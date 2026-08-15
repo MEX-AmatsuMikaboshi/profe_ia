@@ -254,6 +254,29 @@ Antes de subir, las tres comprobaciones que importan:
    `git status --short` antes del commit: si aparece un `.env`, para y arréglalo.
 3. **El mensaje dice qué tarea cierra**, con su id `T-*`. El historial es parte de la evidencia.
 
+### CI necesita el secreto `CONTENT_TOKEN` (acción del propietario)
+
+Desde que D-2 se cerró, `content/` es un submódulo que vive en **otro** repositorio privado, y
+`secrets.GITHUB_TOKEN` solo alcanza a `profe_ia`: el clon falla con `Repository not found`, que es lo
+que GitHub responde a un privado sin acceso, no a un repo inexistente. Los jobs `base` y `logic` lo
+necesitan; `arch`, `db`, `supply` y `mutation` no.
+
+Se resuelve con un PAT fine-grained de solo lectura guardado como secreto `CONTENT_TOKEN`:
+
+- Resource owner `MEX-AmatsuMikaboshi`, **ambos** repositorios (`profe_ia` y `profe_ia_contenido`),
+  permiso `Contents: Read`. Los dos, porque `checkout` usa el mismo token para el repo principal y
+  para el submódulo.
+- Se guarda con `gh secret set CONTENT_TOKEN --repo MEX-AmatsuMikaboshi/profe_ia`, que lo pide por
+  stdin y no lo deja en el historial.
+
+Es acción del propietario, como la cuenta administrativa de Infisical. Un paso previo de cada job
+falla con mensaje explícito si el secreto no está, en vez de dejar morir a `checkout`.
+
+**Regla general que dejó este episodio:** todo check que inspeccione **contenido** de `content/` debe
+ejecutarse dentro del submódulo. Desde el padre solo se ve el gitlink, y por eso el check «conjunto
+dorado reproducible» llevaba pasando por vacío. Revísalo al añadir cualquier check que cruce esa
+frontera.
+
 ### Consecuencia para el estado `VERIFICADA`
 
 Hasta ahora ninguna tarea podía pasar de `HECHA` porque §0.4 exige el check **en verde en `main`** y
