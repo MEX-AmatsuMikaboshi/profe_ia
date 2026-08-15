@@ -48,3 +48,33 @@ export class SourceNotWhitelistedError extends AuthoringCoreError {}
  * principal.
  */
 export class OpenSearchNotComplementError extends AuthoringCoreError {}
+
+/**
+ * Se pidió un valor que depende de una calibración abierta. Falla cerrado igual
+ * que `complexityIndex()` en `proof-search`: el sistema no avanza apoyado en
+ * pesos o umbrales fabricados, y la deuda queda visible.
+ */
+export class CalibrationPendingError extends AuthoringCoreError {
+  constructor(
+    readonly calibrationId: string,
+    detail: string,
+    closesIn: string,
+  ) {
+    super(`PENDING_CALIBRATION: ${calibrationId} (${detail}). Se congela en: ${closesIn}.`);
+    this.name = new.target.name;
+  }
+}
+
+/** `CAL-SOURCE-SCORE`: pesos del `source_suitability_score` (T-H45-04). */
+export class SuitabilityCalibrationPendingError extends CalibrationPendingError {
+  constructor(detail: string, closesIn: string) {
+    super('CAL-SOURCE-SCORE', detail, closesIn);
+  }
+}
+
+/** `CAL-SATURATION`: tamaño base, racha y umbral de información nueva (T-H45-04). */
+export class SaturationCalibrationPendingError extends CalibrationPendingError {
+  constructor(detail: string, closesIn: string) {
+    super('CAL-SATURATION', detail, closesIn);
+  }
+}
