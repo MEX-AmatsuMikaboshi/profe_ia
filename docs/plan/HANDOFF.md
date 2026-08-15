@@ -14,9 +14,11 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
-con 1 de 17**: `T-H5-01` (W1, ingesta) quedó cerrada. La siguiente es **`T-H5-02`** —extracción
-curricular con esquema cerrado, Rol A—. Antes de seguir lee §3, que dice qué se rompe fácil, y §7,
-que enumera lo que **no** está verificado.
+con 3 de 17**: `T-H5-01` (W1 ingesta), `T-H5-02` (W2 extracción) y `T-H5-03` (mapa de KC). La
+siguiente es **`T-H5-04`** —objetivos observables, secuencia, perfil pedagógico por KC, matriz de
+activación de estrategias, política de ayudas/*fading* y plan de retrieval/spacing, todo en
+`pedagogy/`—. Antes de seguir lee §3, que dice qué se rompe fácil, y §7, que enumera lo que **no**
+está verificado.
 
 **Hay una acción tuya pendiente que bloquea todos los `VERIFICADA`:** el secreto `CONTENT_TOKEN`
 (§8). Sin él, dos de los seis jobs de CI siguen en rojo y ninguna tarea puede pasar de `HECHA`.
@@ -50,10 +52,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, esperan operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **1 de 17.** `T-H5-01` (W1) cerrada; sigue `T-H5-02` |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **3 de 17.** `T-H5-01/02/03` cerradas; sigue `T-H5-04` |
 | F7–F16 | No empezadas |
 
-Van **53 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **55 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas:
 [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
@@ -63,14 +65,21 @@ No hay acta de `H4` ni de `H4.5` todavía: ninguna de las dos fases está en con
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H5-02` — extracción curricular (Rol A)
+### La tarea siguiente: `T-H5-04` — objetivos, secuencia y política pedagógica (Rol B)
 
-F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. `T-H5-01` está
-cerrada (§3.a), así que sigue `T-H5-02`: extracción con esquema cerrado —claims, definiciones,
-reglas, notación, restricciones y referencias exactas—, tipos de claim
-`source_assertion | cross_source_consensus | system_inference`, `curricular_decision` aparte y
-anclaje estructural determinista (P-I §7.11). **El ancla ya existe**: `fragmentId()` de
-`ingestion.ts` es pública justo para que W2 la recalcule sin preguntarle a W1.
+F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las tres primeras
+están cerradas (§3.a), así que sigue `T-H5-04`: objetivos observables, secuencia, perfil pedagógico
+por KC, matriz de activación de estrategias, política de ayudas y *fading* contingente, plan de
+retrieval/spacing compatible con el calendario y plantillas de sesión y de autoexplicación/feedback,
+**todo versionado en `pedagogy/`**. El catálogo de estrategias de P-I §5.10 es de **doce** y cerrado:
+no se crean categorías nuevas con autoridad.
+
+Dos piezas de esta sesión que conviene usar en vez de rehacer:
+
+- **`KC_CATALOG`** (`authoring-core/src/kc-map.ts`) trae los dieciocho KC con sus dependencias
+  tipadas y sus `rule_id` derivados del cálculo. El perfil pedagógico por KC se cuelga de ahí.
+- **`crossSetEdges()`** ya enumera FORMAL y POLITICA_CONTENIDO por separado, que es lo que
+  `T-H5-12` necesita para justificar las aristas cruzadas que queden.
 
 Cuatro cosas más que ya están puestas y conviene usar en vez de rehacer:
 
@@ -92,6 +101,29 @@ Lo que queda abierto y **no** bloquea a F6:
 ---
 
 ## 3.a Lo cerrado en esta sesión (15-08, tercera)
+
+### F6 · H5 — `T-H5-02`, W2 extracción, y `T-H5-03`, mapa de KC
+
+`extraction.ts` y `kc-map.ts`. Lo que se rompe fácil si no se conoce:
+
+- **El tipo de claim se comprueba, no se declara.** `cross_source_consensus` exige **dos componentes
+  distintos** —dos fragmentos de la misma obra son una sola fuente, y un conteo de anclas lo daría
+  por bueno— y `system_inference` **no puede citar fuentes**. Esa segunda regla importa más de lo que
+  parece: §7.11 saca `system_inference` del denominador de atribución, así que una etiqueta falsa
+  movería la métrica de groundedness sin que nadie tocara la métrica.
+- **W2 no juzga la verdad de nada**: anclaje, tipo e identidad. Que el claim se siga del fragmento lo
+  mide `T-H5-17`, y el NLI nunca es autoridad.
+- **Los `rule_id` del mapa se derivan de `logic-core`**, no se copian. Copiados, mapa y cálculo
+  podrían separarse sin que nada lo notara.
+- **`KC12 PC:KC10` es la única arista de política de contenido**, y tratarla como formal afirmaría
+  una necesidad del cálculo que el Maestro niega por escrito. **`KC17` no tiene arista a `KC16`**: el
+  orden entre ambas es pedagógico.
+- **Las aristas cruzadas se enumeran por tipo, nunca sumadas.** Un total diría cuántas rutas de
+  contaminación hay pero no cuál se puede quitar cambiando una política.
+- **Justificar un ciclo no silencia los demás.** Una arista puede cerrar más de uno, y bastaría
+  justificar el más inocente. Esa prueba nació de un error propio: la primera versión sembró una
+  arista que cierra dos ciclos y justificaba uno, y falló **la prueba**, no el módulo. En vez de
+  ajustar el número y seguir, el caso quedó como prueba.
 
 ### F6 · H5 — `T-H5-01`, W1 ingesta
 
@@ -269,7 +301,7 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **758 pruebas**: 631 unitarias + 127 contra
+Estado en el checkpoint: **todo en verde en local**. **805 pruebas**: 678 unitarias + 127 contra
 PostgreSQL 17 real. Empezó esta sesión en 719.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
@@ -503,7 +535,7 @@ En este orden.
    verde, ese es el momento de empezar a mover tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`,
    una por una y solo las que su check cubra. Si no está, no lo crees tú: es acción del propietario
    (§8), y seguir trabajando no depende de ello.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **758 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **805 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
 4. **Sigue F6 · H5** por `T-H5-02`. Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
