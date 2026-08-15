@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { CanaryRegistry } from '@profesor-ia/security-policy';
 import {
   buildSessionContext,
   CanaryHitError,
@@ -139,6 +140,55 @@ describe('filtro de egreso (P-I §9.4)', () => {
     expect(visto).toHaveLength(1);
     expect(visto[0]).toContain('Derivar A∧B');
     expect(visto[0]).toContain('worked_example');
+  });
+
+  it('el registro real de canarios encaja como detector del filtro (T-H4-05)', () => {
+    const registro = new CanaryRegistry();
+    registro.register({
+      canaryId: 'canary-sol-01',
+      assetClass: 'soluciones',
+      location: 'private_solutions.solution.body',
+      freezeVersion: 'freeze-2026-08-15',
+      value: 'ZZ-CANARIO-9902',
+      scopes: ['contexto_construido'],
+      incidentProcedure: 'abortar, incidente nivel 3, bloquear corrida, investigar la ruta',
+    });
+
+    expect(() =>
+      buildSessionContext(
+        entrada({
+          authorizedFragments: [
+            { fragmentId: 'f1', blockId: 'bloque-01', text: 'la solución es ZZ-CANARIO-9902' },
+          ],
+        }),
+        { canaryDetector: registro.detectorFor('contexto_construido') },
+      ),
+    ).toThrow(CanaryHitError);
+
+    // Y el hit quedó observado y la corrida bloqueada, no solo abortada la llamada.
+    expect(registro.isRunBlocked()).toBe(true);
+    expect(registro.observedHits()).toHaveLength(1);
+  });
+
+  it('un contexto limpio con el registro real no bloquea nada', () => {
+    const registro = new CanaryRegistry();
+    registro.register({
+      canaryId: 'canary-sol-01',
+      assetClass: 'soluciones',
+      location: 'private_solutions.solution.body',
+      freezeVersion: 'freeze-2026-08-15',
+      value: 'ZZ-CANARIO-9902',
+      scopes: ['contexto_construido'],
+      incidentProcedure: 'abortar, incidente nivel 3, bloquear corrida, investigar la ruta',
+    });
+
+    expect(() =>
+      buildSessionContext(entrada(), {
+        canaryDetector: registro.detectorFor('contexto_construido'),
+      }),
+    ).not.toThrow();
+    expect(registro.isRunBlocked()).toBe(false);
+    expect(registro.observedHits()).toEqual([]);
   });
 
   it('sin detector el contexto se construye, pero nada lo da por limpio', () => {

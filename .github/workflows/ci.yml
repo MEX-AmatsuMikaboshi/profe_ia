@@ -91,6 +91,10 @@ jobs:
       # proveedor.
       - name: ci:gateway:contracts
         run: pnpm run ci:gateway:contracts
+      # Canarios (P-II §11.3): registro, detección por superficie, bloqueo de
+      # corrida y encaje real con el filtro de egreso de la pasarela.
+      - name: ci:canary
+        run: pnpm run ci:canary
 
   logic:
     # Núcleo lógico (F2/H2): el gate exige 0 falsos positivos y 0 falsos

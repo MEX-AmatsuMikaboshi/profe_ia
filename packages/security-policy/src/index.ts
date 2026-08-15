@@ -10,3 +10,4 @@ export const PACKAGE_NAME = '@profesor-ia/security-policy' as const;
 
 export * from './roles.js';
 export * from './matrix.js';
+export * from './canary.js';
