@@ -17,7 +17,22 @@ export {
   UnpinnedBindingError,
   ContradictoryCapabilitiesError,
   UnknownProviderContractError,
+  FragmentOutsideBlockError,
+  HelpLevelExceededError,
+  UndeclaredStateKeyError,
+  CanaryHitError,
 } from './errors.js';
+
+export {
+  buildSessionContext,
+  type AuthorizedFragment,
+  type BuildSessionContextOptions,
+  type CanaryDetector,
+  type SelectedHint,
+  type SessionContext,
+  type SessionContextInput,
+  type StructuredError,
+} from './session-context.js';
 
 export {
   canonicalizeEnum,

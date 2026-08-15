@@ -62,3 +62,22 @@ export class ContradictoryCapabilitiesError extends ModelGatewayError {}
  * un hallazgo que hay que ver, no un caso que absorber en silencio.
  */
 export class UnknownProviderContractError extends ModelGatewayError {}
+
+/** El fragmento no pertenece al bloque del contexto (T-H4-04 ← P-I §9.4). */
+export class FragmentOutsideBlockError extends ModelGatewayError {}
+
+/** La pista seleccionada supera el nivel de ayuda permitido (P-I §9.4). */
+export class HelpLevelExceededError extends ModelGatewayError {}
+
+/**
+ * Una clave de estado no declarada intentó entrar en el contexto. Es un fallo y
+ * no un campo que se ignora: ignorarlo escondería el intento (P-II §8.3).
+ */
+export class UndeclaredStateKeyError extends ModelGatewayError {}
+
+/**
+ * Cadena canario detectada en el egreso (P-II §11.3). Significa que una solución
+ * llegó hasta el contexto construido: se aborta. El incidente y el bloqueo de
+ * corrida los añade T-H4-05.
+ */
+export class CanaryHitError extends ModelGatewayError {}
