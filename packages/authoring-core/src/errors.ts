@@ -192,3 +192,14 @@ export class IncompleteExtractionError extends AuthoringCoreError {}
  * referencia otra versión del cálculo.
  */
 export class KcMapError extends AuthoringCoreError {}
+
+/**
+ * La política pedagógica de autoría contradice P-I §5.9, §5.10, §8.3.1–§8.3.4 o
+ * el contrato de P-II §7.2.1 (T-H5-04).
+ *
+ * Incluye el caso que más tienta: pedir el miembro de enum de una de las dos
+ * entradas del catálogo que no lo tienen. Falla cerrado y dice por dónde se
+ * expresan, en vez de devolver la estrategia más parecida —que registraría en la
+ * traza que se dio ayuda justo en el paso en que se estaba retirando—.
+ */
+export class PedagogyPolicyError extends AuthoringCoreError {}

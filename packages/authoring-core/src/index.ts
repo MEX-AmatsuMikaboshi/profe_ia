@@ -15,3 +15,4 @@ export * from './translingual.js';
 export * from './ingestion.js';
 export * from './extraction.js';
 export * from './kc-map.js';
+export * from './pedagogy.js';
