@@ -1,6 +1,7 @@
 # HANDOFF — punto de continuación
 
-**Fecha del checkpoint:** 2026-08-15 (F1, F2 y casi toda F3 cerradas; el anterior es del 14-08)
+**Fecha del checkpoint:** 2026-08-15, segunda sesión del día (F4 al 75 %, F5 cerrada; la anterior
+cerró F1–F3)
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -12,9 +13,13 @@ con qué comprobaciones, en §8.
 
 ### Por dónde empezar, en una línea
 
-F0–F2 completas, F3 a falta de `T-H3-05`. **La siguiente tarea del camino crítico es F4 · H4**
-(pasarela de modelo y benchmark). Antes de arrancarla, lee §3 —hay tres cosas cerradas esta sesión
-que se rompen fácil si no se conocen— y §7, que enumera lo que **no** está verificado.
+F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible) y **F5 con 8 de 8**. La
+siguiente es **F6 · H5** —ingesta, construcción curricular, autoría y freeze—, la fase más grande del
+plan con 17 tareas. Antes de arrancarla lee §3, que dice qué de F4/F5 se rompe fácil, y §7, que
+enumera lo que **no** está verificado.
+
+**Hay una acción tuya pendiente que bloquea todos los `VERIFICADA`:** el secreto `CONTENT_TOKEN`
+(§8). Sin él, dos de los seis jobs de CI siguen en rojo y ninguna tarea puede pasar de `HECHA`.
 
 ---
 
@@ -39,42 +44,106 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 
 | Fase | Estado |
 |---|---|
-| **F0 · H0** repositorio, contratos, CI | Completa. Gate abierto solo por falta de ejecución en `main` |
+| **F0 · H0** repositorio, contratos, CI | Completa. Gate abierto solo por falta de ejecución verde en `main` |
 | **F1 · H1** BD, roles, evidencia | Completa. El gate solo espera firma y ejecución en `main` |
 | **F2 · H2** verificador | 16 de 16 tareas. **Todo el AC cubierto**; el gate solo espera firma y ejecución en `main` |
-| **F3 · H3** entorno local | 4 de 5 tareas. Falta `T-H3-05` (trazas, esperan operación real) |
-| F4–F16 | No empezadas |
+| **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, esperan operación real en F7/F8) |
+| **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
+| **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
+| F6–F16 | No empezadas |
 
-Detalle tarea por tarea, con evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
-Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, todas **abiertas**.
+Van **52 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+evidencia y fechas:
+[`PLAN_STATUS.md`](PLAN_STATUS.md).
+Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
+No hay acta de `H4` ni de `H4.5` todavía: ninguna de las dos fases está en condiciones de firmarse.
 
 ---
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: F4 · H4 — pasarela de modelo y benchmark
+### La tarea siguiente: F6 · H5 — ingesta, autoría y freeze (W1–W5)
 
-Es lo único del camino crítico que queda sin empezar y que no depende de nadie más. `Plan.md` §F4:
-`model-gateway` con proveedores, bindings, filtros de egreso y `cost-ledger`, más el arnés
-`BENCH-01/02`. Tres cosas que ya están puestas y que conviene aprovechar en vez de rehacer:
+Es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Consume lo construido en
+F5 (corpus autorizado) y en F4 (perfil `AUTORIA` de la pasarela). Cuatro cosas que ya están puestas y
+conviene usar en vez de rehacer:
 
-- La regla depcruise `i1-session-engine-sin-sdk-de-proveedor` ya prohíbe que nadie salvo
-  `model-gateway` importe un SDK de proveedor. Si al implementarla aparece una violación, es la
-  regla haciendo su trabajo, no un estorbo.
-- El compose ya deja a `authoring-worker` como **único** servicio con salida a Internet. La pasarela
-  de sesión no la tiene: eso condiciona dónde puede vivir cada llamada.
-- Los contratos de coste (`pricing_manifest`, `cost_event`) ya existen en la base con la regla dura
-  de que un cambio de tarifa **crea un manifiesto nuevo, nunca reescribe costos**.
+- **El estado W0 ya tiene máquina de transiciones** (`authoring-core/src/w0-state.ts`). `W1_ingesta`
+  es su estado terminal bueno: F6 arranca justo ahí.
+- **`freezeWinningOrder()`** de `proof-search` falla cerrado esperando a `T-H5-05`, que es donde se
+  decide el orden del pipeline de autoría con `BENCH-04`.
+- **`complexityIndex()`** falla cerrado esperando a `T-H5-10` (`CAL-09`). H6 no abre sin eso.
+- **Los `CAL-*` de F5 se congelan aquí**: `CAL-SOURCE-SCORE`, `CAL-SATURATION` y `CAL-NLI` tienen su
+  punto de fallo escrito en `authoring-core` y esperan a H5/H4.5 con corpus real.
 
-Lo demás que queda abierto, y por qué no bloquea a F4:
+Lo que queda abierto y **no** bloquea a F6:
 
-- **`T-H3-05`** (trazas) espera a que exista una operación real que trazar, en F7/F8.
-- **Los gates H0–H3** esperan firma humana y ejecución en Actions, no más código.
+- **`T-H3-05`** (trazas) espera una operación real que trazar, en F7/F8.
+- **Los gates H0–H3** esperan firma humana y ejecución verde en Actions, no más código.
 - **Infisical** necesita que crees su cuenta administrativa a mano.
+- **`T-H4-09/10/11`** esperan credenciales y gasto; ver §3.a.
 
 ---
 
-Lo cerrado esta sesión, con lo que hay que saber antes de tocarlo:
+## 3.a Lo cerrado en esta sesión (15-08, segunda)
+
+### F4 · H4 — pasarela de modelo: 9 de 12
+
+Hecho: adaptadores propios, capacidades por binding, validación fail-closed de la salida, contexto de
+sesión por whitelist con filtro de egreso, canarios, `pricing-manifest` + `cost-ledger`, control de
+gasto, matriz de batch/caching y modo degradado. Cinco checks nuevos en CI, todos en el job `arch`
+—que es de los que sí pasan sin el PAT—: `ci:gateway:fail-closed`, `ci:gateway:contracts`,
+`ci:canary`, `ci:cost:ledger`.
+
+**Lo que se rompe fácil si no se conoce:**
+
+- **No hay ningún nombre de modelo ni parámetro de muestreo escrito en el código.** El id sale del
+  binding; los parámetros los autoriza el binding. Escribir «claude-x» o «temperature: 0» en un
+  adaptador anticiparía un ganador que solo `BENCH-01/02` decide.
+- **`AuthorizedParameters` es un tipo de marca** que solo produce `authorizeParameters()`. No lo
+  sortees con un cast: es lo que impide que un adaptador reciba parámetros sin contrastar.
+- **`ModelGateway` no tiene `send()`**, solo `execute()` con esquema obligatorio. Se retiró a
+  propósito: un `send()` crudo sería un camino para leer salida del proveedor sin validación local,
+  que es el agujero que P-II §8.4 cierra.
+- **El orden de clasificación de la salida es el requisito**, no una preferencia: truncamiento,
+  rechazo y error de proveedor **antes** que el esquema. Reordenarlo haría que un truncado se
+  reportara como `schema_violation` y escondería la causa real.
+- **El bloqueo por canario y el de presupuesto no se pueden levantar programáticamente.** No hay
+  `unblock`, `reset`, `force` ni `continueAnyway`, y hay pruebas de que no existen. Añadir uno
+  convertiría los dos bloqueos en sugerencias.
+
+**Las tres que faltan, y por qué:** `T-H4-09` (refresco documental) es `PENDIENTE` **por diseño** —la
+norma pide hacerlo *inmediatamente antes* del benchmark, y adelantarlo produciría evidencia caducada—;
+`T-H4-10` y `T-H4-11` están `BLOQUEADA(gasto y credenciales del propietario)`: exigen llamadas reales
+facturables y, la segunda, dos proveedores de familias distintas.
+
+### F5 · H4.5 — investigación de fuentes (W0): 8 de 8
+
+Todo en `packages/authoring-core`. Máquina de estados W0, sistema formal objetivo, licencias,
+descubrimiento, idoneidad/saturación, manifiesto de selección, autorización externa y trazabilidad
+translingüe.
+
+**Lo que se rompe fácil si no se conoce:**
+
+- **La whitelist de la base de datos no impone orden.** `operations.w0_state` tiene un `CHECK` de
+  pertenencia que acepta saltar de `solicitud_curso` a `corpus_autorizado`. El orden lo impone
+  `assertW0Transition`; si escribes al estado sin pasar por ahí, no hay flujo.
+- **La clasificación de licencias no devuelve un booleano por recurso**, sino un veredicto **por uso
+  previsto**. El caso Calgary obliga: el mismo material sirve como fuente documental del cálculo y
+  está bloqueado como base expresiva. Un sí/no obligaría a elegir una de las dos respuestas ciertas.
+- **`LICENSE_UNRESOLVED` no es `excluido`.** No resuelto espera a que alguien resuelva la
+  proveniencia; excluido está decidido. Confundirlos borra la diferencia.
+- **`assertNoHumanRewrite` es la mitad ejecutable de «sin reescritura pedagógica humana».** Compara
+  el manifiesto presentado al aprobador con el que devuelve. Si lo quitas, la regla vuelve a ser una
+  declaración de intenciones y el veredicto de autonomía deja de poder medirse.
+- **`suitabilityScore()`, `shouldStopDiscovery()` y `nliGate()` fallan cerrado a propósito.** Son los
+  tres puntos donde se enchufan los valores congelados de `CAL-SOURCE-SCORE`, `CAL-SATURATION` y
+  `CAL-NLI`. No los «arregles» devolviendo un número o un booleano: una parada inventada cierra el
+  corpus antes de tiempo o quema presupuesto, y **ninguna de las dos se nota mirando el resultado**.
+
+---
+
+## 3.b De sesiones anteriores
 
 ### a) F2 está cerrada; el gate H2 espera firma
 
@@ -141,6 +210,8 @@ pnpm install
 pnpm run ci:lint && pnpm run ci:typecheck && pnpm run ci:unit && pnpm run ci:build
 pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs
 pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net
+pnpm run ci:gateway:fail-closed && pnpm run ci:gateway:contracts
+pnpm run ci:canary && pnpm run ci:cost:ledger
 pnpm run db:grants:check && pnpm run ci:db:negative
 pnpm run ci:supply:sbom && pnpm run ci:supply:drift
 pnpm run ci:infra:hardening
@@ -152,11 +223,30 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde**. 505 pruebas: 378 unitarias + 127 contra PostgreSQL 17
-real. (El checkpoint del 14-08 decía «391 unitarias + 103»; 391 era en realidad el total de las dos
-suites, no solo las unitarias.)
+Estado en el checkpoint: **todo en verde en local**. **719 pruebas**: 592 unitarias + 127 contra
+PostgreSQL 17 real. Empezó la sesión en 505.
 
-`pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte.
+`pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
+`logic-core`, así que las 214 pruebas nuevas de esta sesión —que son de `model-gateway`,
+`security-policy` y `authoring-core`— **no mueven el baseline de 90.31 %**. No lo leas como que la
+cobertura de mutación cayó ni subió: mide otra cosa.
+
+### Estado de CI en `main` al cerrar
+
+Observado, no supuesto (corrida `31883718220` y posteriores):
+
+| Job | Resultado |
+|---|---|
+| `ci:arch:depcruise` (+ los cuatro checks nuevos de F4) | ✅ |
+| `ci:db:testcontainers · ci:db:negative` | ✅ |
+| `ci:supply:sbom · ci:supply:drift` | ✅ |
+| `ci:logic:mutation` | ✅ |
+| `ci:lint · ci:typecheck · ci:unit · ci:build` | ❌ falta `CONTENT_TOKEN` |
+| `ci:logic:golden · ci:logic:pbt · ci:logic:no-net` | ❌ falta `CONTENT_TOKEN` |
+
+Los dos rojos fallan en 3–4 s con un mensaje explícito, antes del checkout. **En cuanto exista el
+secreto, `gh run rerun <id> --failed` debería ponerlos en verde**, y entonces —y solo entonces— se
+puede empezar a marcar `VERIFICADA`.
 
 ---
 
@@ -178,10 +268,17 @@ suites, no solo las unitarias.)
    **No edites fuentes con una corrida en marcha**: trabaja sobre una copia y los resultados salen
    falsos. Y al leer el reporte, recorta el nodo mutado por su `location`: el campo de reemplazo no
    distingue dos mutantes distintos de la misma línea.
-6. **Bash de Git y `$APPDATA`.** El shim de pnpm resuelve a una ruta inexistente bajo
+5. **Bash de Git y `$APPDATA`.** El shim de pnpm resuelve a una ruta inexistente bajo
    `C:\Program Files\Git\...`. Usa PowerShell para todo lo que invoque pnpm.
-5. **PostgreSQL reserva el prefijo `pg_`.** Por eso el rol de migraciones es `owner_migrations` y no
+6. **PostgreSQL reserva el prefijo `pg_`.** Por eso el rol de migraciones es `owner_migrations` y no
    `pg_owner_migrations` como dice el plan (desviación D-6).
+7. **Un `.yml` de workflow inválido no degrada un check: los apaga todos.** Pasó el 15-08: el mensaje
+   de un `run:` contenía `CONTENT_TOKEN: sin él`, y un `: ` dentro de un escalar YAML plano se parsea
+   como mapa anidado. La corrida murió en 0 s **sin ejecutar ningún job**. Valida el workflow con un
+   parser antes de subirlo —el paquete `yaml` ya está en el árbol— y usa escalar de bloque (`run: |`)
+   para cualquier mensaje con dos puntos.
+8. **Bash aquí no entiende los here-strings de PowerShell.** `git commit -m @'…'@` mete un `@` como
+   primera línea del mensaje. Para mensajes largos, heredoc (`cat > /tmp/msg <<'EOF'`) y `-F`.
 
 ---
 
@@ -202,11 +299,20 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
   `NO_IMPLEMENTADO` en vez de simular éxito; `proof-search` lanza `CertificateRejectedError` en vez
   de devolver «no encontré».
 - **Desviaciones documentadas.** Cualquier apartamiento del plan va a §«Decisiones de ingeniería» de
-  `PLAN_STATUS.md` con su causa. Van D-1 a D-13.
+  `PLAN_STATUS.md` con su causa. Van **D-1 a D-16**.
 - **Una justificación se intenta refutar antes de escribirla.** Vale para los mutantes
   «inalcanzables» y para cualquier «esto no puede pasar»: si no intentaste alcanzarlo, no lo sabes.
 - **Un commit, una tarea `T-*`**, con `PLAN_STATUS.md` actualizado en el mismo commit, y **se sube al
   terminarla** (§12 del plan y §8 de este documento).
+- **Un control que no puede fallar es peor que no tenerlo.** Dos veces en esta sesión una
+  comprobación pasaba por vacío: el check del conjunto dorado tras cerrar D-2, y una prueba que
+  comparaba un objeto consigo mismo tras partir un fichero. Antes de dar por bueno un check nuevo,
+  **siémbrale un fallo y comprueba que lo detecta**. Es el mismo método que
+  `verify-depcruise-catches.mjs` aplica a las reglas de arquitectura.
+- **Cuando falte un mapeo que ninguna autoridad da, hazlo dato y falla si no está.** Pasó tres veces
+  en F4/F5: el reparto operación↔perfil (D-15), la política de rearme del gate de gasto (D-16) y los
+  umbrales de saturación. En los tres, cablear un valor plausible habría movido una frontera real
+  —de seguridad, de gasto o de corpus— con una suposición.
 
 ---
 
@@ -224,10 +330,28 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
   `apps/web` los consuma. Anotado en el mismo `PROVENANCE.md`.
 - **Calibraciones abiertas por diseño**: `CALC-03` (decisor terminante), `CALC-05` (cota tabla↔SAT),
   `CAL-04` (conjunto dorado), `CAL-07` (isomorfismo), `CAL-08`, `CAL-09` (pesos y comparabilidad del
-  índice de complejidad, H5) y el benchmark `BENCH-04` (orden del pipeline de autoría, F6).
+  índice de complejidad, H5), `CAL-SOURCE-SCORE` y `CAL-SATURATION` (idoneidad y parada de W0,
+  H4.5), `CAL-NLI` (fiabilidad del NLI por estrato, H5), y los benchmarks `BENCH-01/02` (F4) y
+  `BENCH-04` (orden del pipeline de autoría, F6).
   `docs/params/registry.yaml` está vacío a propósito: se llena cuando un gate real congele un valor.
-  Las dos últimas ya tienen su punto de fallo cerrado en el código (`complexityIndex()`,
-  `assertComparable()`, `freezeWinningOrder()`): son el lugar donde se enchufa el valor congelado.
+  **Todas tienen ya su punto de fallo escrito en el código** —`complexityIndex()`,
+  `assertComparable()`, `freezeWinningOrder()`, `suitabilityScore()`, `compareSuitability()`,
+  `shouldStopDiscovery()`, `nliGate()`, `CanaryRegistry.plan()`—: son el lugar donde se enchufa el
+  valor congelado, no bugs que arreglar.
+- **F4 no tiene ni una llamada real a un proveedor.** Toda la pasarela está probada con transporte
+  inyectado y respuestas construidas a mano. Eso prueba la lógica local, **no** que un proveedor
+  responda como el adaptador supone: las formas de respuesta de Anthropic y OpenAI están escritas
+  desde su contrato documentado y las verifica `T-H4-09` justo antes del benchmark. Si al hacer la
+  primera llamada real aparece un `UnknownProviderContractError`, es el adaptador haciendo su trabajo.
+- **`T-H2-05` aparece dos veces en la tabla de F2** de `PLAN_STATUS.md`: una fila para «13 primitivas
+  + `DNE`, whitelist cerrada» y otra para `src/rules.ts`. Las dieciséis tareas de F2 están hechas y
+  ninguna falta —el trabajo está—, pero **una de las dos filas lleva el id equivocado**. No se
+  corrigió porque no consta cuál de los dos ids es el bueno, y elegir uno sería inventar
+  trazabilidad. Quien lo sepa, que lo arregle contra `Plan.md` §F2.
+- **F5 no ha corrido W0 sobre fuentes reales.** El mecanismo está completo y probado con fixtures;
+  `research/` sigue con `selection-manifest.yaml`, `source-scores.yaml`, `conflicts.yaml`,
+  `coverage-saturation.yaml` y `license-register.yaml` como placeholders vacíos. Solo
+  `whitelist.yaml` está poblado.
 
 ---
 
@@ -302,3 +426,39 @@ Dos consecuencias prácticas:
   preferencia: es la causa exacta de que el primer push dejara `base` y `logic` en rojo.
 
 Para ver dónde quedó todo: `git log --stat -1` en cada uno.
+
+---
+
+## 9. Primeros pasos de la próxima sesión
+
+En este orden.
+
+1. **Lee este archivo entero y después `PLAN_STATUS.md`.** No empieces por el código.
+2. **Mira si ya existe el secreto `CONTENT_TOKEN`:**
+
+   ```bash
+   gh secret list --repo MEX-AmatsuMikaboshi/profe_ia
+   ```
+
+   Si está, relanza la última corrida fallida y **observa** el resultado; si los seis jobs quedan en
+   verde, ese es el momento de empezar a mover tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`,
+   una por una y solo las que su check cubra. Si no está, no lo crees tú: es acción del propietario
+   (§8), y seguir trabajando no depende de ello.
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **719 pruebas**. Si da
+   menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
+4. **Arranca F6 · H5** por `T-H5-01`. Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
+   condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
+5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
+   verde y `git push origin main`. Si tocas `content/`, **primero el submódulo** (§8).
+
+### Preguntas abiertas para el propietario
+
+Ninguna bloquea el trabajo de código, pero las tres llevan tiempo esperando:
+
+1. **`CONTENT_TOKEN`** — bloquea todos los `VERIFICADA`. Instrucciones en §8.
+2. **Credenciales de proveedor y autorización de gasto** — bloquean `T-H4-10/11`. El tope declarado
+   es ≈MXN 500/mes con bloqueo duro a los 700, y el gate ya está implementado y probado.
+3. **Cuenta administrativa de Infisical** — hasta entonces los servicios leen credenciales de `.env`,
+   que es el modo de arranque, no el de destino.
+
+Las tres son acciones del propietario por naturaleza, no tareas pendientes de nadie más.
