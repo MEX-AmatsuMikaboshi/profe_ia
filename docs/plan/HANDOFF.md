@@ -1,10 +1,20 @@
 # HANDOFF — punto de continuación
 
-**Fecha del checkpoint:** 2026-08-15 (F2 completa; el anterior es del 14-08)
+**Fecha del checkpoint:** 2026-08-15 (F1, F2 y casi toda F3 cerradas; el anterior es del 14-08)
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
 [`PLAN_STATUS.md`](PLAN_STATUS.md), que es la fuente de verdad de avance (§12 del plan).
+
+**Lo primero que hay que saber:** ya hay remoto
+(<https://github.com/MEX-AmatsuMikaboshi/profe_ia.git>) y **cada tarea terminada se sube**. Cómo y
+con qué comprobaciones, en §8.
+
+### Por dónde empezar, en una línea
+
+F0–F2 completas, F3 a falta de `T-H3-05`. **La siguiente tarea del camino crítico es F4 · H4**
+(pasarela de modelo y benchmark). Antes de arrancarla, lee §3 —hay tres cosas cerradas esta sesión
+que se rompen fácil si no se conocen— y §7, que enumera lo que **no** está verificado.
 
 ---
 
@@ -42,7 +52,29 @@ Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, todas **a
 
 ## 3. Por dónde seguir
 
-Lo que quedó sobre la mesa, en el orden que recomiendo:
+### La tarea siguiente: F4 · H4 — pasarela de modelo y benchmark
+
+Es lo único del camino crítico que queda sin empezar y que no depende de nadie más. `Plan.md` §F4:
+`model-gateway` con proveedores, bindings, filtros de egreso y `cost-ledger`, más el arnés
+`BENCH-01/02`. Tres cosas que ya están puestas y que conviene aprovechar en vez de rehacer:
+
+- La regla depcruise `i1-session-engine-sin-sdk-de-proveedor` ya prohíbe que nadie salvo
+  `model-gateway` importe un SDK de proveedor. Si al implementarla aparece una violación, es la
+  regla haciendo su trabajo, no un estorbo.
+- El compose ya deja a `authoring-worker` como **único** servicio con salida a Internet. La pasarela
+  de sesión no la tiene: eso condiciona dónde puede vivir cada llamada.
+- Los contratos de coste (`pricing_manifest`, `cost_event`) ya existen en la base con la regla dura
+  de que un cambio de tarifa **crea un manifiesto nuevo, nunca reescribe costos**.
+
+Lo demás que queda abierto, y por qué no bloquea a F4:
+
+- **`T-H3-05`** (trazas) espera a que exista una operación real que trazar, en F7/F8.
+- **Los gates H0–H3** esperan firma humana y ejecución en Actions, no más código.
+- **Infisical** necesita que crees su cuenta administrativa a mano.
+
+---
+
+Lo cerrado esta sesión, con lo que hay que saber antes de tocarlo:
 
 ### a) F2 está cerrada; el gate H2 espera firma
 
@@ -173,15 +205,17 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
   `PLAN_STATUS.md` con su causa. Van D-1 a D-13.
 - **Una justificación se intenta refutar antes de escribirla.** Vale para los mutantes
   «inalcanzables» y para cualquier «esto no puede pasar»: si no intentaste alcanzarlo, no lo sabes.
-- **Un PR, una tarea `T-*`**, y `PLAN_STATUS.md` actualizado en el mismo PR (§12).
+- **Un commit, una tarea `T-*`**, con `PLAN_STATUS.md` actualizado en el mismo commit, y **se sube al
+  terminarla** (§12 del plan y §8 de este documento).
 
 ---
 
 ## 7. Lo que no está verificado y conviene no olvidar
 
-- **Ningún check está «en verde en `main`».** No hay remoto git ni ejecución de GitHub Actions, así
-  que por §0.4 ninguna tarea puede marcarse `VERIFICADA`. Todo lo que dice `HECHA` está verificado
-  localmente y es reproducible.
+- **Ninguna tarea está `VERIFICADA`.** Todo lo que dice `HECHA` está verificado **localmente** y es
+  reproducible, pero §0.4 exige el check en verde en `main`. Ya hay remoto (§8), así que el camino
+  está abierto: falta comprobar en Actions que los workflows corrieron y quedaron verdes. No marques
+  `VERIFICADA` por el hecho de haber subido el código.
 - **El ZIP de mockups no coincide** con el hash de §0.1, aunque el HTML normativo interno sí
   coincide byte a byte. Registrado en `packages/ui-tokens/vendor/PROVENANCE.md`; corresponde al
   aprobador confirmar o corregir la referencia.
@@ -197,12 +231,42 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
 
 ---
 
-## 8. Estado del control de versiones
+## 8. Control de versiones — **hay remoto, y se usa**
 
-Dos repositorios git independientes, ambos con su commit de checkpoint y **sin remoto**:
+Remoto del monorepo: <https://github.com/MEX-AmatsuMikaboshi/profe_ia.git> (`origin/main`).
 
-- **Monorepo**: raíz del proyecto.
-- **Contenido**: `content/unidad-deduccion-natural/`, historial propio (§4.3 del plan). El monorepo
-  lo registra como gitlink; falta formalizarlo con `git submodule add` cuando exista un remoto (D-2).
+### Regla de trabajo: cada tarea terminada se sube
+
+**Al cerrar una tarea `T-*`, se sube al remoto.** No al final de la sesión ni «cuando haya varias»:
+al terminar cada una. Un commit por tarea, con `PLAN_STATUS.md` actualizado en el mismo commit
+(§12 del plan).
+
+```bash
+git add -A
+git commit -m "T-Hx-nn: <qué quedó cerrado>"
+git push origin main
+```
+
+Antes de subir, las tres comprobaciones que importan:
+
+1. **La batería de §4 en verde.** No se sube una tarea con un check rojo.
+2. **Ningún secreto.** `infra/compose/.env` está en `.gitignore` y ahí se queda. Compruébalo con
+   `git status --short` antes del commit: si aparece un `.env`, para y arréglalo.
+3. **El mensaje dice qué tarea cierra**, con su id `T-*`. El historial es parte de la evidencia.
+
+### Consecuencia para el estado `VERIFICADA`
+
+Hasta ahora ninguna tarea podía pasar de `HECHA` porque §0.4 exige el check **en verde en `main`** y
+no había dónde ejecutarlo. Con el remoto ya existe `.github/workflows/ci.yml` en el repositorio.
+**Antes de marcar `VERIFICADA` cualquier tarea, mira la pestaña Actions y comprueba que su check
+corrió y quedó en verde en `main`.** Que exista el remoto no es lo mismo que el check haya corrido:
+sigue siendo verde observado, no verde supuesto.
+
+### El repositorio de contenido
+
+`content/unidad-deduccion-natural/` es un repositorio git independiente con historial propio (§4.3).
+El monorepo lo registra como **gitlink**, no como submódulo formal. Ahora que hay remoto, **queda
+pendiente crear su repositorio remoto y formalizarlo con `git submodule add`** (D-2). Mientras no se
+haga, un clon del monorepo trae el gitlink pero no el contenido.
 
 Para ver dónde quedó todo: `git log --stat -1` en cada uno.

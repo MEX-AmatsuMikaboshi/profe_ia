@@ -31,8 +31,8 @@ la tarea cita.
 | `docs/blocked-by-spec.md` | Decisiones normativas faltantes (hoy vacío, a propósito) |
 
 Estados de tarea: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA`. **`VERIFICADA` exige el check en verde
-en `main`**; como no hay remoto git ni ejecución de Actions, hoy ninguna tarea puede estarlo. No
-marques `VERIFICADA` nada.
+en `main`**, observado en la pestaña Actions del remoto. Que el código esté subido no basta: si no
+has visto el check verde, la tarea es `HECHA`, no `VERIFICADA`.
 
 ## 2. Comandos
 
@@ -190,6 +190,12 @@ operación instrumentable en F7/F8 — un span de «arranqué» sería éxito si
 505 pruebas en verde: 378 unitarias + 127 contra PostgreSQL 17 real. Mutation testing en 90.31 % con
 cero mutantes sin cobertura.
 
-Sin remoto git. Dos repositorios independientes: el monorepo y `content/unidad-deduccion-natural/`
-(historial propio, registrado como gitlink; falta `git submodule add` cuando exista remoto — D-2).
-Nunca se versiona `.env`.
+**Remoto del monorepo:** <https://github.com/MEX-AmatsuMikaboshi/profe_ia.git> (`origin/main`).
+**Al terminar una tarea `T-*`, se sube**: un commit por tarea, con `PLAN_STATUS.md` actualizado en el
+mismo commit, la batería de verificación en verde y `git push origin main`. No se acumulan tareas
+para subirlas juntas. El detalle está en `docs/plan/HANDOFF.md` §8.
+
+`content/unidad-deduccion-natural/` es un repositorio independiente con historial propio, registrado
+como gitlink; falta crear su remoto y formalizarlo con `git submodule add` (D-2).
+
+**Nunca se versiona `.env`.** Antes de cada commit, `git status --short`: si aparece un `.env`, para.
