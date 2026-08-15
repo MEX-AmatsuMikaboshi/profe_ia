@@ -33,9 +33,15 @@ export const BINARY_SYMBOL: Readonly<Record<BinaryOp, string>> = Object.freeze({
 export const isBinary = (f: Formula): f is Extract<Formula, { left: Formula }> =>
   f.kind === 'and' || f.kind === 'or' || f.kind === 'implies' || f.kind === 'iff';
 
-/** Operador principal de la fórmula, para `E-RULE-MAINOP`. */
-export const mainOperator = (f: Formula): string =>
-  f.kind === 'atom' ? 'atom' : f.kind === 'falsum' ? 'falsum' : f.kind;
+/**
+ * Operador principal de la fórmula, para `E-RULE-MAINOP`.
+ *
+ * Es exactamente `kind`: `atom` y `falsum` se llaman igual como forma que como
+ * operador principal. Antes esto era un ternario que devolvía `'atom'` y
+ * `'falsum'` explícitamente —cuatro ramas que no podían distinguirse de
+ * devolver `kind`, y que el mutation testing marcaba como código muerto.
+ */
+export const mainOperator = (f: Formula): string => f.kind;
 
 /**
  * Impresión canónica. Los corchetes exteriores se omiten (única omisión

@@ -421,23 +421,54 @@ const telemetryOf = (
 });
 
 /**
+ * Posición del oráculo semántico en el pipeline (BENCH-04, T-H2-16).
+ *
+ * `prefilter` es el orden por omisión y el que hoy usa la autoría. Las otras
+ * dos existen para poder **medir** el orden en L0 antes de congelarlo (P-I
+ * §7.4): no se adopta un orden como ley universal sin medición.
+ *
+ *  - `prefilter`  — oráculo antes de buscar (orden de referencia);
+ *  - `postfilter` — buscar primero y consultar al oráculo solo si no hubo
+ *    prueba; mismos veredictos, distinto trabajo;
+ *  - `off`        — sin oráculo. **No es equivalente**: sin él, un candidato
+ *    semánticamente inválido solo puede reportarse como presupuesto agotado.
+ */
+export type SemanticOraclePlacement = 'prefilter' | 'postfilter' | 'off';
+
+export interface SearchOptions {
+  readonly semanticOracle?: SemanticOraclePlacement;
+}
+
+/**
  * Busca una derivación. Todo certificado se **re-verifica con `logic-core`**
  * antes de aceptarse (P-I §7.4, punto 4): si la re-verificación falla, no se
  * devuelve `proof_found`.
  */
-export function search(request: SearchRequest): SearchOutcome {
+export function search(request: SearchRequest, options: SearchOptions = {}): SearchOutcome {
+  const placement: SemanticOraclePlacement = options.semanticOracle ?? 'prefilter';
   const premises = request.premises.map(parse);
   const goal = parse(request.goal);
   const work = new WorkBudget(request.budget);
 
+  /**
+   * El oráculo solo puede **rechazar**: que no haya contramodelo no demuestra
+   * derivabilidad en el cálculo (P-I §7.4, última línea).
+   */
+  const semanticRejection = (costExplored: number): SearchOutcome | null => {
+    const semantic = entails(premises, goal);
+    return semantic.status === 'countermodel'
+      ? {
+          status: 'semantically_invalid',
+          countermodel: semantic.valuation,
+          telemetry: telemetryOf(work, request.mode, costExplored),
+        }
+      : null;
+  };
+
   // 1. Prefiltro semántico: el oráculo independiente puede rechazar de entrada.
-  const semantic = entails(premises, goal);
-  if (semantic.status === 'countermodel') {
-    return {
-      status: 'semantically_invalid',
-      countermodel: semantic.valuation,
-      telemetry: telemetryOf(work, request.mode, 0),
-    };
+  if (placement === 'prefilter') {
+    const rejected = semanticRejection(0);
+    if (rejected) return rejected;
   }
 
   const maxCost =
@@ -478,10 +509,21 @@ export function search(request: SearchRequest): SearchOutcome {
     }
 
     if (work.exhausted) {
+      // Postfiltro: el oráculo se consulta solo cuando la búsqueda no halló
+      // prueba. El veredicto es el mismo que con prefiltro; el trabajo, no.
+      if (placement === 'postfilter') {
+        const rejected = semanticRejection(cost);
+        if (rejected) return rejected;
+      }
       return { status: 'search_budget_exhausted', telemetry: telemetryOf(work, request.mode, cost) };
     }
     // Se completó la cota `cost` sin agotar presupuesto: queda cubierta.
     exhaustivelyCovered = cost;
+  }
+
+  if (placement === 'postfilter') {
+    const rejected = semanticRejection(maxCost);
+    if (rejected) return rejected;
   }
 
   if (request.mode === 'exhaustive_k') {

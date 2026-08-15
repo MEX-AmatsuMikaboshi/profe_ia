@@ -315,3 +315,126 @@ describe('¬I / ¬E / X / IP / DNE', () => {
     expect(code('DNE', ctx('A', ['¬¬¬¬A']))).toBe('E-RULE-SHAPE');
   });
 });
+
+/**
+ * Orientaciones **a medias**: la conclusión coincide con una parte de la
+ * orientación autorizada y no con la otra. Son los casos que distinguen `&&` de
+ * `||` en cada comprobación de forma; sin ellos, una regla que acepte media
+ * coincidencia pasa desapercibida. Huecos que destapó el mutation testing.
+ */
+describe('coincidencias parciales: aceptar media orientación sería aceptar de más', () => {
+  it('∧I rechaza que solo uno de los miembros corresponda a una cita', () => {
+    // Izquierdo = línea 1, derecho ajeno.
+    expect(code('∧I', ctx('A∧C', ['A', 'B']))).toBe('E-RULE-SHAPE');
+    // Izquierdo = línea 2 (orientación invertida), derecho ajeno.
+    expect(code('∧I', ctx('B∧C', ['A', 'B']))).toBe('E-RULE-SHAPE');
+  });
+
+  it('∨E rechaza que solo una subprueba suponga un disyunto', () => {
+    expect(
+      code(
+        '∨E',
+        ctx('C', ['A∨B'], [
+          { assumption: 'B', conclusion: 'C' },
+          { assumption: 'C', conclusion: 'C' },
+        ]),
+      ),
+    ).toBe('E-RULE-SHAPE');
+  });
+
+  it('↔I rechaza que una subprueba encaje y la otra no', () => {
+    expect(
+      code(
+        '↔I',
+        ctx('A↔B', [], [
+          { assumption: 'A', conclusion: 'C' },
+          { assumption: 'B', conclusion: 'A' },
+        ]),
+      ),
+    ).toBe('E-RULE-SHAPE');
+    expect(
+      code(
+        '↔I',
+        ctx('A↔B', [], [
+          { assumption: 'A', conclusion: 'B' },
+          { assumption: 'B', conclusion: 'C' },
+        ]),
+      ),
+    ).toBe('E-RULE-SHAPE');
+  });
+
+  it('↔E rechaza el lado correcto con la conclusión equivocada', () => {
+    expect(code('↔E', ctx('C', ['A↔B', 'B']))).toBe('E-RULE-SHAPE');
+    expect(code('↔E', ctx('C', ['A↔B', 'A']))).toBe('E-RULE-SHAPE');
+  });
+
+  it('¬E exige una contradicción real entre las dos citas', () => {
+    expect(code('¬E', ctx('⊥', ['A', 'B']))).toBe('E-RULE-SHAPE');
+    expect(code('¬E', ctx('⊥', ['A', '¬B']))).toBe('E-RULE-SHAPE');
+  });
+});
+
+/**
+ * `E-RULE-MAINOP` y `E-RULE-SHAPE` no son intercambiables: el primero dice que
+ * la forma citada no es la que la regla exige; el segundo, que siéndolo, las
+ * piezas no encajan. Confundirlos degradaría el diagnóstico que ve el alumno.
+ */
+describe('MAINOP y SHAPE se distinguen', () => {
+  it('→E: sin condicional es MAINOP; con condicional que no encaja es SHAPE', () => {
+    expect(code('→E', ctx('C', ['A', 'B']))).toBe('E-RULE-MAINOP');
+    expect(code('→E', ctx('C', ['A→B', 'A']))).toBe('E-RULE-SHAPE');
+    expect(code('→E', ctx('B', ['A→B', 'C']))).toBe('E-RULE-SHAPE');
+  });
+
+  it('↔E: sin bicondicional es MAINOP; con bicondicional que no encaja es SHAPE', () => {
+    expect(code('↔E', ctx('C', ['A', 'B']))).toBe('E-RULE-MAINOP');
+    expect(code('↔E', ctx('C', ['A↔B', 'D']))).toBe('E-RULE-SHAPE');
+  });
+});
+
+/**
+ * `→E` y `↔E` miran **las dos** citas para decidir si el error es de forma o de
+ * operador principal. Estos casos ponen la fórmula correcta en la segunda cita:
+ * si el verificador solo mirara la primera, degradaría el diagnóstico a
+ * `E-RULE-MAINOP` cuando el problema real es que las piezas no encajan.
+ */
+describe('la segunda cita también cuenta para elegir el código de error', () => {
+  it('→E: el condicional en la segunda línea sigue dando SHAPE, no MAINOP', () => {
+    expect(code('→E', ctx('C', ['A', 'A→B']))).toBe('E-RULE-SHAPE');
+  });
+
+  it('↔E: el bicondicional en la segunda línea sigue dando SHAPE, no MAINOP', () => {
+    expect(code('↔E', ctx('C', ['A', 'A↔B']))).toBe('E-RULE-SHAPE');
+  });
+});
+
+/**
+ * `↔I` acepta las dos subpruebas en cualquier orden. Estos casos entran por la
+ * orientación invertida y fallan en un solo conjunto: comprueban que la
+ * orientación de vuelta se exige **completa**, no a trozos.
+ */
+describe('↔I: la orientación invertida también se exige completa', () => {
+  it('rechaza cuando la vuelta encaja salvo la última conclusión', () => {
+    expect(
+      code(
+        '↔I',
+        ctx('A↔B', [], [
+          { assumption: 'B', conclusion: 'C' },
+          { assumption: 'A', conclusion: 'B' },
+        ]),
+      ),
+    ).toBe('E-RULE-SHAPE');
+  });
+
+  it('rechaza cuando la vuelta encaja salvo la conclusión intermedia', () => {
+    expect(
+      code(
+        '↔I',
+        ctx('A↔B', [], [
+          { assumption: 'B', conclusion: 'A' },
+          { assumption: 'A', conclusion: 'C' },
+        ]),
+      ),
+    ).toBe('E-RULE-SHAPE');
+  });
+});

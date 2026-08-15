@@ -1,0 +1,369 @@
+# Entorno local L0 (Plan.md T-H3-01, T-H3-04, T-H3-05 ← Maestro P-I §15.1, P-II §11.5.1).
+#
+# Todo el sistema en la PC del propietario, sin hosting. Las fronteras que aquí
+# se declaran **no son configuración de conveniencia**: son los invariantes de
+# §4.5 expresados en la capa que los puede hacer cumplir.
+#
+#  - `verifier` corre con `network_mode: none`. No es una precaución: es I-3.
+#    Su transporte es un spool en disco (D-12).
+#  - Solo `authoring-worker` toca `solutions-private`, y solo él tiene salida a
+#    Internet (APIs de modelo y W0). Solo `measurement-worker` monta las
+#    reservas de sondas (I-4).
+#  - El socket de Docker **no se monta en ningún servicio**. Montarlo equivale a
+#    conceder root en el host y anularía todo lo demás.
+#  - Todo servicio: sin privilegios nuevos, sin capabilities, raíz de solo
+#    lectura y usuario no root.
+#
+# Los digests de imagen se fijan en el freeze (D-7); aquí se fijan etiquetas.
+
+name: profesor-ia
+
+x-hardening: &hardening
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  read_only: true
+  restart: unless-stopped
+
+x-node-service: &node-service
+  build:
+    context: ../..
+    dockerfile: infra/compose/Dockerfile
+  depends_on:
+    postgres:
+      condition: service_healthy
+  environment:
+    NODE_ENV: production
+    OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+    LOG_FILE: /var/log/profesor-ia/service.log
+
+x-worker-health: &worker-health
+  # El healthcheck no puede ser un endpoint: estos servicios no exponen red.
+  # Se comprueba que el latido sea **reciente**, no que el archivo exista: un
+  # proceso colgado dejaría el archivo viejo y parecería sano.
+  test: ["CMD-SHELL", "test $(( $(date +%s) - $(stat -c %Y /tmp/health) )) -lt 30"]
+  interval: 10s
+  timeout: 5s
+  retries: 3
+  start_period: 20s
+
+networks:
+  # Sin salida a Internet. Todo lo que no necesita egress vive aquí.
+  core:
+    internal: true
+  # Publicación de puertos al host. Docker no publica puertos en una red
+  # `internal`, así que los servicios con puerto publicado necesitan esta red:
+  # es una limitación de la plataforma, documentada en el runbook.
+  edge: {}
+  # Egress autorizado por función: solo autoría (APIs de modelo, fuentes W0).
+  egress: {}
+
+volumes:
+  pgdata:
+  logs:
+  spool:
+  artifacts:
+  redisdata:
+
+services:
+  postgres:
+    <<: *hardening
+    image: postgres:17-alpine
+    networks: [core]
+    # Arranca **ya** como el usuario `postgres` de la imagen (uid 70). Su
+    # entrypoint, corriendo como root, intentaría `chown`/`chmod` sobre el
+    # volumen y fallaría: `cap_drop: ALL` le quitó `CAP_CHOWN`. La alternativa
+    # sería devolverle capabilities; esta no relaja ninguna frontera.
+    user: "70:70"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-profesor_ia}
+      POSTGRES_USER: ${POSTGRES_USER:-profesor_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?define POSTGRES_PASSWORD en infra/compose/.env}
+      INFISICAL_DB: ${INFISICAL_DB:-infisical}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Corre una sola vez, con el volumen vacío: crea la base de Infisical.
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
+    # `read_only: true` con las rutas que PostgreSQL sí necesita escribir.
+    # `mode=1777` porque el proceso ya no es root y el tmpfs se crea `root:root`.
+    tmpfs:
+      - /tmp:mode=1777
+      - /run:mode=1777
+      - /var/run/postgresql:mode=1777
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-profesor_admin} -d $${POSTGRES_DB:-profesor_ia}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  # Infisical necesita Redis además de PostgreSQL (D-13). No es un servicio del
+  # plan: es una dependencia del gestor de secretos que el plan sí exige.
+  redis:
+    <<: *hardening
+    image: redis:7-alpine
+    networks: [core]
+    # Mismo motivo que en `postgres`: su entrypoint desciende de root con
+    # `setpriv`, que necesita `CAP_SETUID`. Arrancar ya como `redis` (uid 999)
+    # evita pedir la capability.
+    user: "999:1000"
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "no"]
+    volumes:
+      - redisdata:/data
+    tmpfs:
+      - /tmp:mode=1777
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  infisical:
+    <<: *hardening
+    image: infisical/infisical:v0.132.2-postgres
+    networks: [core, edge]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      ENCRYPTION_KEY: ${INFISICAL_ENCRYPTION_KEY:?define INFISICAL_ENCRYPTION_KEY en infra/compose/.env}
+      AUTH_SECRET: ${INFISICAL_AUTH_SECRET:?define INFISICAL_AUTH_SECRET en infra/compose/.env}
+      DB_CONNECTION_URI: postgres://${POSTGRES_USER:-profesor_admin}:${POSTGRES_PASSWORD}@postgres:5432/${INFISICAL_DB:-infisical}
+      REDIS_URL: redis://redis:6379
+      SITE_URL: http://localhost:${INFISICAL_PORT:-8080}
+    ports:
+      - "127.0.0.1:${INFISICAL_PORT:-8080}:8080"
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/status || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  otel-collector:
+    <<: *hardening
+    image: otel/opentelemetry-collector-contrib:0.115.1
+    networks: [core]
+    command: ["--config=/etc/otel/config.yaml"]
+    user: "10001:10001"
+    volumes:
+      - ./otel-collector.yaml:/etc/otel/config.yaml:ro
+      - logs:/var/log/profesor-ia:ro
+    tmpfs:
+      - /tmp
+
+  web:
+    <<: [*hardening, *node-service]
+    build:
+      context: ../..
+      dockerfile: infra/compose/Dockerfile
+      args:
+        APP: web
+    networks: [core, edge]
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      LOG_FILE: /var/log/profesor-ia/web.log
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3000}:3000"
+    volumes:
+      - logs:/var/log/profesor-ia
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  api:
+    <<: [*hardening, *node-service]
+    build:
+      context: ../..
+      dockerfile: infra/compose/Dockerfile
+      args:
+        APP: api
+    networks: [core, edge]
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      LOG_FILE: /var/log/profesor-ia/api.log
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      DATABASE_URL: postgres://svc_api:${SVC_API_PASSWORD:?define SVC_API_PASSWORD en infra/compose/.env}@postgres:5432/${POSTGRES_DB:-profesor_ia}
+    ports:
+      - "127.0.0.1:${API_PORT:-3001}:3001"
+    volumes:
+      - logs:/var/log/profesor-ia
+      - spool:/spool
+      - artifacts:/artifacts
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  verifier:
+    <<: *hardening
+    build:
+      context: ../..
+      dockerfile: infra/compose/Dockerfile
+      args:
+        APP: verifier
+    # I-3 / T-H2-15: sin red. No es `internal`, es **ninguna**: el proceso no
+    # tiene interfaz por la que salir ni entrar.
+    network_mode: none
+    environment:
+      NODE_ENV: production
+      SPOOL_IN: /spool/in
+      SPOOL_OUT: /spool/out
+      SPOOL_DONE: /spool/done
+      SPOOL_FAILED: /spool/failed
+    volumes:
+      - spool:/spool
+    tmpfs:
+      - /tmp
+    healthcheck: *worker-health
+
+  authoring-worker:
+    <<: [*hardening, *node-service]
+    build:
+      context: ../..
+      dockerfile: infra/compose/Dockerfile
+      args:
+        APP: authoring-worker
+    # Único servicio con egress autorizado (APIs de modelo y fuentes W0).
+    networks: [core, egress]
+    environment:
+      NODE_ENV: production
+      LOG_FILE: /var/log/profesor-ia/authoring-worker.log
+      DATABASE_URL: postgres://svc_authoring:${SVC_AUTHORING_PASSWORD:?define SVC_AUTHORING_PASSWORD en infra/compose/.env}@postgres:5432/${POSTGRES_DB:-profesor_ia}
+    volumes:
+      - logs:/var/log/profesor-ia
+      - artifacts:/artifacts
+      # Único servicio que monta el repositorio de contenido y, con él,
+      # `solutions-private`: es quien produce las soluciones.
+      - ../../content/unidad-deduccion-natural:/content
+    tmpfs:
+      - /tmp
+    healthcheck: *worker-health
+
+  measurement-worker:
+    <<: [*hardening, *node-service]
+    build:
+      context: ../..
+      dockerfile: infra/compose/Dockerfile
+      args:
+        APP: measurement-worker
+    networks: [core]
+    environment:
+      NODE_ENV: production
+      LOG_FILE: /var/log/profesor-ia/measurement-worker.log
+      DATABASE_URL: postgres://svc_measurement:${SVC_MEASUREMENT_PASSWORD:?define SVC_MEASUREMENT_PASSWORD en infra/compose/.env}@postgres:5432/${POSTGRES_DB:-profesor_ia}
+    volumes:
+      - logs:/var/log/profesor-ia
+      # I-4: las reservas de sondas se montan **solo** aquí, y de solo lectura.
+      - ../../content/unidad-deduccion-natural/items/probes-baseline:/probes/baseline:ro
+      - ../../content/unidad-deduccion-natural/items/probes-intervention:/probes/intervention:ro
+    tmpfs:
+      - /tmp
+    healthcheck: *worker-health
+
+  background-worker:
+    <<: [*hardening, *node-service]
+    build:
+      context: ../..
+      dockerfile: infra/compose/Dockerfile
+      args:
+        APP: background-worker
+    networks: [core]
+    environment:
+      NODE_ENV: production
+      LOG_FILE: /var/log/profesor-ia/background-worker.log
+      DATABASE_URL: postgres://svc_background:${SVC_BACKGROUND_PASSWORD:?define SVC_BACKGROUND_PASSWORD en infra/compose/.env}@postgres:5432/${POSTGRES_DB:-profesor_ia}
+    volumes:
+      - logs:/var/log/profesor-ia
+      - artifacts:/artifacts
+    tmpfs:
+      - /tmp
+    healthcheck: *worker-health
+
+  # Servicios de un solo uso (`--profile tools`): no arrancan con `dev:up`.
+  migrator:
+    <<: *hardening
+    profiles: ["tools"]
+    build:
+      context: ../..
+      dockerfile: infra/compose/Dockerfile
+      args:
+        APP: api
+    networks: [core]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ADMIN_DATABASE_URL: postgres://${POSTGRES_USER:-profesor_admin}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-profesor_ia}
+      SVC_API_PASSWORD: ${SVC_API_PASSWORD}
+      SVC_SESSION_PASSWORD: ${SVC_SESSION_PASSWORD}
+      SVC_VERIFIER_PASSWORD: ${SVC_VERIFIER_PASSWORD}
+      SVC_AUTHORING_PASSWORD: ${SVC_AUTHORING_PASSWORD}
+      SVC_MEASUREMENT_PASSWORD: ${SVC_MEASUREMENT_PASSWORD}
+      SVC_BACKGROUND_PASSWORD: ${SVC_BACKGROUND_PASSWORD}
+      SVC_AUDIT_PASSWORD: ${SVC_AUDIT_PASSWORD}
+    command: ["node", "scripts/db/apply-migrations.mjs"]
+    tmpfs:
+      - /tmp
+    restart: "no"
+
+  backup:
+    <<: *hardening
+    profiles: ["tools"]
+    image: postgres:17-alpine
+    networks: [core]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ../backups:/backups
+    tmpfs:
+      - /tmp
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        pg_dump -h postgres -U ${POSTGRES_USER:-profesor_admin}
+        -d ${POSTGRES_DB:-profesor_ia} -Fc
+        -f /backups/${BACKUP_NAME:-profesor_ia}.dump
+    restart: "no"
+
+  restore:
+    <<: *hardening
+    profiles: ["tools"]
+    image: postgres:17-alpine
+    networks: [core]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ../backups:/backups:ro
+    tmpfs:
+      - /tmp
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        pg_restore -h postgres -U ${POSTGRES_USER:-profesor_admin}
+        -d ${POSTGRES_DB:-profesor_ia} --clean --if-exists --no-owner
+        /backups/${BACKUP_NAME:-profesor_ia}.dump
+    restart: "no"

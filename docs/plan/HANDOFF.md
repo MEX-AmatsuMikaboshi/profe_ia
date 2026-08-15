@@ -1,6 +1,6 @@
 # HANDOFF — punto de continuación
 
-**Fecha del checkpoint:** 2026-08-14
+**Fecha del checkpoint:** 2026-08-15 (F2 completa; el anterior es del 14-08)
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -30,9 +30,9 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | Fase | Estado |
 |---|---|
 | **F0 · H0** repositorio, contratos, CI | Completa. Gate abierto solo por falta de ejecución en `main` |
-| **F1 · H1** BD, roles, evidencia | AC del gate cubierto. Falta `T-H1-05` (Better Auth) |
-| **F2 · H2** verificador | 14 de 16 tareas. Faltan `T-H2-14` y `T-H2-16` |
-| **F3 · H3** entorno local | No empezada. **Desbloqueada**: Docker ya funciona |
+| **F1 · H1** BD, roles, evidencia | Completa. El gate solo espera firma y ejecución en `main` |
+| **F2 · H2** verificador | 16 de 16 tareas. **Todo el AC cubierto**; el gate solo espera firma y ejecución en `main` |
+| **F3 · H3** entorno local | 4 de 5 tareas. Falta `T-H3-05` (trazas, esperan operación real) |
 | F4–F16 | No empezadas |
 
 Detalle tarea por tarea, con evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
@@ -44,27 +44,61 @@ Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, todas **a
 
 Lo que quedó sobre la mesa, en el orden que recomiendo:
 
-### a) Cerrar F2 (camino crítico)
+### a) F2 está cerrada; el gate H2 espera firma
 
-- **`T-H2-14` índice de complejidad estructural.** Norma: Maestro P-I §7.6 (línea ~1154).
-  Longitud/garantía, reglas distintas, profundidad/subpruebas, premisas, conectivos,
-  descarga/indirecta, coste/nodos sin interpretarlos como total de caminos, distancia estructural.
-  **Los pesos NO se inventan aquí**: se fijan y congelan en H5 (`CAL-09`), y H6 no abre sin eso.
-  Prerrequisito del gate H5, así que conviene hacerlo pronto.
-- **`T-H2-16` arnés BENCH-04.** Compara en L0 `prefiltro semántico → proof search` contra
-  alternativas equivalentes. Solo el arnés; la corrida y el congelamiento del orden son de F6.
-- **Mutation testing**: 81.99 %. Ver [`../quality/mutation-baseline.md`](../quality/mutation-baseline.md)
-  para el desglose y la regla de operación. El trabajo restante está en `verify.ts` y `parser.ts`.
+Las 16 tareas están hechas y **todo el AC está cubierto localmente**. Mutation testing terminó en
+**90.31 % con cero mutantes sin cobertura**; los 112 vivos están clasificados en
+[`../quality/mutation-baseline.md`](../quality/mutation-baseline.md). Stryker muta solo `logic-core`,
+así que `proof-search` no mueve el baseline.
+
+Dos lecciones de método que ese trabajo dejó, y que conviene leer antes de tocar la mutación:
+
+1. **El reporte imprime el reemplazo, no el nodo mutado.** Dos mutantes distintos de una misma línea
+   se ven idénticos. Leerlo mal lleva tanto a dar por cubierto lo que no lo está como a culpar a la
+   herramienta de falsos supervivientes. El script debe recortar por `location`.
+2. **Una justificación de «rama inalcanzable» hay que intentar alcanzarla antes de escribirla.** La
+   del oráculo semántico parecía sólida —toda regla autorizada es sana— y era falsa.
+
+Lo que quedó cerrado el 15-08 y conviene conocer antes de tocarlo:
+
+- **`T-H2-14` índice de complejidad** (`packages/proof-search/src/complexity.ts`). Las medidas de
+  P-I §7.6 en dos grupos: `structural` no depende del presupuesto, `searchRelative` sí. Esa
+  separación es lo que impide leer «nodos explorados» como total de caminos. **No hay escalar**:
+  `complexityIndex()` lanza `CalibrationPendingError` hasta que H5 congele los pesos (`CAL-09` /
+  `T-H5-10`), y H6 no abre sin eso. No lo «arregles» devolviendo un número.
+- **`T-H2-16` arnés BENCH-04** (`packages/proof-search/src/bench.ts`). Mide en L0 los dos órdenes
+  equivalentes y marca cinco clases de hallazgo de seguridad; cualquiera vuelve el informe no
+  comparable. `freezeWinningOrder()` falla cerrado: el ganador se decide en F6 (`T-H5-05`).
 
 ### b) F3 · H3 — entorno local
 
-Docker 29.7.2 con motor Linux ya está operativo. Falta `infra/compose/` con los ocho servicios,
-scripts `dev:up`/`dev:seed`/`dev:backup`/`dev:restore`, el hardening de `T-H3-04` (socket de Docker
-no montado, egress por función, `solutions-private` solo en procesos autorizados) y OpenTelemetry local.
+Levantado y endurecido. `pnpm run dev:env && pnpm run dev:up && pnpm run dev:seed`; el runbook está
+en [`../../infra/runbooks/local.md`](../../infra/runbooks/local.md). `ci:infra:hardening` comprueba
+159 propiedades sobre la configuración **resuelta** por Docker e imprime cuatro imposibilidades
+técnicas registradas.
 
-### c) `T-H1-05` Better Auth
+Dos cosas quedan abiertas y ninguna es un olvido:
 
-Es lo único que impide firmar el acta H1.
+- **`T-H3-05`**: el colector corre y recibe, pero los servicios no emiten spans. No hay operación
+  que trazar hasta F7/F8, y un span de «arranqué» para poder decir que hay trazas sería éxito
+  simulado.
+- **Infisical** necesita que su cuenta administrativa se cree a mano en <http://localhost:8080>.
+  Crear cuentas es acción del propietario. Hasta entonces los servicios leen credenciales de `.env`,
+  que es el modo de arranque, no el de destino.
+
+### c) F1 · H1 — cerrada
+
+`T-H1-05` quedó hecha el 15-08. Better Auth 1.6.29 autoalojado, con sus seis tablas dentro de
+`identity` y prefijo `auth_` (D-14). Dos cosas que conviene saber antes de tocarlo:
+
+- **El correo no autentica solo.** No hay enlace mágico ni código por correo, y hay una prueba que
+  falla si alguien los añade. Añadirlos violaría P-I §14.2.
+- **`svc_api` no borra cuentas.** Administra credenciales y sesiones; la supresión es de
+  `svc_background`, que es quien atiende el derecho (P-I §14.5). Está en la matriz y lo comprueba la
+  suite negativa.
+
+Lo que **no** está probado y no se afirma que lo esté: la ceremonia WebAuthn completa y el montaje
+de rutas HTTP. Son de F7.
 
 ---
 
@@ -77,9 +111,18 @@ pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs
 pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net
 pnpm run db:grants:check && pnpm run ci:db:negative
 pnpm run ci:supply:sbom && pnpm run ci:supply:drift
+pnpm run ci:infra:hardening
 ```
 
-Estado en el checkpoint: **todo en verde**. 391 pruebas unitarias + 103 contra PostgreSQL 17 real.
+El entorno local se comprueba aparte, porque necesita Docker y tarda:
+
+```bash
+pnpm run ci:infra:compose-up
+```
+
+Estado en el checkpoint: **todo en verde**. 505 pruebas: 378 unitarias + 127 contra PostgreSQL 17
+real. (El checkpoint del 14-08 decía «391 unitarias + 103»; 391 era en realidad el total de las dos
+suites, no solo las unitarias.)
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte.
 
@@ -100,7 +143,11 @@ Estado en el checkpoint: **todo en verde**. 391 pruebas unitarias + 103 contra P
    descubrimiento automático), no acepta `vitest.project`, y usa
    `packages/logic-core/vitest.mutation.config.ts`, que excluye `isolation.test.ts` porque esa
    prueba escanea el código fuente y Stryker lo instrumenta inyectando `process.env`.
-   **No edites fuentes con una corrida en marcha**: trabaja sobre una copia y los resultados salen falsos.
+   **No edites fuentes con una corrida en marcha**: trabaja sobre una copia y los resultados salen
+   falsos. Y al leer el reporte, recorta el nodo mutado por su `location`: el campo de reemplazo no
+   distingue dos mutantes distintos de la misma línea.
+6. **Bash de Git y `$APPDATA`.** El shim de pnpm resuelve a una ruta inexistente bajo
+   `C:\Program Files\Git\...`. Usa PowerShell para todo lo que invoque pnpm.
 5. **PostgreSQL reserva el prefijo `pg_`.** Por eso el rol de migraciones es `owner_migrations` y no
    `pg_owner_migrations` como dice el plan (desviación D-6).
 
@@ -123,7 +170,9 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
   `NO_IMPLEMENTADO` en vez de simular éxito; `proof-search` lanza `CertificateRejectedError` en vez
   de devolver «no encontré».
 - **Desviaciones documentadas.** Cualquier apartamiento del plan va a §«Decisiones de ingeniería» de
-  `PLAN_STATUS.md` con su causa. Van D-1 a D-9.
+  `PLAN_STATUS.md` con su causa. Van D-1 a D-13.
+- **Una justificación se intenta refutar antes de escribirla.** Vale para los mutantes
+  «inalcanzables» y para cualquier «esto no puede pasar»: si no intentaste alcanzarlo, no lo sabes.
 - **Un PR, una tarea `T-*`**, y `PLAN_STATUS.md` actualizado en el mismo PR (§12).
 
 ---
@@ -140,8 +189,11 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
   local-first durante una corrida: hay que autoalojar la fuente en la capa de la app antes de que
   `apps/web` los consuma. Anotado en el mismo `PROVENANCE.md`.
 - **Calibraciones abiertas por diseño**: `CALC-03` (decisor terminante), `CALC-05` (cota tabla↔SAT),
-  `CAL-04` (conjunto dorado), `CAL-07` (isomorfismo), `CAL-08`, `CAL-09` (complejidad).
+  `CAL-04` (conjunto dorado), `CAL-07` (isomorfismo), `CAL-08`, `CAL-09` (pesos y comparabilidad del
+  índice de complejidad, H5) y el benchmark `BENCH-04` (orden del pipeline de autoría, F6).
   `docs/params/registry.yaml` está vacío a propósito: se llena cuando un gate real congele un valor.
+  Las dos últimas ya tienen su punto de fallo cerrado en el código (`complexityIndex()`,
+  `assertComparable()`, `freezeWinningOrder()`): son el lugar donde se enchufa el valor congelado.
 
 ---
 

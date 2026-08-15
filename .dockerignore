@@ -1,0 +1,15 @@
+# Contexto de build: solo fuentes y manifiestos. Copiar `node_modules` del host
+# rompería la reproducibilidad que exige `--frozen-lockfile` (Plan.md §3).
+node_modules
+**/node_modules
+**/dist
+**/.turbo
+.stryker-tmp
+reports
+supply/sbom.cdx.json
+.git
+.github
+docs
+docs_maes
+analysis
+infra/backups/*.dump

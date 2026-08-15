@@ -19,7 +19,19 @@ export interface TableGrant {
 
 /** Inventario canónico de tablas por esquema. Las migraciones lo materializan. */
 export const TABLES: Readonly<Record<SchemaName, readonly string[]>> = Object.freeze({
-  identity: ['account', 'identity_link', 'app_role_assignment'],
+  identity: [
+    'account',
+    'identity_link',
+    'app_role_assignment',
+    // Tablas de Better Auth (T-H1-05, D-14). Viven en `identity` porque no se
+    // crea un octavo esquema, y llevan prefijo para no pisar `account`.
+    'auth_user',
+    'auth_session',
+    'auth_account',
+    'auth_verification',
+    'auth_passkey',
+    'auth_two_factor',
+  ],
   pedagogy: [
     'course',
     'kc',
@@ -60,6 +72,8 @@ export const TABLES: Readonly<Record<SchemaName, readonly string[]>> = Object.fr
 const RO = ['SELECT'] as const;
 const RW = ['SELECT', 'INSERT', 'UPDATE'] as const;
 const APPEND = ['INSERT'] as const;
+/** Incluye `DELETE`: solo para material efímero, nunca para expediente. */
+const CRUD = ['SELECT', 'INSERT', 'UPDATE', 'DELETE'] as const;
 
 const g = (schema: SchemaName, table: string, operations: readonly Operation[]): TableGrant => ({
   schema,
@@ -99,6 +113,18 @@ export const PERMISSION_MATRIX: Readonly<Record<ServiceRole, readonly TableGrant
     svc_api: [
       g('identity', 'account', RW),
       g('identity', 'app_role_assignment', RO),
+      // Better Auth (T-H1-05). El servicio que atiende el inicio de sesión
+      // administra credenciales y sesiones, pero **no borra cuentas**: el
+      // derecho de supresión lo ejerce `svc_background` (P-I §14.4). Por eso
+      // `auth_user` y `auth_account` no llevan DELETE, y sí lo llevan las
+      // tablas de material efímero: cerrar sesión, consumir un token de
+      // verificación, quitar una passkey o desactivar el segundo factor.
+      g('identity', 'auth_user', RW),
+      g('identity', 'auth_account', RW),
+      g('identity', 'auth_session', CRUD),
+      g('identity', 'auth_verification', CRUD),
+      g('identity', 'auth_passkey', CRUD),
+      g('identity', 'auth_two_factor', CRUD),
       ...PEDAGOGY_READONLY_REFERENCE.map((t) => g('pedagogy', t, RO)),
       ...PROVENANCE.map((t) => g('pedagogy', t, RO)),
       g('pedagogy', 'session_state', RW),
@@ -154,8 +180,16 @@ export const PERMISSION_MATRIX: Readonly<Record<ServiceRole, readonly TableGrant
     svc_background: [
       // Único servicio que resuelve identidad real: derechos, borrados, alta.
       g('identity', 'account', RW),
-      g('identity', 'identity_link', ['SELECT', 'INSERT', 'UPDATE', 'DELETE']),
+      g('identity', 'identity_link', CRUD),
       g('identity', 'app_role_assignment', RW),
+      // Ejerce el derecho de supresión sobre las credenciales (P-I §14.5): es
+      // el único que puede borrar la cuenta, no el servicio que la usa.
+      g('identity', 'auth_user', CRUD),
+      g('identity', 'auth_account', CRUD),
+      g('identity', 'auth_session', CRUD),
+      g('identity', 'auth_verification', CRUD),
+      g('identity', 'auth_passkey', CRUD),
+      g('identity', 'auth_two_factor', CRUD),
       ...PEDAGOGY_READONLY_REFERENCE.map((t) => g('pedagogy', t, RO)),
       ...PROVENANCE.map((t) => g('pedagogy', t, RO)),
       g('pedagogy', 'session_state', RO),

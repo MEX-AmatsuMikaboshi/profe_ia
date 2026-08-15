@@ -20,10 +20,16 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@better-auth/passkey": "^1.6.29",
     "@profesor-ia/contracts": "workspace:*",
-    "@profesor-ia/security-policy": "workspace:*"
+    "@profesor-ia/security-policy": "workspace:*",
+    "better-auth": "^1.6.29",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
-    "typescript": "5.9.3"
+    "@simplewebauthn/server": "13.3.2",
+    "@types/pg": "^8.21.0",
+    "typescript": "5.9.3",
+    "zod": "4.4.3"
   }
 }

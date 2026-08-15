@@ -30,12 +30,12 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 | T-H1-02 | CRITICAL | HECHA | `packages/security-policy/src/matrix.ts`, `…100100_roles.sql`, `…100400_grants.sql` (generado) | 2026-08-14 | Matriz como dato → migración generada (`db:grants`), con `--check` de drift en CI. Rol de migraciones renombrado por D-6. |
 | T-H1-03 | CRITICAL | HECHA | `…100300_evidence_append_only.sql` | 2026-08-14 | Triggers que niegan `UPDATE`/`DELETE`/`TRUNCATE` (incluso al propietario) + secuencia monótona y cadena `previous_hash` verificada en la base. |
 | T-H1-04 | CRITICAL | HECHA | `infra/database/test/negative.test.ts` — **103 pruebas verdes** contra PostgreSQL 17.11 real | 2026-08-14 | Incluye controles positivos: sin ellos la suite negativa pasaría por vacío. |
-| T-H1-05 | REQUIRED | PENDIENTE | — | — | Better Auth autoalojado (passkey/WebAuthn, TOTP administrativo, cuentas seudónimas). |
+| T-H1-05 | REQUIRED | HECHA | `apps/api/src/auth.ts`, `test/auth.test.ts` (13 pruebas), `…120000_auth.sql`, matriz ampliada | 2026-08-15 | Better Auth 1.6.29 autoalojado. Seis tablas **dentro de `identity`** con prefijo `auth_` (D-14): no se crea un octavo esquema y no se pisa `identity.account`, que es la cuenta seudónima. `auth_user.id` **es** el `account_id`; la identidad real sigue en `identity_link`, que `svc_api` no puede leer. Passkey/WebAuthn + contraseña de ≥12 con correo verificado; el correo valida y recupera pero **no autentica solo**: no hay enlace mágico ni código por correo, y hay prueba de que no los hay. TOTP exigido por todo rol distinto de `alumno`, derivado del catálogo para que un rol nuevo entre exigiéndolo. Cookies `httpOnly`+`secure`+`sameSite`, sesión de 8 h con renovación. `svc_api` administra credenciales pero **no borra cuentas**: la supresión es de `svc_background` (P-I §14.5). Suite negativa 103 → **127 pruebas** contra PostgreSQL real. **No probado aquí**: la ceremonia WebAuthn completa y el montaje HTTP, que son de F7. |
 | T-H1-06 | REQUIRED | HECHA | `…100500_rls.sql` | 2026-08-14 | RLS + `FORCE ROW LEVEL SECURITY` como segunda capa; `measurement`/`private_solutions` no dependen de RLS. |
 
-**Gate H1:** `docs/gates/H1.md` — abierto. El AC literal está cubierto; falta T-H1-05 y la ejecución en `main`.
+**Gate H1:** `docs/gates/H1.md` — abierto. Las 6 tareas están HECHAS; falta la ejecución en `main` y las firmas.
 
-## F2 — H2 · Verificador (iniciado, camino crítico)
+## F2 — H2 · Verificador (16 de 16 tareas; camino crítico)
 
 | Tarea | Etiqueta | Estado | Evidencia | Fecha | Notas |
 |---|---|---|---|---|---|
@@ -51,17 +51,30 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 | T-H2-13 | REQUIRED | HECHA | `src/calculus.ts` (`LEXICON_ES`) | 2026-08-14 | Lexicón español separado de los ids formales. |
 | T-H2-15 | REQUIRED | HECHA | `test/isolation.test.ts` (11 pruebas) | 2026-08-14 | Sin red, sin `process.env`, sin reloj ni azar; función pura que no muta su entrada. |
 | T-H2-05 | CRITICAL | HECHA | `src/rules.ts`, `test/rules.test.ts` (60 pruebas) | 2026-08-14 | Cada regla con sus orientaciones alternativas y cada motivo de rechazo. |
-| T-H2-12 | CRITICAL | EN_CURSO | `stryker.conf.json`, `docs/quality/mutation-baseline.md` | 2026-08-14 | Baseline inicial 62.79 %. La cobertura de ramas para matar mutantes destapó un **falso rechazo de átomos válidos** (`O`, `Y`, `N`), ya corregido. Segunda corrida en marcha. |
+| T-H2-12 | CRITICAL | HECHA | `stryker.conf.json`, `docs/quality/mutation-baseline.md`, 47 pruebas nuevas | 2026-08-15 | 62.79 → 78.22 → 81.99 → 87.56 → 88.67 → **90.31 %**, y **cero mutantes sin cobertura** (eran 177). `ast.ts` y `errors.ts` al 100 %. Los 112 vivos son prosa de mensajes o equivalentes por contrato —la lista de códigos `E-*` es cerrada, así que dos ramas que rechazan con el mismo código son indistinguibles— y están clasificados uno por uno. Dos correcciones de método: el reporte imprime el reemplazo, no el nodo mutado, y leerlo mal produce conclusiones falsas en ambas direcciones; y la rama del oráculo semántico, que iba a justificarse como inalcanzable, **sí es alcanzable** cuando un paso correcto cita una línea ya rechazada. Ahora tiene prueba. Código muerto eliminado en vez de justificado: `mainOperator`. |
 | T-H2-08 | CRITICAL | HECHA | `packages/proof-search/`, `test/search.test.ts` (24 pruebas) | 2026-08-14 | Cuatro funciones separadas (P-I §7.4): prefiltro semántico → buscador → **re-verificación obligatoria por logic-core** → sin decisor terminante. Corte primario en unidades de trabajo deterministas; el timeout de pared solo protege el proceso y se registra aparte. `no_proof_exists_in_calculus` **no existe** en la implementación (CALC-03). `exhaustive_k` solo certifica `minimalCostVerified` tras cubrir todos los costes menores; si no halla, solo afirma `no_proof_with_cost_at_most_k`. Un certificado rechazado por el verificador lanza `CertificateRejectedError` (incidente nivel 3), no se disfraza de «no encontré». |
 | T-H2-09 | CRITICAL | HECHA | `packages/isomorphism-canonicalizer/`, `test/canonicalize.test.ts` (16 pruebas) | 2026-08-14 | Firma estructural sobre el grafo de dependencias: invariante al renombrado de átomos, al orden de citas y al reordenamiento de pasos independientes; duplicado trivial como caso más estricto. Los nombres canónicos son átomos válidos del lenguaje, así que la forma canónica se puede volver a parsear. `ci:arch:depcruise` confirma que la ruta de verificación no lo importa (54 módulos, violación sembrada detectada). `[CALIBRATION CAL-07]` precisión/recall sigue abierto para H5/H10. |
-| T-H2-14, T-H2-16 | REQUIRED/BENCHMARK | PENDIENTE | — | — | Complejidad estructural y arné BENCH-04. |
+| T-H2-14 | REQUIRED | HECHA | `packages/proof-search/src/complexity.ts`, `test/complexity.test.ts` (17 pruebas) | 2026-08-15 | Las medidas literales de P-I §7.6, separadas en dos grupos: `structural` (solo depende del enunciado y de la solución) y `searchRelative` (depende del presupuesto). Esa separación es lo que impide leer «nodos explorados» como total de caminos: dos presupuestos distintos con la misma solución dan `structural` idéntico y `searchRelative` distinto, y hay prueba de ello. Mide **solo soluciones re-verificadas**: un certificado que `logic-core` rechaza lanza `UnverifiedSolutionError`. El escalar no existe todavía — `complexityIndex()` y `assertComparable()` fallan cerrado con `CAL-09` (se congela en H5, `T-H5-10`) en vez de agregar con pesos inventados. Distancia estructural: D-10. |
+| T-H2-16 | BENCHMARK BENCH-04 | HECHA | `packages/proof-search/src/bench.ts`, `test/bench.test.ts` (13 pruebas) | 2026-08-15 | Arnés L0 con muestra fija de 7 casos y dos órdenes equivalentes (`prefiltro→búsqueda` de referencia y `búsqueda→prefiltro`), habilitados por el parámetro aditivo `semanticOracle` de `search()` (el orden por omisión no cambia). Mide «desempeño **y seguridad**» (anexo E.2): cinco códigos de hallazgo —certificado no re-verificado, certificado rechazado, desacuerdo con la referencia, minimalidad fuera de `exhaustive_k` y corte de pared usado como afirmación lógica— y **cualquier hallazgo vuelve el informe no comparable**. Cada código tiene su variante sembrada en pruebas, incluida la trampa de P-I §7.4 (tomar la validez semántica por prueba de derivabilidad). El informe no tiene campo «ganador»: `freezeWinningOrder()` falla cerrado hasta F6 (`T-H5-05`). Sin reloj inyectado el informe es determinista. |
+
+## F3 — H3 · Entorno local reproducible
+
+| Tarea | Etiqueta | Estado | Evidencia | Fecha | Notas |
+|---|---|---|---|---|---|
+| T-H3-01 | REQUIRED | HECHA | `infra/compose/docker-compose.yml`, `Dockerfile`, `apps/*/src/main.ts`; **10 servicios `healthy`** verificados con `ci:infra:compose-up` | 2026-08-15 | Los ocho servicios del plan más `redis` y `otel-collector` (D-13). Imagen única parametrizada por `APP`. Cada app recibe un entrypoint mínimo de salud y logs estructurados (D-11), sin adelantar lógica de fases posteriores. Tres fallos reales encontrados al levantarlo, no al leerlo: `postgres` y `redis` no arrancaban porque sus entrypoints hacen `chown`/`setpriv` como root y `cap_drop: ALL` se lo impide —se resolvió arrancándolos ya como su propio usuario, sin devolver capabilities—, y a Infisical le faltaba su base, que ahora crea el init de PostgreSQL. |
+| T-H3-02 | REQUIRED | HECHA | `scripts/dev/compose.mjs`, `scripts/dev/generate-env.mjs`, `scripts/db/apply-migrations.mjs` | 2026-08-15 | `dev:env`/`dev:up`/`dev:seed`/`dev:backup`/`dev:restore` (+ `down`, `status`, `logs`). `dev:seed` ejecutado contra el entorno real: **6 migraciones aplicadas y 7 roles acreditados**. Corre **dentro** de la red interna: la base nunca se publica al host. `dev:env` no sobreescribe un `.env` existente. |
+| T-H3-03 | REQUIRED | HECHA | `docs/env/windows.md` | 2026-08-15 | Windows 11 Pro 10.0.26200, Docker 29.7.2 motor Linux, WSL2, Node 24.16.0, PostgreSQL 17.11. Con tiempos base medidos y las cinco trampas del entorno, incluida la nueva: el Bash de Git rompe `$APPDATA` y pnpm no resuelve. |
+| T-H3-04 | CRITICAL | HECHA | `scripts/infra/check-compose-hardening.mjs` — **159 comprobaciones en verde** | 2026-08-15 | Lee la configuración **resuelta** por Docker, no el YAML. Socket de Docker sin montar en ningún servicio, `no-new-privileges`, `cap_drop ALL`, raíz de solo lectura, sin root, seccomp activo, puertos solo en `127.0.0.1`. Y las tres fronteras: `verifier` con `network_mode: none` (I-3), `solutions-private` solo en autoría (I-2), sondas solo en medición (I-4). Cuatro imposibilidades técnicas registradas y **impresas en cada corrida**. |
+| T-H3-05 | REQUIRED | EN_CURSO | `infra/compose/otel-collector.yaml` | 2026-08-15 | Colector local con OTLP y `filelog` (única vía del verificador, que no tiene red). **Los servicios no emiten spans**: no hay operación que trazar hasta F7/F8, y un span de «arranqué» para poder decir que hay trazas sería éxito simulado. Se cierra con la primera operación real. |
+
+**Gate H3:** `docs/gates/H3.md` — abierto. Falta `T-H3-05`, la inicialización de Infisical (acción del propietario) y la ejecución en `main`.
 
 ## Fases siguientes
 
 | Fase | Hito | Estado | Bloqueo actual |
 |---|---|---|---|
-| F3 | H3 · Entorno local | PENDIENTE | Desbloqueado: Docker operativo |
-| F2 | H2 · resto del verificador | PENDIENTE | Camino crítico; sin bloqueos |
+| F3 | H3 · Entorno local | EN_CURSO | 4 de 5 tareas; `T-H3-05` espera la primera operación instrumentable |
+| F2 | H2 · cierre del gate | EN_CURSO | Las 16 tareas están HECHAS; falta la ejecución en `main` |
 | F4–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
 
 ## Entorno de ejecución (verificado 2026-08-14)
@@ -106,4 +119,35 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
 - **D-9 — `valid` y `goalReached` separados.** El contrato del verificador no tiene código de error para «derivación correcta de otra cosa», y la lista de códigos `E-*` es cerrada. En vez de inventar uno, `VerificationResult` expone `goalReached` aparte: `valid` dice que todo paso está autorizado y `goalReached` si se probó lo pedido. Quien decide la corrección del intento es el motor, con ambos datos.
 - **D-6 — Nombre del rol de migraciones.** `Plan.md` T-H1-02 lo nombra `pg_owner_migrations`, pero PostgreSQL **reserva el prefijo `pg_`** y rechaza crear ese rol (lo mismo ocurrió con el superusuario `pg_admin` del arnés). El Maestro P-II §11.2 exige «un rol propietario/migración separado del uso ordinario» sin fijar nombre: se usa `owner_migrations`. Incompatibilidad demostrable y documentada (§3).
 - **D-7 — Versión de Docker Engine.** El plan declara familia 27.x; el entorno instaló 29.7.2. No afecta la autoridad reproducible (`lockfile + SBOM + digests`); los digests de imagen se fijan en el freeze.
+- **D-10 — Ubicación y definición del índice de complejidad.** P-I §7.6 nombra las medidas pero no
+  las define, y §4.2 fija las listas obligatorias de `packages/`: el módulo no puede ser un paquete
+  nuevo. Vive en `proof-search` —no en `logic-core`— porque consume telemetría de búsqueda
+  (presupuesto, garantía de minimalidad, diversidad) que solo existe en la ruta de autoría, y así la
+  ruta de verificación no lo importa. **Distancia estructural premisas↔conclusión**: diferencia
+  simétrica de los multiconjuntos de subfórmulas (ocurrencias de la meta ausentes de las premisas más
+  ocurrencias de las premisas ausentes de la meta). Es determinista y vale 0 cuando ambos lados
+  coinciden; su peso dentro del índice es `[CALIBRATION CAL-09]` y la definición puede sustituirse
+  cuando H5 fije la comparabilidad. **Cantidad de conectivos** se reporta por separado sobre el
+  enunciado y sobre la solución, en vez de elegir un denominador por cuenta propia.
+- **D-14 — Tablas de Better Auth con prefijo, dentro de `identity`.** P-II §9.2 fija siete esquemas
+  exactos, así que la autenticación no puede tener el suyo. Y la biblioteca llama `account` a su
+  tabla de credenciales, nombre que en este modelo ya significa otra cosa —la cuenta seudónima del
+  participante—, así que sus seis tablas llevan prefijo `auth_`. Los nombres de columna van en
+  camelCase entre comillas porque son el contrato de la biblioteca: sin comillas, PostgreSQL
+  plegaría `createdAt` a `createdat` y la biblioteca no encontraría sus columnas. La conexión fija
+  `search_path=identity` en vez de calificar cada tabla, que rompería su generador de consultas.
+- **D-11 — Entrypoints mínimos de contenedor.** `T-H3-01` exige ocho servicios que arranquen y
+  respondan a un healthcheck, pero las seis apps eran esqueletos que exportaban una constante. Cada
+  una recibe un `src/main.ts` con lo mínimo: salud y logs estructurados. **No se adelanta lógica de
+  fases posteriores**: `api` y `web` responden `NO_IMPLEMENTADO` a todo lo que no sea `/health`, y
+  los workers declaran en su log de arranque qué fase los implementa. Un worker que dijera «listo»
+  sin pipeline sería éxito simulado.
+- **D-12 — Transporte del verificador por spool.** El verificador corre con `network_mode: none`
+  (I-3), así que no puede recibir trabajo por HTTP ni por la cola. Entra un `.json` con la
+  derivación en `/spool/in` y sale el veredicto en `/spool/out`. Es el único transporte compatible
+  con «función pura sin red» que además permite ejecutarlo masivamente (T-H2-15).
+- **D-13 — Servicios de compose no listados en el plan.** `T-H3-01` enumera ocho servicios;
+  el compose levanta dos más. `redis` es dependencia de Infisical, que sí está en la lista.
+  `otel-collector` lo exige `T-H3-05`, que pide un colector local. Ninguno amplía la superficie
+  funcional: ambos viven en la red interna, sin salida ni puerto publicado.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

@@ -2,7 +2,7 @@
   "name": "@profesor-ia/proof-search",
   "version": "0.0.0",
   "private": true,
-  "description": "Buscador certificante (paquete de autoría, no de sesión; T-H2-08).",
+  "description": "Buscador certificante, índice de complejidad y arnés BENCH-04 (paquete de autoría, no de sesión; T-H2-08, T-H2-14, T-H2-16).",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -11,7 +11,7 @@
     "properties": [
       {
         "name": "profesor-ia:lockfile-sha256",
-        "value": "3d99b31805cdce163c232d04bf49c837e7c55e8c3d9d21dd2f933ae416d295ba"
+        "value": "4e0bb53a39b51e629912e51dccc72d12f2f882a451fcd6d6b37a80cfe7f0ac78"
       },
       {
         "name": "profesor-ia:node-version",
@@ -2764,6 +2764,422 @@
       "name": "@profesor-ia/security-policy",
       "version": "link:../../packages/security-policy",
       "purl": "pkg:npm/%40profesor-ia%2Fsecurity-policy@link:../../packages/security-policy"
+    },
+    {
+      "type": "library",
+      "name": "better-auth",
+      "version": "1.6.29",
+      "purl": "pkg:npm/better-auth@1.6.29",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@better-auth/passkey",
+      "version": "1.6.29",
+      "purl": "pkg:npm/%40better-auth%2Fpasskey@1.6.29",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@better-auth/utils",
+      "version": "0.4.2",
+      "purl": "pkg:npm/%40better-auth%2Futils@0.4.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@better-fetch/fetch",
+      "version": "1.3.1",
+      "purl": "pkg:npm/%40better-fetch%2Ffetch@1.3.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@simplewebauthn/browser",
+      "version": "13.3.0",
+      "purl": "pkg:npm/%40simplewebauthn%2Fbrowser@13.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "better-call",
+      "version": "1.4.0",
+      "purl": "pkg:npm/better-call@1.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "nanostores",
+      "version": "1.4.2",
+      "purl": "pkg:npm/nanostores@1.4.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@better-auth/core",
+      "version": "1.6.29",
+      "purl": "pkg:npm/%40better-auth%2Fcore@1.6.29",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/semantic-conventions",
+      "version": "1.43.0",
+      "purl": "pkg:npm/%40opentelemetry%2Fsemantic-conventions@1.43.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@standard-schema/spec",
+      "version": "1.1.0",
+      "purl": "pkg:npm/%40standard-schema%2Fspec@1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "jose",
+      "version": "6.2.8",
+      "purl": "pkg:npm/jose@6.2.8",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "kysely",
+      "version": "0.29.5",
+      "purl": "pkg:npm/kysely@0.29.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@simplewebauthn/server",
+      "version": "13.3.2",
+      "purl": "pkg:npm/%40simplewebauthn%2Fserver@13.3.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@hexagon/base64",
+      "version": "1.1.28",
+      "purl": "pkg:npm/%40hexagon%2Fbase64@1.1.28",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@levischuck/tiny-cbor",
+      "version": "0.2.11",
+      "purl": "pkg:npm/%40levischuck%2Ftiny-cbor@0.2.11",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-schema",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-schema@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-x509",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-x509@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-rsa",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-rsa@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "asn1js",
+      "version": "3.0.10",
+      "purl": "pkg:npm/asn1js@3.0.10",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-ecc",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-ecc@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-android",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-android@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/x509",
+      "version": "1.14.3",
+      "purl": "pkg:npm/%40peculiar%2Fx509@1.14.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pvtsutils",
+      "version": "1.3.6",
+      "purl": "pkg:npm/pvtsutils@1.3.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "reflect-metadata",
+      "version": "0.2.2",
+      "purl": "pkg:npm/reflect-metadata@0.2.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-csr",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-csr@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "tsyringe",
+      "version": "4.10.0",
+      "purl": "pkg:npm/tsyringe@4.10.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "tslib",
+      "version": "1.14.1",
+      "purl": "pkg:npm/tslib@1.14.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "0BSD"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-cms",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-cms@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-x509-attr",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-x509-attr@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-pkcs9",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-pkcs9@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-pkcs8",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-pkcs8@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@peculiar/asn1-pfx",
+      "version": "2.9.0",
+      "purl": "pkg:npm/%40peculiar%2Fasn1-pfx@2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
     },
     {
       "type": "library",

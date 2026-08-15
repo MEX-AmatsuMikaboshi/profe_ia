@@ -1,0 +1,195 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+El repositorio trabaja en **español**: documentación, comentarios, mensajes de commit y salida al
+usuario. Los ids formales (`rule_id`, códigos `E-*`, enums, nombres de check) nunca se traducen.
+
+## 1. Jerarquía de autoridad — léela antes de decidir nada
+
+Este repo no se gobierna por el código, sino por documentos ordenados (`Plan.md` §0.1):
+
+1. `docs_maes/Profesor_IA_Documento_Maestro_Normalizado_v2.12_PostUI_PrePlan.md` (**Maestro**, citado como P-I/P-II/P-III + Apéndices)
+2. `docs_maes/Profesor_IA_Especificacion_UI_UX_v0.1_Conformada.md` (**UIUX**)
+3. `Plan.md` (raíz, 117 KB — el plan de construcción ejecutable, tareas `T-Hx-nn`)
+4. La implementación
+
+**Si el código contradice al plan, el código está mal. Si el plan contradice al Maestro, el plan está
+mal** — y se corrige el inferior, no el superior. Ya ocurrió tres veces (ver «Correcciones por
+autoridad superior» en `docs/plan/PLAN_STATUS.md`).
+
+El Maestro son 388 KB: no lo leas entero. Navega por secciones (`Grep '^#{1,3} '`) y lee solo lo que
+la tarea cita.
+
+### Puntos de entrada obligatorios
+
+| Archivo | Qué es |
+|---|---|
+| `docs/plan/HANDOFF.md` | Punto de continuación entre sesiones. **Léelo primero.** |
+| `docs/plan/PLAN_STATUS.md` | Fuente de verdad de avance, tarea por tarea, con evidencia y las decisiones de ingeniería D-1…D-14 |
+| `docs/gates/H*.md` | Actas de gate; un gate sin acta firmada no está cerrado |
+| `docs/blocked-by-spec.md` | Decisiones normativas faltantes (hoy vacío, a propósito) |
+
+Estados de tarea: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA`. **`VERIFICADA` exige el check en verde
+en `main`**; como no hay remoto git ni ejecución de Actions, hoy ninguna tarea puede estarlo. No
+marques `VERIFICADA` nada.
+
+## 2. Comandos
+
+Ejecuta **todo desde PowerShell**. En el Bash de Git, `$APPDATA` se expande a una ruta Windows dentro
+de un contexto POSIX y el shim de pnpm resuelve a `C:\Program Files\Git\...\pnpm.cjs`, que no existe.
+
+```bash
+pnpm install
+pnpm run ci:lint && pnpm run ci:typecheck && pnpm run ci:unit && pnpm run ci:build
+```
+
+Verificación completa de que todo sigue en pie (~1 min sin Docker):
+
+```bash
+pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net && pnpm run db:grants:check && pnpm run ci:db:negative && pnpm run ci:supply:sbom && pnpm run ci:supply:drift && pnpm run ci:infra:hardening
+```
+
+| Comando | Qué hace |
+|---|---|
+| `pnpm run ci:unit` | Vitest, proyecto `unit` (~3 s) |
+| `pnpm run ci:db:negative` | Suite negativa de privilegios contra PostgreSQL 17 real vía Testcontainers (~12 s, necesita Docker) |
+| `pnpm run ci:arch:depcruise` | Reglas `forbidden` que codifican los invariantes I-1…I-9 |
+| `node scripts/arch/verify-depcruise-catches.mjs` | Que esas reglas **detectan** una violación sembrada |
+| `pnpm run ci:logic:golden` / `:pbt` / `:no-net` | Conjunto dorado (413 casos) / propiedades fast-check / pureza del verificador |
+| `pnpm run ci:logic:mutation` | Stryker sobre `logic-core` (~8–9 min; se corre aparte) |
+| `pnpm run db:grants:check` | Que la migración de `GRANT` corresponde a la matriz vigente |
+| `pnpm run ci:supply:sbom` / `:drift` | SBOM CycloneDX + digest de lockfile / drift y advisories (bloqueante) |
+| `pnpm run ci:infra:hardening` | 159 propiedades sobre la config **resuelta** por Docker |
+| `pnpm run ci:infra:compose-up` | Arranque limpio del stack + verificador por spool + prueba de que `core` no sale a Internet |
+| `pnpm run dev:env` → `dev:up` → `dev:seed` | Levantar el entorno local (`infra/runbooks/local.md`); además `dev:down/status/logs/backup/restore` |
+| `pnpm run logic:golden:generate` | Regenera el conjunto dorado; **el diff debe ser vacío** |
+| `pnpm run contracts:json-schema` | Emite los JSON Schema desde `packages/contracts` |
+
+### Una sola prueba
+
+```bash
+pnpm exec vitest run --project unit packages/logic-core/test/rules.test.ts -t "∨E"
+```
+
+`vitest.config.ts` define dos proyectos: `unit` (`packages|tools|apps/*/test/**`) y `db`
+(`infra/database/test/**`, con timeouts largos y `fileParallelism: false` porque el estado de la base
+es compartido). Sin `--project`, corren ambos.
+
+### Antes de tocar migraciones o la matriz de permisos
+
+`infra/database/migrations/20260815120100_grants.sql` es **generado**. La fuente es
+`packages/security-policy/src/matrix.ts`. El flujo es: editar la matriz → `pnpm run ci:build` (el
+generador lee el paquete compilado) → `pnpm run db:grants` → `pnpm run ci:db:negative`.
+
+## 3. Arquitectura
+
+Monolito modular con procesos aislados. `pnpm workspaces` + Turborepo; 23 workspaces bajo `apps/*`,
+`packages/*` y `tools/*`. Las listas de `apps/` y `packages/` son **obligatorias** (P-II §3.1): no se
+crean paquetes nuevos. Por eso el CLI vive en `tools/cli` (D-1) y el índice de complejidad en
+`proof-search` en vez de en un paquete propio (D-10).
+
+TypeScript 5.9.3 `strict` + `exactOptionalPropertyTypes` + `noUncheckedIndexedAccess` +
+`verbatimModuleSyntax`, ESM `NodeNext`, Node 24. Cada paquete compila con `tsc -p tsconfig.json` a
+`dist/`; `turbo` encadena `build`/`typecheck` con `dependsOn: ["^build"]`.
+
+### Los invariantes son ejecutables, no prosa
+
+`.dependency-cruiser.cjs` tiene 10 reglas `forbidden`; **cada una codifica un invariante I-1…I-9 y su
+violación es una implementación inválida**, no un aviso de estilo:
+
+- **I-1** — `session-engine`, `pedagogy-policy` y `domain-engine` no pueden importar SDKs de
+  proveedor de modelo. Solo `model-gateway` habla con proveedores.
+- **I-2** — `model-gateway`, `session-engine`, `apps/api` y `apps/web` no alcanzan
+  `solutions-private`. `solutions-private/` nunca se monta en contenedores del agente ni de web.
+- **I-3 / T-H2-15** — la ruta de verificación (`logic-core`, `apps/verifier`) no importa ningún
+  cliente HTTP ni socket. El verificador corre con `network_mode: none`; su transporte es un spool en
+  disco (D-12), y es función pura sin red, sin `process.env`, sin reloj ni azar.
+- **I-4** — `authoring-worker`/`authoring-core` no tocan sondas ni `measurement-worker`.
+- **T-H2-09** — `isomorphism-canonicalizer` está **prohibido** en la ruta de verificación; por eso es
+  un paquete separado de `logic-core`.
+- **DEC-VISION-001** — ningún score visual autoriza un veredicto formal.
+
+Si añades un import y `ci:arch:depcruise` falla, el import está mal, no la regla.
+
+### Base de datos
+
+Siete esquemas exactos (`identity`, `pedagogy`, `evidence`, `private_solutions`, `measurement`,
+`audit`, `operations`) — **no se crea un octavo**. Por eso las seis tablas de Better Auth viven dentro
+de `identity` con prefijo `auth_` (D-14). `evidence` es append-only por triggers que niegan
+`UPDATE`/`DELETE`/`TRUNCATE` incluso al propietario, con secuencia monótona y cadena `previous_hash`
+verificada en la base; una corrección es un evento nuevo enlazado (I-6). RLS es **segunda** capa, no
+la primera. El rol de migraciones es `owner_migrations`, no `pg_owner_migrations`: PostgreSQL reserva
+el prefijo `pg_` (D-6).
+
+### Núcleo lógico (`packages/logic-core`)
+
+Verificador determinista de deducción natural proposicional en formato Fitch sobre el cálculo
+congelado `authorized-calculus-v1`, transcrito literalmente y hasheado. Sin precedencia entre
+conectivos binarios (`A∧B∧C` se rechaza con `E-SYN-PRECEDENCE`); `¬` liga la unidad siguiente (D-8).
+Prohibidas conmutativa, asociativa, DNE automática, NNF/CNF/DNF. La lista de códigos `E-*` es
+**cerrada**: no inventes uno nuevo. `valid` y `goalReached` están separados a propósito (D-9).
+
+`proof-search` re-verifica obligatoriamente todo certificado con `logic-core`; un certificado
+rechazado lanza `CertificateRejectedError` (incidente nivel 3), nunca se disfraza de «no encontré».
+`no_proof_exists_in_calculus` **no existe** en la implementación (CALC-03), y agotar el presupuesto no
+afirma inexistencia.
+
+## 4. Disciplinas que no se negocian
+
+- **No inventar.** Si falta una decisión y ninguna autoridad la resuelve, va a
+  `docs/blocked-by-spec.md` y a `PLAN_STATUS.md` como `BLOCKED_BY_SPEC`, no a un valor plausible.
+  `packages/contracts/src/pending.ts` (`pendingCatalog()`) rechaza todo valor en vez de fabricar
+  miembros de enum.
+- **Los valores `[CALIBRATION]` fallan cerrado.** `complexityIndex()`, `assertComparable()` y
+  `freezeWinningOrder()` lanzan porque su parámetro se congela en un gate futuro (CAL-09, BENCH-04).
+  **No los «arregles» devolviendo un número**: ese punto de fallo es donde se enchufa el valor
+  congelado.
+- **Nada de degradación silenciosa.** Un fallo no se disfraza de resultado benigno. El CLI falla con
+  `NO_IMPLEMENTADO` (exit 3); `api`/`web` responden `NO_IMPLEMENTADO` a todo lo que no sea `/health`
+  hasta que su fase los implemente (D-11). Un worker que dijera «listo» sin pipeline sería éxito
+  simulado.
+- **Expectativas a priori.** El generador del conjunto dorado declara qué debe pasar **antes** de
+  ejecutar. Nunca grabes la salida observada como «esperado»: eso convierte el conjunto dorado en un
+  espejo del bug. Ya evitó dos casos mal especificados.
+- **Controles positivos.** La suite negativa de privilegios incluye pruebas de que cada concesión de
+  la matriz **sí** funciona; sin ellas, una base rota haría pasar todas las negativas por vacío.
+- **Una justificación se intenta refutar antes de escribirla.** Vale para los mutantes
+  «inalcanzables» y para cualquier «esto no puede pasar». La del oráculo semántico parecía sólida y
+  era falsa.
+- **Desviaciones documentadas.** Cualquier apartamiento del plan va a «Decisiones de ingeniería» de
+  `PLAN_STATUS.md` con su causa (van D-1 a D-14). No tienen autoridad normativa.
+- **Un PR, una tarea `T-*`**, título `T-Hx-nn: …`, y `PLAN_STATUS.md` actualizado en el mismo PR.
+
+## 5. Trampas de este entorno
+
+Son reales y cuestan una hora cada una si no se conocen (`docs/env/windows.md`).
+
+1. **PowerShell para pnpm** — ver §2.
+2. **PATH de Docker.** Una consola abierta *antes* de instalar Docker conserva el PATH viejo y
+   Testcontainers falla con `spawn docker-credential-desktop ENOENT`. Antepón
+   `C:\Program Files\Docker\Docker\resources\bin` o abre consola nueva. Los scripts de `scripts/dev/`
+   y `scripts/infra/` ya lo hacen solos.
+3. **pnpm está en `%APPDATA%\npm`** (instalado con npm; `corepack enable` falla por permisos en
+   `C:\Program Files\nodejs`).
+4. **`.cmd` desde Node.** `execFile` sin shell sobre `pnpm.cmd`/`npx.cmd` falla con `EINVAL` desde
+   Node 20. Resuelto en `scripts/supply/pnpm-exec.mjs` (usa `npm_execpath`) y en
+   `scripts/arch/verify-depcruise-catches.mjs` (invoca el `.mjs` con `process.execPath`). Sigue ese
+   patrón si escribes un script nuevo que invoque pnpm.
+5. **Stryker.** Usa `packages/logic-core/vitest.mutation.config.ts`, necesita `plugins` declarado
+   explícitamente y no acepta `vitest.project`. **No edites fuentes con una corrida en marcha**: los
+   resultados salen falsos. Al leer el reporte, recorta el nodo mutado por su `location` — el campo de
+   reemplazo no distingue dos mutantes distintos de la misma línea, y leerlo mal produce conclusiones
+   falsas en ambas direcciones. `.stryker-tmp/` contiene copias completas del repo: **exclúyela de
+   toda búsqueda** (glob/grep) o los resultados vendrán multiplicados por seis.
+
+## 6. Estado actual (2026-08-15)
+
+F0/H0, F1/H1 y F2/H2 completas; F3/H3 con 4 de 5 tareas (`T-H3-05`, trazas, espera la primera
+operación instrumentable en F7/F8 — un span de «arranqué» sería éxito simulado). F4–F16 no empezadas.
+505 pruebas en verde: 378 unitarias + 127 contra PostgreSQL 17 real. Mutation testing en 90.31 % con
+cero mutantes sin cobertura.
+
+Sin remoto git. Dos repositorios independientes: el monorepo y `content/unidad-deduccion-natural/`
+(historial propio, registrado como gitlink; falta `git submodule add` cuando exista remoto — D-2).
+Nunca se versiona `.env`.

@@ -1,0 +1,64 @@
+# Colector OpenTelemetry local (Plan.md T-H3-05).
+#
+# Local-first: nada sale de la máquina. Los exportadores escriben a un volumen
+# local y a la salida estándar del propio colector.
+#
+# Dos entradas, por una razón de invariante:
+#
+#  - `otlp` para los servicios con red, cuando instrumenten operaciones reales
+#    (F7/F8). Hoy no hay operación que trazar: emitir un span de «arranqué»
+#    para poder decir que hay trazas sería éxito simulado.
+#  - `filelog` sobre el volumen de logs, que es la **única** vía por la que el
+#    verificador puede aportar telemetría: no tiene red por I-3.
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+  filelog:
+    include:
+      - /var/log/profesor-ia/*.log
+    start_at: beginning
+    operators:
+      - type: json_parser
+        parse_from: body
+        timestamp:
+          parse_from: attributes.ts
+          layout_type: gotime
+          layout: "2006-01-02T15:04:05.999Z07:00"
+
+processors:
+  batch:
+    timeout: 5s
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 256
+
+exporters:
+  # Salida por la propia bitácora del colector. Un exportador a archivo exigiría
+  # un volumen escribible por el uid del proceso, y esta imagen es distroless: no
+  # puede tomar posesión del volumen. El destino de archivo se define cuando haya
+  # trazas reales que conservar (F7/F8).
+  debug:
+    verbosity: normal
+
+service:
+  telemetry:
+    logs:
+      level: info
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+    logs:
+      receivers: [otlp, filelog]
+      processors: [memory_limiter, batch]
+      exporters: [debug]

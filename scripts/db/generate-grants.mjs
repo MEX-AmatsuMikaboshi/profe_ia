@@ -11,7 +11,10 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const ROOT = process.cwd();
-const OUT = join(ROOT, 'infra', 'database', 'migrations', '20260814100400_grants.sql');
+// La migración de grants va **después** de toda migración que cree tablas: no se
+// puede conceder sobre lo que no existe. Al entrar las tablas de Better Auth
+// (`20260815120000_auth.sql`, T-H1-05) esta migración se movió al final.
+const OUT = join(ROOT, 'infra', 'database', 'migrations', '20260815120100_grants.sql');
 const POLICY = join(ROOT, 'packages', 'security-policy', 'dist', 'index.js');
 
 let policy;

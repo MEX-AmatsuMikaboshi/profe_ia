@@ -105,3 +105,48 @@ describe('impresión canónica', () => {
     expect(print(parse('(A∧B)∨C'))).toBe('(A∧B)∨C');
   });
 });
+
+/**
+ * Una causa de rechazo por prueba. Todas comparten el código `E-SYN-PARSE`
+ * —la lista de códigos es cerrada—, así que lo que estas pruebas fijan no es el
+ * mensaje sino que **cada rama de rechazo se recorre y rechaza**. Sin ellas, un
+ * fallo que dejara pasar corchetes descompensados no se notaría.
+ */
+describe('cada causa de rechazo sintáctico se recorre', () => {
+  it('fórmula incompleta tras un conectivo', () => {
+    expect(code('A∧')).toBe('E-SYN-PARSE');
+    expect(code('¬')).toBe('E-SYN-PARSE');
+    expect(code('   ')).toBe('E-SYN-PARSE');
+  });
+
+  it('corchete de cierre inesperado donde se esperaba una subfórmula', () => {
+    expect(code(')')).toBe('E-SYN-PARSE');
+    expect(code('(A∧)')).toBe('E-SYN-PARSE');
+  });
+
+  it('sobran símbolos después de una fórmula completa', () => {
+    expect(code('AB')).toBe('E-SYN-PARSE');
+    expect(code('A∧B C')).toBe('E-SYN-PARSE');
+  });
+});
+
+describe('subíndices de átomo', () => {
+  it('acepta el dígito en los dos extremos del rango', () => {
+    expect(print(parse('A0'))).toBe('A_0');
+    expect(print(parse('A9'))).toBe('A_9');
+  });
+
+  it('acepta subíndices de varios dígitos, con guion bajo o sin él', () => {
+    expect(print(parse('A_10'))).toBe('A_10');
+    expect(print(parse('A10'))).toBe('A_10');
+  });
+});
+
+describe('el corchete se cierra con corchete, no con cualquier símbolo', () => {
+  it('rechaza un corchete «cerrado» por un símbolo que no lo cierra', () => {
+    // Sin la comprobación de que el token de cierre **es** `)`, este token se
+    // consumiría en silencio y `(A¬` se aceptaría como la fórmula `A`.
+    expect(code('(A¬')).toBe('E-SYN-PARSE');
+    expect(code('(A∧B¬')).toBe('E-SYN-PARSE');
+  });
+});
