@@ -21,7 +21,14 @@ export {
   HelpLevelExceededError,
   UndeclaredStateKeyError,
   CanaryHitError,
+  ManifestRewriteError,
+  UnknownPricingManifestError,
+  ManifestNotEffectiveError,
+  MissingPricingEntryError,
+  CurrencyMismatchError,
 } from './errors.js';
+
+export { CostLedger, priceCall, type CallUsage, type PricedCall } from './cost.js';
 
 export {
   buildSessionContext,

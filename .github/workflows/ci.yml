@@ -95,6 +95,10 @@ jobs:
       # corrida y encaje real con el filtro de egreso de la pasarela.
       - name: ci:canary
         run: pnpm run ci:canary
+      # Ledger de costos (P-II §9.5): un cambio de tarifa crea manifiesto nuevo
+      # y el costo histórico no se reescribe.
+      - name: ci:cost:ledger
+        run: pnpm run ci:cost:ledger
 
   logic:
     # Núcleo lógico (F2/H2): el gate exige 0 falsos positivos y 0 falsos

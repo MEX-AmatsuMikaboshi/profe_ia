@@ -81,3 +81,29 @@ export class UndeclaredStateKeyError extends ModelGatewayError {}
  * corrida los añade T-H4-05.
  */
 export class CanaryHitError extends ModelGatewayError {}
+
+/**
+ * Se intentó registrar contenido distinto bajo un `pricing_manifest_id` ya
+ * usado (T-H4-06 ← P-II §9.5). Un cambio de tarifa crea un id nuevo; nunca
+ * reescribe el costo histórico.
+ */
+export class ManifestRewriteError extends ModelGatewayError {}
+
+/** El manifiesto citado por el evento de costo no está registrado. */
+export class UnknownPricingManifestError extends ModelGatewayError {}
+
+/**
+ * El evento ocurrió antes de que su manifiesto entrara en vigor: sería cobrar
+ * con una tarifa futura, que es reconstruir el costo con precios actuales.
+ */
+export class ManifestNotEffectiveError extends ModelGatewayError {}
+
+/**
+ * Se facturó una unidad sin tarifa declarada. Falla en vez de sumar cero: un
+ * cero fabricado haría parecer el gasto menor del real justo donde mira el gate
+ * de presupuesto.
+ */
+export class MissingPricingEntryError extends ModelGatewayError {}
+
+/** El manifiesto mezcla monedas para un mismo modelo; no hay conversión implícita. */
+export class CurrencyMismatchError extends ModelGatewayError {}
