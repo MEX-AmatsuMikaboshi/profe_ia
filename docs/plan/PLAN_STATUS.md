@@ -4,17 +4,18 @@ Convenciones: `Plan.md` §0.4 y §12.
 Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus checks CI/gate en verde en `main`) o `BLOQUEADA(razón)` / `BLOCKED_BY_SPEC`.
 
 > `HECHA` = implementado y verificado localmente. `VERIFICADA` exige el check en verde en `main`;
-> todavía no hay remoto git ni ejecución de GitHub Actions, así que ninguna tarea puede estarlo aún.
+> desde el 15-08-2026 hay remoto y GitHub Actions ejecuta, así que la condición ya es alcanzable:
+> una tarea pasa a `VERIFICADA` cuando sus checks se observan en verde en `main`, no antes.
 
 ## F0 — H0 · Repositorio, contratos y CI
 
 | Tarea | Etiqueta | Estado | Evidencia | Fecha | Notas |
 |---|---|---|---|---|---|
 | T-H0-01 | REQUIRED | HECHA | `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `tsconfig.base.json`, `.nvmrc` | 2026-08-14 | 23 workspaces (§4.2). TS 5.9.3 `strict` + `exactOptionalPropertyTypes`; Node 24 pin. CLI en `tools/cli` (D-1). |
-| T-H0-02 | REQUIRED | HECHA | `content/unidad-deduccion-natural/` | 2026-08-14 | Árbol §4.3 completo, `README` por carpeta, `freeze-manifest.json` placeholder. Repo git propio; falta enlazarlo como submódulo cuando exista remoto (D-2). |
+| T-H0-02 | REQUIRED | HECHA | `content/unidad-deduccion-natural/` | 2026-08-14 | Árbol §4.3 completo, `README` por carpeta, `freeze-manifest.json` placeholder. Repo git propio, enlazado como submódulo el 15-08-2026 (D-2 cerrada). |
 | T-H0-03 | REQUIRED | HECHA | `packages/contracts/src/**`, `test/contracts.test.ts` (20 pruebas) | 2026-08-14 | **Reescrito contra el Maestro** el 14-08 tras recibir los documentos: ver «Correcciones por autoridad». 19 JSON Schema emitidos. |
 | T-H0-04 | CRITICAL | HECHA | `.dependency-cruiser.cjs`, `scripts/arch/verify-depcruise-catches.mjs` | 2026-08-14 | 10 reglas `forbidden` (I-1…I-9) + verificación con violación sembrada. |
-| T-H0-05 | REQUIRED | HECHA | `.github/workflows/ci.yml` | 2026-08-14 | Jobs `ci:lint`, `ci:typecheck`, `ci:unit`, `ci:arch:depcruise`, `ci:db:testcontainers`, `ci:build`, `ci:supply:*`. Sin ejecutar en Actions (no hay remoto). |
+| T-H0-05 | REQUIRED | HECHA | `.github/workflows/ci.yml` | 2026-08-14 | Jobs `ci:lint`, `ci:typecheck`, `ci:unit`, `ci:arch:depcruise`, `ci:db:testcontainers`, `ci:build`, `ci:supply:*`. Primera ejecución en Actions el 15-08-2026; descubrió que el job `arch` corría `depcruise` sin build previo y no resolvía `@profesor-ia/*` (en local pasaba por tener `dist/` de corridas anteriores). Corregido con un paso de build. |
 | T-H0-06 | REQUIRED | HECHA | `scripts/supply/*.mjs`, `supply/sbom.cdx.json`, `supply/lockfile.digest` | 2026-08-14 | SBOM CycloneDX 1.6 (185 componentes), digest de lockfile, política de licencias sin excepciones, drift y advisories en verde. |
 | T-H0-07 | REQUIRED | HECHA | `tools/cli/src/**`, `test/cli.test.ts` | 2026-08-14 | Los 4 comandos fallan con `NO_IMPLEMENTADO` (exit 3); prueba que impide el éxito simulado. |
 | T-H0-08 | REQUIRED | HECHA | `docs/plan/`, `docs/gates/`, `docs/blocked-by-spec.md`, `.github/pull_request_template.md` | 2026-08-14 | `blocked-by-spec.md` vacío conforme a §0.3. |
@@ -83,7 +84,7 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 |---|---|
 | Node 24.x | ✅ v24.16.0 |
 | pnpm 10.x | ✅ 10.34.5 (vía npm; `corepack enable` falla por permisos en `C:\Program Files\nodejs`) |
-| git | ✅ 2.55.0 — sin remoto configurado |
+| git | ✅ 2.55.0 — remoto configurado el 15-08-2026 (dos repos privados en GitHub) |
 | Docker Engine / Compose | ✅ 29.7.2, motor Linux, overlayfs (D-7: el plan declara familia 27.x) |
 | WSL2 | ✅ versión predeterminada 2, distribución `docker-desktop` |
 | Python | ⚠️ 3.12 (el plan pide 3.13.x; solo relevante en F16) |
@@ -112,7 +113,7 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
 ## Decisiones de ingeniería de este plan (sin autoridad normativa, §0.2.8)
 
 - **D-1 — Ubicación del CLI.** `tools/cli`, porque §4.2 fija listas obligatorias para `apps/` y `packages/` y el CLI no aparece en ninguna.
-- **D-2 — Repositorio de contenido.** Repo git independiente en `content/unidad-deduccion-natural/`; el registro como submódulo requiere un remoto.
+- **D-2 — Repositorio de contenido.** ~~Repo git independiente en `content/unidad-deduccion-natural/`; el registro como submódulo requiere un remoto.~~ **Cerrada el 15-08-2026**: `MEX-AmatsuMikaboshi/profe_ia_contenido` (privado), registrado en `.gitmodules`. El gitlink apunta a un commit que existe en ese remoto, condición sin la cual el checkout de CI falla.
 - **D-3 — Catálogos pendientes.** Mecanismo `pendingCatalog()` que rechaza todo valor; hoy sin usuarios.
 - **D-4 — Tipos referenciados sin definir.** `VersionManifest` (P-II §9.1) y `StructuredItemPrompt` (P-II §6.3) se nombran en el Maestro sin definirse. Se implementan con la estructura mínima que su uso exige, marcadas en el código. No son `BLOCKED_BY_SPEC`: no hay decisión normativa faltante, solo un tipo auxiliar.
 - **D-8 — `¬` y la ausencia de precedencia.** P-II §4.1.1 fija «sin precedencia **entre conectivos binarios**». El parser aplica `¬` a la unidad inmediatamente siguiente (átomo, `⊥` o fórmula entre corchetes), que es la convención de *forall x*. Así `¬A∧B` es `(¬A)∧B` sin ambigüedad, mientras que `A∧B∧C` sigue rechazándose con `E-SYN-PRECEDENCE`.

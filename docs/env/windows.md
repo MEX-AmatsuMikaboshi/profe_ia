@@ -13,7 +13,7 @@ los límites reales de carga los mide H8, no este documento.
 | Docker Engine | familia 27.x | 29.7.2, motor Linux, overlayfs | ✅ con desviación D-7 |
 | WSL2 | requerido | versión predeterminada 2, distribución `docker-desktop` | ✅ |
 | PostgreSQL | 17 | 17.11 (imagen `postgres:17-alpine`) | ✅ |
-| git | — | 2.55.0, sin remoto configurado | ✅ |
+| git | — | 2.55.0, remoto configurado el 15-08-2026 | ✅ |
 | Python | 3.13.x | 3.12 | ⚠️ solo relevante en F16 |
 
 ## Rendimiento base observado

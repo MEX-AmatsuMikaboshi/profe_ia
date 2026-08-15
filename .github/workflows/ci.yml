@@ -55,6 +55,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Los paquetes del workspace exponen `dist/`, así que sin build previo
+      # depcruise no resuelve `@profesor-ia/*` y falla por `sin-dependencias-no-resueltas`.
+      # En local pasaba por tener `dist/` de corridas anteriores.
+      - name: build (depcruise resuelve por `exports`, que apuntan a `dist/`)
+        run: pnpm run ci:build
       - name: ci:arch:depcruise
         run: pnpm run ci:arch:depcruise
       # AC de F0: la regla debe fallar ante una violación sembrada y pasar al retirarla.

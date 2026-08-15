@@ -265,8 +265,17 @@ sigue siendo verde observado, no verde supuesto.
 ### El repositorio de contenido
 
 `content/unidad-deduccion-natural/` es un repositorio git independiente con historial propio (§4.3).
-El monorepo lo registra como **gitlink**, no como submódulo formal. Ahora que hay remoto, **queda
-pendiente crear su repositorio remoto y formalizarlo con `git submodule add`** (D-2). Mientras no se
-haga, un clon del monorepo trae el gitlink pero no el contenido.
+Su remoto es <https://github.com/MEX-AmatsuMikaboshi/profe_ia_contenido.git> (privado) y **ya está
+formalizado como submódulo** en `.gitmodules`: **D-2 cerrada** el 15-08-2026.
+
+Dos consecuencias prácticas:
+
+- **Al clonar**, usa `git clone --recurse-submodules`; si ya clonaste, `git submodule update --init`.
+  Sin el contenido, `ci:unit` y `ci:logic:golden` no pueden correr: leen el cálculo congelado y los
+  413 casos del conjunto dorado desde ahí.
+- **Al cambiar contenido**, se sube **primero** el repositorio de contenido y **después** el monorepo
+  con el gitlink actualizado. Si se hace al revés, el gitlink apunta a un commit que no existe en el
+  remoto y el checkout de CI falla con `fatal: reference is not a tree`. Ese orden no es una
+  preferencia: es la causa exacta de que el primer push dejara `base` y `logic` en rojo.
 
 Para ver dónde quedó todo: `git log --stat -1` en cada uno.
