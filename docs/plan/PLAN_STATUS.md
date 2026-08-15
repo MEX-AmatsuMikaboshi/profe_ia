@@ -70,13 +70,20 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 
 **Gate H3:** `docs/gates/H3.md` — abierto. Falta `T-H3-05`, la inicialización de Infisical (acción del propietario) y la ejecución en `main`.
 
+## F4 — H4 · Pasarela de modelo y benchmark (1 de 12 tareas)
+
+| Tarea | Etiqueta | Estado | Evidencia | Fecha | Notas |
+|---|---|---|---|---|---|
+| T-H4-01 | CRITICAL | HECHA | `packages/model-gateway/src/{operations,credentials,adapter,gateway,errors}.ts`, `src/adapters/{anthropic,openai}.ts`, `test/gateway.test.ts` (17 pruebas) | 2026-08-15 | **Adaptadores propios, sin SDK de proveedor**, conforme a la decisión CONGELADA del Maestro («Adaptadores propios TypeScript + Zod; perfiles `SESION` y `AUTORIA` con credenciales separadas»). Cada adaptador construye su propia petición HTTP y **no comparten forma** —`x-api-key` frente a `Authorization: Bearer`, `system` frente a `instructions`—, que es la razón de que sean dos módulos y no un constructor parametrizado (P-II §8.1: no hay plantilla universal de petición). Hay prueba de que difieren. **Ningún nombre de modelo ni parámetro de muestreo está escrito en el código**: el id sale del binding y los parámetros los autoriza T-H4-02; hay prueba de que el cuerpo saliente no lleva `temperature`/`top_p`/`top_k`/`reasoning`/`max_tokens`. Elegir un modelo aquí anticiparía un ganador que solo BENCH-01/02 puede decidir. Las once operaciones se **derivan** del contrato en vez de transcribirse, para que no puedan divergir. Separación de credenciales estructural: una pasarela sirve a **un** perfil, resuelve su credencial una sola vez y **no guarda el resolver**, así que no tiene camino hacia la del otro perfil —hay prueba de que la de `SESION` solo pide `SESION`, de que un perfil sin credencial falla en vez de heredar la ajena, y de que el secreto no aparece en `toString`, en `JSON.stringify` ni en el mensaje de error—. El transporte se inyecta: las pruebas no tocan la red. La respuesta se devuelve **cruda**, sin interpretar: clasificarla es T-H4-03, y hacerlo a medias aquí dejaría pasar salida sin validación local (P-II §8.4). Reparto operación↔perfil: **D-15**. |
+
 ## Fases siguientes
 
 | Fase | Hito | Estado | Bloqueo actual |
 |---|---|---|---|
 | F3 | H3 · Entorno local | EN_CURSO | 4 de 5 tareas; `T-H3-05` espera la primera operación instrumentable |
 | F2 | H2 · cierre del gate | EN_CURSO | Las 16 tareas están HECHAS; falta la ejecución en `main` |
-| F4–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
+| F4 | H4 · Pasarela de modelo | EN_CURSO | 1 de 12 tareas; `T-H4-02` (capacidades por binding) es la siguiente |
+| F5–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
 
 ## Entorno de ejecución (verificado 2026-08-14)
 
@@ -151,4 +158,16 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   el compose levanta dos más. `redis` es dependencia de Infisical, que sí está en la lista.
   `otel-collector` lo exige `T-H3-05`, que pide un colector local. Ninguno amplía la superficie
   funcional: ambos viven en la red interna, sin salida ni puerto publicado.
+- **D-15 — El reparto operación↔perfil es dato, no tabla en el código.** P-II §8.2 enumera las once
+  operaciones y exige que autoría y sesión usen «perfiles y credenciales separadas», pero **ninguna
+  autoridad tabula qué operación corre bajo qué perfil**, y el reparto no es evidente: `create_` y
+  `critique_authoring_candidate` son inequívocamente de autoría, pero `draft_worked_example` o
+  `draft_feedback` los puede consumir tanto la sesión como el canal de autoría de W1–W5. Cablearlo
+  decidiría por cuenta propia qué credencial toca cada llamada, es decir, movería una frontera de
+  seguridad con una suposición. Así que cada binding **declara** las operaciones que sirve al
+  registrarse y la pasarela rechaza toda operación no declarada, sin valor por omisión: hay prueba de
+  que una pasarela sin operaciones declaradas no sirve ninguna de las once. No es `BLOCKED_BY_SPEC`
+  —no falta una decisión normativa, falta un mapeo auxiliar— y ese registro es el punto donde se
+  enchufa cuando F6 defina el canal de autoría. Dos bindings que declaren la misma operación son un
+  fallo (`AmbiguousBindingError`), no un empate que gane el primero.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

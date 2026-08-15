@@ -1,4 +1,33 @@
 // @profesor-ia/model-gateway — Proveedores, bindings, filtros, cost-ledger (F4/H4).
-// F0/H0: esqueleto sin lógica. Ver docs/plan/PLAN_STATUS.md.
+// T-H4-01: adaptadores propios, operaciones exactas y perfiles con credenciales
+// separadas. El resto de F4 (capacidades, validación de salida, canarios,
+// cost-ledger) entra por sus tareas. Ver docs/plan/PLAN_STATUS.md.
 
 export const PACKAGE_NAME = "@profesor-ia/model-gateway" as const;
+
+export {
+  ModelGatewayError,
+  OperationNotAuthorizedForProfileError,
+  ProfileMismatchError,
+  AmbiguousBindingError,
+  MissingCredentialError,
+  UnknownProviderError,
+} from './errors.js';
+
+export { MODEL_OPERATIONS, MODEL_PROFILES, isModelOperation } from './operations.js';
+export { ProfileCredential, type CredentialResolver } from './credentials.js';
+export type {
+  BuildRequestInput,
+  ProviderAdapter,
+  ProviderRequest,
+  ProviderResponse,
+  Transport,
+} from './adapter.js';
+export { ANTHROPIC_PROVIDER, anthropicAdapter } from './adapters/anthropic.js';
+export { OPENAI_PROVIDER, openaiAdapter } from './adapters/openai.js';
+export {
+  ModelGateway,
+  type BindingRegistration,
+  type DispatchInput,
+  type ModelGatewayOptions,
+} from './gateway.js';
