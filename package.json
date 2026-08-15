@@ -25,7 +25,7 @@
     "ci:gateway:fail-closed": "vitest run --project unit packages/model-gateway/test/gateway.test.ts packages/model-gateway/test/session-context.test.ts",
     "ci:gateway:contracts": "vitest run --project unit packages/model-gateway/test/output.test.ts",
     "ci:canary": "vitest run --project unit packages/security-policy/test/canary.test.ts packages/model-gateway/test/session-context.test.ts",
-    "ci:cost:ledger": "vitest run --project unit packages/model-gateway/test/cost.test.ts",
+    "ci:cost:ledger": "vitest run --project unit packages/model-gateway/test/cost.test.ts packages/model-gateway/test/budget.test.ts",
     "logic:golden:generate": "node scripts/logic/generate-golden.mjs",
     "ci:db:testcontainers": "vitest run --project db",
     "ci:db:negative": "vitest run --project db",

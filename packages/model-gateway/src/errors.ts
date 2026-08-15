@@ -107,3 +107,13 @@ export class MissingPricingEntryError extends ModelGatewayError {}
 
 /** El manifiesto mezcla monedas para un mismo modelo; no hay conversión implícita. */
 export class CurrencyMismatchError extends ModelGatewayError {}
+
+/**
+ * Gasto acumulado por encima del umbral duro sin revisión del propietario
+ * (T-H4-07 ← `OWNER-BUDGET-001`). No tiene variante permisiva: el gate nunca
+ * degrada integridad, así que no hay «continuar igualmente».
+ */
+export class BudgetBlockedError extends ModelGatewayError {}
+
+/** Umbral de alerta ausente o incoherente con el umbral duro. */
+export class InvalidAlertThresholdError extends ModelGatewayError {}

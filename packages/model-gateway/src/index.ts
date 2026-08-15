@@ -26,9 +26,21 @@ export {
   ManifestNotEffectiveError,
   MissingPricingEntryError,
   CurrencyMismatchError,
+  BudgetBlockedError,
+  InvalidAlertThresholdError,
 } from './errors.js';
 
 export { CostLedger, priceCall, type CallUsage, type PricedCall } from './cost.js';
+
+export {
+  BudgetController,
+  BUDGET_CURRENCY,
+  HARD_REVIEW_THRESHOLD_MXN,
+  ORDINARY_MONTHLY_TARGET_MXN,
+  type BudgetControllerOptions,
+  type BudgetStatus,
+  type OwnerReview,
+} from './budget.js';
 
 export {
   buildSessionContext,
