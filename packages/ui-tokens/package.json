@@ -1,0 +1,28 @@
+{
+  "name": "@profesor-ia/ui-tokens",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sistema visual de referencia v0.1 vendorizado (T-H0-09).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./vendor/styles.css",
+    "./ds-manifest.json": "./vendor/ds-manifest.json"
+  },
+  "files": [
+    "dist",
+    "vendor"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

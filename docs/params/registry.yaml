@@ -1,0 +1,11 @@
+# Registro de parámetros calibrados (Plan.md §12).
+#
+# Todo valor [CALIBRATION] fijado se escribe aquí (o en content/**) con:
+#   parameter_id (CAL-* / CALC-* del Maestro), valor, gate que lo congela,
+#   evidencia y hash del freeze correspondiente.
+#
+# Regla dura (§0.2.2): una decisión CONDICIONADA A BENCHMARK o CALIBRABLE se
+# implementa como procedimiento + gate, nunca como valor inventado. Este archivo
+# está vacío hasta que un gate real congele su primer parámetro.
+
+parameters: []

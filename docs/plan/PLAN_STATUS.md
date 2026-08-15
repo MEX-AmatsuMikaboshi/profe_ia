@@ -1,0 +1,109 @@
+# PLAN_STATUS.md — fuente de verdad de avance
+
+Convenciones: `Plan.md` §0.4 y §12.
+Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus checks CI/gate en verde en `main`) o `BLOQUEADA(razón)` / `BLOCKED_BY_SPEC`.
+
+> `HECHA` = implementado y verificado localmente. `VERIFICADA` exige el check en verde en `main`;
+> todavía no hay remoto git ni ejecución de GitHub Actions, así que ninguna tarea puede estarlo aún.
+
+## F0 — H0 · Repositorio, contratos y CI
+
+| Tarea | Etiqueta | Estado | Evidencia | Fecha | Notas |
+|---|---|---|---|---|---|
+| T-H0-01 | REQUIRED | HECHA | `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `tsconfig.base.json`, `.nvmrc` | 2026-08-14 | 23 workspaces (§4.2). TS 5.9.3 `strict` + `exactOptionalPropertyTypes`; Node 24 pin. CLI en `tools/cli` (D-1). |
+| T-H0-02 | REQUIRED | HECHA | `content/unidad-deduccion-natural/` | 2026-08-14 | Árbol §4.3 completo, `README` por carpeta, `freeze-manifest.json` placeholder. Repo git propio; falta enlazarlo como submódulo cuando exista remoto (D-2). |
+| T-H0-03 | REQUIRED | HECHA | `packages/contracts/src/**`, `test/contracts.test.ts` (20 pruebas) | 2026-08-14 | **Reescrito contra el Maestro** el 14-08 tras recibir los documentos: ver «Correcciones por autoridad». 19 JSON Schema emitidos. |
+| T-H0-04 | CRITICAL | HECHA | `.dependency-cruiser.cjs`, `scripts/arch/verify-depcruise-catches.mjs` | 2026-08-14 | 10 reglas `forbidden` (I-1…I-9) + verificación con violación sembrada. |
+| T-H0-05 | REQUIRED | HECHA | `.github/workflows/ci.yml` | 2026-08-14 | Jobs `ci:lint`, `ci:typecheck`, `ci:unit`, `ci:arch:depcruise`, `ci:db:testcontainers`, `ci:build`, `ci:supply:*`. Sin ejecutar en Actions (no hay remoto). |
+| T-H0-06 | REQUIRED | HECHA | `scripts/supply/*.mjs`, `supply/sbom.cdx.json`, `supply/lockfile.digest` | 2026-08-14 | SBOM CycloneDX 1.6 (185 componentes), digest de lockfile, política de licencias sin excepciones, drift y advisories en verde. |
+| T-H0-07 | REQUIRED | HECHA | `tools/cli/src/**`, `test/cli.test.ts` | 2026-08-14 | Los 4 comandos fallan con `NO_IMPLEMENTADO` (exit 3); prueba que impide el éxito simulado. |
+| T-H0-08 | REQUIRED | HECHA | `docs/plan/`, `docs/gates/`, `docs/blocked-by-spec.md`, `.github/pull_request_template.md` | 2026-08-14 | `blocked-by-spec.md` vacío conforme a §0.3. |
+| T-H0-09 | REQUIRED | HECHA | `packages/ui-tokens/vendor/`, `test/vendor.test.ts` | 2026-08-14 | Vendorizado sin editar + `PROVENANCE.md` con hashes. **Discrepancia registrada**: el ZIP entregado no coincide con el hash de §0.1, pero el HTML normativo interno sí coincide byte a byte. |
+
+**Gate H0:** `docs/gates/H0.md` — abierto (falta ejecución en `main`).
+
+## F1 — H1 · Base de datos, roles y autenticación mínima
+
+| Tarea | Etiqueta | Estado | Evidencia | Fecha | Notas |
+|---|---|---|---|---|---|
+| T-H1-01 | CRITICAL | HECHA | `infra/database/migrations/20260814100000_schemas.sql`, `…100200_tables.sql` | 2026-08-14 | 7 esquemas exactos + 33 tablas iniciales. `PUBLIC` revocado en esquemas y base. |
+| T-H1-02 | CRITICAL | HECHA | `packages/security-policy/src/matrix.ts`, `…100100_roles.sql`, `…100400_grants.sql` (generado) | 2026-08-14 | Matriz como dato → migración generada (`db:grants`), con `--check` de drift en CI. Rol de migraciones renombrado por D-6. |
+| T-H1-03 | CRITICAL | HECHA | `…100300_evidence_append_only.sql` | 2026-08-14 | Triggers que niegan `UPDATE`/`DELETE`/`TRUNCATE` (incluso al propietario) + secuencia monótona y cadena `previous_hash` verificada en la base. |
+| T-H1-04 | CRITICAL | HECHA | `infra/database/test/negative.test.ts` — **103 pruebas verdes** contra PostgreSQL 17.11 real | 2026-08-14 | Incluye controles positivos: sin ellos la suite negativa pasaría por vacío. |
+| T-H1-05 | REQUIRED | PENDIENTE | — | — | Better Auth autoalojado (passkey/WebAuthn, TOTP administrativo, cuentas seudónimas). |
+| T-H1-06 | REQUIRED | HECHA | `…100500_rls.sql` | 2026-08-14 | RLS + `FORCE ROW LEVEL SECURITY` como segunda capa; `measurement`/`private_solutions` no dependen de RLS. |
+
+**Gate H1:** `docs/gates/H1.md` — abierto. El AC literal está cubierto; falta T-H1-05 y la ejecución en `main`.
+
+## F2 — H2 · Verificador (iniciado, camino crítico)
+
+| Tarea | Etiqueta | Estado | Evidencia | Fecha | Notas |
+|---|---|---|---|---|---|
+| T-H2-01 | CRITICAL | HECHA | `content/…/kc/authorized-calculus-v1.yaml`, `packages/logic-core/calculus/`, `src/calculus.ts`, `test/calculus.test.ts` (11 pruebas) | 2026-08-14 | Transcripción literal de P-II §4.1.1, hasheada (`904d3b44…`). Prueba de que ambas copias son idénticas y que el hash no derivó. |
+| T-H2-03 | CRITICAL | HECHA | `packages/logic-core/src/calculus.ts` | 2026-08-14 | Tablas de alias de conectivos y reglas; prueba de que ningún alias es `rule_id` y de que los alias rechazados no entran. |
+| T-H2-05 | CRITICAL | HECHA | idem | 2026-08-14 | 13 primitivas + `DNE`, whitelist cerrada; `PR`/`AS` excluidas como reglas. |
+| T-H2-02 | CRITICAL | HECHA | `src/tokenizer.ts`, `src/parser.ts`, `src/ast.ts`, `test/parser.test.ts` (32 pruebas) | 2026-08-14 | Normalización conservadora; sin precedencia; `(A∧B)∧C ≠ A∧(B∧C)`; prohibidas conmutativa/asociativa/DNE automática/NNF/CNF/DNF. |
+| T-H2-04 | CRITICAL | HECHA | `src/fitch.ts`, `src/verify.ts` | 2026-08-14 | Alcance, citas, descarga, subpruebas hermanas, subpruebas de una línea y descarga vacua. |
+| T-H2-06 | CRITICAL | HECHA | `src/errors.ts`, `src/verify.ts`, `test/verify.test.ts` (34 pruebas) | 2026-08-14 | Los 18 códigos `E-*` con `firstInvalidStep`, regla mal aplicada, referencias y traza. |
+| T-H2-07 | CRITICAL | HECHA | `src/semantics.ts` | 2026-08-14 | Tabla de verdad bivalente con `v(⊥)=F`; asimetría literal; `not-applicable` solo con razón. Cota tabla↔SAT abierta como `[CALIBRATION CALC-05]`. |
+| T-H2-10 | CRITICAL | HECHA | `content/…/golden-tests/` — **413 casos**; `test/golden.test.ts` | 2026-08-14 | Pisos cubiertos: 120/120/63/50/60 frente a 100/100/50/50/50. Expectativas declaradas a priori, no grabadas de la salida. |
+| T-H2-11 | CRITICAL | HECHA | `test/pbt.test.ts` (10 propiedades, fast-check) | 2026-08-14 | `parse(print(ast))`, renombrado biyectivo, línea cerrada nunca citable, construida⇒aceptada, aceptada⇒semánticamente válida, determinismo, `firstInvalidStep`. Semillas y `numRuns` registrados por propiedad. |
+| T-H2-13 | REQUIRED | HECHA | `src/calculus.ts` (`LEXICON_ES`) | 2026-08-14 | Lexicón español separado de los ids formales. |
+| T-H2-15 | REQUIRED | HECHA | `test/isolation.test.ts` (11 pruebas) | 2026-08-14 | Sin red, sin `process.env`, sin reloj ni azar; función pura que no muta su entrada. |
+| T-H2-05 | CRITICAL | HECHA | `src/rules.ts`, `test/rules.test.ts` (60 pruebas) | 2026-08-14 | Cada regla con sus orientaciones alternativas y cada motivo de rechazo. |
+| T-H2-12 | CRITICAL | EN_CURSO | `stryker.conf.json`, `docs/quality/mutation-baseline.md` | 2026-08-14 | Baseline inicial 62.79 %. La cobertura de ramas para matar mutantes destapó un **falso rechazo de átomos válidos** (`O`, `Y`, `N`), ya corregido. Segunda corrida en marcha. |
+| T-H2-08 | CRITICAL | HECHA | `packages/proof-search/`, `test/search.test.ts` (24 pruebas) | 2026-08-14 | Cuatro funciones separadas (P-I §7.4): prefiltro semántico → buscador → **re-verificación obligatoria por logic-core** → sin decisor terminante. Corte primario en unidades de trabajo deterministas; el timeout de pared solo protege el proceso y se registra aparte. `no_proof_exists_in_calculus` **no existe** en la implementación (CALC-03). `exhaustive_k` solo certifica `minimalCostVerified` tras cubrir todos los costes menores; si no halla, solo afirma `no_proof_with_cost_at_most_k`. Un certificado rechazado por el verificador lanza `CertificateRejectedError` (incidente nivel 3), no se disfraza de «no encontré». |
+| T-H2-09 | CRITICAL | HECHA | `packages/isomorphism-canonicalizer/`, `test/canonicalize.test.ts` (16 pruebas) | 2026-08-14 | Firma estructural sobre el grafo de dependencias: invariante al renombrado de átomos, al orden de citas y al reordenamiento de pasos independientes; duplicado trivial como caso más estricto. Los nombres canónicos son átomos válidos del lenguaje, así que la forma canónica se puede volver a parsear. `ci:arch:depcruise` confirma que la ruta de verificación no lo importa (54 módulos, violación sembrada detectada). `[CALIBRATION CAL-07]` precisión/recall sigue abierto para H5/H10. |
+| T-H2-14, T-H2-16 | REQUIRED/BENCHMARK | PENDIENTE | — | — | Complejidad estructural y arné BENCH-04. |
+
+## Fases siguientes
+
+| Fase | Hito | Estado | Bloqueo actual |
+|---|---|---|---|
+| F3 | H3 · Entorno local | PENDIENTE | Desbloqueado: Docker operativo |
+| F2 | H2 · resto del verificador | PENDIENTE | Camino crítico; sin bloqueos |
+| F4–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
+
+## Entorno de ejecución (verificado 2026-08-14)
+
+| Requisito | Estado |
+|---|---|
+| Node 24.x | ✅ v24.16.0 |
+| pnpm 10.x | ✅ 10.34.5 (vía npm; `corepack enable` falla por permisos en `C:\Program Files\nodejs`) |
+| git | ✅ 2.55.0 — sin remoto configurado |
+| Docker Engine / Compose | ✅ 29.7.2, motor Linux, overlayfs (D-7: el plan declara familia 27.x) |
+| WSL2 | ✅ versión predeterminada 2, distribución `docker-desktop` |
+| Python | ⚠️ 3.12 (el plan pide 3.13.x; solo relevante en F16) |
+
+### Nota operativa de Docker en Windows
+
+Una consola abierta **antes** de instalar Docker conserva el `PATH` viejo y Testcontainers falla con
+`spawn docker-credential-desktop ENOENT`. Basta con abrir una consola nueva, o anteponer
+`C:\Program Files\Docker\Docker\resources\bin` al `PATH`.
+
+## Correcciones por autoridad superior (14-08-2026)
+
+Al recibir el Maestro, los contratos escritos desde `Plan.md` se corrigieron contra el texto literal (§0.1: si el inferior contradice al superior, se corrige el inferior):
+
+| Contrato | Qué estaba mal | Corrección |
+|---|---|---|
+| `EvidenceEvent` | Faltaban `schemaVersion`, `correlationId`, `runId`, `participantPseudoId`, `sessionId`, `causedByEventId`, `artifactRefs`, `traceId`, `occurredAtServer`; `decisionMaker` tenía 3 valores; `validity` usaba `missing` | Transcripción literal P-II §9.1: `decisionMaker` con 5 valores, `validity` = `valid|invalid|deviation`, `correctionOfEventId` |
+| `PedagogicalDecision` | Enum de estrategias declarado «pendiente»; campos añadidos que pertenecen al estado de sesión | Literal P-II §7.2.1: 10 estrategias, 5 campos exactos |
+| `Probe*` | `experimentalSet` como enum A/B/C, `phase` sin `retention`, `measureKind` con nombres inventados, sin `observation` | Literal P-II §6.3, con `probeRoundId` nulo y `observation` nulo (los faltantes no se imputan) |
+| `AnchoredSegment` | `kind: factual/non_factual` inventado, anclas como objetos | Literal P-II §8.4: `text`, `anchors: string[]`, `function` de 4 valores |
+| `Incident` | `incident_code` como catálogo pendiente | P-I §13: niveles 1/2/3 literales con acción obligatoria; `incident_code` se congela por corrida en el `run-manifest` |
+| Veredictos | Faltaba el de autonomía; métricas sin contrato | Literal P-I §12.3 (4 veredictos) y §10.5 (contrato por métrica con numerador/denominador/faltantes) |
+
+Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` devuelve vacío). El mecanismo `pendingCatalog()` se conserva para huecos futuros y su comportamiento fail-closed sigue probado.
+
+## Decisiones de ingeniería de este plan (sin autoridad normativa, §0.2.8)
+
+- **D-1 — Ubicación del CLI.** `tools/cli`, porque §4.2 fija listas obligatorias para `apps/` y `packages/` y el CLI no aparece en ninguna.
+- **D-2 — Repositorio de contenido.** Repo git independiente en `content/unidad-deduccion-natural/`; el registro como submódulo requiere un remoto.
+- **D-3 — Catálogos pendientes.** Mecanismo `pendingCatalog()` que rechaza todo valor; hoy sin usuarios.
+- **D-4 — Tipos referenciados sin definir.** `VersionManifest` (P-II §9.1) y `StructuredItemPrompt` (P-II §6.3) se nombran en el Maestro sin definirse. Se implementan con la estructura mínima que su uso exige, marcadas en el código. No son `BLOCKED_BY_SPEC`: no hay decisión normativa faltante, solo un tipo auxiliar.
+- **D-8 — `¬` y la ausencia de precedencia.** P-II §4.1.1 fija «sin precedencia **entre conectivos binarios**». El parser aplica `¬` a la unidad inmediatamente siguiente (átomo, `⊥` o fórmula entre corchetes), que es la convención de *forall x*. Así `¬A∧B` es `(¬A)∧B` sin ambigüedad, mientras que `A∧B∧C` sigue rechazándose con `E-SYN-PRECEDENCE`.
+- **D-9 — `valid` y `goalReached` separados.** El contrato del verificador no tiene código de error para «derivación correcta de otra cosa», y la lista de códigos `E-*` es cerrada. En vez de inventar uno, `VerificationResult` expone `goalReached` aparte: `valid` dice que todo paso está autorizado y `goalReached` si se probó lo pedido. Quien decide la corrección del intento es el motor, con ambos datos.
+- **D-6 — Nombre del rol de migraciones.** `Plan.md` T-H1-02 lo nombra `pg_owner_migrations`, pero PostgreSQL **reserva el prefijo `pg_`** y rechaza crear ese rol (lo mismo ocurrió con el superusuario `pg_admin` del arnés). El Maestro P-II §11.2 exige «un rol propietario/migración separado del uso ordinario» sin fijar nombre: se usa `owner_migrations`. Incompatibilidad demostrable y documentada (§3).
+- **D-7 — Versión de Docker Engine.** El plan declara familia 27.x; el entorno instaló 29.7.2. No afecta la autoridad reproducible (`lockfile + SBOM + digests`); los digests de imagen se fijan en el freeze.
+- **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

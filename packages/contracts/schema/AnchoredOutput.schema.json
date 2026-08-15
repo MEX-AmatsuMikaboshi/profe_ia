@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "operationId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "segments": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "anchors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "function": {
+            "type": "string",
+            "enum": [
+              "definition",
+              "explanation",
+              "example",
+              "transition"
+            ]
+          }
+        },
+        "required": [
+          "text",
+          "anchors",
+          "function"
+        ]
+      }
+    },
+    "authorizedBlockId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    }
+  },
+  "required": [
+    "operationId",
+    "segments",
+    "authorizedBlockId"
+  ]
+}

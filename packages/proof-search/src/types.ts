@@ -1,0 +1,101 @@
+import type { Formula } from '@profesor-ia/logic-core';
+
+/**
+ * Contrato del buscador de demostraciones (Plan.md T-H2-08 [CRITICAL] ←
+ * Maestro P-I §7.4 y P-II §4.4).
+ *
+ * **El buscador se usa en autoría, no en sesión.**
+ *
+ * Las cuatro funciones de P-I §7.4 no se colapsan: el oráculo semántico
+ * (`logic-core`), el buscador heurístico (este paquete), el decisor terminante
+ * (no existe aún) y la re-verificación por `logic-core` son piezas distintas.
+ */
+
+export type SearchMode = 'heuristic' | 'exhaustive_k';
+
+export interface SearchBudget {
+  /**
+   * Corte **primario**: trabajo reproducible en unidades de inferencia
+   * intentada. Es lo único que decide cuándo parar; no depende del reloj.
+   */
+  readonly maxWorkUnits: number;
+  /** Coste máximo explorado en `exhaustive_k`. Métrica: número de líneas. */
+  readonly maxCost?: number;
+  /**
+   * Salvaguarda de pared. Protege el proceso pero **no se usa para afirmar
+   * propiedades lógicas**; si se dispara, queda registrado por separado.
+   */
+  readonly wallTimeoutMs?: number;
+}
+
+export interface SearchTelemetry {
+  /** Unidades de trabajo consumidas: reproducible entre corridas. */
+  readonly workUnits: number;
+  /** Coste máximo (en líneas) explorado exhaustivamente. */
+  readonly costExplored: number;
+  /** `true` solo si la salvaguarda de pared cortó la búsqueda. */
+  readonly wallTimeoutHit: boolean;
+  readonly mode: SearchMode;
+  /** Orden de exploración congelado por versión. */
+  readonly searchOrderVersion: string;
+}
+
+export interface FoundProof {
+  /** Derivación en el formato que `logic-core` verifica. */
+  readonly lines: readonly {
+    readonly formula: string;
+    readonly rule: string;
+    readonly refs?: readonly (number | readonly [number, number])[];
+    readonly depth: number;
+  }[];
+  /** Métrica de coste declarada por el cálculo: `proof_line_count`. */
+  readonly cost: number;
+  /** Reglas necesarias en la solución encontrada (P-II §4.4). */
+  readonly rulesUsed: readonly string[];
+}
+
+export type SearchOutcome =
+  | {
+      readonly status: 'proof_found';
+      readonly proof: FoundProof;
+      /**
+       * Solo `true` si `exhaustive_k` agotó **todos** los costes menores.
+       * Nunca se afirma minimalidad global.
+       */
+      readonly minimalCostVerified: boolean;
+      readonly telemetry: SearchTelemetry;
+    }
+  | {
+      readonly status: 'semantically_invalid';
+      /** Contramodelo del oráculo independiente. */
+      readonly countermodel: Readonly<Record<string, boolean>>;
+      readonly telemetry: SearchTelemetry;
+    }
+  | {
+      /** Agotó el presupuesto. **No** significa inexistencia (P-I §7.4). */
+      readonly status: 'search_budget_exhausted';
+      readonly telemetry: SearchTelemetry;
+    }
+  | {
+      /** Exploró exhaustivamente hasta `k` sin hallar prueba. No infiere inexistencia global. */
+      readonly status: 'no_proof_with_cost_at_most_k';
+      readonly k: number;
+      readonly telemetry: SearchTelemetry;
+    };
+
+export interface SearchRequest {
+  readonly premises: readonly string[];
+  readonly goal: string;
+  readonly mode: SearchMode;
+  readonly budget: SearchBudget;
+}
+
+/** Meta trivial: la conclusión ya está entre las premisas (P-II §4.4). */
+export interface TrivialGoal {
+  readonly trivial: true;
+  readonly premiseIndex: number;
+}
+
+export interface InternalContext {
+  readonly available: readonly { formula: Formula; source: number }[];
+}

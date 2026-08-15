@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "Mutation testing del núcleo lógico (Plan.md T-H2-12 [CRITICAL] ← P-II §4.6). Antes del gate H2, todo mutante superviviente relevante debe eliminarse por prueba o justificarse como equivalente/inaplicable. `thresholds.break` es no-regresión del baseline congelado, no una meta arbitraria.",
+  "packageManager": "pnpm",
+  "_plugins_comment": "pnpm aísla node_modules, así que el descubrimiento automático de plugins no encuentra el runner: se declara explícitamente.",
+  "plugins": ["@stryker-mutator/vitest-runner"],
+  "testRunner": "vitest",
+  "vitest": {
+    "configFile": "packages/logic-core/vitest.mutation.config.ts"
+  },
+  "reporters": ["html", "clear-text", "progress", "json"],
+  "htmlReporter": { "fileName": "reports/mutation/logic-core.html" },
+  "jsonReporter": { "fileName": "reports/mutation/logic-core.json" },
+  "_mutate_comment": "Se mutan las rutas críticas de verificación. `index.ts` solo reexporta; `calculus.ts` son datos literales del artefacto congelado, cuya integridad la protege el hash (calculus.test.ts), no una prueba de comportamiento; `construction.ts` genera derivaciones candidatas y no participa en ningún veredicto: un mutante que cambie qué derivación válida se construye es equivalente frente a la propiedad que la gobierna («toda derivación construida es aceptada»).",
+  "mutate": [
+    "packages/logic-core/src/**/*.ts",
+    "!packages/logic-core/src/index.ts",
+    "!packages/logic-core/src/calculus.ts",
+    "!packages/logic-core/src/construction.ts"
+  ],
+  "concurrency": 4,
+  "timeoutMS": 20000,
+  "coverageAnalysis": "perTest",
+  "thresholds": {
+    "high": 90,
+    "low": 80,
+    "break": null
+  },
+  "tempDirName": ".stryker-tmp",
+  "cleanTempDir": true
+}

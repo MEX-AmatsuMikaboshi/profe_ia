@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "eventId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "sequenceNumber": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "streamId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "correlationId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "causedByEventId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "artifactRefs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "traceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "participantPseudoId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "sessionId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "eventType": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload": {
+      "anyOf": [
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        {
+          "type": "object",
+          "properties": {
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "artifactHash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "artifactRef"
+          ]
+        }
+      ]
+    },
+    "decisionMaker": {
+      "type": "string",
+      "enum": [
+        "engine",
+        "verifier",
+        "model",
+        "human",
+        "system"
+      ]
+    },
+    "autonomyStatus": {
+      "type": "string",
+      "enum": [
+        "autonomous",
+        "automatic-control",
+        "human-exception",
+        "failed"
+      ]
+    },
+    "versions": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "version"
+        ]
+      }
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "occurredAtServer": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "correctionOfEventId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "previousHash": {
+      "type": "string",
+      "minLength": 1
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "eventId",
+    "sequenceNumber",
+    "correlationId",
+    "runId",
+    "participantPseudoId",
+    "sessionId",
+    "eventType",
+    "payload",
+    "decisionMaker",
+    "autonomyStatus",
+    "versions",
+    "occurredAt",
+    "previousHash",
+    "hash"
+  ]
+}

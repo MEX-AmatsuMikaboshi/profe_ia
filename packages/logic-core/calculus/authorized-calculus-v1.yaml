@@ -1,0 +1,63 @@
+# authorized-calculus-v1 — transcripción LITERAL de Maestro P-II §4.1.1.
+#
+# Estado: CONGELADA (DEC-CALCULUS-001 / -SNAPSHOT-001 / -RULES-001 /
+# -SEMANTICS-001 / -SETS-001). Cambiar de snapshot exige nueva versión
+# documental del cálculo y comparación explícita antes de adopción.
+#
+# Este archivo NO se edita para "corregir" el cálculo: si contradice al
+# Maestro, se corrige este archivo (Plan.md §0.1).
+
+authorizedCalculusVersion: authorized-calculus-v1
+formal_system_id: forallx-calgary-tfl
+logic: classical-propositional
+proof_format: fitch
+status: CONGELADA
+
+source:
+  work: "forall x: Calgary — An Introduction to Formal Logic"
+  edition: "Fall 2025"
+  revision: "8642250"
+  revision_date: "2026-07-18"
+  source_locator: "https://forallx.openlogicproject.org/"
+  snapshot_kind: "official PDF"
+  snapshot_size_bytes: 1562067
+  snapshot_sha256: "2a8fea85b358fb45ba7835dee5166b5990b7a7c11ad4dc6c41ebdd9a265c1888"
+
+language:
+  atoms: ["A".."Z", "letras subindicadas"]
+  atoms_content_policy_stage1: ["A".."Z"]
+  connectives: ["¬", "∧", "∨", "→", "↔"]
+  falsum:
+    symbol: "⊥"
+    kind: distinguished_atom
+    semantics: always_false
+  arity: strictly_binary
+  precedence: none
+  bracketing: mandatory_except_outermost
+  content_policy_stage1:
+    falsum_as_premise: false
+    falsum_as_initial_assumption: false
+
+rules:
+  primitive: ["R", "∧I", "∧E", "∨I", "∨E", "→I", "→E", "↔I", "↔E", "¬I", "¬E", "X", "IP"]
+  line_justifications: ["PR", "AS"]
+  derived_allowed: ["DNE"]
+  whitelist_closed: true
+
+semantics:
+  kind: classical_truth_functional_bivalent
+  valuation_constraint: "v(⊥)=F"
+  oracle_use: "fallo semántico puede rechazar; éxito semántico no certifica derivabilidad"
+
+decision_policy:
+  completeness_claimed: false
+  no_proof_exists_in_calculus_enabled: false
+
+proof_search:
+  primary_budget: deterministic_work_units
+  wall_timeout: safeguard_only
+  cost_metric: proof_line_count
+
+experimental_sets:
+  versions_per_set: single
+  rule_gating_by_phase: false

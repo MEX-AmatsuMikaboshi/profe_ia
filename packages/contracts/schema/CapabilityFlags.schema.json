@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "voiceInput": {
+      "type": "boolean"
+    },
+    "voiceOutput": {
+      "type": "boolean"
+    },
+    "whiteboard": {
+      "type": "boolean"
+    },
+    "visualBoardInterpretation": {
+      "type": "boolean"
+    },
+    "uiAnnotations": {
+      "type": "boolean"
+    },
+    "internalUiCapture": {
+      "type": "boolean"
+    },
+    "externalScreenCapture": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "voiceInput",
+    "voiceOutput",
+    "whiteboard",
+    "visualBoardInterpretation",
+    "uiAnnotations",
+    "internalUiCapture",
+    "externalScreenCapture"
+  ]
+}

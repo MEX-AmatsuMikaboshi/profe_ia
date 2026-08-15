@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "participantPseudoId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "probeRoundId": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "opportunityId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "experimentalSet": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "baseline",
+        "intervention",
+        "retention"
+      ]
+    },
+    "measureKind": {
+      "type": "string",
+      "enum": [
+        "primary_probe",
+        "transfer_measurement",
+        "retention_probe"
+      ]
+    }
+  },
+  "required": [
+    "runId",
+    "participantPseudoId",
+    "probeRoundId",
+    "opportunityId",
+    "experimentalSet",
+    "phase",
+    "measureKind"
+  ]
+}

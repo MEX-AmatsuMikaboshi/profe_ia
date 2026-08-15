@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "LEARNING_MODE",
+        "MEASUREMENT_MODE"
+      ]
+    },
+    "strategy": {
+      "type": "string",
+      "enum": [
+        "direct_explanation",
+        "worked_example",
+        "completion_problem",
+        "guided_practice",
+        "independent_practice",
+        "scaffolding",
+        "self_explanation",
+        "retrieval",
+        "prerequisite_remediation",
+        "near_transfer"
+      ]
+    },
+    "assistanceLevel": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "masteryEligible": {
+      "type": "boolean"
+    },
+    "reasonCode": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "mode",
+    "strategy",
+    "assistanceLevel",
+    "masteryEligible",
+    "reasonCode"
+  ]
+}

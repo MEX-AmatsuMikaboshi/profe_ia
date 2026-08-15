@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "supportedParameters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rejectedParameters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "structuredOutput": {
+      "type": "object",
+      "properties": {
+        "supported": {
+          "type": "boolean"
+        },
+        "maxSchemaDepth": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "supported"
+      ]
+    },
+    "reasoning": {
+      "type": "object",
+      "properties": {
+        "supported": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "supported"
+      ]
+    },
+    "dataPolicy": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string"
+        },
+        "loggingRetentionDays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "zeroDataRetention": {
+          "type": "boolean"
+        },
+        "contractualEligibility": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "available_not_enabled",
+            "enabled"
+          ]
+        }
+      },
+      "required": [
+        "contractualEligibility"
+      ]
+    },
+    "limits": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "failureCodes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "supportedParameters",
+    "rejectedParameters",
+    "structuredOutput",
+    "reasoning",
+    "dataPolicy"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "manifestVersion": {
+      "type": "string",
+      "const": "0"
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "visualDimensionAnchorsHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "order": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "string",
+          "const": "integridad"
+        },
+        {
+          "type": "string",
+          "const": "autonomia"
+        },
+        {
+          "type": "string",
+          "const": "pedagogia"
+        },
+        {
+          "type": "string",
+          "const": "viabilidad"
+        }
+      ]
+    },
+    "approverRole": {
+      "type": "string",
+      "const": "EXPERIMENT_AUDITOR"
+    },
+    "minValidObservationsPerPhase": {
+      "type": "number",
+      "const": 5
+    },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "keyId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "signature": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        }
+      },
+      "required": [
+        "keyId",
+        "signature",
+        "signedAt"
+      ]
+    }
+  },
+  "required": [
+    "manifestVersion",
+    "runId",
+    "order",
+    "approverRole",
+    "minValidObservationsPerPhase"
+  ]
+}

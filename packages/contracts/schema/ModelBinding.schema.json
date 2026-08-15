@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "bindingId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "profile": {
+      "type": "string",
+      "enum": [
+        "SESION",
+        "AUTORIA"
+      ]
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1
+    },
+    "modelId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "endpoint": {
+      "type": "string",
+      "minLength": 1
+    },
+    "snapshot": {
+      "type": "string"
+    },
+    "aliasResolvedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "deprecationNotice": {
+      "type": "string"
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "supportedParameters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rejectedParameters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "structuredOutput": {
+          "type": "object",
+          "properties": {
+            "supported": {
+              "type": "boolean"
+            },
+            "maxSchemaDepth": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "notes": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "supported"
+          ]
+        },
+        "reasoning": {
+          "type": "object",
+          "properties": {
+            "supported": {
+              "type": "boolean"
+            },
+            "notes": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "supported"
+          ]
+        },
+        "dataPolicy": {
+          "type": "object",
+          "properties": {
+            "region": {
+              "type": "string"
+            },
+            "loggingRetentionDays": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "zeroDataRetention": {
+              "type": "boolean"
+            },
+            "contractualEligibility": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "available_not_enabled",
+                "enabled"
+              ]
+            }
+          },
+          "required": [
+            "contractualEligibility"
+          ]
+        },
+        "limits": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "failureCodes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "supportedParameters",
+        "rejectedParameters",
+        "structuredOutput",
+        "reasoning",
+        "dataPolicy"
+      ]
+    },
+    "behaviorFingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "verifiedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    }
+  },
+  "required": [
+    "bindingId",
+    "profile",
+    "provider",
+    "modelId",
+    "endpoint",
+    "capabilities",
+    "verifiedAt"
+  ]
+}

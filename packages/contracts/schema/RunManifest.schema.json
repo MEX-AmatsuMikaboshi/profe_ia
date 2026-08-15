@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "manifestVersion": {
+      "type": "string",
+      "const": "0"
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "roleAssignments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "SYSTEM_OWNER",
+              "CORPUS_APPROVER",
+              "TECHNICAL_AUDITOR",
+              "EXPERIMENT_AUDITOR",
+              "SECURITY_PRIVACY_RESPONSIBLE",
+              "PROFESSIONAL_REVIEWER"
+            ]
+          },
+          "personId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "role",
+          "personId"
+        ]
+      }
+    },
+    "capabilityFlags": {
+      "type": "object",
+      "properties": {
+        "voiceInput": {
+          "type": "boolean"
+        },
+        "voiceOutput": {
+          "type": "boolean"
+        },
+        "whiteboard": {
+          "type": "boolean"
+        },
+        "visualBoardInterpretation": {
+          "type": "boolean"
+        },
+        "uiAnnotations": {
+          "type": "boolean"
+        },
+        "internalUiCapture": {
+          "type": "boolean"
+        },
+        "externalScreenCapture": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "voiceInput",
+        "voiceOutput",
+        "whiteboard",
+        "visualBoardInterpretation",
+        "uiAnnotations",
+        "internalUiCapture",
+        "externalScreenCapture"
+      ]
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "local",
+        "remote"
+      ]
+    },
+    "budgetLimitMxn": {
+      "type": "number",
+      "minimum": 0
+    },
+    "freezeManifestHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "incidentCodes": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "keyId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "signature": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        }
+      },
+      "required": [
+        "keyId",
+        "signature",
+        "signedAt"
+      ]
+    }
+  },
+  "required": [
+    "manifestVersion",
+    "runId",
+    "createdAt",
+    "roleAssignments",
+    "capabilityFlags",
+    "environment",
+    "budgetLimitMxn"
+  ]
+}

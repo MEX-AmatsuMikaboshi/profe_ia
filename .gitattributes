@@ -1,0 +1,12 @@
+# Finales de línea normalizados a LF en índice y working tree.
+#
+# No es preferencia de estilo: hay artefactos hasheados (el cálculo congelado,
+# el SBOM, el digest del lockfile) cuya integridad depende de que los bytes no
+# cambien entre plataformas. `core.autocrlf` los rompería en el checkout.
+* text=auto eol=lf
+
+# Binarios: sin conversión ni diff textual.
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary

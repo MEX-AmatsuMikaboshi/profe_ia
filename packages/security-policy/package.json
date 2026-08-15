@@ -1,0 +1,28 @@
+{
+  "name": "@profesor-ia/security-policy",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Matriz de permisos y canarios (DEC-PRIVILEGE-001, T-H4-05).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@profesor-ia/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

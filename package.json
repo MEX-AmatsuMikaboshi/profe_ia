@@ -1,0 +1,59 @@
+{
+  "name": "profesor-ia",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Profesor IA — Etapa 1. Monorepo (Plan.md §4.2, T-H0-01).",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=24.0.0 <25.0.0",
+    "pnpm": ">=10.0.0 <11.0.0"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "ci:lint": "eslint .",
+    "ci:typecheck": "turbo run typecheck",
+    "ci:unit": "vitest run",
+    "ci:build": "turbo run build",
+    "ci:arch:depcruise": "depcruise --config .dependency-cruiser.cjs apps packages tools",
+    "ci:supply:sbom": "node scripts/supply/generate-sbom.mjs",
+    "ci:supply:drift": "node scripts/supply/check-drift.mjs",
+    "ci:logic:golden": "vitest run --project unit packages/logic-core/test/golden.test.ts",
+    "ci:logic:pbt": "vitest run --project unit packages/logic-core/test/pbt.test.ts",
+    "ci:logic:no-net": "vitest run --project unit packages/logic-core/test/isolation.test.ts",
+    "ci:logic:mutation": "stryker run",
+    "logic:golden:generate": "node scripts/logic/generate-golden.mjs",
+    "ci:db:testcontainers": "vitest run --project db",
+    "ci:db:negative": "vitest run --project db",
+    "db:grants": "node scripts/db/generate-grants.mjs",
+    "db:grants:check": "node scripts/db/generate-grants.mjs --check",
+    "contracts:json-schema": "pnpm --filter @profesor-ia/contracts run emit:json-schema",
+    "plan:status": "node scripts/plan/check-status.mjs"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ],
+    "_overrides_comment": "GHSA-q8mj-m7cp-5q26 (qs <=6.15.1, DoS) llega por @stryker-mutator/core > typed-rest-client. Se resuelve elevando la versión, no documentando una excepción: Plan.md §3 exige que un advisory aplicable sin mitigación bloquee el gate.",
+    "overrides": {
+      "qs": "^6.15.3"
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@profesor-ia/security-policy": "workspace:*",
+    "@stryker-mutator/core": "^10.0.0",
+    "@stryker-mutator/vitest-runner": "^10.0.0",
+    "@testcontainers/postgresql": "^12.1.0",
+    "@types/node": "^24.10.1",
+    "@types/pg": "^8.21.0",
+    "dependency-cruiser": "^16.10.0",
+    "eslint": "^9.39.0",
+    "fast-check": "^4.9.0",
+    "pg": "^8.23.0",
+    "turbo": "^2.5.9",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.46.0",
+    "vitest": "^3.2.4"
+  }
+}

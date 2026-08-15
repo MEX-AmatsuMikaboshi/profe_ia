@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.turbo/
+coverage/
+*.tsbuildinfo
+.stryker-tmp/
+
+# Secretos: nunca se versiona .env (Plan.md §3, fila "Secretos"; Infisical inyecta en runtime)
+.env
+.env.*
+!.env.example
+
+# Artefactos locales de desarrollo
+artifacts/
+tmp/
+sbom.json
+# Solo el directorio de informes de la raíz (mutation, etc.); `analysis/reports/`
+# es documentación del plan y sí se versiona.
+/reports/

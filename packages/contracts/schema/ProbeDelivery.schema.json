@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "probeInstanceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "opportunityId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "itemOrdinal": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
+    },
+    "batchSize": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
+    },
+    "prompt": {
+      "type": "object",
+      "properties": {
+        "itemId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "premises": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "goal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "responseFormat": {
+          "type": "string",
+          "enum": [
+            "fitch_proof",
+            "structured_choice",
+            "free_text"
+          ]
+        }
+      },
+      "required": [
+        "itemId",
+        "statement",
+        "goal",
+        "responseFormat"
+      ]
+    },
+    "timeLimitSeconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "verifierContract": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "probeInstanceId",
+    "opportunityId",
+    "itemOrdinal",
+    "batchSize",
+    "prompt",
+    "timeLimitSeconds",
+    "verifierContract"
+  ]
+}

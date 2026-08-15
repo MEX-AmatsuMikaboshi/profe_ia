@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "anchors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "function": {
+      "type": "string",
+      "enum": [
+        "definition",
+        "explanation",
+        "example",
+        "transition"
+      ]
+    }
+  },
+  "required": [
+    "text",
+    "anchors",
+    "function"
+  ]
+}
