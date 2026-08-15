@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "@profesor-ia/contracts": "workspace:*",
-    "@profesor-ia/content-schema": "workspace:*"
+    "@profesor-ia/content-schema": "workspace:*",
+    "@profesor-ia/logic-core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.9.3"

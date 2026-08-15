@@ -11,7 +11,7 @@
     "properties": [
       {
         "name": "profesor-ia:lockfile-sha256",
-        "value": "0e1b927b9489cfbe558fd837711293384a3bb6194f020e156959b59c3e44d392"
+        "value": "43445b9b4c6daf29c0119f086473057402f798300feb2000d069809cd8d6a333"
       },
       {
         "name": "profesor-ia:node-version",
@@ -3195,15 +3195,15 @@
     },
     {
       "type": "library",
-      "name": "@profesor-ia/experiment",
-      "version": "link:../../packages/experiment",
-      "purl": "pkg:npm/%40profesor-ia%2Fexperiment@link:../../packages/experiment"
-    },
-    {
-      "type": "library",
       "name": "@profesor-ia/logic-core",
       "version": "link:../../packages/logic-core",
       "purl": "pkg:npm/%40profesor-ia%2Flogic-core@link:../../packages/logic-core"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/experiment",
+      "version": "link:../../packages/experiment",
+      "purl": "pkg:npm/%40profesor-ia%2Fexperiment@link:../../packages/experiment"
     },
     {
       "type": "library",
