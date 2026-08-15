@@ -28,7 +28,13 @@ jobs:
       # checkout aplica tanto al repo principal como al submódulo: necesita
       # `Contents: Read` sobre `profe_ia` **y** sobre `profe_ia_contenido`.
       - name: CONTENT_TOKEN presente
-        run: test -n "$T" || { echo "::error::Falta el secreto CONTENT_TOKEN: sin él no se puede clonar el submódulo privado content/ (D-2)."; exit 1; }
+        # Escalar de bloque: el mensaje lleva `: ` y en un escalar plano de YAML
+        # eso se parsea como mapa y rompe el workflow entero.
+        run: |
+          test -n "$T" || {
+            echo "::error::Falta el secreto CONTENT_TOKEN. Sin él no se puede clonar el submódulo privado content/ (D-2)."
+            exit 1
+          }
         env:
           T: ${{ secrets.CONTENT_TOKEN }}
       - uses: actions/checkout@v5
@@ -84,7 +90,13 @@ jobs:
     steps:
       # Ver la nota del job `base`: el submódulo privado exige el PAT.
       - name: CONTENT_TOKEN presente
-        run: test -n "$T" || { echo "::error::Falta el secreto CONTENT_TOKEN: sin él no se puede clonar el submódulo privado content/ (D-2)."; exit 1; }
+        # Escalar de bloque: el mensaje lleva `: ` y en un escalar plano de YAML
+        # eso se parsea como mapa y rompe el workflow entero.
+        run: |
+          test -n "$T" || {
+            echo "::error::Falta el secreto CONTENT_TOKEN. Sin él no se puede clonar el submódulo privado content/ (D-2)."
+            exit 1
+          }
         env:
           T: ${{ secrets.CONTENT_TOKEN }}
       - uses: actions/checkout@v5
