@@ -182,3 +182,13 @@ export class DuplicateExtractionIdError extends AuthoringCoreError {}
  * justificación.
  */
 export class IncompleteExtractionError extends AuthoringCoreError {}
+
+/**
+ * El mapa de KC contradice el catálogo literal de P-I §5.2, el cálculo
+ * autorizado o las reglas de §5.2.1 (T-H5-03).
+ *
+ * Cubre las cuatro formas: una regla que el cálculo no autoriza, un ciclo sin
+ * justificar, un fundamento pre-SCED puesto como KC objetivo y un conjunto que
+ * referencia otra versión del cálculo.
+ */
+export class KcMapError extends AuthoringCoreError {}
