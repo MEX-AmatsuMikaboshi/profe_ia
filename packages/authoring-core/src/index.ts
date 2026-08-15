@@ -6,3 +6,4 @@ export const PACKAGE_NAME = "@profesor-ia/authoring-core" as const;
 export * from './errors.js';
 export * from './w0-state.js';
 export * from './formal-system.js';
+export * from './licensing.js';

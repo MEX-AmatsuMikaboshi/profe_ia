@@ -20,3 +20,11 @@ export class ForeignSystemInMajorityError extends AuthoringCoreError {}
  * sería dejar que otro cálculo decida el nuestro.
  */
 export class NoEligibleClaimsError extends AuthoringCoreError {}
+
+/**
+ * Al recurso le faltan campos de los cuatro mínimos de P-I §7.0
+ * (`source_component`, `source_version`, `provenance_basis`,
+ * `license_evidence`). Sin ellos no hay cadena de atribución que comprobar, y
+ * clasificarlo sería afirmar un derecho que nadie registró.
+ */
+export class IncompleteLicenseRecordError extends AuthoringCoreError {}
