@@ -124,3 +124,14 @@ export class InvalidAlertThresholdError extends ModelGatewayError {}
  * retención declarada no habilita tráfico de participante.
  */
 export class ModalityNotEligibleError extends ModelGatewayError {}
+
+/**
+ * Falta un activo congelado o el valor de un hueco de plantilla en modo
+ * degradado (T-H4-12 ← P-II §8.6). No se rellena: un relleno haría pasar por
+ * «el núcleo respondió» algo que no estaba, y el perfil dejaría de servir para
+ * aislar si el fallo viene del modelo o del núcleo.
+ */
+export class FrozenAssetMissingError extends ModelGatewayError {}
+
+/** Se intentó generar en vivo con el perfil degradado activo (P-II §8.6). */
+export class LiveGenerationDisabledError extends ModelGatewayError {}

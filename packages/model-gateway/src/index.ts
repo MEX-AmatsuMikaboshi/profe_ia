@@ -29,7 +29,19 @@ export {
   BudgetBlockedError,
   InvalidAlertThresholdError,
   ModalityNotEligibleError,
+  FrozenAssetMissingError,
+  LiveGenerationDisabledError,
 } from './errors.js';
+
+export {
+  DegradedProfile,
+  FROZEN_ASSET_KINDS,
+  GatewayMode,
+  type DegradedProfileOptions,
+  type FeedbackTemplate,
+  type FrozenAsset,
+  type FrozenAssetKind,
+} from './degraded.js';
 
 export {
   assertModalityEligible,
