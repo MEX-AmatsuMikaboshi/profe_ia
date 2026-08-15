@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
-**Fecha del checkpoint:** 2026-08-15, segunda sesión del día (F4 al 75 %, F5 cerrada; la anterior
-cerró F1–F3)
+**Fecha del checkpoint:** 2026-08-15, tercera sesión del día (F6 arrancada por `T-H5-01`; la segunda
+cerró F5 y dejó F4 en 9 de 12; la primera cerró F1–F3)
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -13,10 +13,10 @@ con qué comprobaciones, en §8.
 
 ### Por dónde empezar, en una línea
 
-F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible) y **F5 con 8 de 8**. La
-siguiente es **F6 · H5** —ingesta, construcción curricular, autoría y freeze—, la fase más grande del
-plan con 17 tareas. Antes de arrancarla lee §3, que dice qué de F4/F5 se rompe fácil, y §7, que
-enumera lo que **no** está verificado.
+F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
+con 1 de 17**: `T-H5-01` (W1, ingesta) quedó cerrada. La siguiente es **`T-H5-02`** —extracción
+curricular con esquema cerrado, Rol A—. Antes de seguir lee §3, que dice qué se rompe fácil, y §7,
+que enumera lo que **no** está verificado.
 
 **Hay una acción tuya pendiente que bloquea todos los `VERIFICADA`:** el secreto `CONTENT_TOKEN`
 (§8). Sin él, dos de los seis jobs de CI siguen en rojo y ninguna tarea puede pasar de `HECHA`.
@@ -50,9 +50,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, esperan operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| F6–F16 | No empezadas |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **1 de 17.** `T-H5-01` (W1) cerrada; sigue `T-H5-02` |
+| F7–F16 | No empezadas |
 
-Van **52 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **53 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas:
 [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
@@ -62,14 +63,19 @@ No hay acta de `H4` ni de `H4.5` todavía: ninguna de las dos fases está en con
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: F6 · H5 — ingesta, autoría y freeze (W1–W5)
+### La tarea siguiente: `T-H5-02` — extracción curricular (Rol A)
 
-Es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Consume lo construido en
-F5 (corpus autorizado) y en F4 (perfil `AUTORIA` de la pasarela). Cuatro cosas que ya están puestas y
-conviene usar en vez de rehacer:
+F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. `T-H5-01` está
+cerrada (§3.a), así que sigue `T-H5-02`: extracción con esquema cerrado —claims, definiciones,
+reglas, notación, restricciones y referencias exactas—, tipos de claim
+`source_assertion | cross_source_consensus | system_inference`, `curricular_decision` aparte y
+anclaje estructural determinista (P-I §7.11). **El ancla ya existe**: `fragmentId()` de
+`ingestion.ts` es pública justo para que W2 la recalcule sin preguntarle a W1.
+
+Cuatro cosas más que ya están puestas y conviene usar en vez de rehacer:
 
 - **El estado W0 ya tiene máquina de transiciones** (`authoring-core/src/w0-state.ts`). `W1_ingesta`
-  es su estado terminal bueno: F6 arranca justo ahí.
+  es su estado terminal bueno, y es donde F6 arranca.
 - **`freezeWinningOrder()`** de `proof-search` falla cerrado esperando a `T-H5-05`, que es donde se
   decide el orden del pipeline de autoría con `BENCH-04`.
 - **`complexityIndex()`** falla cerrado esperando a `T-H5-10` (`CAL-09`). H6 no abre sin eso.
@@ -85,9 +91,49 @@ Lo que queda abierto y **no** bloquea a F6:
 
 ---
 
-## 3.a Lo cerrado en esta sesión (15-08, segunda)
+## 3.a Lo cerrado en esta sesión (15-08, tercera)
 
-### F4 · H4 — pasarela de modelo: 9 de 12
+### F6 · H5 — `T-H5-01`, W1 ingesta
+
+`packages/authoring-core/src/ingestion.ts`. Los seis pasos de §12 «W1», las seis validaciones de
+bloqueo de P-III §3.2 y los siete campos de fragmento de §3.3.
+
+**Lo que se rompe fácil si no se conoce:**
+
+- **El orden de comprobación es el requisito**, igual que en la clasificación de salida de la
+  pasarela: identidad → legibilidad → contenido. Si la deriva se mirara después, el informe diría
+  «KC sin cobertura» de un documento que ni siquiera es el que W0 evaluó. Hay prueba con deriva **y**
+  falta de cobertura a la vez de que gana `CorpusDriftError`.
+- **Una deriva de hash no se resuelve actualizando el snapshot.** Actualizarlo borraría el hecho de
+  que la fuente cambió después de evaluarse; la salida es reevaluar en W0.
+- **La identidad tiene dos mitades**: los bytes y la etiqueta de versión. La segunda viaja dentro del
+  `fragment_id`, así que aceptar los mismos bytes bajo otra versión haría que las anclas citaran una
+  versión que nadie evaluó. Ese hueco apareció **releyendo el módulo ya escrito**, con las pruebas en
+  verde: ningún fixture remarcaba la versión, así que no había nada que fallara.
+- **W1 no vuelve a clasificar licencias.** Los veredictos por uso entran como dato de W0 y **un uso
+  no declarado no está permitido**. Es lo que hace que el caso Calgary sobreviva a la ingesta: el
+  material entra como fuente documental y sus fragmentos **no** son base expresiva. Si W1 volviera a
+  clasificar, dos módulos podrían dar respuestas distintas sobre el mismo material.
+- **`kcsWithoutExpressiveBase` no bloquea, y es a propósito**: ninguna autoridad dice que deba. Pero
+  sin ese dato, W3 descubriría en plena autoría que no puede construir reactivos para un KC y el
+  hueco parecería un fallo del generador.
+- **Los IDs de fragmento se derivan, no se numeran** (D-17). `fragmentId()` es pública para que W2
+  recalcule el ancla; un ID que solo W1 supiera construir no sería un ancla.
+- **La legibilidad no tiene umbrales.** Vacío, U+FFFD y controles C0: hechos del decodificador. Una
+  fracción mínima de caracteres legibles sería un parámetro que ninguna autoridad fija.
+- **Tres entradas se exigen declaradas** (D-18): KC candidatos, secciones necesarias y familia de
+  notación autorizada. Con lista vacía, sus tres validaciones pasarían **por vacío**.
+
+**El método volvió a pagar:** se sembraron nueve mutaciones y las nueve se detectan, pero una destapó
+que el filtro de permiso documental de la cobertura pasaba por vacío en todos los fixtures. Se añadió
+el caso que sí lo ejercita. Sin la siembra, ese control habría entrado en `main` sin poder fallar
+nunca. El guion de siembra está en el historial de esta sesión y se rehace en un minuto: merece la
+pena para cualquier módulo nuevo con varias ramas de bloqueo.
+
+`content/…/source/manifest.yaml` **sigue siendo placeholder**: no hay corpus real que ingerir hasta
+que W0 corra sobre fuentes reales, y poblarlo sería fabricar corpus.
+
+### F4 · H4 — pasarela de modelo: 9 de 12 (sesión anterior)
 
 Hecho: adaptadores propios, capacidades por binding, validación fail-closed de la salida, contexto de
 sesión por whitelist con filtro de egreso, canarios, `pricing-manifest` + `cost-ledger`, control de
@@ -117,7 +163,7 @@ norma pide hacerlo *inmediatamente antes* del benchmark, y adelantarlo producir�
 `T-H4-10` y `T-H4-11` están `BLOQUEADA(gasto y credenciales del propietario)`: exigen llamadas reales
 facturables y, la segunda, dos proveedores de familias distintas.
 
-### F5 · H4.5 — investigación de fuentes (W0): 8 de 8
+### F5 · H4.5 — investigación de fuentes (W0): 8 de 8 (sesión anterior)
 
 Todo en `packages/authoring-core`. Máquina de estados W0, sistema formal objetivo, licencias,
 descubrimiento, idoneidad/saturación, manifiesto de selección, autorización externa y trazabilidad
@@ -223,17 +269,18 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **719 pruebas**: 592 unitarias + 127 contra
-PostgreSQL 17 real. Empezó la sesión en 505.
+Estado en el checkpoint: **todo en verde en local**. **758 pruebas**: 631 unitarias + 127 contra
+PostgreSQL 17 real. Empezó esta sesión en 719.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
-`logic-core`, así que las 214 pruebas nuevas de esta sesión —que son de `model-gateway`,
-`security-policy` y `authoring-core`— **no mueven el baseline de 90.31 %**. No lo leas como que la
-cobertura de mutación cayó ni subió: mide otra cosa.
+`logic-core`, así que ni las 214 pruebas de la sesión anterior ni las 38 de esta —todas de
+`model-gateway`, `security-policy` y `authoring-core`— **mueven el baseline de 90.31 %**. No lo leas
+como que la cobertura de mutación cayó ni subió: mide otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto (corrida `31883718220` y posteriores):
+Observado, no supuesto (corrida `31907080653`, la de `T-H5-01`, y las anteriores desde
+`31883718220`):
 
 | Job | Resultado |
 |---|---|
@@ -244,9 +291,17 @@ Observado, no supuesto (corrida `31883718220` y posteriores):
 | `ci:lint · ci:typecheck · ci:unit · ci:build` | ❌ falta `CONTENT_TOKEN` |
 | `ci:logic:golden · ci:logic:pbt · ci:logic:no-net` | ❌ falta `CONTENT_TOKEN` |
 
-Los dos rojos fallan en 3–4 s con un mensaje explícito, antes del checkout. **En cuanto exista el
-secreto, `gh run rerun <id> --failed` debería ponerlos en verde**, y entonces —y solo entonces— se
-puede empezar a marcar `VERIFICADA`.
+Los dos rojos fallan en el paso `CONTENT_TOKEN presente`, antes del checkout, y se comprueba job por
+job con:
+
+```bash
+gh api repos/MEX-AmatsuMikaboshi/profe_ia/actions/runs/<id>/jobs --jq '.jobs[] | select(.conclusion=="failure") | .name, (.steps[] | select(.conclusion=="failure") | .name)'
+```
+
+Merece la pena mirar **qué paso** falló y no solo que el job está rojo: es lo que distingue «falta el
+secreto» de «se rompió el código», y las dos cosas pintan el mismo aspa en la pestaña Actions.
+**En cuanto exista el secreto, `gh run rerun <id> --failed` debería ponerlos en verde**, y entonces
+—y solo entonces— se puede empezar a marcar `VERIFICADA`.
 
 ---
 
@@ -348,6 +403,10 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
   ninguna falta —el trabajo está—, pero **una de las dos filas lleva el id equivocado**. No se
   corrigió porque no consta cuál de los dos ids es el bueno, y elegir uno sería inventar
   trazabilidad. Quien lo sepa, que lo arregle contra `Plan.md` §F2.
+- **`T-H5-01` no ha ingerido ningún corpus real.** El mecanismo de W1 está completo y probado con
+  fixtures, pero depende de una corrida W0 sobre fuentes reales que todavía no existe:
+  `content/…/source/manifest.yaml` y `source/fragments/` siguen siendo placeholders. Poblarlos con
+  material construido a mano sería fabricar corpus, no ingerirlo.
 - **F5 no ha corrido W0 sobre fuentes reales.** El mecanismo está completo y probado con fixtures;
   `research/` sigue con `selection-manifest.yaml`, `source-scores.yaml`, `conflicts.yaml`,
   `coverage-saturation.yaml` y `license-register.yaml` como placeholders vacíos. Solo
@@ -444,9 +503,9 @@ En este orden.
    verde, ese es el momento de empezar a mover tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`,
    una por una y solo las que su check cubra. Si no está, no lo crees tú: es acción del propietario
    (§8), y seguir trabajando no depende de ello.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **719 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **758 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Arranca F6 · H5** por `T-H5-01`. Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
+4. **Sigue F6 · H5** por `T-H5-02`. Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
    verde y `git push origin main`. Si tocas `content/`, **primero el submódulo** (§8).
