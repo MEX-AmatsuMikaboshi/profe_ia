@@ -28,3 +28,23 @@ export class NoEligibleClaimsError extends AuthoringCoreError {}
  * clasificarlo sería afirmar un derecho que nadie registró.
  */
 export class IncompleteLicenseRecordError extends AuthoringCoreError {}
+
+/**
+ * Modo de acceso fuera del conjunto cerrado (T-H45-02 ← P-I §7.0: «sin crawler
+ * web general»). Si los modos fueran texto libre, el crawler entraría
+ * escribiéndolo.
+ */
+export class GeneralCrawlerForbiddenError extends AuthoringCoreError {}
+
+/** Al candidato le falta parte del registro obligatorio de §7.0. */
+export class IncompleteDiscoveryRecordError extends AuthoringCoreError {}
+
+/** Fuente fuera de la whitelist con un modo distinto de búsqueda abierta. */
+export class SourceNotWhitelistedError extends AuthoringCoreError {}
+
+/**
+ * Todos los candidatos vienen de búsqueda abierta. §7.0 la admite «solo como
+ * complemento», y sin nada de la whitelist no complementa: es la estrategia
+ * principal.
+ */
+export class OpenSearchNotComplementError extends AuthoringCoreError {}
