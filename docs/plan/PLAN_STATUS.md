@@ -101,6 +101,12 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 | T-H45-07 | REQUIRED | HECHA | `packages/authoring-core/src/corpus-authorization.ts`, `test/corpus-authorization.test.ts` (9 pruebas) | 2026-08-15 | «Frontera externa de gobernanza, no autoría docente ordinaria.» **El aprobador decide, no edita**: `assertNoHumanRewrite` compara el manifiesto presentado con el devuelto y falla si difieren, con prueba de que detecta un solo componente que pasa de `autorizado` a `excluido`. Sin esa comprobación la regla sería una declaración de intenciones — y si el humano pudiera reescribir la propuesta, pasaría a ser suya y W0 dejaría de ser autónoma, que es justo lo que el veredicto de autonomía tiene que poder medir. Rechazar exige `rejection_reason_code` **y** evidencia, y un motivo de entre los **cuatro literales**: un motivo libre permitiría rechazar por razones pedagógicas, que es lo que esta frontera excluye. Solo `CORPUS_APPROVER` decide. La decisión devuelve el estado siguiente en vez de mutar nada: persiste `operations.w0_state` y la transición la valida `assertW0Transition`. |
 | T-H45-08 | REQUIRED | HECHA | `packages/authoring-core/src/translingual.ts`, `test/translingual.test.ts` (10 pruebas) | 2026-08-15 | Los seis campos del rastro son obligatorios, y **origen igual a destino se rechaza**: registrarlo como traducido ocultaría que el texto nunca se tradujo. **La atribuibilidad se juzga contra el fragmento original**, y `attributionTarget()` es una función y no un campo elegible justamente para que no exista la opción de juzgar contra la traducción — hacerlo mediría si el traductor fue coherente consigo mismo, no si la fuente dice lo que se le atribuye. El NLI se puede producir como **señal auxiliar** marcada `isVerdict: false`, pero usarlo como **gate falla cerrado** (`CAL-NLI`, H5) **incluso con score 1.0**, con prueba: ningún estrato tiene fiabilidad demostrada, y devolver un booleano convertiría un verificador estadístico en autoridad determinista, que es lo que el Maestro descarta por su nombre. Mientras no haya gate, la revisión exige auditoría humana y no trae ningún campo que parezca un veredicto aprobado (`passed`, `approved`, `entailed`, `verified`), con prueba. |
 
+## F6 — H5 · Ingesta, construcción curricular, autoría y freeze (W1–W5) (1 de 17 tareas)
+
+| Tarea | Etiqueta | Estado | Evidencia | Fecha | Notas |
+|---|---|---|---|---|---|
+| T-H5-01 | REQUIRED | HECHA | `packages/authoring-core/src/ingestion.ts`, `test/ingestion.test.ts` (38 pruebas) | 2026-08-15 | Los seis pasos de §12 «W1» y las seis validaciones de bloqueo de P-III §3.2, con los siete campos de fragmento de §3.3. **El orden de comprobación es el requisito**, como en la clasificación de salida de la pasarela: identidad → legibilidad → contenido. Si la deriva se mirara después, el informe diría «KC sin cobertura» de un documento que no es el que W0 evaluó; hay prueba con deriva **y** falta de cobertura a la vez de que gana `CorpusDriftError`. **La deriva no se resuelve actualizando el hash** —eso borraría que la fuente cambió tras evaluarse— sino reevaluando en W0, y el mensaje lo dice. **W1 no vuelve a clasificar licencias**: los veredictos por uso entran como dato de W0 y **un uso no declarado no está permitido**, así que el caso Calgary sobrevive intacto a la ingesta —el material entra como fuente documental y sus fragmentos no son base expresiva—; colapsarlo en un booleano aquí habría obligado a elegir una de las dos respuestas ciertas. Y como consecuencia queda registrado `kcsWithoutExpressiveBase`: sin ese dato, W3 descubriría en plena autoría que no puede construir reactivos para un KC y el hueco parecería fallo del generador. **No bloquea** porque ninguna autoridad dice que deba. Los IDs se **derivan** de la terna que identifica al fragmento (D-17) en vez de asignarse por contador: hay prueba de que insertar una sección al principio no renumera las demás, que es justo el modo de fallo del correlativo. Legibilidad **sin umbrales**: vacío, U+FFFD —que *es* el decodificador reportando un byte ilegible— y controles C0; una fracción mínima de caracteres legibles habría sido un parámetro que nadie fija. Las causas de bloqueo se reportan **todas**, no la primera. Un componente `excluido` o `pendiente` no se ingiere: lo no decidido no es autorizado. Paso 6 ejecutable: el corpus sale congelado en profundidad, escribir en él lanza y no expone `add`/`update`/`remove`/`patch`/`replace`, con prueba. Entradas que harían pasar un control **por vacío** —sin KC candidatos, sin secciones necesarias, sin familia de notación— se rechazan (D-18). **Ocho mutaciones sembradas y las ocho detectadas**; la séptima destapó que el filtro de permiso documental de la cobertura pasaba por vacío en todos los fixtures, y se añadió el caso que sí lo ejercita. `source/manifest.yaml` sigue siendo placeholder: no hay corpus real que ingerir hasta que W0 corra sobre fuentes reales, y poblarlo con material inventado sería fabricar corpus. |
+
 ## Fases siguientes
 
 | Fase | Hito | Estado | Bloqueo actual |
@@ -109,7 +115,8 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 | F2 | H2 · cierre del gate | EN_CURSO | Las 16 tareas están HECHAS; falta la ejecución en `main` |
 | F4 | H4 · Pasarela de modelo | EN_CURSO | 9 de 12 tareas. Todo lo construible está hecho; `T-H4-09/10/11` esperan credenciales y autorización de gasto del propietario |
 | F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| F6–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
+| F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 1 de 17 tareas. Sigue `T-H5-02` (extracción, Rol A) |
+| F7–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
 
 ## Entorno de ejecución (verificado 2026-08-14)
 
@@ -215,4 +222,24 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   bloqueo— y la revisión guarda `reviewedUpToMxn`, de modo que el dato para una política de rearme ya
   queda registrado cuando el propietario la fije. Se deja visible aquí en vez de inventar la política:
   una regla de rearme fabricada gobernaría gasto real.
+- **D-17 — Derivación del `fragment_id` estable.** P-III §3.3 exige que cada fragmento tenga «ID
+  estable» pero no fija su forma, igual que P-I §7.6 nombraba medidas sin definirlas (D-10). Se
+  deriva de la terna que identifica al fragmento —`componente@version#ubicación`— en vez de asignarse
+  por contador, porque un correlativo cambia al insertar o reordenar secciones y eso es exactamente
+  lo que «estable» excluye; hay prueba de ese modo de fallo. Se expone como función pública
+  (`fragmentId()`) para que W2 recalcule el ancla sin preguntarle a W1: un ID que solo W1 supiera
+  construir no sería un ancla, sería un identificador interno. El hash va en campo aparte porque §3.3
+  lo enumera aparte: el ID identifica la posición, el hash identifica el contenido, y confundirlos
+  haría que corregir una errata cambiara todas las referencias.
+- **D-18 — Las validaciones de bloqueo del corpus exigen declaración explícita, sin valor por
+  omisión.** Tres de las seis validaciones de P-III §3.2 necesitan un dato que la norma da por
+  supuesto: contra qué KC se mide cobertura, qué secciones son necesarias y cuál es la familia de
+  notación autorizada. Con lista vacía, las tres pasarían **por vacío** —el corpus parecería cubrirlo
+  todo, no faltaría ninguna sección y ninguna notación sería incompatible—, así que `ingestCorpus`
+  las rechaza en vez de aceptarlas como «nada que comprobar». Es el mismo criterio que ya costó dos
+  hallazgos: el check del conjunto dorado y la prueba que comparaba un objeto consigo mismo. La
+  incompatibilidad de notación se hace ejecutable exigiendo por componente divergente una aclaración
+  de **convención alternativa** —la clase que W0 ya tiene (`T-H45-03`)—: una diferencia clasificada
+  no es una incompatibilidad, una sin aclarar sí, que es la lectura literal de «contradictorias sin
+  aclaración» aplicada a la notación.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

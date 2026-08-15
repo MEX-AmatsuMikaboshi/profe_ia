@@ -105,3 +105,41 @@ export class NliCalibrationPendingError extends CalibrationPendingError {
     super('CAL-NLI', detail, closesIn);
   }
 }
+
+/**
+ * Los bytes cargados en W1 no son los que W0 evaluó (T-H5-01 ← §12 «W1», paso 2).
+ *
+ * Se lanza **antes** que cualquier validación de contenido: si el artefacto no es
+ * el evaluado, todo lo que se midiera después hablaría de otro documento. Y la
+ * salida no es actualizar el hash —eso borraría el hecho de que la fuente cambió
+ * después de evaluarse— sino reevaluar en W0.
+ */
+export class CorpusDriftError extends AuthoringCoreError {}
+
+/**
+ * Un fragmento no pasa la validación de legibilidad (§12 «W1», paso 5).
+ *
+ * Solo hechos del decodificador, nunca umbrales: vacío, carácter de reemplazo
+ * (que **es** el decodificador reportando un fallo) o control C0 no imprimible.
+ * Una fracción mínima de caracteres legibles sería un parámetro que ninguna
+ * autoridad fija.
+ */
+export class IllegibleFragmentError extends AuthoringCoreError {}
+
+/**
+ * Llegó a W1 un componente que W0 no autorizó (`excluido` o `pendiente`), o que
+ * no aparece en el manifiesto de selección.
+ *
+ * No es un defecto del corpus sino del pipeline: ingerir un `pendiente` trataría
+ * lo no decidido como autorizado.
+ */
+export class UnauthorizedComponentError extends AuthoringCoreError {}
+
+/**
+ * A la entrada de W1 le falta algo sin lo cual una validación pasaría **por
+ * vacío**: sin KC candidatos no hay cobertura que comprobar y sin secciones
+ * necesarias declaradas no hay ausencia que detectar.
+ *
+ * Un control que no puede fallar es peor que no tenerlo.
+ */
+export class IncompleteIngestionInputError extends AuthoringCoreError {}
