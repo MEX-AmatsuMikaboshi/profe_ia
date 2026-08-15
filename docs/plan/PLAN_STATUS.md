@@ -87,6 +87,12 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 | T-H4-11 | BENCHMARK BENCH-02 | BLOQUEADA(gasto y credenciales del propietario) | — | — | Igual que `T-H4-10`, y además exige generador y crítico de **familias distintas**, es decir credenciales de dos proveedores. |
 | T-H4-12 | REQUIRED | HECHA | `packages/model-gateway/src/degraded.ts`, `test/degraded.test.ts` (10 pruebas) | 2026-08-15 | Las cuatro clases congeladas son las literales del §8.6. El diseño lo fija el cuarto uso que la norma le da al perfil —**aislar si el fallo viene del modelo o del núcleo**—: si el modo degradado rellenara un hueco, dejaría de servir como control. Por eso **un activo congelado que falta lanza** en vez de devolver texto de relleno, con prueba: un relleno haría pasar por «el núcleo respondió» algo que no estaba. Igual con las plantillas: un hueco sin valor lanza, porque `«El paso {linea} no está justificado»` con el hueco vacío es una frase que el alumno leería como completa. El perfil **no expone ninguna vía de generar** (`generate`/`complete`/`call`/`send`/`execute`), con prueba. Es conmutable en ambos sentidos, pero **no conmuta solo ante un fallo del proveedor** —no hay `autoFallback` ni equivalente, con prueba—: caer automáticamente a degradado escondería el fallo justo cuando el perfil existe para poder atribuirlo. Los activos llevan `freezeVersion` para que la comparación técnica sea trazable. |
 
+## F5 — H4.5 · Investigación y curación de fuentes (W0) (1 de 8 tareas)
+
+| Tarea | Etiqueta | Estado | Evidencia | Fecha | Notas |
+|---|---|---|---|---|---|
+| T-H45-01 | REQUIRED | HECHA | `packages/authoring-core/src/w0-state.ts`, `test/w0-state.test.ts` (14 pruebas) | 2026-08-15 | `operations.w0_state` ya tenía los trece estados con un `CHECK`, pero **un `CHECK` de pertenencia permite cualquier orden**: aceptaba saltar de `solicitud_curso` a `corpus_autorizado` sin haber descubierto una sola fuente. Lo que aporta esta tarea son las transiciones, y **ninguna es inventada**. El flujo principal es el literal de `Plan.md`; el ciclo de rechazo es el literal del Maestro (`corpus_rechazado → W0_reinvestigacion → propuesta_corpus`), con prueba explícita de que la reinvestigación **no** vuelve a `fuentes_descubiertas` —eso habría sido una rama inventada—; y el cierre en fallo sale del paso 12 de §12, alcanzable tras medir cobertura y tras una reinvestigación agotada. **No hay comodín**: hay una prueba que recorre las 13 × 13 combinaciones y comprueba que toda transición no declarada falla. Un estado terminal no transita a ningún sitio, y hay prueba de que **el fallo no se puede disfrazar de avance**: desde `failed_no_authorizable_corpus` no se llega ni a `propuesta_corpus` ni a `W1_ingesta`. Un rechazo **sin `rejection_reason_code` no se registra** —«la causa se registra mediante código y evidencia»—, porque un rechazo anónimo dejaría a la reinvestigación sin saber qué corregir. Una prueba lee la migración y comprueba que los trece estados del código son los del `CHECK`: si se separan, uno de los dos miente. |
+
 ## Fases siguientes
 
 | Fase | Hito | Estado | Bloqueo actual |
@@ -94,7 +100,8 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 | F3 | H3 · Entorno local | EN_CURSO | 4 de 5 tareas; `T-H3-05` espera la primera operación instrumentable |
 | F2 | H2 · cierre del gate | EN_CURSO | Las 16 tareas están HECHAS; falta la ejecución en `main` |
 | F4 | H4 · Pasarela de modelo | EN_CURSO | 9 de 12 tareas. Todo lo construible está hecho; `T-H4-09/10/11` esperan credenciales y autorización de gasto del propietario |
-| F5–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
+| F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | 1 de 8 tareas; `T-H45-03` (sistema formal objetivo y clasificación de diferencias) es la siguiente construible |
+| F6–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
 
 ## Entorno de ejecución (verificado 2026-08-14)
 

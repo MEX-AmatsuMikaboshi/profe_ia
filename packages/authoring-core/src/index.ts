@@ -2,3 +2,5 @@
 // F0/H0: esqueleto sin lógica. Ver docs/plan/PLAN_STATUS.md.
 
 export const PACKAGE_NAME = "@profesor-ia/authoring-core" as const;
+
+export * from './w0-state.js';
