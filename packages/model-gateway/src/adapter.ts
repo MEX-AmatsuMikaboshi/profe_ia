@@ -1,6 +1,7 @@
 import type { ModelBinding, ModelOperation } from '@profesor-ia/contracts';
 import type { AuthorizedParameters } from './capabilities.js';
 import type { ProfileCredential } from './credentials.js';
+import type { ProviderOutcome } from './output.js';
 
 /**
  * Adaptadores **propios** (T-H4-01 ← Maestro §«Pasarela de modelo», CONGELADA:
@@ -51,4 +52,15 @@ export interface ProviderAdapter {
   /** Debe coincidir con `binding.provider`. */
   readonly provider: string;
   buildRequest(input: BuildRequestInput): ProviderRequest;
+  /**
+   * Traduce la respuesta del proveedor al resultado normalizado (T-H4-03).
+   *
+   * El adaptador **solo traduce**: dice qué pasó según el proveedor —salida,
+   * truncamiento, rechazo, error— y nunca decide si la salida es válida. Esa
+   * decisión es de `validateModelOutput`, que es independiente del proveedor.
+   *
+   * Ante una forma o un motivo de parada que no reconoce, lanza
+   * `UnknownProviderContractError` en vez de suponer que todo fue bien.
+   */
+  parseResponse(response: ProviderResponse): ProviderOutcome;
 }

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { z } from 'zod';
 import { ModelBinding, ModelOperation, ModelProfile } from '@profesor-ia/contracts';
 import type { ModelProfile as Profile } from '@profesor-ia/contracts';
 import {
@@ -24,12 +25,23 @@ import {
   type Transport,
 } from '../src/index.js';
 
+/** Respuesta de Anthropic con el motivo de parada y el texto pedidos. */
+function respuestaAnthropic(stopReason: string, texto: string) {
+  return {
+    status: 200,
+    body: JSON.stringify({ stop_reason: stopReason, content: [{ type: 'text', text: texto }] }),
+  };
+}
+
 /** Transporte que registra lo enviado; las pruebas no tocan la red. */
-function recordingTransport(): { transport: Transport; sent: ProviderRequest[] } {
+function recordingTransport(respuesta?: { status: number; body: string }): {
+  transport: Transport;
+  sent: ProviderRequest[];
+} {
   const sent: ProviderRequest[] = [];
   const transport: Transport = async (request) => {
     sent.push(request);
-    return { status: 200, body: '{}' };
+    return respuesta ?? { status: 200, body: '{}' };
   };
   return { transport, sent };
 }
@@ -71,8 +83,9 @@ function resolverDeAmbos(vistos?: Profile[]) {
 function gatewayDeSesion(
   registrations: readonly BindingRegistration[],
   vistos?: Profile[],
+  respuesta?: { status: number; body: string },
 ): { gateway: ModelGateway; sent: ProviderRequest[] } {
-  const { transport, sent } = recordingTransport();
+  const { transport, sent } = recordingTransport(respuesta);
   const gateway = new ModelGateway({
     profile: 'SESION',
     registrations,
@@ -296,11 +309,12 @@ describe('capacidades por binding (T-H4-02 ← DEC-MODEL-BINDING-001)', () => {
     ]);
 
     await expect(
-      gateway.send({
+      gateway.execute({
         operation: 'explain_block',
         instructions: 'i',
         input: 'e',
         parameters: { top_p: 0.9 },
+        schema: z.unknown(),
       }),
     ).rejects.toThrow(UnsupportedParameterError);
     expect(sent).toEqual([]);
@@ -390,19 +404,25 @@ describe('capacidades por binding (T-H4-02 ← DEC-MODEL-BINDING-001)', () => {
 });
 
 describe('envío por transporte inyectado', () => {
-  it('usa el transporte y no interpreta la respuesta (eso es T-H4-03)', async () => {
-    const { gateway, sent } = gatewayDeSesion([
-      { binding: binding(), operations: ['explain_block'] },
-    ]);
+  it('usa el transporte y valida la salida antes de devolverla', async () => {
+    const { gateway, sent } = gatewayDeSesion(
+      [{ binding: binding(), operations: ['explain_block'] }],
+      undefined,
+      respuestaAnthropic('end_turn', '{"ok":true}'),
+    );
 
-    const { request, response } = await gateway.send({
+    const resultado = await gateway.execute({
       operation: 'explain_block',
       instructions: 'i',
       input: 'e',
+      schema: z.object({ ok: z.boolean() }),
     });
 
-    expect(sent).toEqual([request]);
-    expect(response).toEqual({ status: 200, body: '{}' });
+    expect(sent).toHaveLength(1);
+    expect(resultado.classification).toBe('valid');
+    if (resultado.classification === 'valid') {
+      expect(resultado.data).toEqual({ ok: true });
+    }
   });
 
   it('una operación no autorizada no llega a tocar el transporte', async () => {
@@ -411,7 +431,12 @@ describe('envío por transporte inyectado', () => {
     ]);
 
     await expect(
-      gateway.send({ operation: 'draft_feedback', instructions: 'i', input: 'e' }),
+      gateway.execute({
+        operation: 'draft_feedback',
+        instructions: 'i',
+        input: 'e',
+        schema: z.unknown(),
+      }),
     ).rejects.toThrow(OperationNotAuthorizedForProfileError);
     expect(sent).toEqual([]);
   });

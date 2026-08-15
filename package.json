@@ -23,6 +23,7 @@
     "ci:logic:no-net": "vitest run --project unit packages/logic-core/test/isolation.test.ts",
     "ci:logic:mutation": "stryker run",
     "ci:gateway:fail-closed": "vitest run --project unit packages/model-gateway/test/gateway.test.ts",
+    "ci:gateway:contracts": "vitest run --project unit packages/model-gateway/test/output.test.ts",
     "logic:golden:generate": "node scripts/logic/generate-golden.mjs",
     "ci:db:testcontainers": "vitest run --project db",
     "ci:db:negative": "vitest run --project db",

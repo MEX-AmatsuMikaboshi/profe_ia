@@ -16,7 +16,18 @@ export {
   RejectedParameterError,
   UnpinnedBindingError,
   ContradictoryCapabilitiesError,
+  UnknownProviderContractError,
 } from './errors.js';
+
+export {
+  canonicalizeEnum,
+  validateModelOutput,
+  type CanonicalEnumValue,
+  type CanonicalizeEnumOptions,
+  type ProviderOutcome,
+  type ValidatedOutput,
+  type ValidateOutputInput,
+} from './output.js';
 
 export {
   assertBindingUsable,
@@ -40,5 +51,6 @@ export {
   ModelGateway,
   type BindingRegistration,
   type DispatchInput,
+  type ExecuteInput,
   type ModelGatewayOptions,
 } from './gateway.js';

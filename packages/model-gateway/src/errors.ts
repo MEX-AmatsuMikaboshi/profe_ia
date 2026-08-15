@@ -50,3 +50,15 @@ export class UnpinnedBindingError extends ModelGatewayError {}
 
 /** El binding declara un parámetro como soportado y rechazado a la vez. */
 export class ContradictoryCapabilitiesError extends ModelGatewayError {}
+
+/**
+ * El proveedor devolvió una forma o un motivo de parada que el adaptador no
+ * reconoce (T-H4-03 ← P-II §8.4: el flujo falla cerrado ante «contrato
+ * desconocido»).
+ *
+ * Se lanza en vez de clasificarlo como una de las cinco causas: la lista de
+ * `ModelOutputClassification` es cerrada, y meter ahí lo desconocido lo haría
+ * indistinguible de una causa real. Un motivo de parada nuevo del proveedor es
+ * un hallazgo que hay que ver, no un caso que absorber en silencio.
+ */
+export class UnknownProviderContractError extends ModelGatewayError {}

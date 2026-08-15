@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "@profesor-ia/contracts": "workspace:*",
-    "@profesor-ia/security-policy": "workspace:*"
+    "@profesor-ia/security-policy": "workspace:*",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "typescript": "5.9.3"

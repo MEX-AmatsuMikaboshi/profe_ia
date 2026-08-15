@@ -1,7 +1,9 @@
 import type { ModelBinding, ModelOperation, ModelProfile } from '@profesor-ia/contracts';
+import type { ZodType } from 'zod';
 import type { BuildRequestInput, ProviderAdapter, ProviderRequest, Transport } from './adapter.js';
 import { assertBindingUsable, authorizeParameters, NO_PARAMETERS } from './capabilities.js';
 import { ProfileCredential, type CredentialResolver } from './credentials.js';
+import { validateModelOutput, type ValidatedOutput } from './output.js';
 import {
   AmbiguousBindingError,
   OperationNotAuthorizedForProfileError,
@@ -49,6 +51,13 @@ export interface DispatchInput {
    * no enviar ninguno, que es el caso por omisión.
    */
   readonly parameters?: Readonly<Record<string, unknown>>;
+}
+
+export interface ExecuteInput<T> extends DispatchInput {
+  /** Esquema local contra el que se valida la salida (T-H4-03). Obligatorio. */
+  readonly schema: ZodType<T>;
+  /** Intento, para distinguir el reintento único que permite BENCH-01. */
+  readonly attempt?: number;
 }
 
 export class ModelGateway {
@@ -154,16 +163,25 @@ export class ModelGateway {
   }
 
   /**
-   * Envía por el transporte inyectado y devuelve la respuesta **cruda**.
+   * Envía, traduce con el adaptador y **valida localmente** (T-H4-03).
    *
-   * No la interpreta: clasificar la salida en
-   * `valid|schema_violation|truncated|refusal|provider_error` es T-H4-03, y
-   * hacerlo aquí a medias dejaría pasar salida sin validación local, que es
-   * justo lo que P-II §8.4 prohíbe.
+   * No existe un camino que devuelva la salida cruda del proveedor: P-II §8.4
+   * dice que la salida estructurada del proveedor no es evidencia suficiente de
+   * validez, así que exponer un `send()` sin validar sería precisamente el
+   * agujero que esa norma cierra. Los datos solo son alcanzables tras estrechar
+   * por `classification === 'valid'`.
    */
-  async send(input: DispatchInput): Promise<{ request: ProviderRequest; response: unknown }> {
+  async execute<T>(input: ExecuteInput<T>): Promise<ValidatedOutput<T>> {
+    const { binding, adapter } = this.resolve(input.operation);
     const request = this.buildRequest(input);
     const response = await this.#transport(request);
-    return { request, response };
+
+    return validateModelOutput({
+      operation: input.operation,
+      bindingId: binding.bindingId,
+      outcome: adapter.parseResponse(response),
+      schema: input.schema,
+      attempt: input.attempt ?? 1,
+    });
   }
 }

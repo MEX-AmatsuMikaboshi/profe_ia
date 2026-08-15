@@ -1,4 +1,11 @@
-import type { BuildRequestInput, ProviderAdapter, ProviderRequest } from '../adapter.js';
+import type {
+  BuildRequestInput,
+  ProviderAdapter,
+  ProviderRequest,
+  ProviderResponse,
+} from '../adapter.js';
+import { UnknownProviderContractError } from '../errors.js';
+import type { ProviderOutcome } from '../output.js';
 
 /**
  * Adaptador propio para OpenAI (T-H4-01).
@@ -42,4 +49,92 @@ export const openaiAdapter: ProviderAdapter = {
       }),
     };
   },
+
+  /**
+   * Nótese que **no** comparte lógica con el adaptador de Anthropic: aquí el
+   * truncamiento se lee de `status: 'incomplete'` + `incomplete_details.reason`
+   * y el rechazo de un bloque `refusal`, no de un único `stop_reason`. Es la
+   * misma razón por la que hay dos adaptadores y no uno parametrizado.
+   */
+  parseResponse(response: ProviderResponse): ProviderOutcome {
+    if (response.status < 200 || response.status >= 300) {
+      return { kind: 'provider_error', status: response.status, body: response.body };
+    }
+
+    let cuerpo: unknown;
+    try {
+      cuerpo = JSON.parse(response.body);
+    } catch {
+      throw new UnknownProviderContractError(
+        `OpenAI devolvió 2xx con un cuerpo que no es JSON. No se supone que fue bien.`,
+      );
+    }
+
+    const estado = leerCampo(cuerpo, 'status');
+    const rechazo = primerRechazo(cuerpo);
+    if (rechazo !== null) {
+      return { kind: 'refusal', text: rechazo, rawStopReason: 'refusal' };
+    }
+
+    if (estado === 'completed') {
+      return { kind: 'output', text: concatenarTexto(cuerpo), rawStopReason: 'completed' };
+    }
+
+    if (estado === 'incomplete') {
+      const detalles = leerCampo(cuerpo, 'incomplete_details');
+      const motivo =
+        typeof detalles === 'object' && detalles !== null
+          ? (detalles as { reason?: unknown }).reason
+          : undefined;
+
+      if (motivo === 'max_output_tokens') {
+        return {
+          kind: 'truncated',
+          text: concatenarTexto(cuerpo),
+          rawStopReason: `incomplete:${motivo}`,
+        };
+      }
+      throw new UnknownProviderContractError(
+        `OpenAI devolvió status incomplete con motivo ${JSON.stringify(motivo)}, que este ` +
+          `adaptador no reconoce (P-II §8.4).`,
+      );
+    }
+
+    throw new UnknownProviderContractError(
+      `OpenAI devolvió status ${JSON.stringify(estado)}, que este adaptador no reconoce. ` +
+        `Un estado nuevo es un hallazgo que hay que ver, no un caso que absorber (P-II §8.4).`,
+    );
+  },
 };
+
+function leerCampo(cuerpo: unknown, campo: string): unknown {
+  if (typeof cuerpo !== 'object' || cuerpo === null) return undefined;
+  return (cuerpo as Record<string, unknown>)[campo];
+}
+
+function bloquesDeContenido(cuerpo: unknown): unknown[] {
+  const output = leerCampo(cuerpo, 'output');
+  if (!Array.isArray(output)) return [];
+
+  return output.flatMap((item) => {
+    const content = leerCampo(item, 'content');
+    return Array.isArray(content) ? content : [];
+  });
+}
+
+function primerRechazo(cuerpo: unknown): string | null {
+  for (const bloque of bloquesDeContenido(cuerpo)) {
+    const { type, refusal } = (bloque ?? {}) as { type?: unknown; refusal?: unknown };
+    if (type === 'refusal' && typeof refusal === 'string') return refusal;
+  }
+  return null;
+}
+
+function concatenarTexto(cuerpo: unknown): string {
+  return bloquesDeContenido(cuerpo)
+    .map((bloque) => {
+      const { type, text } = (bloque ?? {}) as { type?: unknown; text?: unknown };
+      return type === 'output_text' && typeof text === 'string' ? text : '';
+    })
+    .join('');
+}

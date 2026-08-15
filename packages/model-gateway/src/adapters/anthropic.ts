@@ -1,4 +1,11 @@
-import type { BuildRequestInput, ProviderAdapter, ProviderRequest } from '../adapter.js';
+import type {
+  BuildRequestInput,
+  ProviderAdapter,
+  ProviderRequest,
+  ProviderResponse,
+} from '../adapter.js';
+import { UnknownProviderContractError } from '../errors.js';
+import type { ProviderOutcome } from '../output.js';
 
 /**
  * Adaptador propio para Anthropic (T-H4-01).
@@ -51,4 +58,58 @@ export const anthropicAdapter: ProviderAdapter = {
       }),
     };
   },
+
+  parseResponse(response: ProviderResponse): ProviderOutcome {
+    if (response.status < 200 || response.status >= 300) {
+      return { kind: 'provider_error', status: response.status, body: response.body };
+    }
+
+    let cuerpo: unknown;
+    try {
+      cuerpo = JSON.parse(response.body);
+    } catch {
+      throw new UnknownProviderContractError(
+        `Anthropic devolvió 2xx con un cuerpo que no es JSON. No se supone que fue bien.`,
+      );
+    }
+
+    const stopReason = leerStopReason(cuerpo);
+    const texto = concatenarTexto(cuerpo);
+
+    switch (stopReason) {
+      case 'end_turn':
+      case 'stop_sequence':
+        return { kind: 'output', text: texto, rawStopReason: stopReason };
+      case 'max_tokens':
+        return { kind: 'truncated', text: texto, rawStopReason: stopReason };
+      case 'refusal':
+        return { kind: 'refusal', text: texto, rawStopReason: stopReason };
+      default:
+        throw new UnknownProviderContractError(
+          `Anthropic devolvió el motivo de parada ${JSON.stringify(stopReason)}, que este ` +
+            `adaptador no reconoce. Un motivo nuevo es un hallazgo que hay que ver, no un caso ` +
+            `que absorber (P-II §8.4).`,
+        );
+    }
+  },
 };
+
+function leerStopReason(cuerpo: unknown): unknown {
+  if (typeof cuerpo !== 'object' || cuerpo === null) return undefined;
+  return (cuerpo as { stop_reason?: unknown }).stop_reason;
+}
+
+/** Concatena los bloques de texto; los demás tipos de bloque no son texto. */
+function concatenarTexto(cuerpo: unknown): string {
+  if (typeof cuerpo !== 'object' || cuerpo === null) return '';
+  const content = (cuerpo as { content?: unknown }).content;
+  if (!Array.isArray(content)) return '';
+
+  return content
+    .map((bloque) => {
+      if (typeof bloque !== 'object' || bloque === null) return '';
+      const { type, text } = bloque as { type?: unknown; text?: unknown };
+      return type === 'text' && typeof text === 'string' ? text : '';
+    })
+    .join('');
+}

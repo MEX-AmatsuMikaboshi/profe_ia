@@ -86,6 +86,11 @@ jobs:
       # `arch` porque no necesita el submódulo de contenido.
       - name: ci:gateway:fail-closed
         run: pnpm run ci:gateway:fail-closed
+      # Contract tests equivalentes por adaptador (P-II §8.4): una misma
+      # operación conserva sus invariantes aunque cambien las peculiaridades del
+      # proveedor.
+      - name: ci:gateway:contracts
+        run: pnpm run ci:gateway:contracts
 
   logic:
     # Núcleo lógico (F2/H2): el gate exige 0 falsos positivos y 0 falsos
