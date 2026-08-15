@@ -254,10 +254,10 @@ function usosPermitidos(
 /**
  * Ejecuta W1 sobre el material cargado y devuelve el corpus ingerido, ya sellado.
  *
- * Lanza —nunca devuelve un corpus degradado— en cuatro situaciones distintas y
- * con errores distintos, porque las causas son distintas: entrada incompleta,
- * componente no autorizado por W0, deriva de identidad, ilegibilidad, y las seis
- * de P-III §3.2 agrupadas en `CorpusBlockedError`.
+ * Lanza —nunca devuelve un corpus degradado— con **cinco** errores distintos,
+ * porque las causas son distintas y colapsarlas escondería cuál ocurrió: entrada
+ * incompleta, componente no autorizado por W0, deriva de identidad, ilegibilidad,
+ * y las seis de P-III §3.2 agrupadas en `CorpusBlockedError`.
  */
 export function ingestCorpus(input: IngestionInput): IngestedCorpus {
   assertEntradaCompleta(input);
@@ -284,6 +284,14 @@ export function ingestCorpus(input: IngestionInput): IngestedCorpus {
       throw new UnauthorizedComponentError(
         `El componente ${componente.sourceComponent} está ${entrada.status} en el manifiesto de W0 ` +
           `y no se ingiere. Ingerir un pendiente trataría lo no decidido como autorizado.`,
+      );
+    }
+
+    if (componente.sourceVersion !== entrada.sourceVersion) {
+      throw new CorpusDriftError(
+        `El componente ${componente.sourceComponent} se carga como ${componente.sourceVersion} y W0 ` +
+          `evaluó ${entrada.sourceVersion}. La etiqueta de versión viaja dentro del fragment_id, así ` +
+          `que aceptarla haría que las anclas citaran una versión que nadie evaluó.`,
       );
     }
 

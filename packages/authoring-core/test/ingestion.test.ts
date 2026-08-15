@@ -167,6 +167,17 @@ describe('identidad con el snapshot de W0 y bloqueo ante deriva', () => {
     expect(() => ingestCorpus(derivado)).toThrow(/reevaluar en W0/);
   });
 
+  it('la etiqueta de versión también es identidad, no solo los bytes', () => {
+    // Con los mismos bytes pero otra versión declarada, el fragment_id citaría
+    // una versión que W0 nunca evaluó y el ancla apuntaría a un fantasma.
+    const remarcado = entrada({
+      components: [componente({ sourceVersion: 'Spring 2026' })],
+    });
+
+    expect(() => ingestCorpus(remarcado)).toThrow(CorpusDriftError);
+    expect(() => ingestCorpus(remarcado)).toThrow(/versión que nadie evaluó/);
+  });
+
   it('la deriva se detecta antes que cualquier validación de contenido', () => {
     // El mismo material con deriva **y** sin cobertura de KC. Si el orden fuera el
     // contrario, el informe hablaría de la cobertura de un documento que ni

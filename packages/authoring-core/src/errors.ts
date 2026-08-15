@@ -107,7 +107,10 @@ export class NliCalibrationPendingError extends CalibrationPendingError {
 }
 
 /**
- * Los bytes cargados en W1 no son los que W0 evaluó (T-H5-01 ← §12 «W1», paso 2).
+ * Lo cargado en W1 no tiene la identidad que W0 evaluó (T-H5-01 ← §12 «W1»,
+ * paso 2). Cubre las dos mitades de esa identidad: los **bytes** —el SHA-256 no
+ * reproduce el snapshot— y la **etiqueta de versión**, que viaja dentro del
+ * `fragment_id` y haría que las anclas citaran una versión que nadie evaluó.
  *
  * Se lanza **antes** que cualquier validación de contenido: si el artefacto no es
  * el evaluado, todo lo que se midiera después hablaría de otro documento. Y la
