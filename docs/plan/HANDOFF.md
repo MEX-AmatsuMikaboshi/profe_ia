@@ -52,10 +52,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, esperan operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **3 de 17.** `T-H5-01/02/03` cerradas; sigue `T-H5-04` |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **4 de 17.** `T-H5-01…04` cerradas; sigue `T-H5-05` |
 | F7–F16 | No empezadas |
 
-Van **55 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **56 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas:
 [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
@@ -65,21 +65,27 @@ No hay acta de `H4` ni de `H4.5` todavía: ninguna de las dos fases está en con
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H5-04` — objetivos, secuencia y política pedagógica (Rol B)
+### La tarea siguiente: `T-H5-05` — W3 generación (CRITICAL, camino crítico)
 
-F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las tres primeras
-están cerradas (§3.a), así que sigue `T-H5-04`: objetivos observables, secuencia, perfil pedagógico
-por KC, matriz de activación de estrategias, política de ayudas y *fading* contingente, plan de
-retrieval/spacing compatible con el calendario y plantillas de sesión y de autoexplicación/feedback,
-**todo versionado en `pedagogy/`**. El catálogo de estrategias de P-I §5.10 es de **doce** y cerrado:
-no se crean categorías nuevas con autoridad.
+F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las cuatro primeras
+están cerradas (§3.a), así que sigue `T-H5-05`, que es la más grande de la fase y encadena: Rol C sin
+solución autoritativa → validez determinista **en el orden congelado tras `BENCH-04`** → soluciones y
+certificados re-verificados por `logic-core` hacia `solutions-private/` → complejidad → duplicados e
+isomorfismos → pistas (Rol D) → crítica (Rol E, familia distinta) → filtros → separación física de
+reservas.
 
-Dos piezas de esta sesión que conviene usar en vez de rehacer:
+**Ojo con el orden**: `freezeWinningOrder()` de `proof-search` falla cerrado precisamente aquí. La
+preferencia inicial a *benchmarkear* es `prefiltro semántico → proof search`, pero el ganador lo
+decide `BENCH-04` y no se puede cablear.
+
+Tres piezas de esta sesión que conviene usar en vez de rehacer:
 
 - **`KC_CATALOG`** (`authoring-core/src/kc-map.ts`) trae los dieciocho KC con sus dependencias
-  tipadas y sus `rule_id` derivados del cálculo. El perfil pedagógico por KC se cuelga de ahí.
+  tipadas y sus `rule_id` derivados del cálculo.
 - **`crossSetEdges()`** ya enumera FORMAL y POLITICA_CONTENIDO por separado, que es lo que
   `T-H5-12` necesita para justificar las aristas cruzadas que queden.
+- **`STRATEGY_CATALOG` y `toDecisionStrategy()`** (`pedagogy.ts`) fijan el catálogo de doce y fallan
+  cerrado en las dos entradas sin miembro de enum. Las pistas de Rol D se apoyan en esa política.
 
 Cuatro cosas más que ya están puestas y conviene usar en vez de rehacer:
 
@@ -101,6 +107,28 @@ Lo que queda abierto y **no** bloquea a F6:
 ---
 
 ## 3.a Lo cerrado en esta sesión (15-08, tercera)
+
+### F6 · H5 — `T-H5-04`, política pedagógica
+
+`pedagogy.ts`. Lo que se rompe fácil si no se conoce:
+
+- **El catálogo de estrategias es de doce y el enum de decisión de diez, y la asimetría es del
+  Maestro.** §5.10 enumera doce acciones; P-II §7.2.1 da —con las palabras «por ejemplo»— un
+  contrato con diez. **No se arregla inventando dos miembros de enum**: cada entrada sin miembro
+  declara por dónde se expresa, y `toDecisionStrategy()` falla cerrado al pedírselo. `fading` se
+  expresa bajando `assistanceLevel` —el *fading* es literalmente retirar ayuda— y `feedback` acompaña
+  a la decisión en vez de competir con ella. Devolver «la más parecida» haría que la traza registrara
+  que se dio ayuda justo en el paso en que se estaba retirando.
+- **Ninguna regla de activación puede dispararse en `MEASUREMENT_MODE`.** §8.3.1 pone el modo por
+  encima de la selección de estrategia; una regla que se activara midiendo se vería como una ayuda
+  oportuna justo donde la medición deja de valer.
+- **Los pasos de patrón que no son estrategias se registran como acción del motor.** Inventarle una
+  estrategia a «volver al KC objetivo» afirmaría una decisión pedagógica donde solo hay una
+  transición.
+- **`fading` por reloj exige la evidencia de preinscripción que la norma exige**; sin ella mediría
+  cuánto aguanta el alumno sin ayuda, no cuánto aprendió.
+- **La revisión espaciada no consume reserva de medición**: gastarla consumiría el material con el
+  que después se mide la retención.
 
 ### F6 · H5 — `T-H5-02`, W2 extracción, y `T-H5-03`, mapa de KC
 
@@ -301,7 +329,7 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **805 pruebas**: 678 unitarias + 127 contra
+Estado en el checkpoint: **todo en verde en local**. **837 pruebas**: 710 unitarias + 127 contra
 PostgreSQL 17 real. Empezó esta sesión en 719.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
@@ -535,7 +563,7 @@ En este orden.
    verde, ese es el momento de empezar a mover tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`,
    una por una y solo las que su check cubra. Si no está, no lo crees tú: es acción del propietario
    (§8), y seguir trabajando no depende de ello.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **805 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **837 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
 4. **Sigue F6 · H5** por `T-H5-02`. Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
