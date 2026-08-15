@@ -13,3 +13,4 @@ export * from './selection-manifest.js';
 export * from './corpus-authorization.js';
 export * from './translingual.js';
 export * from './ingestion.js';
+export * from './extraction.js';

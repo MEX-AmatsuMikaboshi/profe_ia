@@ -146,3 +146,39 @@ export class UnauthorizedComponentError extends AuthoringCoreError {}
  * Un control que no puede fallar es peor que no tenerlo.
  */
 export class IncompleteIngestionInputError extends AuthoringCoreError {}
+
+/**
+ * Un elemento extraído no ancla a un fragmento real del corpus ingerido
+ * (T-H5-02 ← P-I §7.11: «el anclaje estructural es determinista»).
+ *
+ * Cubre las tres formas de no anclar: citar un fragmento que no existe, citarlo
+ * con un hash que ya no es el suyo —el ancla envejeció y apunta a otro texto— y
+ * citar como autoridad un fragmento que W0 no permite usar como fuente
+ * documental.
+ */
+export class UnanchoredExtractionError extends AuthoringCoreError {}
+
+/**
+ * El claim no cumple lo que su propio tipo afirma (T-H5-02 ← P-I §7.11).
+ *
+ * Los tres tipos no son etiquetas decorativas: `cross_source_consensus` afirma
+ * que varias fuentes coinciden y `system_inference` afirma que **no** lo dice
+ * una fuente sino el sistema. Un tipo que no se comprueba deja de significar
+ * nada y contamina el denominador de atribución.
+ */
+export class ClaimTypeViolationError extends AuthoringCoreError {}
+
+/**
+ * Dos elementos comparten identificador. La cadena
+ * `fuente → fragmento → claim → decisión curricular → artefacto → actividad`
+ * se recorre por id: con uno repetido, el recorrido se bifurca y deja de
+ * reconstruir una sola pieza.
+ */
+export class DuplicateExtractionIdError extends AuthoringCoreError {}
+
+/**
+ * A la extracción le falta algo que la haría afirmar más de lo que tiene: una
+ * extracción sin claims, o una decisión curricular sin soporte o sin
+ * justificación.
+ */
+export class IncompleteExtractionError extends AuthoringCoreError {}
