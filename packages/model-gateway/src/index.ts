@@ -12,7 +12,18 @@ export {
   AmbiguousBindingError,
   MissingCredentialError,
   UnknownProviderError,
+  UnsupportedParameterError,
+  RejectedParameterError,
+  UnpinnedBindingError,
+  ContradictoryCapabilitiesError,
 } from './errors.js';
+
+export {
+  assertBindingUsable,
+  authorizeParameters,
+  NO_PARAMETERS,
+  type AuthorizedParameters,
+} from './capabilities.js';
 
 export { MODEL_OPERATIONS, MODEL_PROFILES, isModelOperation } from './operations.js';
 export { ProfileCredential, type CredentialResolver } from './credentials.js';

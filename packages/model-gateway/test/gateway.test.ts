@@ -3,6 +3,10 @@ import { ModelBinding, ModelOperation, ModelProfile } from '@profesor-ia/contrac
 import type { ModelProfile as Profile } from '@profesor-ia/contracts';
 import {
   AmbiguousBindingError,
+  ContradictoryCapabilitiesError,
+  RejectedParameterError,
+  UnpinnedBindingError,
+  UnsupportedParameterError,
   ANTHROPIC_PROVIDER,
   anthropicAdapter,
   MODEL_OPERATIONS,
@@ -41,6 +45,8 @@ function baseBinding() {
     provider: ANTHROPIC_PROVIDER,
     modelId: 'modelo-declarado-por-el-binding',
     endpoint: 'https://proveedor.example/v1/messages',
+    // Snapshot fechado: sin él haría falta huella de comportamiento (T-H4-02).
+    snapshot: 'snapshot-declarado-por-el-binding',
     capabilities: {
       supportedParameters: [],
       rejectedParameters: [],
@@ -253,6 +259,133 @@ describe('adaptadores propios, sin plantilla universal (P-II §8.1)', () => {
     });
 
     expect(() => gateway.resolve('explain_block')).toThrow(UnknownProviderError);
+  });
+});
+
+describe('capacidades por binding (T-H4-02 ← DEC-MODEL-BINDING-001)', () => {
+  const conParametros = () =>
+    binding({
+      capabilities: {
+        ...baseBinding().capabilities,
+        supportedParameters: ['temperature', 'max_tokens'],
+        rejectedParameters: ['top_k'],
+      },
+    });
+
+  it('solo envía parámetros declarados compatibles', () => {
+    const { gateway } = gatewayDeSesion([
+      { binding: conParametros(), operations: ['explain_block'] },
+    ]);
+
+    const body = JSON.parse(
+      gateway.buildRequest({
+        operation: 'explain_block',
+        instructions: 'i',
+        input: 'e',
+        parameters: { temperature: 0, max_tokens: 128 },
+      }).body,
+    ) as Record<string, unknown>;
+
+    expect(body['temperature']).toBe(0);
+    expect(body['max_tokens']).toBe(128);
+  });
+
+  it('un parámetro no declarado falla localmente, sin salir a la red', async () => {
+    const { gateway, sent } = gatewayDeSesion([
+      { binding: conParametros(), operations: ['explain_block'] },
+    ]);
+
+    await expect(
+      gateway.send({
+        operation: 'explain_block',
+        instructions: 'i',
+        input: 'e',
+        parameters: { top_p: 0.9 },
+      }),
+    ).rejects.toThrow(UnsupportedParameterError);
+    expect(sent).toEqual([]);
+  });
+
+  it('desconocido y rechazado son errores distintos, no se colapsan', () => {
+    const { gateway } = gatewayDeSesion([
+      { binding: conParametros(), operations: ['explain_block'] },
+    ]);
+    const peticion = (parameters: Record<string, unknown>) => () =>
+      gateway.buildRequest({ operation: 'explain_block', instructions: 'i', input: 'e', parameters });
+
+    expect(peticion({ top_p: 0.9 })).toThrow(UnsupportedParameterError);
+    expect(peticion({ top_k: 4 })).toThrow(RejectedParameterError);
+    expect(peticion({ top_k: 4 })).not.toThrow(UnsupportedParameterError);
+  });
+
+  it('sin parámetros solicitados no se envía ninguno', () => {
+    const { gateway } = gatewayDeSesion([
+      { binding: conParametros(), operations: ['explain_block'] },
+    ]);
+    const body = JSON.parse(
+      gateway.buildRequest({ operation: 'explain_block', instructions: 'i', input: 'e' }).body,
+    ) as Record<string, unknown>;
+
+    expect(body).not.toHaveProperty('temperature');
+    expect(body).not.toHaveProperty('max_tokens');
+  });
+
+  it('un parámetro declarado no puede suplantar el id del modelo', () => {
+    const { gateway } = gatewayDeSesion([
+      {
+        binding: binding({
+          capabilities: { ...baseBinding().capabilities, supportedParameters: ['model'] },
+        }),
+        operations: ['explain_block'],
+      },
+    ]);
+
+    const body = JSON.parse(
+      gateway.buildRequest({
+        operation: 'explain_block',
+        instructions: 'i',
+        input: 'e',
+        parameters: { model: 'otro-modelo-cualquiera' },
+      }).body,
+    ) as Record<string, unknown>;
+
+    expect(body['model']).toBe('modelo-declarado-por-el-binding');
+  });
+
+  it('sin snapshot ni huella el binding no se registra', () => {
+    const sinFijar = binding({ snapshot: undefined });
+    expect(sinFijar.snapshot).toBeUndefined();
+    expect(sinFijar.behaviorFingerprint).toBeUndefined();
+
+    expect(() => gatewayDeSesion([{ binding: sinFijar, operations: ['explain_block'] }])).toThrow(
+      UnpinnedBindingError,
+    );
+  });
+
+  it('un alias sin snapshot vale si trae huella de comportamiento', () => {
+    const conHuella = binding({
+      snapshot: undefined,
+      behaviorFingerprint: 'a'.repeat(64),
+      aliasResolvedAt: '2026-08-13T00:00:00+00:00',
+    });
+
+    expect(() =>
+      gatewayDeSesion([{ binding: conHuella, operations: ['explain_block'] }]),
+    ).not.toThrow();
+  });
+
+  it('capacidades contradictorias son un fallo, no una precedencia', () => {
+    const contradictorio = binding({
+      capabilities: {
+        ...baseBinding().capabilities,
+        supportedParameters: ['temperature'],
+        rejectedParameters: ['temperature'],
+      },
+    });
+
+    expect(() =>
+      gatewayDeSesion([{ binding: contradictorio, operations: ['explain_block'] }]),
+    ).toThrow(ContradictoryCapabilitiesError);
   });
 });
 

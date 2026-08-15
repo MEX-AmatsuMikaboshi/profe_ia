@@ -25,7 +25,13 @@ const ANTHROPIC_API_VERSION = '2023-06-01';
 export const anthropicAdapter: ProviderAdapter = {
   provider: ANTHROPIC_PROVIDER,
 
-  buildRequest({ binding, credential, instructions, input }: BuildRequestInput): ProviderRequest {
+  buildRequest({
+    binding,
+    credential,
+    instructions,
+    input,
+    parameters,
+  }: BuildRequestInput): ProviderRequest {
     return {
       method: 'POST',
       url: binding.endpoint,
@@ -34,7 +40,11 @@ export const anthropicAdapter: ProviderAdapter = {
         'x-api-key': credential.reveal(),
         'anthropic-version': ANTHROPIC_API_VERSION,
       },
+      // Los parámetros autorizados van primero: los campos que fija el binding
+      // se escriben después y ganan, de modo que ningún parámetro declarado
+      // pueda suplantar el id del modelo y romper la identidad del binding.
       body: JSON.stringify({
+        ...parameters,
         model: binding.modelId,
         system: instructions,
         messages: [{ role: 'user', content: input }],

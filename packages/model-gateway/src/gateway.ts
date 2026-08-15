@@ -1,5 +1,6 @@
 import type { ModelBinding, ModelOperation, ModelProfile } from '@profesor-ia/contracts';
 import type { BuildRequestInput, ProviderAdapter, ProviderRequest, Transport } from './adapter.js';
+import { assertBindingUsable, authorizeParameters, NO_PARAMETERS } from './capabilities.js';
 import { ProfileCredential, type CredentialResolver } from './credentials.js';
 import {
   AmbiguousBindingError,
@@ -41,6 +42,13 @@ export interface DispatchInput {
   readonly operation: ModelOperation;
   readonly instructions: string;
   readonly input: string;
+  /**
+   * Parámetros **solicitados**, aún sin autorizar (T-H4-02). La pasarela los
+   * contrasta contra `ModelCapabilities` del binding que va a atender la
+   * operación y falla localmente ante uno desconocido o rechazado. Omitirlo es
+   * no enviar ninguno, que es el caso por omisión.
+   */
+  readonly parameters?: Readonly<Record<string, unknown>>;
 }
 
 export class ModelGateway {
@@ -62,6 +70,11 @@ export class ModelGateway {
     const byOperation = new Map<ModelOperation, BindingRegistration>();
     for (const registration of options.registrations) {
       const { binding, operations } = registration;
+
+      // Un binding sin snapshot ni huella, o con capacidades contradictorias, no
+      // llega a registrarse: fallar al arrancar es preferible a descubrirlo en
+      // la primera llamada facturable (T-H4-02).
+      assertBindingUsable(binding);
 
       if (binding.profile !== options.profile) {
         throw new ProfileMismatchError(
@@ -124,12 +137,18 @@ export class ModelGateway {
   /** Construye la petición saliente sin enviarla. Útil para inspeccionarla. */
   buildRequest(input: DispatchInput): ProviderRequest {
     const { binding, adapter } = this.resolve(input.operation);
+    const parameters =
+      input.parameters === undefined
+        ? NO_PARAMETERS
+        : authorizeParameters(binding, input.parameters);
+
     const buildInput: BuildRequestInput = {
       binding,
       operation: input.operation,
       credential: this.#credential,
       instructions: input.instructions,
       input: input.input,
+      parameters,
     };
     return adapter.buildRequest(buildInput);
   }

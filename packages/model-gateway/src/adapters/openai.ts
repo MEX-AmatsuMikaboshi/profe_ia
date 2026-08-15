@@ -17,7 +17,13 @@ export const OPENAI_PROVIDER = 'openai' as const;
 export const openaiAdapter: ProviderAdapter = {
   provider: OPENAI_PROVIDER,
 
-  buildRequest({ binding, credential, instructions, input }: BuildRequestInput): ProviderRequest {
+  buildRequest({
+    binding,
+    credential,
+    instructions,
+    input,
+    parameters,
+  }: BuildRequestInput): ProviderRequest {
     return {
       method: 'POST',
       url: binding.endpoint,
@@ -25,7 +31,11 @@ export const openaiAdapter: ProviderAdapter = {
         'content-type': 'application/json',
         authorization: `Bearer ${credential.reveal()}`,
       },
+      // Igual que en el adaptador de Anthropic: los campos del binding se
+      // escriben después de los parámetros y ganan, para que ninguno pueda
+      // suplantar el id del modelo.
       body: JSON.stringify({
+        ...parameters,
         model: binding.modelId,
         instructions,
         input,

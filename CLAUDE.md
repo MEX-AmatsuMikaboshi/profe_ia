@@ -58,6 +58,7 @@ pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && 
 | `node scripts/arch/verify-depcruise-catches.mjs` | Que esas reglas **detectan** una violación sembrada |
 | `pnpm run ci:logic:golden` / `:pbt` / `:no-net` | Conjunto dorado (413 casos) / propiedades fast-check / pureza del verificador |
 | `pnpm run ci:logic:mutation` | Stryker sobre `logic-core` (~8–9 min; se corre aparte) |
+| `pnpm run ci:gateway:fail-closed` | Que la pasarela no envía parámetros no declarados por el binding ni acepta un binding sin snapshot ni huella |
 | `pnpm run db:grants:check` | Que la migración de `GRANT` corresponde a la matriz vigente |
 | `pnpm run ci:supply:sbom` / `:drift` | SBOM CycloneDX + digest de lockfile / drift y advisories (bloqueante) |
 | `pnpm run ci:infra:hardening` | 159 propiedades sobre la config **resuelta** por Docker |

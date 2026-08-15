@@ -31,3 +31,22 @@ export class MissingCredentialError extends ModelGatewayError {}
 
 /** No hay adaptador propio para el proveedor que declara el binding. */
 export class UnknownProviderError extends ModelGatewayError {}
+
+/**
+ * El parámetro no está declarado en `supportedParameters` (T-H4-02). Distinto de
+ * `RejectedParameterError`: aquí el proveedor no lo documenta, allí lo documenta
+ * como incompatible.
+ */
+export class UnsupportedParameterError extends ModelGatewayError {}
+
+/** El binding declara el parámetro como rechazado por el proveedor (T-H4-02). */
+export class RejectedParameterError extends ModelGatewayError {}
+
+/**
+ * El binding no fija snapshot ni huella de comportamiento, así que no identifica
+ * nada reproducible: un alias puede cambiar de modelo sin aviso (T-H4-02).
+ */
+export class UnpinnedBindingError extends ModelGatewayError {}
+
+/** El binding declara un parámetro como soportado y rechazado a la vez. */
+export class ContradictoryCapabilitiesError extends ModelGatewayError {}

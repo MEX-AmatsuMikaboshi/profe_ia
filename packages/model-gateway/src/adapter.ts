@@ -1,4 +1,5 @@
 import type { ModelBinding, ModelOperation } from '@profesor-ia/contracts';
+import type { AuthorizedParameters } from './capabilities.js';
 import type { ProfileCredential } from './credentials.js';
 
 /**
@@ -38,6 +39,12 @@ export interface BuildRequestInput {
    */
   readonly instructions: string;
   readonly input: string;
+  /**
+   * Parámetros ya contrastados contra `ModelCapabilities` (T-H4-02). El tipo
+   * solo lo produce `authorizeParameters`, así que un adaptador no puede
+   * recibir parámetros sin autorizar aunque el llamante se equivoque.
+   */
+  readonly parameters: AuthorizedParameters;
 }
 
 export interface ProviderAdapter {

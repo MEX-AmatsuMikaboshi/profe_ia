@@ -81,6 +81,11 @@ jobs:
       # AC de F0: la regla debe fallar ante una violación sembrada y pasar al retirarla.
       - name: ci:arch:depcruise (violación sembrada)
         run: node scripts/arch/verify-depcruise-catches.mjs
+      # Fallo cerrado de la pasarela (F4): no envía parámetros no declarados por
+      # el binding ni acepta un binding sin snapshot ni huella. Vive en el job
+      # `arch` porque no necesita el submódulo de contenido.
+      - name: ci:gateway:fail-closed
+        run: pnpm run ci:gateway:fail-closed
 
   logic:
     # Núcleo lógico (F2/H2): el gate exige 0 falsos positivos y 0 falsos
