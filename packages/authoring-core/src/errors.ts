@@ -91,3 +91,17 @@ export class IncompleteSelectionManifestError extends AuthoringCoreError {}
  * pedagógicamente la propuesta (T-H45-07 ← P-I §7.0).
  */
 export class InvalidCorpusDecisionError extends AuthoringCoreError {}
+
+/**
+ * Al claim traducido le falta parte del rastro que exige `DEC-LANGUAGE-001`
+ * (T-H45-08). Sin el original y su ubicación no se puede juzgar la
+ * atribuibilidad contra la fuente.
+ */
+export class IncompleteTranslationTraceError extends AuthoringCoreError {}
+
+/** `CAL-NLI`: fiabilidad del NLI por estrato; se congela en H5 (T-H45-08). */
+export class NliCalibrationPendingError extends CalibrationPendingError {
+  constructor(detail: string, closesIn: string) {
+    super('CAL-NLI', detail, closesIn);
+  }
+}

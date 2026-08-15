@@ -11,3 +11,4 @@ export * from './discovery.js';
 export * from './suitability.js';
 export * from './selection-manifest.js';
 export * from './corpus-authorization.js';
+export * from './translingual.js';
