@@ -28,7 +28,21 @@ export {
   CurrencyMismatchError,
   BudgetBlockedError,
   InvalidAlertThresholdError,
+  ModalityNotEligibleError,
 } from './errors.js';
+
+export {
+  assertModalityEligible,
+  cacheTelemetryFor,
+  checkModalityEligibility,
+  DATA_CLASSIFICATIONS,
+  MODALITIES,
+  type CacheTelemetry,
+  type DataClassification,
+  type EligibilityInput,
+  type EligibilityVerdict,
+  type Modality,
+} from './modality.js';
 
 export { CostLedger, priceCall, type CallUsage, type PricedCall } from './cost.js';
 

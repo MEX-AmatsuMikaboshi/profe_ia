@@ -117,3 +117,10 @@ export class BudgetBlockedError extends ModelGatewayError {}
 
 /** Umbral de alerta ausente o incoherente con el umbral duro. */
 export class InvalidAlertThresholdError extends ModelGatewayError {}
+
+/**
+ * La modalidad (batch o caching) no es elegible para esta operación
+ * (T-H4-08 ← P-II §8.4). Lo desconocido no es permiso: una política de datos sin
+ * retención declarada no habilita tráfico de participante.
+ */
+export class ModalityNotEligibleError extends ModelGatewayError {}

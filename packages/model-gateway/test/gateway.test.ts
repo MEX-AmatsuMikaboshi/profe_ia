@@ -64,6 +64,8 @@ function baseBinding() {
       rejectedParameters: [],
       structuredOutput: { supported: true },
       reasoning: { supported: false },
+      batch: { supported: false },
+      caching: { supported: false },
       dataPolicy: { contractualEligibility: 'unknown' },
     },
     verifiedAt: '2026-08-13T00:00:00+00:00',

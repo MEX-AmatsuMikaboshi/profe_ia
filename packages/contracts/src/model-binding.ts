@@ -40,6 +40,19 @@ export const ModelCapabilities = z.object({
     notes: z.string().optional(),
   }),
   reasoning: z.object({ supported: z.boolean(), notes: z.string().optional() }),
+  /**
+   * Batch y caching son **capacidades explícitas**, no optimizaciones
+   * transparentes (P-II §8.4, T-H4-08). Son obligatorias justamente por eso: un
+   * binding tiene que declarar si las tiene, y no declararlas no puede quedar a
+   * medio camino entre «no» y «no se preguntó».
+   */
+  batch: z.object({ supported: z.boolean(), notes: z.string().optional() }),
+  caching: z.object({
+    supported: z.boolean(),
+    /** TTL «cuando se conozca» (§8.4); ausente significa desconocido, no cero. */
+    ttlSeconds: z.number().int().nonnegative().optional(),
+    notes: z.string().optional(),
+  }),
   /** Política de datos conocida y verificable (elegibilidad H9, EXT-03). */
   dataPolicy: z.object({
     region: z.string().optional(),
