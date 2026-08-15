@@ -78,3 +78,16 @@ export class SaturationCalibrationPendingError extends CalibrationPendingError {
     super('CAL-SATURATION', detail, closesIn);
   }
 }
+
+/**
+ * Al manifiesto de selección le falta alguno de los ocho entregables de
+ * P-I §7.0 (T-H45-06). Ninguno es opcional: un manifiesto incompleto afirma
+ * haber cerrado W0 sin haberlo hecho.
+ */
+export class IncompleteSelectionManifestError extends AuthoringCoreError {}
+
+/**
+ * El aprobador rechazó sin `rejection_reason_code`, o intentó reescribir
+ * pedagógicamente la propuesta (T-H45-07 ← P-I §7.0).
+ */
+export class InvalidCorpusDecisionError extends AuthoringCoreError {}
