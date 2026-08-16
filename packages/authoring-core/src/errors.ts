@@ -216,6 +216,17 @@ export class PedagogyPolicyError extends AuthoringCoreError {}
 export class AuthoritativeSolutionFromGeneratorError extends AuthoringCoreError {}
 
 /**
+ * La cobertura mínima de P-III §4.2 / P-I §7.8 no se cumple, o la entrada que la
+ * mide haría que se cumpliera **por vacío** (T-H5-08).
+ *
+ * Lo segundo es la mitad importante: sin KC declarados en el piloto, sin puntos
+ * críticos y sin tipos de error prioritarios, los tres pisos que dependen de
+ * ellos saldrían cubiertos sin un solo reactivo. Es la misma disciplina que D-18
+ * aplicó a las validaciones de bloqueo del corpus.
+ */
+export class CoverageError extends AuthoringCoreError {}
+
+/**
  * La pertenencia a familia contradice P-I §7.8 / `DEC-FAMILY-001` (T-H5-07).
  *
  * El caso que importa es la **reasignación**: «el pipeline no puede reasignar
