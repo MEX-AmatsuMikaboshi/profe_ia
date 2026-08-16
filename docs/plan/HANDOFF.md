@@ -1,7 +1,8 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-15, cuarta sesión del día.
-**Qué se cerró aquí:** `T-H5-05`, la tarea más grande de F6 (W3, camino crítico).
+**Qué se cerró aquí:** `T-H5-05` (W3, la tarea más grande de F6), `T-H5-06` (reservas sin
+solapamiento) y `T-H5-07` (`item_family_id`).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,10 +15,8 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
-con 5 de 17**: `T-H5-01` (W1 ingesta), `T-H5-02` (W2 extracción), `T-H5-03` (mapa de KC), `T-H5-04`
-(política pedagógica) y `T-H5-05` (W3 generación). La siguiente es **`T-H5-06`**, reservas sin
-solapamiento. Antes de arrancarla lee §3, que dice qué se rompe fácil, y §7, que enumera lo que
-**no** está verificado.
+con 7 de 17**: `T-H5-01…07`. La siguiente es **`T-H5-08`**, cobertura mínima. Antes de arrancarla
+lee §3, que dice qué se rompe fácil, y §7, que enumera lo que **no** está verificado.
 
 **Hay una acción tuya pendiente que bloquea todos los `VERIFICADA`:** el secreto `CONTENT_TOKEN`
 (§8). Sin él, dos de los seis jobs de CI siguen en rojo y ninguna tarea puede pasar de `HECHA`.
@@ -51,10 +50,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **5 de 17.** `T-H5-01…05` cerradas; sigue `T-H5-06` |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **7 de 17.** `T-H5-01…07` cerradas; sigue `T-H5-08` |
 | F7–F16 | No empezadas |
 
-Van **57 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **59 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -66,9 +65,9 @@ inventa:
 
 | Hito | Qué significa | Avance |
 |---|---|---|
-| Sesión seca (fin de F7) | Una clase completa con guion fijo, sin IA en vivo | **65 %** |
-| Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **61 %** |
-| `LOCAL_SELF_USE` (F11) | El propietario lo usa de principio a fin, con voz y pizarrón | **49 %** |
+| Sesión seca (fin de F7) | Una clase completa con guion fijo, sin IA en vivo | **67 %** |
+| Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **63 %** |
+| `LOCAL_SELF_USE` (F11) | El propietario lo usa de principio a fin, con voz y pizarrón | **50 %** |
 
 **Dos cosas que no se arreglan programando**, y por eso el porcentaje no cuenta toda la verdad:
 falta elegir el modelo (`T-H4-10/11` necesita credenciales y autorización de gasto) y falta corpus
@@ -78,19 +77,21 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H5-06` — reservas sin solapamiento (CRITICAL)
+### La tarea siguiente: `T-H5-08` — cobertura mínima (REQUIRED)
 
-F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las cinco primeras
-están cerradas (§3.a), así que sigue `T-H5-06`: las diez reservas de P-I §7.7 disjuntas, **también
-por isomorfismo** bajo la canonicalización congelada (`DUP-01`, `CAL-TRANSFER-ISOLATION`).
+F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las siete primeras
+están cerradas (§3.a), así que sigue `T-H5-08`: los pisos de cobertura de P-III §4.2 y P-I §7.8 —seis
+actividades operativas por KC, tres niveles de pista, una transferencia, reserva de recuperación,
+trazabilidad; y por conjunto, sondas para el calendario completo **más reserva ≥20 %**—.
 
-**Lo primero que hay que saber de esa tarea ya está medido y dicho: el árbol no separa dos de las
-diez.** `TRANSFER_MASTERY` y `TRANSFER_MEASUREMENT` comparten `items/transfer/` porque el árbol
-obligatorio de P-II §3.2 solo tiene nueve directorios (D-20). `reserves.ts` lo declara —
-`physicallySeparable()` devuelve `false` para esas dos y el informe trae siempre
-`notSeparatedByDirectory`—, así que `T-H5-06` **tiene que separarlas por otro medio** y no puede
-apoyarse en el directorio. No lo tapes creando un décimo directorio: el Maestro está por encima del
-plan.
+**Lo que hay que tener presente antes de empezarla**: §4.2 dice con todas sus letras que esos
+conteos son «**parámetros operativos de cobertura de esta versión**, no constantes científicas», que
+se identifican en el registro de parámetros y se congelan. `docs/params/registry.yaml` está vacío a
+propósito. Las cifras literales sí están en la norma (6, 3, 1, 20 %), así que **no** son un
+`[CALIBRATION]` que haya que fallar cerrado: lo que sigue abierto es `CAL-01`/`CAL-BANK-KC` —los
+pisos reales derivados del calendario— y `CAL-13`/`CAL-RETENTION-BANK`, la suficiencia de banco para
+retención a 7 días sin reutilización. Y ojo con la salida `retention_not_evaluated`: si la corrida no
+va a medir retención hay que **declararlo antes de H11**, no omitirlo.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -103,10 +104,17 @@ Lo que ya está puesto y conviene usar en vez de rehacer:
 - **`STRATEGY_CATALOG` y `toDecisionStrategy()`** (`pedagogy.ts`) fijan el catálogo de doce y fallan
   cerrado en las dos entradas sin miembro de enum.
 - **`runW3Generation()`** (`generation.ts`) devuelve `items` y `privateSolutions` **separados**, con
-  `structuralSignature` por reactivo ya calculada: es la entrada natural del control de disjunción
-  por isomorfismo. Y `findDuplicateAmong()` es pública y probada con proofs a mano.
-- **`RESERVES` y `assertPhysicalSeparation()`** (`reserves.ts`) traen las diez reservas literales, su
-  directorio y la separación física; falta la semántica, que es `T-H5-06`.
+  `structuralSignature` e `itemFamilyId` por reactivo ya calculados. `findDuplicateAmong()` es
+  pública y probada con proofs a mano.
+- **`reserves.ts`** trae las diez reservas, su directorio, la separación física y la **semántica**:
+  `collisionProhibited()` es la regla de qué colisión está prohibida y vive en un solo sitio;
+  `MEASUREMENT_RESERVES` se deriva del contrato de sondas; `assertReserveDisjointness()` comprueba el
+  paquete entero. `CONSUMPTION_EXCLUSIONS` es la tabla literal de §7.7 que `T-H6-06` tendrá que
+  aplicar.
+- **`FamilyRegistry`** (`family.ts`) fija el `item_family_id` en la primera asignación. **Pásaselo a
+  `runW3Generation()` entre corridas**: con uno nuevo por corrida, reasignar familias es gratis y el
+  umbral del 30 % de `T-H5-09` se calcula sobre otra cosa. `members()` es lo que `T-H5-09` y
+  `T-H5-14` necesitan contar.
 - **`complexityIndex()`** falla cerrado esperando a `T-H5-10` (`CAL-09`). H6 no abre sin eso, y
   `assertMeasuredMatchesTargetComplexity()` de `generation.ts` es el otro punto donde se enchufa.
 - **El orden del pipeline de validez sigue sin congelar** (`BENCH-04`): `resolveValidityVariant()`
@@ -126,8 +134,9 @@ Lo que queda abierto y **no** bloquea a F6:
 
 ## 3.a Lo cerrado en esta sesión (15-08, cuarta)
 
-Una sola tarea, `T-H5-05`, la más grande de F6: cuatro módulos nuevos en `packages/authoring-core`
-(`generation.ts`, `hints.ts`, `critique.ts`, `reserves.ts`) y **76 pruebas nuevas** (837 → 913).
+Tres tareas —`T-H5-05`, `T-H5-06` y `T-H5-07`—, cinco módulos nuevos en `packages/authoring-core`
+(`generation.ts`, `hints.ts`, `critique.ts`, `reserves.ts`, `family.ts`) y **122 pruebas nuevas**
+(837 → 959).
 
 ### `T-H5-05` — W3, autoría automática
 
@@ -155,10 +164,47 @@ isomorfismo reportados por separado porque piden arreglos distintos; Rol D con l
 `masteryDisqualifying` guardada **como propuesta**; y Rol E cuyo veredicto **no mueve la aceptación
 en ninguna dirección**.
 
+### `T-H5-06` — reservas sin solapamiento
+
+Toda la tarea la decide **una palabra de P-I §7.7**: «isomorfismos **prohibidos**», no
+«isomorfismos».
+
+- **Dentro de una misma reserva la colisión no está prohibida: es la familia.** §7.8 define familia
+  como los candidatos que comparten plantilla, función de banco, KC objetivo y **la misma
+  `structural_signature`**, y dice que renombrar átomos o reordenar pasos independientes **no crean
+  una familia nueva**. Los miembros de una familia son isomorfos entre sí por definición.
+- **Entre dos reservas de enseñanza tampoco**: practicar guiado y después independiente sobre la
+  misma estructura es scaffolding y fading.
+- **En cuanto una de las dos es de medición, sí.** §5.11 lo dice de las dos categorías de
+  transferencia con todas sus letras.
+
+Eso **corrigió un defecto de `T-H5-05`** que entró en el mismo commit: su paso 6 rechazaba todo
+isomorfo sin mirar la reserva, lo que dejaba toda familia paramétrica en un solo miembro y volvía
+inalcanzables los pisos de §7.8 y de P-III §4.2. No se veía con las pruebas en verde porque ninguna
+comprobaba que dos gemelos de la misma reserva sobrevivieran.
+
+Las reservas de medición se **derivan** del contrato de P-II §6.3 (`MeasureKind` × `ScedPhase`), y
+las combinaciones que ninguna autoridad describe lanzan. El control de superficie de §5.11 es el que
+**no necesita umbral** —igualdad de la redacción normalizada—; cualquier medida de parecido sí, y por
+eso `surfaceSimilarity()` falla cerrado. **`DUP-01`**: `isolated` vale `null` —no `true`— cuando
+alguno de los dos bancos de transferencia está vacío, y afirmar que el aislamiento está *demostrado*
+falla cerrado con `CAL-07`: «no detecté» no es «no hay».
+
+### `T-H5-07` — `item_family_id`
+
+Derivado de los cuatro componentes, no asignado por contador (como el `fragment_id`, D-17). Así, «un
+cambio real de estructura, función o KC **sí** crea familia distinta» es aritmética y no una regla
+que alguien recuerde; y la redacción no puede moverla porque **no es uno de los cuatro componentes**.
+
+Lo que la derivación sola **no** impide es la elusión real: `generator_template_id` es cadena libre,
+así que reetiquetar la plantilla de un candidato defectuoso lo sacaría de la familia que va camino de
+quedar bloqueada por `T-H5-09`. Eso lo cierra `FamilyRegistry`: la primera asignación fija, sin
+`remove`/`clear`/`reassign`.
+
 ### Las cuatro cosas que las pruebas en verde no enseñaban
 
-Se sembraron **36 mutaciones y las 36 quedaron detectadas a la primera**. Y aun así, releyendo el
-módulo ya escrito aparecieron cuatro huecos que ninguna prueba señalaba:
+En `T-H5-05` se sembraron **36 mutaciones y las 36 quedaron detectadas a la primera**. Y aun así,
+releyendo el módulo ya escrito aparecieron cuatro huecos que ninguna prueba señalaba:
 
 1. **Una guarda exportada que el pipeline no llamaba.** `assertNoAuthoritativeSolution()` estaba
    escrita, probada y sin usar: un candidato con solución habría atravesado W3 entero.
@@ -173,6 +219,11 @@ módulo ya escrito aparecieron cuatro huecos que ninguna prueba señalaba:
 
 **Ninguno de los cuatro se veía con las pruebas en verde, ni con las 36 mutaciones detectadas.** La
 siembra prueba que los controles que hay funcionan; no dice nada de los que faltan.
+
+En total esta sesión sembró **73 mutaciones** (36 + 20 + 17) y **una sobrevivió**: la que comprueba
+que el contrato de bancos de transferencia no se ha separado del catálogo de reservas. Solo salta si
+los dos divergen, y hoy no divergen —guarda que no se puede disparar desde fuera—. Se hizo inyectable
+con valores por omisión, como `findCycles(edges)`, y entonces se pudo probar.
 
 ### Y un defecto real de `proof-search` que W3 destapó
 
@@ -404,14 +455,14 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **913 pruebas**: 786 unitarias + 127 contra
+Estado en el checkpoint: **todo en verde en local**. **959 pruebas**: 832 unitarias + 127 contra
 PostgreSQL 17 real. Empezó esta sesión en 837.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
-`logic-core`, así que las 76 pruebas nuevas de esta sesión —de `authoring-core` y una de
+`logic-core`, así que las 122 pruebas nuevas de esta sesión —de `authoring-core` y una de
 `proof-search`— **no mueven el baseline de 90.31 %**. No lo leas como que la cobertura de mutación
-cayó ni subió: mide otra cosa. La siembra de esta tarea se hizo a mano (36 mutaciones sobre los
-cuatro módulos nuevos), que es lo que se viene haciendo fuera de `logic-core`.
+cayó ni subió: mide otra cosa. La siembra de estas tareas se hizo a mano (73 mutaciones sobre los
+cinco módulos nuevos), que es lo que se viene haciendo fuera de `logic-core`.
 
 ### Estado de CI en `main` al cerrar
 
@@ -486,7 +537,7 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
   `NO_IMPLEMENTADO` en vez de simular éxito; `proof-search` lanza `CertificateRejectedError` en vez
   de devolver «no encontré».
 - **Desviaciones documentadas.** Cualquier apartamiento del plan va a §«Decisiones de ingeniería» de
-  `PLAN_STATUS.md` con su causa. Van **D-1 a D-20**.
+  `PLAN_STATUS.md` con su causa. Van **D-1 a D-21**.
 - **Una siembra en verde no dice nada de los controles que faltan.** En `T-H5-05` se sembraron 36
   mutaciones y las 36 quedaron detectadas a la primera; y aun así, releyendo el módulo aparecieron
   cuatro huecos, entre ellos **una guarda exportada y probada que el pipeline nunca llamaba** y un
@@ -520,7 +571,7 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
 - **Ninguna tarea está `VERIFICADA`.** Todo lo que dice `HECHA` está verificado **localmente** y es
   reproducible, pero §0.4 exige el check en verde en `main`. No marques `VERIFICADA` por el hecho de
   haber subido el código.
-- **F6 ha construido mecanismos, no contenido.** Las cinco tareas cerradas producen validadores y
+- **F6 ha construido mecanismos, no contenido.** Las siete tareas cerradas producen validadores y
   catálogos —`T-H5-05` incluida: W3 es el pipeline, no una corrida—, pero **todos los artefactos de
   `content/` siguen siendo placeholders de ~140 bytes**:
   `source/manifest.yaml`, `source/fragments/`, `extracted/*.yaml`, `kc/map.yaml`,
@@ -627,12 +678,12 @@ En este orden.
    verde, ese es el momento de empezar a mover tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`,
    una por una y solo las que su check cubra. Si no está, no lo crees tú: es acción del propietario
    (§8), y seguir trabajando no depende de ello.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **913 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **959 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F6 · H5 por `T-H5-06`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
+4. **Sigue F6 · H5 por `T-H5-08`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
-   Empieza por §3: el árbol **no** separa las dos reservas de transferencia (D-20) y esa tarea tiene
-   que separarlas por otro medio.
+   Empieza por §3, que dice qué de esa tarea son cifras literales de la norma y qué sigue abierto
+   como calibración.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
    verde y `git push origin main`. Si tocas `content/`, **primero el submódulo** (§8).
 
