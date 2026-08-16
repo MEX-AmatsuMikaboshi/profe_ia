@@ -2,7 +2,7 @@
 
 **Fecha del checkpoint:** 2026-08-15, cuarta sesión del día.
 **Qué se cerró aquí:** `T-H5-05` (W3, la tarea más grande de F6), `T-H5-06` (reservas sin
-solapamiento) y `T-H5-07` (`item_family_id`).
+solapamiento), `T-H5-07` (`item_family_id`) y `T-H5-08` (cobertura mínima).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -15,8 +15,8 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
-con 7 de 17**: `T-H5-01…07`. La siguiente es **`T-H5-08`**, cobertura mínima. Antes de arrancarla
-lee §3, que dice qué se rompe fácil, y §7, que enumera lo que **no** está verificado.
+con 8 de 17**: `T-H5-01…08`. La siguiente es **`T-H5-09`**, límites de regeneración. Antes de
+arrancarla lee §3, que dice qué se rompe fácil, y §7, que enumera lo que **no** está verificado.
 
 **Hay una acción tuya pendiente que bloquea todos los `VERIFICADA`:** el secreto `CONTENT_TOKEN`
 (§8). Sin él, dos de los seis jobs de CI siguen en rojo y ninguna tarea puede pasar de `HECHA`.
@@ -50,10 +50,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **7 de 17.** `T-H5-01…07` cerradas; sigue `T-H5-08` |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **8 de 17.** `T-H5-01…08` cerradas; sigue `T-H5-09` |
 | F7–F16 | No empezadas |
 
-Van **59 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **60 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -65,9 +65,9 @@ inventa:
 
 | Hito | Qué significa | Avance |
 |---|---|---|
-| Sesión seca (fin de F7) | Una clase completa con guion fijo, sin IA en vivo | **67 %** |
-| Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **63 %** |
-| `LOCAL_SELF_USE` (F11) | El propietario lo usa de principio a fin, con voz y pizarrón | **50 %** |
+| Sesión seca (fin de F7) | Una clase completa con guion fijo, sin IA en vivo | **68 %** |
+| Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **65 %** |
+| `LOCAL_SELF_USE` (F11) | El propietario lo usa de principio a fin, con voz y pizarrón | **51 %** |
 
 **Dos cosas que no se arreglan programando**, y por eso el porcentaje no cuenta toda la verdad:
 falta elegir el modelo (`T-H4-10/11` necesita credenciales y autorización de gasto) y falta corpus
@@ -77,21 +77,27 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H5-08` — cobertura mínima (REQUIRED)
+### La tarea siguiente: `T-H5-09` — límites de regeneración (REQUIRED)
 
-F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las siete primeras
-están cerradas (§3.a), así que sigue `T-H5-08`: los pisos de cobertura de P-III §4.2 y P-I §7.8 —seis
-actividades operativas por KC, tres niveles de pista, una transferencia, reserva de recuperación,
-trazabilidad; y por conjunto, sondas para el calendario completo **más reserva ≥20 %**—.
+F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las ocho primeras
+están cerradas (§3.a), así que sigue `T-H5-09`: los límites de P-III §4.3 —≤5 intentos por candidato,
+≤3 regeneraciones por familia antes de bloqueo, >30 % de rechazo automático ⇒ familia **inestable**
+fuera del paquete hasta rediseñar la plantilla— más la política de regeneración de P-II §5.4.
 
-**Lo que hay que tener presente antes de empezarla**: §4.2 dice con todas sus letras que esos
-conteos son «**parámetros operativos de cobertura de esta versión**, no constantes científicas», que
-se identifican en el registro de parámetros y se congelan. `docs/params/registry.yaml` está vacío a
-propósito. Las cifras literales sí están en la norma (6, 3, 1, 20 %), así que **no** son un
-`[CALIBRATION]` que haya que fallar cerrado: lo que sigue abierto es `CAL-01`/`CAL-BANK-KC` —los
-pisos reales derivados del calendario— y `CAL-13`/`CAL-RETENTION-BANK`, la suficiencia de banco para
-retención a 7 días sin reutilización. Y ojo con la salida `retention_not_evaluated`: si la corrida no
-va a medir retención hay que **declararlo antes de H11**, no omitirlo.
+**Las tres cosas que conviene tener claras antes de empezarla:**
+
+1. **Las tres cifras son literales** (5, 3, 30 %), pero §4.3 las llama «parámetros operativos
+   iniciales de la versión» que «deben congelarse antes del piloto». Van con `parameterId`, como los
+   pisos de `T-H5-08`: mira `COVERAGE_PARAMETERS` en `coverage.ts` y sigue ese patrón.
+2. **La familia ya existe y es inmutable.** `FamilyRegistry` (`family.ts`) es lo que hace contable el
+   umbral del 30 %, y es también lo que impide la elusión: sin él, reetiquetar la plantilla de un
+   candidato defectuoso lo sacaría de la familia que va camino de quedar bloqueada. **Pásale el mismo
+   registro a `runW3Generation()` entre corridas**, o el conteo empieza de cero cada vez.
+3. **P-II §5.4 es la parte fina**: «el agente recibe **únicamente el código de fallo y restricciones
+   seguras**». Los códigos ya existen y son lista cerrada (`W3_REJECTION_CODES`); lo que hay que
+   construir es el informe de regeneración, y **no puede tener campo para la solución ni para el
+   contramodelo detallado**, por lo mismo que `W3ItemRecord` no tiene campo para el certificado. Y
+   «sin reparación manual silenciosa»: no hay camino que edite un candidato en vez de regenerarlo.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -115,6 +121,10 @@ Lo que ya está puesto y conviene usar en vez de rehacer:
   `runW3Generation()` entre corridas**: con uno nuevo por corrida, reasignar familias es gratis y el
   umbral del 30 % de `T-H5-09` se calcula sobre otra cosa. `members()` es lo que `T-H5-09` y
   `T-H5-14` necesitan contar.
+- **`coverage.ts`** trae los pisos de P-III §4.2 como **datos con `parameterId`**, la regla del 20 %
+  ya implementada y las tres entradas que se exigen declaradas (KC del piloto, puntos críticos, tipos
+  de error prioritarios). `requiredProbesForCalendar()` falla cerrado con `CAL-01` hasta que
+  `T-H5-11` congele el calendario.
 - **`complexityIndex()`** falla cerrado esperando a `T-H5-10` (`CAL-09`). H6 no abre sin eso, y
   `assertMeasuredMatchesTargetComplexity()` de `generation.ts` es el otro punto donde se enchufa.
 - **El orden del pipeline de validez sigue sin congelar** (`BENCH-04`): `resolveValidityVariant()`
@@ -134,9 +144,9 @@ Lo que queda abierto y **no** bloquea a F6:
 
 ## 3.a Lo cerrado en esta sesión (15-08, cuarta)
 
-Tres tareas —`T-H5-05`, `T-H5-06` y `T-H5-07`—, cinco módulos nuevos en `packages/authoring-core`
-(`generation.ts`, `hints.ts`, `critique.ts`, `reserves.ts`, `family.ts`) y **122 pruebas nuevas**
-(837 → 959).
+Cuatro tareas —`T-H5-05` a `T-H5-08`—, seis módulos nuevos en `packages/authoring-core`
+(`generation.ts`, `hints.ts`, `critique.ts`, `reserves.ts`, `family.ts`, `coverage.ts`) y **151
+pruebas nuevas** (837 → 988).
 
 ### `T-H5-05` — W3, autoría automática
 
@@ -201,6 +211,20 @@ así que reetiquetar la plantilla de un candidato defectuoso lo sacaría de la f
 quedar bloqueada por `T-H5-09`. Eso lo cierra `FamilyRegistry`: la primera asignación fija, sin
 `remove`/`clear`/`reassign`.
 
+### `T-H5-08` — cobertura mínima
+
+La frontera de la tarea es **qué cifra la norma y qué deriva del calendario**. Lo cifrado se
+comprueba (6 actividades por KC, 3 niveles de pista, 1 transferencia, recuperación, trazabilidad, y
+la reserva del 20 %); lo derivado del calendario **no se puede comprobar todavía**, así que
+`requiredProbesForCalendar()` falla cerrado con `CAL-01`: esa cifra decide si el piloto se abre.
+
+Los pisos van como **datos con `parameterId`**, no como números sueltos dentro de un `if`, porque
+§4.2 exige identificarlos en el registro de parámetros y congelarlos. Tres entradas se exigen
+declaradas —KC del piloto, puntos críticos y tipos de error prioritarios— porque sin ellas los pisos
+que dependen de ellas pasarían por vacío. Y en retención hay dos salidas y ninguna más: medir con
+reserva válida, o declarar `retention_not_evaluated` **con motivo**; decir que se medirá con la
+reserva vacía **lanza en vez de degradarse solo al código**.
+
 ### Las cuatro cosas que las pruebas en verde no enseñaban
 
 En `T-H5-05` se sembraron **36 mutaciones y las 36 quedaron detectadas a la primera**. Y aun así,
@@ -220,10 +244,16 @@ releyendo el módulo ya escrito aparecieron cuatro huecos que ninguna prueba se�
 **Ninguno de los cuatro se veía con las pruebas en verde, ni con las 36 mutaciones detectadas.** La
 siembra prueba que los controles que hay funcionan; no dice nada de los que faltan.
 
-En total esta sesión sembró **73 mutaciones** (36 + 20 + 17) y **una sobrevivió**: la que comprueba
-que el contrato de bancos de transferencia no se ha separado del catálogo de reservas. Solo salta si
-los dos divergen, y hoy no divergen —guarda que no se puede disparar desde fuera—. Se hizo inyectable
-con valores por omisión, como `findCycles(edges)`, y entonces se pudo probar.
+En total esta sesión sembró **103 mutaciones** (36 + 20 + 17 + 30) y **una sobrevivió**: la que
+comprueba que el contrato de bancos de transferencia no se ha separado del catálogo de reservas. Solo
+salta si los dos divergen, y hoy no divergen —guarda que no se puede disparar desde fuera—. Se hizo
+inyectable con valores por omisión, como `findCycles(edges)`, y entonces se pudo probar.
+
+Y el patrón se repitió en las cuatro tareas: **cada una dejó huecos que solo aparecieron releyendo el
+módulo con todo en verde**. En `T-H5-06`, que W3 mataba las familias. En `T-H5-07`, que un defecto
+del candidato se convertía en fallo del pipeline. En `T-H5-08`, dos: la transferencia de medición
+cubriendo un piso que dejaba el dominio inalcanzable, y la capacidad de reconfirmación contada en
+total en vez de por KC. **Ninguno lo señaló una prueba ni una mutación.**
 
 ### Y un defecto real de `proof-search` que W3 destapó
 
@@ -455,14 +485,14 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **959 pruebas**: 832 unitarias + 127 contra
+Estado en el checkpoint: **todo en verde en local**. **988 pruebas**: 861 unitarias + 127 contra
 PostgreSQL 17 real. Empezó esta sesión en 837.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
-`logic-core`, así que las 122 pruebas nuevas de esta sesión —de `authoring-core` y una de
+`logic-core`, así que las 151 pruebas nuevas de esta sesión —de `authoring-core` y una de
 `proof-search`— **no mueven el baseline de 90.31 %**. No lo leas como que la cobertura de mutación
-cayó ni subió: mide otra cosa. La siembra de estas tareas se hizo a mano (73 mutaciones sobre los
-cinco módulos nuevos), que es lo que se viene haciendo fuera de `logic-core`.
+cayó ni subió: mide otra cosa. La siembra de estas tareas se hizo a mano (103 mutaciones sobre los
+seis módulos nuevos), que es lo que se viene haciendo fuera de `logic-core`.
 
 ### Estado de CI en `main` al cerrar
 
@@ -537,7 +567,7 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
   `NO_IMPLEMENTADO` en vez de simular éxito; `proof-search` lanza `CertificateRejectedError` en vez
   de devolver «no encontré».
 - **Desviaciones documentadas.** Cualquier apartamiento del plan va a §«Decisiones de ingeniería» de
-  `PLAN_STATUS.md` con su causa. Van **D-1 a D-21**.
+  `PLAN_STATUS.md` con su causa. Van **D-1 a D-22**.
 - **Una siembra en verde no dice nada de los controles que faltan.** En `T-H5-05` se sembraron 36
   mutaciones y las 36 quedaron detectadas a la primera; y aun así, releyendo el módulo aparecieron
   cuatro huecos, entre ellos **una guarda exportada y probada que el pipeline nunca llamaba** y un
@@ -571,7 +601,7 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
 - **Ninguna tarea está `VERIFICADA`.** Todo lo que dice `HECHA` está verificado **localmente** y es
   reproducible, pero §0.4 exige el check en verde en `main`. No marques `VERIFICADA` por el hecho de
   haber subido el código.
-- **F6 ha construido mecanismos, no contenido.** Las siete tareas cerradas producen validadores y
+- **F6 ha construido mecanismos, no contenido.** Las ocho tareas cerradas producen validadores y
   catálogos —`T-H5-05` incluida: W3 es el pipeline, no una corrida—, pero **todos los artefactos de
   `content/` siguen siendo placeholders de ~140 bytes**:
   `source/manifest.yaml`, `source/fragments/`, `extracted/*.yaml`, `kc/map.yaml`,
@@ -678,12 +708,11 @@ En este orden.
    verde, ese es el momento de empezar a mover tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`,
    una por una y solo las que su check cubra. Si no está, no lo crees tú: es acción del propietario
    (§8), y seguir trabajando no depende de ello.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **959 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **988 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F6 · H5 por `T-H5-08`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
+4. **Sigue F6 · H5 por `T-H5-09`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
-   Empieza por §3, que dice qué de esa tarea son cifras literales de la norma y qué sigue abierto
-   como calibración.
+   Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
    verde y `git push origin main`. Si tocas `content/`, **primero el submódulo** (§8).
 
