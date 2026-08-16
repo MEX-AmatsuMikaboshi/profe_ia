@@ -39,7 +39,7 @@ import {
 import { assertCritique, critiqueRiskFlags, type CritiqueCriterion, type ItemCritique } from './critique.js';
 import { assertHintSet, undisclosedSolutionFormulas, type HintSet } from './hints.js';
 import { KC_IDS, type KcId } from './kc-map.js';
-import { RESERVES, type Reserve } from './reserves.js';
+import { collisionProhibited, effectiveReserve, RESERVES, type Reserve } from './reserves.js';
 
 /**
  * W3 — autoría automática (T-H5-05 [CRITICAL] ← Maestro §12 «W3», P-I §7.4–§7.7
@@ -128,6 +128,12 @@ export interface ItemCandidate {
   readonly targetKcs: readonly KcId[];
   /** Función del banco = reserva de P-I §7.7. */
   readonly bankFunction: Reserve;
+  /**
+   * Obligatorio cuando `bankFunction` es `replacement`: qué reserva repone
+   * (D-21). Sin él no se sabe si al reactivo le aplica la disjunción de
+   * medición, y suponerlo dejaría entrar una reposición isomorfa a una sonda.
+   */
+  readonly replacesReserve?: Reserve;
   /** Complejidad **objetivo** declarada por Rol C; no es una medida. */
   readonly targetComplexity: string;
   readonly prohibitions: readonly string[];
@@ -307,10 +313,22 @@ export interface AcceptedItemShape {
   /** Enunciado en forma canónica. */
   readonly statement: string;
   readonly proof: CanonicalProof;
+  /** Reserva efectiva: decide si la colisión está prohibida. */
+  readonly reserve: Reserve;
 }
 
 /**
- * Primera colisión del candidato contra los ya aceptados, o `null`.
+ * Primera colisión **prohibida** del candidato contra los ya aceptados, o
+ * `null`.
+ *
+ * La palabra que decide es «prohibida». Dos reactivos isomorfos **dentro de la
+ * misma reserva son una familia**, no un defecto: P-I §7.8 define familia como
+ * los candidatos que comparten plantilla, función de banco, KC objetivo y la
+ * misma `structural_signature`, y dice que renombrar átomos o reordenar pasos
+ * independientes **no crea una familia nueva**. Rechazarlos dejaría toda familia
+ * en un solo miembro. Quién colisiona con quién de forma prohibida lo decide
+ * `collisionProhibited()`, en `reserves.ts`, para que la regla viva en un solo
+ * sitio y `T-H5-06` y W3 no puedan separarse.
  *
  * Los dos casos se reportan por separado porque piden arreglos distintos: un
  * **duplicado trivial** es el mismo reactivo con otros nombres de átomo y se
@@ -324,10 +342,12 @@ export interface AcceptedItemShape {
  */
 export function findDuplicateAmong(
   candidate: CanonicalProof,
+  candidateReserve: Reserve,
   canonicalStatementOfCandidate: string,
   accepted: readonly AcceptedItemShape[],
 ): W3Rejection | null {
   for (const previo of accepted) {
+    if (!collisionProhibited(candidateReserve, previo.reserve)) continue;
     if (isTrivialDuplicate(candidate, previo.proof)) {
       return {
         code: 'trivial_duplicate_of_candidate',
@@ -477,7 +497,7 @@ export function runW3Generation(input: W3Input): W3Outcome {
   const items: W3ItemRecord[] = [];
   const privateSolutions: PrivateSolution[] = [];
   /** Aceptados hasta ahora: la comparación de duplicados es contra ellos. */
-  const aceptados: { candidateId: string; statement: string; proof: CanonicalProof }[] = [];
+  const aceptados: AcceptedItemShape[] = [];
 
   const porEnunciadoDelCorpus = new Map<string, string>();
   for (const ejercicio of input.corpusExercises) {
@@ -607,7 +627,14 @@ export function runW3Generation(input: W3Input): W3Outcome {
           `congelada: el alumno pudo verlo resuelto en el material`,
       });
     }
-    const colision = findDuplicateAmong(canonico, enunciadoCanonico, aceptados);
+    const reservaEfectiva = effectiveReserve({
+      itemId: candidato.candidateId,
+      reserve: candidato.bankFunction,
+      ...(candidato.replacesReserve === undefined
+        ? {}
+        : { replacesReserve: candidato.replacesReserve }),
+    });
+    const colision = findDuplicateAmong(canonico, reservaEfectiva, enunciadoCanonico, aceptados);
     if (colision !== null) rechazos.push(colision);
 
     // 7. Pistas (Rol D) y no revelación en el enunciado (P-I §7.5, §9.6).
@@ -664,6 +691,7 @@ export function runW3Generation(input: W3Input): W3Outcome {
         candidateId: candidato.candidateId,
         statement: enunciadoCanonico,
         proof: canonico,
+        reserve: reservaEfectiva,
       });
       privateSolutions.push(
         Object.freeze({

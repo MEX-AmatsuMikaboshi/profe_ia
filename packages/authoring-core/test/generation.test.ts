@@ -373,13 +373,56 @@ describe('duplicados e isomorfismos (paso 6 de W3)', () => {
       candidateId: 'it-001',
       statement: canonicalStatement({ premises: ['A', 'B'], goal: 'A∧B' }),
       proof: pruebaDe(['A', 'B'], 'A∧B'),
+      reserve: 'guided_practice' as const,
     };
     const colision = findDuplicateAmong(
       pruebaDe(['P', 'Q'], 'P∧Q'),
+      'probes_baseline',
       canonicalStatement({ premises: ['P', 'Q'], goal: 'P∧Q' }),
       [previo],
     );
     expect(colision?.code).toBe('trivial_duplicate_of_candidate');
+  });
+
+  it('dentro de la misma reserva el isomorfo **no** es colisión: es la familia', () => {
+    // P-I §7.8 define familia como los candidatos que comparten plantilla,
+    // función de banco, KC objetivo y la misma structural_signature, y dice que
+    // renombrar átomos no crea una familia nueva. Rechazarlos dejaría toda
+    // familia en un solo miembro y volvería inalcanzables los pisos de §7.8.
+    const previo = {
+      candidateId: 'it-001',
+      statement: canonicalStatement({ premises: ['A', 'B'], goal: 'A∧B' }),
+      proof: pruebaDe(['A', 'B'], 'A∧B'),
+      reserve: 'guided_practice' as const,
+    };
+    expect(
+      findDuplicateAmong(
+        pruebaDe(['P', 'Q'], 'P∧Q'),
+        'guided_practice',
+        canonicalStatement({ premises: ['P', 'Q'], goal: 'P∧Q' }),
+        [previo],
+      ),
+    ).toBeNull();
+  });
+
+  it('entre dos reservas de enseñanza tampoco: guiada y después independiente', () => {
+    // Practicar guiado y luego independiente sobre la misma estructura es
+    // scaffolding y fading. La prohibición de §7.7 es la que involucra una
+    // reserva de medición.
+    const previo = {
+      candidateId: 'it-001',
+      statement: canonicalStatement({ premises: ['A', 'B'], goal: 'A∧B' }),
+      proof: pruebaDe(['A', 'B'], 'A∧B'),
+      reserve: 'guided_practice' as const,
+    };
+    expect(
+      findDuplicateAmong(
+        pruebaDe(['P', 'Q'], 'P∧Q'),
+        'independent_practice',
+        canonicalStatement({ premises: ['P', 'Q'], goal: 'P∧Q' }),
+        [previo],
+      ),
+    ).toBeNull();
   });
 
   it('el isomorfo con los pasos independientes en otro orden se reporta aparte', () => {
@@ -402,16 +445,26 @@ describe('duplicados e isomorfismos (paso 6 de W3)', () => {
       ],
       goal: 'A∧B',
     };
-    const colision = findDuplicateAmong(citasAlReves, 'otro-enunciado', [
-      { candidateId: 'it-001', statement: 'enunciado-previo', proof: base },
+    const colision = findDuplicateAmong(citasAlReves, 'probes_baseline', 'otro-enunciado', [
+      {
+        candidateId: 'it-001',
+        statement: 'enunciado-previo',
+        proof: base,
+        reserve: 'guided_practice',
+      },
     ]);
     expect(colision?.code).toBe('isomorphic_to_candidate');
   });
 
   it('sin colisión devuelve `null`', () => {
     expect(
-      findDuplicateAmong(pruebaDe(['A', 'B'], 'A∧B'), 'x', [
-        { candidateId: 'it-000', statement: 'y', proof: pruebaDe(['A→B', '¬B'], '¬A') },
+      findDuplicateAmong(pruebaDe(['A', 'B'], 'A∧B'), 'probes_baseline', 'x', [
+        {
+          candidateId: 'it-000',
+          statement: 'y',
+          proof: pruebaDe(['A→B', '¬B'], '¬A'),
+          reserve: 'guided_practice',
+        },
       ]),
     ).toBeNull();
   });
@@ -421,7 +474,11 @@ describe('duplicados e isomorfismos (paso 6 de W3)', () => {
       entrada({
         candidates: [
           candidato({ candidateId: 'it-001', statement: { premises: ['A', 'B'], goal: 'A∧B' } }),
-          candidato({ candidateId: 'it-002', statement: { premises: ['P', 'Q'], goal: 'P∧Q' } }),
+          candidato({
+            candidateId: 'it-002',
+            bankFunction: 'probes_baseline',
+            statement: { premises: ['P', 'Q'], goal: 'P∧Q' },
+          }),
         ],
       }),
     );
@@ -429,6 +486,28 @@ describe('duplicados e isomorfismos (paso 6 de W3)', () => {
     expect(salida.items[1]?.accepted).toBe(false);
     expect(salida.items[1]?.rejections[0]?.code).toBe('trivial_duplicate_of_candidate');
     expect(salida.privateSolutions).toHaveLength(1);
+  });
+
+  it('dos miembros de una familia en la misma reserva **sobreviven los dos**', () => {
+    // La corrección de T-H5-06 sobre T-H5-05: la versión anterior rechazaba el
+    // segundo y dejaba toda familia en un solo miembro.
+    const salida = runW3Generation(
+      entrada({
+        candidates: [
+          candidato({ candidateId: 'it-001', statement: { premises: ['A', 'B'], goal: 'A∧B' } }),
+          candidato({ candidateId: 'it-002', statement: { premises: ['P', 'Q'], goal: 'P∧Q' } }),
+        ],
+      }),
+    );
+    expect(salida.items.map((i) => i.accepted)).toEqual([true, true]);
+    expect(salida.items[0]?.structuralSignature).toBe(salida.items[1]?.structuralSignature);
+    expect(salida.privateSolutions).toHaveLength(2);
+  });
+
+  it('un candidato de reposición sin declarar a qué repone detiene el pipeline', () => {
+    expect(() =>
+      runW3Generation(entrada({ candidates: [candidato({ bankFunction: 'replacement' })] })),
+    ).toThrow(/no declara a qué reserva repone/u);
   });
 
   it('un candidato que repite un ejercicio del corpus fuente se rechaza', () => {

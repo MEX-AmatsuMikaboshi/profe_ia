@@ -216,6 +216,30 @@ export class PedagogyPolicyError extends AuthoringCoreError {}
 export class AuthoritativeSolutionFromGeneratorError extends AuthoringCoreError {}
 
 /**
+ * Dos reservas se solapan (T-H5-06 ← P-I §7.7, §5.11).
+ *
+ * Distinta de `ReserveSeparationError`, que es dónde está archivado el fichero:
+ * esta es la disjunción **semántica**. Cubre el mismo id en dos reservas, los
+ * ids compartidos entre las dos categorías de transferencia —«los bancos, IDs y
+ * eventos de ambas categorías son distintos»— y la colisión por duplicado
+ * trivial, isomorfismo o superficie entre una reserva de medición y cualquier
+ * otra: un reactivo practicado que reaparece como sonda mide lo que el alumno
+ * acaba de hacer, no lo que aprendió.
+ */
+export class ReserveOverlapError extends AuthoringCoreError {}
+
+/**
+ * `CAL-07` / `CAL-ISOMORPHISM` y `DUP-01`: precisión, recall y tolerancias del
+ * detector de isomorfismo, y la prueba de aislamiento físico/isomórfico entre
+ * `TRANSFER_MASTERY` y `TRANSFER_MEASUREMENT`. Se validan en H5/H10.
+ */
+export class IsomorphismCalibrationPendingError extends CalibrationPendingError {
+  constructor(detail: string, closesIn: string) {
+    super('CAL-07', detail, closesIn);
+  }
+}
+
+/**
  * La entrada de W3 no es coherente consigo misma (T-H5-05): dos candidatos con
  * el mismo id, o un conjunto de pistas o una crítica que apunta a un candidato
  * que no está en el lote.
