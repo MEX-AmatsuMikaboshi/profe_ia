@@ -47,7 +47,7 @@ function item(
       code,
       detail: 'SECRETO: certificado A, contramodelo B y pasos de solución',
     })),
-    targetComplexity: 'media',
+    targetComplexity: 'alta',
     complexityComparisonAvailable: false,
     structuralSignature: SIGNATURE,
     ...(assignment === undefined ? {} : { itemFamilyId: assignment.itemFamilyId }),

@@ -16,7 +16,7 @@ import {
   assertMeasuredMatchesTargetComplexity,
   assertNoAuthoritativeSolution,
   AuthoritativeSolutionFromGeneratorError,
-  CalibrationPendingError,
+  ComplexityTargetMismatchError,
   canonicalStatement,
   FamilyAssignmentError,
   FamilyRegistry,
@@ -51,7 +51,7 @@ function candidato(overrides: Partial<ItemCandidate> = {}): ItemCandidate {
     promptText: 'Demuestra la conclusión a partir de las premisas.',
     targetKcs: ['KC09'],
     bankFunction: 'guided_practice',
-    targetComplexity: 'media',
+    targetComplexity: 'alta',
     prohibitions: ['sin reglas derivadas fuera de DNE'],
     contradictionIsExplicitGoal: false,
     ...overrides,
@@ -206,19 +206,19 @@ describe('W3: candidato que supera el pipeline', () => {
     expect(salida.authorizedCalculusVersion).toBe(AUTHORIZED_CALCULUS_VERSION);
   });
 
-  it('la complejidad se mide pero **no se compara** con la objetivo: eso es CAL-09', () => {
+  it('CAL-09 compara la complejidad medida con la objetivo', () => {
     const salida = runW3Generation(entrada());
     const item = salida.items[0];
-    expect(item?.targetComplexity).toBe('media');
-    // Se declara siempre, aunque sea `false`: omitirlo se leería como que sí se
-    // comparó.
-    expect(item?.complexityComparisonAvailable).toBe(false);
-    expect(() =>
-      assertMeasuredMatchesTargetComplexity(item!.complexity!, item!.targetComplexity),
-    ).toThrow(CalibrationPendingError);
-    expect(() =>
-      assertMeasuredMatchesTargetComplexity(item!.complexity!, item!.targetComplexity),
-    ).toThrow(/CAL-09/u);
+    expect(item?.targetComplexity).toBe('alta');
+    expect(item?.measuredComplexityTier).toBe('alta');
+    expect(item?.complexityComparisonAvailable).toBe(true);
+    expect(assertMeasuredMatchesTargetComplexity(item!.complexity!, item!.targetComplexity)).toEqual({
+      index: item!.complexityIndex,
+      measuredTier: 'alta',
+    });
+    expect(() => assertMeasuredMatchesTargetComplexity(item!.complexity!, 'baja')).toThrow(
+      ComplexityTargetMismatchError,
+    );
   });
 
   it('el certificado va a `privateSolutions` y **no cabe** en el registro del reactivo', () => {
@@ -287,6 +287,7 @@ describe('filtros deterministas del verificador de reactivos (P-I §7.5)', () =>
         candidates: [
           candidato({
             statement: { premises: ['A', '¬A'], goal: '⊥' },
+            targetComplexity: 'baja',
             contradictionIsExplicitGoal: true,
           }),
         ],
@@ -361,6 +362,7 @@ describe('filtros deterministas del verificador de reactivos (P-I §7.5)', () =>
     expect(salida.items[0]?.rejections.map((r) => r.code)).toEqual([
       'goal_trivial',
       'premises_unsatisfiable',
+      'complexity_target_mismatch',
     ]);
   });
 });
@@ -480,11 +482,12 @@ describe('duplicados e isomorfismos (paso 6 de W3)', () => {
     const salida = runW3Generation(
       entrada({
         candidates: [
-          candidato({ candidateId: 'it-001', statement: { premises: ['A', 'B'], goal: 'A∧B' } }),
+          candidato({ candidateId: 'it-001', statement: { premises: ['A', 'B'], goal: 'A∧B' }, targetComplexity: 'baja' }),
           candidato({
             candidateId: 'it-002',
             bankFunction: 'probes_baseline',
             statement: { premises: ['P', 'Q'], goal: 'P∧Q' },
+            targetComplexity: 'baja',
           }),
         ],
       }),
@@ -501,8 +504,8 @@ describe('duplicados e isomorfismos (paso 6 de W3)', () => {
     const salida = runW3Generation(
       entrada({
         candidates: [
-          candidato({ candidateId: 'it-001', statement: { premises: ['A', 'B'], goal: 'A∧B' } }),
-          candidato({ candidateId: 'it-002', statement: { premises: ['P', 'Q'], goal: 'P∧Q' } }),
+          candidato({ candidateId: 'it-001', statement: { premises: ['A', 'B'], goal: 'A∧B' }, targetComplexity: 'baja' }),
+          candidato({ candidateId: 'it-002', statement: { premises: ['P', 'Q'], goal: 'P∧Q' }, targetComplexity: 'baja' }),
         ],
       }),
     );

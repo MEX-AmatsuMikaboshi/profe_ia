@@ -6,6 +6,28 @@
 #
 # Regla dura (§0.2.2): una decisión CONDICIONADA A BENCHMARK o CALIBRABLE se
 # implementa como procedimiento + gate, nunca como valor inventado. Este archivo
-# está vacío hasta que un gate real congele su primer parámetro.
+# estuvo vacío hasta la primera calibración reproducible, CAL-09.
 
-parameters: []
+parameters:
+  - parameter_id: CAL-09
+    version: cal-09-v1
+    status: frozen
+    frozen_at: 2026-08-16
+    gate: H5
+    method: pairwise_ordinal_concordance_v1
+    data_policy: no_participant_data
+    sample_size: 13
+    sample_hash: 9247a8b0df137c56b742e7650e59848be965fe38374e21c6c1ba5acddb1f830a
+    profile_version: structural-complexity-v1
+    authorized_calculus_version: authorized-calculus-v1
+    verifier_version: 0.1.0
+    search_mode: heuristic
+    search_order_version: search-order-v1
+    comparability_max_difference: 12.065296
+    tier_bands:
+      baja: [0, 14.004071]
+      media: [14.004071, 38.57128]
+      alta: [38.57128, 100]
+    evidence:
+      implementation: packages/proof-search/src/cal09.ts
+      test: packages/proof-search/test/cal09.test.ts

@@ -14,4 +14,5 @@ export const PACKAGE_NAME = '@profesor-ia/proof-search' as const;
 export * from './types.js';
 export * from './search.js';
 export * from './complexity.js';
+export * from './cal09.js';
 export * from './bench.js';

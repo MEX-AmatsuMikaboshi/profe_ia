@@ -11,10 +11,14 @@ import {
 import {
   BENCH04_HARNESS_VERSION,
   BENCH04_VARIANTS,
+  CAL09_FROZEN_MANIFEST,
   CertificateRejectedError,
+  classifyComplexity,
+  complexityIndex,
   freezeWinningOrder,
   structuralComplexity,
   type Bench04Report,
+  type ComplexityTier,
   type FoundProof,
   type SearchBudget,
   type SearchMode,
@@ -31,7 +35,7 @@ import {
 } from '@profesor-ia/isomorphism-canonicalizer';
 import {
   AuthoritativeSolutionFromGeneratorError,
-  CalibrationPendingError,
+  ComplexityTargetMismatchError,
   HintPolicyError,
   PipelineOrderNotFrozenError,
   W3InputError,
@@ -102,6 +106,7 @@ export const W3_REJECTION_CODES = [
   'trivial_duplicate_of_candidate',
   'isomorphic_to_candidate',
   'duplicate_of_corpus_exercise',
+  'complexity_target_mismatch',
 ] as const;
 export type W3RejectionCode = (typeof W3_REJECTION_CODES)[number];
 
@@ -136,7 +141,7 @@ export interface ItemCandidate {
    */
   readonly replacesReserve?: Reserve;
   /** Complejidad **objetivo** declarada por Rol C; no es una medida. */
-  readonly targetComplexity: string;
+  readonly targetComplexity: ComplexityTier;
   readonly prohibitions: readonly string[];
   /**
    * Si la contradicción es el objetivo explícito del reactivo. P-I §7.5 exige
@@ -391,10 +396,12 @@ export interface W3ItemRecord {
   readonly rejections: readonly W3Rejection[];
   /** Perfil de complejidad de la solución hallada, cuando la hay. */
   readonly complexity?: StructuralComplexityProfile;
-  /** Complejidad declarada por Rol C, sin comparar: comparar exige `CAL-09`. */
-  readonly targetComplexity: string;
-  /** Declarado siempre, aunque sea `false`: omitirlo se leería como que sí se comparó. */
-  readonly complexityComparisonAvailable: false;
+  /** Complejidad declarada por Rol C y estrato medido por CAL-09. */
+  readonly targetComplexity: ComplexityTier;
+  readonly measuredComplexityTier?: ComplexityTier;
+  readonly complexityIndex?: number;
+  /** Declarado siempre: `true` solo cuando hubo perfil medible y CAL-09 aplicó. */
+  readonly complexityComparisonAvailable: boolean;
   /** Firma estructural de la solución; base del control de duplicados. */
   readonly structuralSignature?: string;
   /**
@@ -625,12 +632,22 @@ export function runW3Generation(input: W3Input): W3Outcome {
     // 4. Re-verificación del certificado con `logic-core`.
     assertCertificateReverified(resultado.proof, candidato.statement.goal);
 
-    // 5. Complejidad estructural. Sin índice: `CAL-09` lo congela en T-H5-10.
+    // 5. Complejidad estructural y comparación contra CAL-09 congelado.
     const complejidad = structuralComplexity({
       premises: candidato.statement.premises,
       goal: candidato.statement.goal,
       outcome: resultado,
     });
+    const indiceDeComplejidad = complexityIndex(complejidad, CAL09_FROZEN_MANIFEST);
+    const estratoMedido = classifyComplexity(complejidad, CAL09_FROZEN_MANIFEST);
+    if (estratoMedido !== candidato.targetComplexity) {
+      rechazos.push({
+        code: 'complexity_target_mismatch',
+        detail:
+          `Rol C pidió complejidad ${candidato.targetComplexity}, pero CAL-09 midió ` +
+          `${estratoMedido} (index=${indiceDeComplejidad}).`,
+      });
+    }
 
     // 6. Duplicados e isomorfismos sobre representación normalizada.
     const canonico = proofOf(resultado.proof, candidato.statement.goal);
@@ -726,7 +743,9 @@ export function runW3Generation(input: W3Input): W3Outcome {
         rejections: Object.freeze([...rechazos]),
         complexity: complejidad,
         targetComplexity: candidato.targetComplexity,
-        complexityComparisonAvailable: false,
+        measuredComplexityTier: estratoMedido,
+        complexityIndex: indiceDeComplejidad,
+        complexityComparisonAvailable: true,
         structuralSignature: firma,
         criticRiskFlags: critica === undefined ? [] : critiqueRiskFlags(critica),
         criticised: critica !== undefined,
@@ -803,19 +822,19 @@ function registroRechazado(
 /**
  * Comparar la complejidad medida con la complejidad objetivo de Rol C.
  *
- * **No se puede todavía**, y este es el punto donde se enchufa `T-H5-10`: sin
- * los pesos congelados del índice no hay escalar con el que decir que una
- * solución de siete líneas cumple un objetivo declarado como «media». Aceptar
- * la declaración del generador la convertiría en la medida.
+ * Usa el manifiesto congelado de T-H5-10; aceptar la declaración de Rol C sin
+ * contrastarla convertiría al generador en la medida.
  */
 export function assertMeasuredMatchesTargetComplexity(
   profile: StructuralComplexityProfile,
-  targetComplexity: string,
-): never {
-  throw new CalibrationPendingError(
-    'CAL-09',
-    `no hay escalar con el que contrastar la complejidad objetivo «${targetComplexity}» contra el ` +
-      `perfil medido (${profile.profileVersion}); P-I §7.6 fija el primer valor operativo en H5`,
-    'H5 / T-H5-10',
-  );
+  targetComplexity: ComplexityTier,
+): Readonly<{ index: number; measuredTier: ComplexityTier }> {
+  const index = complexityIndex(profile, CAL09_FROZEN_MANIFEST);
+  const measuredTier = classifyComplexity(profile, CAL09_FROZEN_MANIFEST);
+  if (measuredTier !== targetComplexity) {
+    throw new ComplexityTargetMismatchError(
+      `complejidad objetivo ${targetComplexity}, medida ${measuredTier} (CAL-09 index=${index})`,
+    );
+  }
+  return Object.freeze({ index, measuredTier });
 }

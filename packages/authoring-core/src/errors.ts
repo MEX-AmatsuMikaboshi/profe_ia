@@ -344,3 +344,6 @@ export class RegenerationLimitError extends AuthoringCoreError {}
  * reasignación encubierta.
  */
 export class RegenerationInputError extends AuthoringCoreError {}
+
+/** La complejidad medida por CAL-09 no coincide con el estrato pedido por Rol C. */
+export class ComplexityTargetMismatchError extends AuthoringCoreError {}

@@ -10,6 +10,7 @@ import {
   type Formula,
   type RuleId,
 } from '@profesor-ia/logic-core';
+import { createHash } from 'node:crypto';
 import type { FoundProof, SearchOutcome, SearchTelemetry } from './types.js';
 
 /**
@@ -28,8 +29,8 @@ import type { FoundProof, SearchOutcome, SearchTelemetry } from './types.js';
  *     y de la estrategia, y no admite lectura absoluta.
  *  3. Los **pesos y el criterio de comparabilidad** son `[CALIBRATION CAL-09]`
  *     y se congelan en H5 (`T-H5-10`), antes de seleccionar los conjuntos y
- *     antes de H6. Hasta entonces no existe un escalar: `complexityIndex()`
- *     falla cerrado en vez de agregar con pesos inventados (§0.2.5).
+ *     antes de H6. `complexityIndex()` exige el manifiesto congelado y falla
+ *     cerrado si falta o no corresponde a las versiones medidas.
  *
  * El módulo vive en `proof-search` y no en `logic-core` porque consume
  * telemetría de búsqueda (presupuesto, garantía de minimalidad, diversidad),
@@ -174,6 +175,68 @@ export interface ComplexityInput {
   readonly alternativeSolutions?: readonly FoundProof[];
 }
 
+export const COMPLEXITY_TIERS = ['baja', 'media', 'alta'] as const;
+export type ComplexityTier = (typeof COMPLEXITY_TIERS)[number];
+
+export const COMPLEXITY_FEATURES = [
+  'proofLength',
+  'distinctRuleCount',
+  'subproofCount',
+  'maxSubproofDepth',
+  'premiseCount',
+  'connectivesInStatement',
+  'requiresAssumptionDischarge',
+  'usesIndirectStrategy',
+  'structuralDistance',
+  'workUnitsLog2',
+  'costExplored',
+  'distinctStrategiesFoundWithinBudget',
+] as const;
+export type ComplexityFeature = (typeof COMPLEXITY_FEATURES)[number];
+
+export interface ComplexityCalibrationSample {
+  readonly caseId: string;
+  readonly tier: ComplexityTier;
+  readonly dataOrigin: 'verified_solution' | 'synthetic_verified_solution' | 'generated_package';
+  readonly profile: StructuralComplexityProfile;
+}
+
+export interface CalibratedFeature {
+  readonly min: number;
+  readonly max: number;
+  /** Peso entero derivado de concordancia ordinal; 0 = sin señal en la muestra. */
+  readonly weight: number;
+}
+
+export interface ComplexityCalibrationManifest {
+  readonly calibrationId: 'CAL-09';
+  readonly version: 'cal-09-v1';
+  readonly status: 'frozen';
+  readonly frozenAt: string;
+  readonly dataPolicy: 'no_participant_data';
+  readonly method: 'pairwise_ordinal_concordance_v1';
+  readonly profileVersion: typeof COMPLEXITY_PROFILE_VERSION;
+  readonly authorizedCalculusVersion: typeof AUTHORIZED_CALCULUS_VERSION;
+  readonly verifierVersion: typeof VERIFIER_VERSION;
+  readonly searchMode: SearchTelemetry['mode'];
+  readonly searchOrderVersion: string;
+  readonly features: Readonly<Record<ComplexityFeature, CalibratedFeature>>;
+  readonly tierBands: Readonly<Record<ComplexityTier, Readonly<{ min: number; max: number }>>>;
+  /** Mitad de la menor separación entre medianas de estratos adyacentes. */
+  readonly comparabilityMaxDifference: number;
+  readonly sampleIds: readonly string[];
+  readonly sampleHash: string;
+}
+
+export interface ComplexityComparison {
+  readonly comparable: boolean;
+  readonly indexA: number;
+  readonly indexB: number;
+  readonly difference: number;
+  readonly maxDifference: number;
+  readonly interpretation: 'structurally_comparable_not_psychometrically_equivalent';
+}
+
 /**
  * Perfil de complejidad estructural de una solución encontrada.
  *
@@ -242,22 +305,40 @@ export function structuralComplexity(input: ComplexityInput): StructuralComplexi
 }
 
 /**
- * Escalar del índice de complejidad. **No existe todavía**: los pesos son
- * `[CALIBRATION CAL-09]` y se fijan en H5 (`T-H5-10`) con corpus, soluciones
- * verificadas y pruebas sintéticas, antes de seleccionar/congelar conjuntos y
- * antes de H6.
- *
- * Firma `never` a propósito: mientras la calibración esté abierta, la única
- * respuesta correcta es el fallo. Cuando H5 congele los pesos, esta función
- * devolverá un número y la firma dejará de ser `never`.
+ * Escalar del índice de complejidad. CAL-09 se congeló en H5 con soluciones
+ * verificadas sintéticas y sin datos de participante. El manifiesto entra como
+ * dato explícito; omitirlo sigue fallando cerrado para que otro flujo no use
+ * pesos implícitos o de otra versión.
  */
-export function complexityIndex(profile: StructuralComplexityProfile): never {
-  throw new CalibrationPendingError(
-    'CAL-09',
-    'H5 / T-H5-10',
-    `los pesos del índice de complejidad no están congelados para ${profile.profileVersion}; ` +
-      'agregar con pesos inventados violaría §0.2.5',
+export function complexityIndex(
+  profile: StructuralComplexityProfile,
+  calibration?: ComplexityCalibrationManifest,
+): number {
+  if (calibration === undefined) {
+    throw new CalibrationPendingError(
+      'CAL-09',
+      'H5 / T-H5-10',
+      `no se proporcionó un manifiesto congelado para ${profile.profileVersion}; ` +
+        'agregar con pesos inventados violaría §0.2.5',
+    );
+  }
+  assertCalibrationApplies(profile, calibration);
+  const vector = complexityFeatureVector(profile);
+  const totalWeight = COMPLEXITY_FEATURES.reduce(
+    (sum, feature) => sum + calibration.features[feature].weight,
+    0,
   );
+  if (totalWeight <= 0) {
+    throw new CalibrationPendingError('CAL-09', 'H5 / T-H5-10', 'el manifiesto no tiene peso positivo');
+  }
+  const score = COMPLEXITY_FEATURES.reduce((sum, feature) => {
+    const configured = calibration.features[feature];
+    const range = configured.max - configured.min;
+    const normalized =
+      range === 0 ? 0 : Math.max(0, Math.min(1, (vector[feature] - configured.min) / range));
+    return sum + normalized * configured.weight;
+  }, 0);
+  return round6((score / totalWeight) * 100);
 }
 
 /**
@@ -272,13 +353,173 @@ export function complexityIndex(profile: StructuralComplexityProfile): never {
 export function assertComparable(
   a: StructuralComplexityProfile,
   b: StructuralComplexityProfile,
-): never {
-  throw new CalibrationPendingError(
-    'CAL-09',
-    'H5 / T-H5-10',
-    `el criterio de comparabilidad no está congelado (${a.profileVersion} vs ${b.profileVersion}); ` +
-      'además, índices iguales no implican equivalencia psicométrica (P-I §7.6)',
+  calibration?: ComplexityCalibrationManifest,
+): ComplexityComparison {
+  if (calibration === undefined) {
+    throw new CalibrationPendingError(
+      'CAL-09',
+      'H5 / T-H5-10',
+      `el criterio de comparabilidad no está congelado (${a.profileVersion} vs ${b.profileVersion}); ` +
+        'además, índices iguales no implican equivalencia psicométrica (P-I §7.6)',
+    );
+  }
+  const indexA = complexityIndex(a, calibration);
+  const indexB = complexityIndex(b, calibration);
+  const difference = round6(Math.abs(indexA - indexB));
+  return Object.freeze({
+    comparable: difference <= calibration.comparabilityMaxDifference,
+    indexA,
+    indexB,
+    difference,
+    maxDifference: calibration.comparabilityMaxDifference,
+    interpretation: 'structurally_comparable_not_psychometrically_equivalent',
+  });
+}
+
+/**
+ * Congela CAL-09 a partir de estratos declarados **antes** de calcular los
+ * pesos. Cada peso es la concordancia neta de esa medida con todos los pares
+ * ordenados baja<media<alta; la parte negativa se trunca en cero. No hay pesos
+ * elegidos a mano y cada cero queda visible en el manifiesto.
+ */
+export function calibrateComplexity(
+  samples: readonly ComplexityCalibrationSample[],
+  frozenAt: string,
+): ComplexityCalibrationManifest {
+  assertCalibrationSample(samples);
+  const vectors = samples.map((sample) => ({ sample, vector: complexityFeatureVector(sample.profile) }));
+  const features = Object.fromEntries(
+    COMPLEXITY_FEATURES.map((feature) => {
+      const values = vectors.map(({ vector }) => vector[feature]);
+      let signal = 0;
+      for (const lower of vectors) {
+        for (const higher of vectors) {
+          if (tierRank(lower.sample.tier) >= tierRank(higher.sample.tier)) continue;
+          signal += Math.sign(higher.vector[feature] - lower.vector[feature]);
+        }
+      }
+      return [
+        feature,
+        Object.freeze({ min: Math.min(...values), max: Math.max(...values), weight: Math.max(0, signal) }),
+      ];
+    }),
+  ) as unknown as Readonly<Record<ComplexityFeature, CalibratedFeature>>;
+
+  if (COMPLEXITY_FEATURES.every((feature) => features[feature].weight === 0)) {
+    throw new CalibrationPendingError(
+      'CAL-09',
+      'H5 / T-H5-10',
+      'la muestra no aporta ninguna señal ordinal positiva; no se puede congelar un índice',
+    );
+  }
+
+  const base = {
+    calibrationId: 'CAL-09',
+    version: 'cal-09-v1',
+    status: 'frozen',
+    frozenAt,
+    dataPolicy: 'no_participant_data',
+    method: 'pairwise_ordinal_concordance_v1',
+    profileVersion: COMPLEXITY_PROFILE_VERSION,
+    authorizedCalculusVersion: AUTHORIZED_CALCULUS_VERSION,
+    verifierVersion: VERIFIER_VERSION,
+    searchMode: samples[0]!.profile.searchRelative.mode,
+    searchOrderVersion: samples[0]!.profile.searchRelative.searchOrderVersion,
+    features: Object.freeze(features),
+  } as const;
+
+  const provisional = {
+    ...base,
+    tierBands: { baja: { min: 0, max: 0 }, media: { min: 0, max: 0 }, alta: { min: 0, max: 0 } },
+    comparabilityMaxDifference: 0,
+    sampleIds: samples.map((s) => s.caseId),
+    sampleHash: '0'.repeat(64),
+  } satisfies ComplexityCalibrationManifest;
+  const scores = samples.map((sample) => ({ sample, score: complexityIndex(sample.profile, provisional) }));
+  const medians = COMPLEXITY_TIERS.map((tier) =>
+    median(scores.filter((s) => s.sample.tier === tier).map((s) => s.score)),
   );
+  if (!(medians[0]! < medians[1]! && medians[1]! < medians[2]!)) {
+    throw new CalibrationPendingError(
+      'CAL-09',
+      'H5 / T-H5-10',
+      `los estratos no quedan ordenados por mediana (${medians.join(' < ')}); revisar la muestra`,
+    );
+  }
+  const lowMediumBoundary = round6((medians[0]! + medians[1]!) / 2);
+  const mediumHighBoundary = round6((medians[1]! + medians[2]!) / 2);
+  const tierBands: ComplexityCalibrationManifest['tierBands'] = Object.freeze({
+    baja: Object.freeze({ min: 0, max: lowMediumBoundary }),
+    media: Object.freeze({ min: lowMediumBoundary, max: mediumHighBoundary }),
+    alta: Object.freeze({ min: mediumHighBoundary, max: 100 }),
+  });
+  const comparabilityMaxDifference = round6(
+    Math.min(medians[1]! - medians[0]!, medians[2]! - medians[1]!) / 2,
+  );
+  const misclassified = scores.filter(({ sample, score }) => {
+    const classified: ComplexityTier =
+      score <= lowMediumBoundary ? 'baja' : score <= mediumHighBoundary ? 'media' : 'alta';
+    return classified !== sample.tier;
+  });
+  if (misclassified.length > 0) {
+    throw new CalibrationPendingError(
+      'CAL-09',
+      'H5 / T-H5-10',
+      `el índice no recupera los estratos predeclarados: ${misclassified
+        .map(({ sample }) => sample.caseId)
+        .join(', ')}`,
+    );
+  }
+  const sampleMaterial = samples.map((sample, index) => ({
+    caseId: sample.caseId,
+    tier: sample.tier,
+    dataOrigin: sample.dataOrigin,
+    features: vectors[index]!.vector,
+  }));
+  return Object.freeze({
+    ...base,
+    tierBands: Object.freeze(tierBands),
+    comparabilityMaxDifference,
+    sampleIds: Object.freeze(samples.map((s) => s.caseId)),
+    sampleHash: createHash('sha256').update(JSON.stringify(sampleMaterial)).digest('hex'),
+  });
+}
+
+export function complexityTierMatches(
+  profile: StructuralComplexityProfile,
+  target: ComplexityTier,
+  calibration: ComplexityCalibrationManifest,
+): boolean {
+  return classifyComplexity(profile, calibration) === target;
+}
+
+export function classifyComplexity(
+  profile: StructuralComplexityProfile,
+  calibration: ComplexityCalibrationManifest,
+): ComplexityTier {
+  const score = complexityIndex(profile, calibration);
+  if (score <= calibration.tierBands.baja.max) return 'baja';
+  if (score <= calibration.tierBands.media.max) return 'media';
+  return 'alta';
+}
+
+export function complexityFeatureVector(
+  profile: StructuralComplexityProfile,
+): Readonly<Record<ComplexityFeature, number>> {
+  return Object.freeze({
+    proofLength: profile.structural.proofLength,
+    distinctRuleCount: profile.structural.distinctRuleCount,
+    subproofCount: profile.structural.subproofCount,
+    maxSubproofDepth: profile.structural.maxSubproofDepth,
+    premiseCount: profile.structural.premiseCount,
+    connectivesInStatement: profile.structural.connectivesInStatement,
+    requiresAssumptionDischarge: Number(profile.structural.requiresAssumptionDischarge),
+    usesIndirectStrategy: Number(profile.structural.usesIndirectStrategy),
+    structuralDistance: profile.structural.structuralDistance,
+    workUnitsLog2: Math.log2(1 + profile.searchRelative.workUnitsSpent),
+    costExplored: profile.searchRelative.costExplored,
+    distinctStrategiesFoundWithinBudget: profile.searchRelative.distinctStrategiesFoundWithinBudget,
+  });
 }
 
 /** Ids canónicos de las reglas de la solución, sin `PR`/`AS`, ordenados y sin repetir. */
@@ -344,4 +585,140 @@ function structuralDistance(premises: readonly Formula[], goal: Formula): number
  */
 function strategySignature(proof: FoundProof): string {
   return proof.lines.map((l) => `${l.depth}:${l.rule}`).join('|');
+}
+
+function assertCalibrationSample(samples: readonly ComplexityCalibrationSample[]): void {
+  if (samples.length === 0) {
+    throw new CalibrationPendingError('CAL-09', 'H5 / T-H5-10', 'muestra de calibración vacía');
+  }
+  const ids = new Set<string>();
+  for (const sample of samples) {
+    if (ids.has(sample.caseId)) {
+      throw new CalibrationPendingError(
+        'CAL-09',
+        'H5 / T-H5-10',
+        `caseId repetido: ${sample.caseId}`,
+      );
+    }
+    ids.add(sample.caseId);
+    if (sample.profile.searchRelative.wallTimeoutHit) {
+      throw new CalibrationPendingError(
+        'CAL-09',
+        'H5 / T-H5-10',
+        `${sample.caseId} disparó timeout de pared y no es comparable`,
+      );
+    }
+    if (
+      sample.profile.profileVersion !== COMPLEXITY_PROFILE_VERSION ||
+      sample.profile.authorizedCalculusVersion !== AUTHORIZED_CALCULUS_VERSION ||
+      sample.profile.verifierVersion !== VERIFIER_VERSION
+    ) {
+      throw new CalibrationPendingError(
+        'CAL-09',
+        'H5 / T-H5-10',
+        `${sample.caseId} mezcla versiones fuera del sobre de calibración`,
+      );
+    }
+    if (
+      sample.profile.searchRelative.mode !== samples[0]!.profile.searchRelative.mode ||
+      sample.profile.searchRelative.searchOrderVersion !==
+        samples[0]!.profile.searchRelative.searchOrderVersion
+    ) {
+      throw new CalibrationPendingError(
+        'CAL-09',
+        'H5 / T-H5-10',
+        `${sample.caseId} mezcla modo u orden de búsqueda; la telemetría relativa no sería comparable`,
+      );
+    }
+  }
+  for (const tier of COMPLEXITY_TIERS) {
+    if (samples.filter((sample) => sample.tier === tier).length < 3) {
+      throw new CalibrationPendingError(
+        'CAL-09',
+        'H5 / T-H5-10',
+        `el estrato ${tier} necesita al menos tres soluciones verificadas`,
+      );
+    }
+  }
+}
+
+function assertCalibrationApplies(
+  profile: StructuralComplexityProfile,
+  calibration: ComplexityCalibrationManifest,
+): void {
+  const invalid: string[] = [];
+  if (calibration.calibrationId !== 'CAL-09') invalid.push('calibrationId');
+  if (calibration.version !== 'cal-09-v1') invalid.push('version');
+  if (calibration.status !== 'frozen') invalid.push('status');
+  if (calibration.dataPolicy !== 'no_participant_data') invalid.push('dataPolicy');
+  if (calibration.method !== 'pairwise_ordinal_concordance_v1') invalid.push('method');
+  if (!/^\d{4}-\d{2}-\d{2}$/u.test(calibration.frozenAt)) invalid.push('frozenAt');
+  if (!/^[0-9a-f]{64}$/u.test(calibration.sampleHash)) invalid.push('sampleHash');
+  if (calibration.sampleIds.length === 0) invalid.push('sampleIds');
+  if (calibration.profileVersion !== profile.profileVersion) invalid.push('profileVersion');
+  if (calibration.authorizedCalculusVersion !== profile.authorizedCalculusVersion) {
+    invalid.push('authorizedCalculusVersion');
+  }
+  if (calibration.verifierVersion !== profile.verifierVersion) invalid.push('verifierVersion');
+  if (invalid.length > 0) {
+    throw new CalibrationPendingError(
+      'CAL-09',
+      'H5 / T-H5-10',
+      `el manifiesto no está congelado para el perfil medido: ${invalid.join(', ')}`,
+    );
+  }
+  for (const feature of COMPLEXITY_FEATURES) {
+    const configured = calibration.features[feature];
+    if (
+      configured === undefined ||
+      !Number.isFinite(configured.min) ||
+      !Number.isFinite(configured.max) ||
+      configured.min > configured.max ||
+      !Number.isInteger(configured.weight) ||
+      configured.weight < 0
+    ) {
+      throw new CalibrationPendingError(
+        'CAL-09',
+        'H5 / T-H5-10',
+        `configuración inválida de la medida ${feature}`,
+      );
+    }
+  }
+  if (
+    !Number.isFinite(calibration.comparabilityMaxDifference) ||
+    calibration.comparabilityMaxDifference < 0
+  ) {
+    throw new CalibrationPendingError(
+      'CAL-09',
+      'H5 / T-H5-10',
+      'criterio de comparabilidad inválido',
+    );
+  }
+  if (
+    profile.searchRelative.wallTimeoutHit ||
+    profile.searchRelative.mode !== calibration.searchMode ||
+    profile.searchRelative.searchOrderVersion !== calibration.searchOrderVersion
+  ) {
+    throw new CalibrationPendingError(
+      'CAL-09',
+      'H5 / T-H5-10',
+      'la telemetría relativa no es comparable con el modo/orden congelado o tuvo timeout',
+    );
+  }
+}
+
+function tierRank(tier: ComplexityTier): number {
+  return COMPLEXITY_TIERS.indexOf(tier);
+}
+
+function median(values: readonly number[]): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? (sorted[middle - 1]! + sorted[middle]!) / 2
+    : sorted[middle]!;
+}
+
+function round6(value: number): number {
+  return Math.round(value * 1_000_000) / 1_000_000;
 }

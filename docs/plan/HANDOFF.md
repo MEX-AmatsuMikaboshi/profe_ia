@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09` (límites y política de regeneración).
+**Qué se cerró aquí:** `T-H5-09` (regeneración) y `T-H5-10` (`CAL-09`).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,7 +14,7 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
-con 9 de 17**: `T-H5-01…09`. La siguiente es **`T-H5-10`**, calibración `CAL-09`. Antes de
+con 10 de 17**: `T-H5-01…10`. La siguiente es **`T-H5-11`**, oportunidades SCED. Antes de
 arrancarla lee §3, que dice qué se rompe fácil, y §7, que enumera lo que **no** está verificado.
 
 **`CONTENT_TOKEN` ya existe** (comprobado el 16-08). Tras subir `T-H5-09` hay que observar CI; si
@@ -49,10 +49,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **9 de 17.** `T-H5-01…09` cerradas; sigue `T-H5-10` |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **10 de 17.** `T-H5-01…10` cerradas; sigue `T-H5-11` |
 | F7–F16 | No empezadas |
 
-Van **61 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **62 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -76,23 +76,19 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H5-10` — calibración `CAL-09`
+### La tarea siguiente: `T-H5-11` — oportunidades SCED
 
-F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las nueve primeras
-están cerradas. Sigue `T-H5-10`: fijar y congelar en H5 los pesos iniciales del índice de
-complejidad y el criterio de comparabilidad, usando corpus, soluciones y sintéticos, sin datos de
-participante. `complexityIndex()` y `assertComparable()` ya fallan cerrado con `CAL-09`; no se les
-debe conectar un valor plausible sin la corrida de calibración que lo justifique.
+F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las diez primeras
+están cerradas. Sigue `T-H5-11`: fijar `k_set` y `min_valid_items_per_opportunity` de la
+microbatería SCED y verificar que las reservas cubren el calendario completo más el 20 % adicional.
 
 **Las tres cosas que conviene tener claras antes de empezarla:**
 
-1. `complexity.ts` ya separa medidas estructurales de medidas relativas a la búsqueda; no colapses
-   esa distinción al construir el índice.
-2. Los pesos y la banda de comparabilidad son una calibración, no literales del Maestro. La tarea
-   exige una corrida reproducible y evidencia congelada; una cifra elegida a mano no cierra `CAL-09`.
-3. La corrida puede usar soluciones y casos sintéticos, pero no datos del participante. Si el corpus
-   real sigue ausente, se construye el procedimiento y se mantiene el gate cerrado en su punto de
-   fallo, sin presentar una calibración sintética insuficiente como freeze final.
+1. El Maestro nombra ambos parámetros pero no da sus valores: son calibración, no literales.
+2. `requiredProbesForCalendar()` sigue fallando con `CAL-01`; este es el punto que T-H5-11 debe
+   cerrar con un calendario simulado y una definición ejecutable de oportunidad válida.
+3. La selección no puede hacer pasar cobertura por vacío: conjuntos, ventanas, reservas y el 20 %
+   adicional deben entrar declarados, y un faltante invalida el calendario en vez de reducirlo.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -147,6 +143,14 @@ un miembro rechazado cuenta una vez aunque se reprocese. La tercera regeneració
 evaluar; se bloquea pedir la cuarta. El informe al agente solo expone los códigos cerrados de W3 y
 restricciones de un catálogo cerrado; las causas detalladas quedan en el registro de auditoría. Un
 rechazo sin certificado no recibe una familia inventada. Son 13 pruebas nuevas, 1001 totales.
+
+### `T-H5-10` — `CAL-09`
+
+`cal-09-v1` quedó congelado con 13 soluciones sintéticas verificadas, sin datos de participante.
+Los pesos se derivan por concordancia ordinal y la prueba de drift reproduce manifiesto, ids y hash.
+El índice queda acotado 0…100; baja/media/alta usan puntos medios entre medianas y la comparabilidad
+estructural máxima es `12.065296`, declarada expresamente como no psicométrica. W3 ya mide y rechaza
+la discrepancia contra el objetivo de Rol C. Son 10 pruebas nuevas, 1011 totales.
 
 ---
 
@@ -493,8 +497,8 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **1001 pruebas**: 874 unitarias + 127 contra
-PostgreSQL 17 real. El checkpoint anterior tenía 988.
+Estado en el checkpoint: **todo en verde en local**. **1011 pruebas**: 884 unitarias + 127 contra
+PostgreSQL 17 real. El checkpoint anterior tenía 1001.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 151 pruebas nuevas de esta sesión —de `authoring-core` y una de
@@ -714,9 +718,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1001 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1011 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F6 · H5 por `T-H5-10`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
+4. **Sigue F6 · H5 por `T-H5-11`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en

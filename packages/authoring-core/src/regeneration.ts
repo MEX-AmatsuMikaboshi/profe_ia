@@ -48,6 +48,7 @@ export const SAFE_REGENERATION_CONSTRAINTS = [
   'respect_frozen_hint_policy',
   'change_candidate_identity_or_structure',
   'avoid_source_exercise_similarity',
+  'match_frozen_complexity_target',
 ] as const;
 export type SafeRegenerationConstraint = (typeof SAFE_REGENERATION_CONSTRAINTS)[number];
 
@@ -69,6 +70,7 @@ const SAFE_CONSTRAINT_BY_REJECTION: Readonly<
   trivial_duplicate_of_candidate: ['change_candidate_identity_or_structure'],
   isomorphic_to_candidate: ['change_candidate_identity_or_structure'],
   duplicate_of_corpus_exercise: ['avoid_source_exercise_similarity'],
+  complexity_target_mismatch: ['match_frozen_complexity_target'],
 });
 
 export interface RegenerationFeedback {
