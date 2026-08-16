@@ -158,6 +158,9 @@ importers:
       '@profesor-ia/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@profesor-ia/domain-engine':
+        specifier: workspace:*
+        version: link:../domain-engine
       '@profesor-ia/isomorphism-canonicalizer':
         specifier: workspace:*
         version: link:../isomorphism-canonicalizer
@@ -341,6 +344,9 @@ importers:
 
   tools/cli:
     dependencies:
+      '@profesor-ia/authoring-core':
+        specifier: workspace:*
+        version: link:../../packages/authoring-core
       '@profesor-ia/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts

@@ -24,3 +24,4 @@ export * from './family.js';
 export * from './generation.js';
 export * from './regeneration.js';
 export * from './experimental-selection.js';
+export * from './package-linter.js';

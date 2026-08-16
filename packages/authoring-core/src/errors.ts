@@ -350,3 +350,10 @@ export class ComplexityTargetMismatchError extends AuthoringCoreError {}
 
 /** La propuesta A/B/C no satisface selección, comparabilidad o cobertura preinscrita. */
 export class ExperimentalSelectionError extends AuthoringCoreError {}
+
+/** El linter integral rechazó el paquete; conserva el informe completo. */
+export class PackageLintError extends AuthoringCoreError {
+  constructor(message: string, readonly report: unknown) {
+    super(message);
+  }
+}

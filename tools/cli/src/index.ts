@@ -1,9 +1,15 @@
-// CLI `profesor-ia` (Plan.md T-H0-07). En F0 los comandos son *stubs que
-// fallan explícitamente*: nunca devuelven éxito simulado, porque un comando de
-// gate que "pasa" sin implementación convertiría una falla en éxito silencioso
-// (§16, criterio de éxito técnico).
+// CLI `profesor-ia` (Plan.md T-H0-07). Los comandos no implementados fallan
+// explícitamente; `content validate` dejó de ser stub en T-H5-13.
+
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import {
+  lintContentPackage,
+  type PackageLintFacts,
+} from '@profesor-ia/authoring-core';
 
 export const NOT_IMPLEMENTED_EXIT_CODE = 3;
+export const VALIDATION_FAILED_EXIT_CODE = 2;
 export const USAGE_EXIT_CODE = 64;
 
 export interface CommandSpec {
@@ -65,6 +71,50 @@ export function run(argv: readonly string[]): RunResult {
       stdout: '',
       stderr: `comando desconocido: ${argv.join(' ')}\n\n${usage()}`,
     };
+  }
+  if (command.path[0] === 'content' && command.path[1] === 'validate') {
+    const packagePath = argv[2];
+    if (packagePath === undefined || packagePath.trim() === '') {
+      return {
+        exitCode: USAGE_EXIT_CODE,
+        stdout: '',
+        stderr: 'uso: profesor-ia content validate <directorio-del-paquete>\n',
+      };
+    }
+    const factsPath = resolve(packagePath, 'lint-input.json');
+    if (!existsSync(factsPath)) {
+      return {
+        exitCode: VALIDATION_FAILED_EXIT_CODE,
+        stdout: '',
+        stderr:
+          `PAQUETE_INVALIDO: falta ${factsPath}. El pipeline debe materializar los hechos ` +
+          `del linter; no se infieren de placeholders.\n`,
+      };
+    }
+    try {
+      const facts = JSON.parse(readFileSync(factsPath, 'utf8')) as PackageLintFacts;
+      const report = lintContentPackage(facts);
+      if (!report.valid) {
+        return {
+          exitCode: VALIDATION_FAILED_EXIT_CODE,
+          stdout: JSON.stringify(report, null, 2) + '\n',
+          stderr: `PAQUETE_INVALIDO: ${report.issues.length} control(es) fallaron.\n`,
+        };
+      }
+      return {
+        exitCode: 0,
+        stdout: JSON.stringify(report, null, 2) + '\n',
+        stderr: '',
+      };
+    } catch (error) {
+      return {
+        exitCode: VALIDATION_FAILED_EXIT_CODE,
+        stdout: '',
+        stderr: `PAQUETE_INVALIDO: lint-input.json ilegible o incompleto: ${
+          error instanceof Error ? error.message : String(error)
+        }\n`,
+      };
+    }
   }
   return {
     exitCode: NOT_IMPLEMENTED_EXIT_CODE,

@@ -20,6 +20,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@profesor-ia/authoring-core": "workspace:*",
     "@profesor-ia/contracts": "workspace:*"
   },
   "devDependencies": {
