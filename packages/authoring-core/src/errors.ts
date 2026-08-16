@@ -347,3 +347,6 @@ export class RegenerationInputError extends AuthoringCoreError {}
 
 /** La complejidad medida por CAL-09 no coincide con el estrato pedido por Rol C. */
 export class ComplexityTargetMismatchError extends AuthoringCoreError {}
+
+/** La propuesta A/B/C no satisface selección, comparabilidad o cobertura preinscrita. */
+export class ExperimentalSelectionError extends AuthoringCoreError {}

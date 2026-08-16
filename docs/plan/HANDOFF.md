@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09…11` (regeneración, `CAL-09` y oportunidad SCED).
+**Qué se cerró aquí:** `T-H5-09…12` (regeneración, calibraciones SCED/CAL-09 y selección A/B/C).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,7 +14,7 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
-con 11 de 17**: `T-H5-01…11`. La siguiente es **`T-H5-12`**, selección A/B/C. Antes de
+con 12 de 17**: `T-H5-01…12`. La siguiente es **`T-H5-13`**, linter integral. Antes de
 arrancarla lee §3, que dice qué se rompe fácil, y §7, que enumera lo que **no** está verificado.
 
 **`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31978986478` verificó T-H5-10 con los seis
@@ -49,10 +49,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **11 de 17.** `T-H5-01…11` cerradas; sigue `T-H5-12` |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **12 de 17.** `T-H5-01…12` cerradas; sigue `T-H5-13` |
 | F7–F16 | No empezadas |
 
-Van **63 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **64 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -76,20 +76,20 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H5-12` — selección de conjuntos A/B/C
+### La tarea siguiente: `T-H5-13` — linter integral del paquete
 
-F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las once primeras
-están cerradas. Sigue `T-H5-12`: proponer y validar los conjuntos A/B/C, simular el calendario,
-comprobar dependencias cruzadas y dificultad comparable, y congelar la selección.
+F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las doce primeras
+están cerradas. Sigue `T-H5-13`: implementar `profesor-ia content validate` con la lista completa
+de P-II §5.5 y recálculo autoritativo de `masteryDisqualifying`.
 
 **Las tres cosas que conviene tener claras antes de empezarla:**
 
-1. `crossSetEdges()` ya separa aristas `FORMAL` y `POLITICA_CONTENIDO`; toda arista restante exige
-   justificación de interpretabilidad, no una suma global.
-2. La comparabilidad usa `cal-09-v1`; una diferencia estructural se registra y nunca se llama
-   equivalencia psicométrica.
-3. El calendario debe usar el sobre SCED congelado de 19 rondas/57 sondas nominales por conjunto;
-   la selección no puede acortarlo para hacer que un banco insuficiente parezca cubierto.
+1. La lista de P-II §5.5 es literal y completa; cada control debe tener evidencia propia y ninguno
+   puede pasar por directorio/colección vacía.
+2. `masteryDisqualifying` propuesto por Rol D no es autoridad: el linter debe recalcularlo desde
+   política determinista y rechazar discrepancias.
+3. El paquete real sigue vacío porque W0 no ha corrido. El linter debe fallar sobre ese estado,
+   no completar placeholders ni fabricar un paquete para lograr verde.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -161,6 +161,16 @@ participante ni pretensión psicométrica. El peor inicio permitido de C (14) m�
 posteriores produce 19 rondas válidas concurrentes: 57 sondas únicas nominales por conjunto y 69
 con la reserva mínima del 20 %. La cobertura rechaza conjuntos ausentes, planes incoherentes, IDs
 repetidos e inventario insuficiente. Son 9 pruebas nuevas, 1020 totales.
+
+### `T-H5-12` — selección A/B/C
+
+`experimental-selection.ts` implementa propuesta, validación, ranking, revisión y freeze. Separa
+F/PC, bloquea dependencia completa hacia un conjunto posterior, registra carryover, compara todos
+los pares con CAL-09, verifica 69 sondas independientes y una transferencia por set, y evita usar
+KC de soporte como diferenciadores. El auditor solo revisa plausibilidad de la propuesta ganadora.
+El mecanismo está completo, pero `experimental-sets.yaml` permanece placeholder: congelar una
+selección sin corpus, perfiles ni bancos reales fabricaría evidencia. Son 8 pruebas nuevas, 1028
+totales.
 
 ---
 
@@ -507,8 +517,8 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **1020 pruebas**: 893 unitarias + 127 contra
-PostgreSQL 17 real. El checkpoint anterior tenía 1011.
+Estado en el checkpoint: **todo en verde en local**. **1028 pruebas**: 901 unitarias + 127 contra
+PostgreSQL 17 real. El checkpoint anterior tenía 1020.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 151 pruebas nuevas de esta sesión —de `authoring-core` y una de
@@ -727,9 +737,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1020 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1028 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F6 · H5 por `T-H5-12`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
+4. **Sigue F6 · H5 por `T-H5-13`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
