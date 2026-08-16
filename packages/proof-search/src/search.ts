@@ -395,7 +395,20 @@ function linearize(premises: readonly Formula[], term: Term): ProofLineInput[] {
     return lineNumber;
   };
 
-  emit(term, 0);
+  const conclusion = emit(term, 0);
+
+  // La misma convención Fitch que dentro de una subprueba, aplicada al ámbito
+  // principal: si la conclusión ya estaba disponible en una línea anterior
+  // —caso típico, la meta es una de las premisas y no la última—, `emit`
+  // devuelve esa línea y no añade ninguna, así que la derivación **terminaría
+  // en otra fórmula**. `verify` respondería `goalReached: false` sin ningún
+  // código de error, y la re-verificación obligatoria escalaría a incidente de
+  // nivel 3 una meta que solo era trivial. Se reitera para que la última línea
+  // sea la meta.
+  if (conclusion !== lines.length) {
+    lines.push({ formula: print(term.formula), rule: 'R', refs: [conclusion], depth: 0 });
+  }
+
   return lines;
 }
 

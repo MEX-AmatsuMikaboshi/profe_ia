@@ -158,9 +158,15 @@ importers:
       '@profesor-ia/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@profesor-ia/isomorphism-canonicalizer':
+        specifier: workspace:*
+        version: link:../isomorphism-canonicalizer
       '@profesor-ia/logic-core':
         specifier: workspace:*
         version: link:../logic-core
+      '@profesor-ia/proof-search':
+        specifier: workspace:*
+        version: link:../proof-search
     devDependencies:
       typescript:
         specifier: 5.9.3

@@ -24,6 +24,26 @@ describe('metas triviales y derivaciones directas', () => {
     }
   });
 
+  it('la meta que es premisa **y no la última** también termina en la meta', () => {
+    // Regresión encontrada por W3 (T-H5-05). `linearize` emite todas las
+    // premisas y, si la meta ya está entre ellas, no añadía línea: la
+    // derivación terminaba en la última premisa. `verify` devolvía
+    // `goalReached: false` **sin ningún código de error**, y la re-verificación
+    // obligatoria escalaba a incidente de nivel 3 una meta que solo era trivial.
+    for (const premisas of [
+      ['A', '¬A'],
+      ['A', 'B'],
+      ['A∧B', 'C', 'D'],
+    ]) {
+      const goal = premisas[0]!;
+      const result = search(req(premisas, goal));
+      expect(result.status).toBe('proof_found');
+      if (result.status !== 'proof_found') continue;
+      expect(result.proof.lines.at(-1)?.formula).toBe(goal);
+      expect(verify({ lines: result.proof.lines, goal }).goalReached).toBe(true);
+    }
+  });
+
   it('encuentra una eliminación de conjunción', () => {
     const result = search(req(['A∧B'], 'B'));
     expect(result.status).toBe('proof_found');

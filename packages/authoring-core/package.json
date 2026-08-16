@@ -22,7 +22,9 @@
   "dependencies": {
     "@profesor-ia/contracts": "workspace:*",
     "@profesor-ia/content-schema": "workspace:*",
-    "@profesor-ia/logic-core": "workspace:*"
+    "@profesor-ia/isomorphism-canonicalizer": "workspace:*",
+    "@profesor-ia/logic-core": "workspace:*",
+    "@profesor-ia/proof-search": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.9.3"

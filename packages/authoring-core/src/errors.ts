@@ -203,3 +203,81 @@ export class KcMapError extends AuthoringCoreError {}
  * traza que se dio ayuda justo en el paso en que se estaba retirando—.
  */
 export class PedagogyPolicyError extends AuthoringCoreError {}
+
+/**
+ * Rol C entregó una solución (T-H5-05 ← P-II §5.2: «No genera la solución
+ * autoritativa»).
+ *
+ * La solución autoritativa la produce el buscador y la certifica `logic-core`.
+ * Aceptar la del generador convertiría la afirmación de un modelo en el patrón
+ * contra el que después se califica al alumno, que es exactamente la autoridad
+ * que P-I §7.1 le niega: «los modelos proponen; el código verifica».
+ */
+export class AuthoritativeSolutionFromGeneratorError extends AuthoringCoreError {}
+
+/**
+ * La entrada de W3 no es coherente consigo misma (T-H5-05): dos candidatos con
+ * el mismo id, o un conjunto de pistas o una crítica que apunta a un candidato
+ * que no está en el lote.
+ *
+ * No es un defecto del candidato sino del pipeline, y por eso lanza en vez de
+ * ser un código de rechazo. Con dos ids repetidos, dos certificados distintos se
+ * guardarían bajo la misma clave en `solutions-private/`; y una crítica
+ * huérfana ignorada en silencio contaría como paso 8 ejecutado sobre un
+ * reactivo que nadie criticó.
+ */
+export class W3InputError extends AuthoringCoreError {}
+
+/**
+ * Se pidió ejecutar el pipeline de validez sin el orden congelado por
+ * `BENCH-04` (T-H5-05 ← P-I §7.4).
+ *
+ * La preferencia inicial **a benchmarkear** es `prefiltro semántico → proof
+ * search`, y por eso no se cablea: adoptarla sin medición es la «ley universal
+ * sin medición» que §7.4 prohíbe por su nombre. El orden entra como dato con su
+ * procedencia, o no se ejecuta.
+ */
+export class PipelineOrderNotFrozenError extends AuthoringCoreError {}
+
+/**
+ * Una pista de Rol D contradice P-I §8.6 o el contrato de salida de P-II §5.2.
+ *
+ * Cubre la propuesta de `masteryDisqualifying = false` sin explicar por qué no
+ * revela, la pista que contiene un paso derivado de la solución —«una pista
+ * nunca puede transformarse silenciosamente en solución»— y el ejemplo del
+ * nivel 4, que la norma exige **no isomorfo**.
+ */
+export class HintPolicyError extends AuthoringCoreError {}
+
+/**
+ * Se pidió el valor autoritativo de `masteryDisqualifying` a la propuesta de
+ * Rol D (T-H5-05 ← P-I §8.6: «la bandera propuesta por el generador **no es
+ * autoritativa**»).
+ *
+ * Falla cerrado igual que `toDecisionStrategy()` con las dos entradas sin
+ * miembro de enum: quien recalcula es la política determinista (`T-H6-03`), y
+ * el linter de paquete rechaza la discrepancia (`T-H5-13`). Devolver aquí la
+ * propuesta la convertiría en autoridad por el camino de en medio.
+ */
+export class MasteryFlagNotAuthoritativeError extends AuthoringCoreError {}
+
+/**
+ * La crítica de Rol E no cumple P-II §5.2, o se intentó usar su acuerdo como
+ * evidencia de calidad cuando el crítico no es independiente.
+ *
+ * «Su veredicto no certifica»: produce señales para los filtros. Un crítico de
+ * la misma familia que el generador **no es independiente** y su acuerdo no
+ * puede usarse para congelar esa familia.
+ */
+export class CritiqueError extends AuthoringCoreError {}
+
+/**
+ * Un artefacto quedó fuera de la separación física que exige P-I §7.7 y
+ * P-II §3.2 (T-H5-05, paso 10 de W3).
+ *
+ * Cubre el reactivo archivado en el banco de otra reserva, el mismo reactivo en
+ * dos reservas y —la que importa— el certificado escrito fuera de
+ * `solutions-private/`, que es el directorio que «no se monta en los
+ * contenedores del agente ni de la aplicación web».
+ */
+export class ReserveSeparationError extends AuthoringCoreError {}

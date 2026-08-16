@@ -16,3 +16,7 @@ export * from './ingestion.js';
 export * from './extraction.js';
 export * from './kc-map.js';
 export * from './pedagogy.js';
+export * from './reserves.js';
+export * from './hints.js';
+export * from './critique.js';
+export * from './generation.js';
