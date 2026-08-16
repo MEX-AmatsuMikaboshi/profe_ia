@@ -58,3 +58,23 @@ parameters:
       tests:
         - packages/experiment/test/sced-opportunity.test.ts
         - packages/authoring-core/test/coverage.test.ts
+  - parameter_id: CAL-AUDIT-PRE
+    version: cal-audit-pre-v1
+    status: frozen
+    frozen_at: 2026-08-16
+    gate: H5
+    method: seeded_sha256_with_floor_augmentation
+    function_floor_percent: 20
+    minimum_per_existing_function: 5
+    minimum_per_kc: 1
+    high_risk_policy: include_all
+    block_gates:
+      critical_count: 1
+      major_percent_exclusive: 5
+      minor_percent_exclusive: 15
+      major_defects_per_family: 2
+      uncovered_stratum: true
+    inclusion_probability_policy: null_when_overlapping_floors_prevent_closed_form
+    evidence:
+      implementation: packages/authoring-core/src/preaudit.ts
+      test: packages/authoring-core/test/preaudit.test.ts
