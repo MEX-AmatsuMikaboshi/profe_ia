@@ -1,8 +1,7 @@
 # HANDOFF — punto de continuación
 
-**Fecha del checkpoint:** 2026-08-15, cuarta sesión del día.
-**Qué se cerró aquí:** `T-H5-05` (W3, la tarea más grande de F6), `T-H5-06` (reservas sin
-solapamiento), `T-H5-07` (`item_family_id`) y `T-H5-08` (cobertura mínima).
+**Fecha del checkpoint:** 2026-08-16.
+**Qué se cerró aquí:** `T-H5-09` (límites y política de regeneración).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -15,11 +14,11 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
-con 8 de 17**: `T-H5-01…08`. La siguiente es **`T-H5-09`**, límites de regeneración. Antes de
+con 9 de 17**: `T-H5-01…09`. La siguiente es **`T-H5-10`**, calibración `CAL-09`. Antes de
 arrancarla lee §3, que dice qué se rompe fácil, y §7, que enumera lo que **no** está verificado.
 
-**Hay una acción tuya pendiente que bloquea todos los `VERIFICADA`:** el secreto `CONTENT_TOKEN`
-(§8). Sin él, dos de los seis jobs de CI siguen en rojo y ninguna tarea puede pasar de `HECHA`.
+**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). Tras subir `T-H5-09` hay que observar CI; si
+los jobs quedan verdes, ya se pueden promover las tareas cubiertas de `HECHA` a `VERIFICADA`.
 
 ---
 
@@ -50,10 +49,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **8 de 17.** `T-H5-01…08` cerradas; sigue `T-H5-09` |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **9 de 17.** `T-H5-01…09` cerradas; sigue `T-H5-10` |
 | F7–F16 | No empezadas |
 
-Van **60 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **61 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -77,27 +76,23 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H5-09` — límites de regeneración (REQUIRED)
+### La tarea siguiente: `T-H5-10` — calibración `CAL-09`
 
-F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las ocho primeras
-están cerradas (§3.a), así que sigue `T-H5-09`: los límites de P-III §4.3 —≤5 intentos por candidato,
-≤3 regeneraciones por familia antes de bloqueo, >30 % de rechazo automático ⇒ familia **inestable**
-fuera del paquete hasta rediseñar la plantilla— más la política de regeneración de P-II §5.4.
+F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las nueve primeras
+están cerradas. Sigue `T-H5-10`: fijar y congelar en H5 los pesos iniciales del índice de
+complejidad y el criterio de comparabilidad, usando corpus, soluciones y sintéticos, sin datos de
+participante. `complexityIndex()` y `assertComparable()` ya fallan cerrado con `CAL-09`; no se les
+debe conectar un valor plausible sin la corrida de calibración que lo justifique.
 
 **Las tres cosas que conviene tener claras antes de empezarla:**
 
-1. **Las tres cifras son literales** (5, 3, 30 %), pero §4.3 las llama «parámetros operativos
-   iniciales de la versión» que «deben congelarse antes del piloto». Van con `parameterId`, como los
-   pisos de `T-H5-08`: mira `COVERAGE_PARAMETERS` en `coverage.ts` y sigue ese patrón.
-2. **La familia ya existe y es inmutable.** `FamilyRegistry` (`family.ts`) es lo que hace contable el
-   umbral del 30 %, y es también lo que impide la elusión: sin él, reetiquetar la plantilla de un
-   candidato defectuoso lo sacaría de la familia que va camino de quedar bloqueada. **Pásale el mismo
-   registro a `runW3Generation()` entre corridas**, o el conteo empieza de cero cada vez.
-3. **P-II §5.4 es la parte fina**: «el agente recibe **únicamente el código de fallo y restricciones
-   seguras**». Los códigos ya existen y son lista cerrada (`W3_REJECTION_CODES`); lo que hay que
-   construir es el informe de regeneración, y **no puede tener campo para la solución ni para el
-   contramodelo detallado**, por lo mismo que `W3ItemRecord` no tiene campo para el certificado. Y
-   «sin reparación manual silenciosa»: no hay camino que edite un candidato en vez de regenerarlo.
+1. `complexity.ts` ya separa medidas estructurales de medidas relativas a la búsqueda; no colapses
+   esa distinción al construir el índice.
+2. Los pesos y la banda de comparabilidad son una calibración, no literales del Maestro. La tarea
+   exige una corrida reproducible y evidencia congelada; una cifra elegida a mano no cierra `CAL-09`.
+3. La corrida puede usar soluciones y casos sintéticos, pero no datos del participante. Si el corpus
+   real sigue ausente, se construye el procedimiento y se mantiene el gate cerrado en su punto de
+   fallo, sin presentar una calibración sintética insuficiente como freeze final.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -142,7 +137,20 @@ Lo que queda abierto y **no** bloquea a F6:
 
 ---
 
-## 3.a Lo cerrado en esta sesión (15-08, cuarta)
+## 3.a Lo cerrado el 16-08
+
+### `T-H5-09` — límites de regeneración
+
+`regeneration.ts` aplica 5 intentos por candidato, 3 regeneraciones por familia y el umbral
+estricto de >30 % como datos con `parameterId`. El denominador sale de `FamilyRegistry.members()` y
+un miembro rechazado cuenta una vez aunque se reprocese. La tercera regeneración autorizada se puede
+evaluar; se bloquea pedir la cuarta. El informe al agente solo expone los códigos cerrados de W3 y
+restricciones de un catálogo cerrado; las causas detalladas quedan en el registro de auditoría. Un
+rechazo sin certificado no recibe una familia inventada. Son 13 pruebas nuevas, 1001 totales.
+
+---
+
+## 3.b Lo cerrado en la sesión del 15-08, cuarta
 
 Cuatro tareas —`T-H5-05` a `T-H5-08`—, seis módulos nuevos en `packages/authoring-core`
 (`generation.ts`, `hints.ts`, `critique.ts`, `reserves.ts`, `family.ts`, `coverage.ts`) y **151
@@ -267,7 +275,7 @@ todos los casos de prueba previos tenían la meta como **única** premisa.
 
 ---
 
-## 3.b Lo cerrado en la sesión anterior (15-08, tercera)
+## 3.c Lo cerrado en la sesión anterior (15-08, tercera)
 
 Cuatro tareas, todas en `packages/authoring-core`, **118 pruebas nuevas** (719 → 837). Cada una con
 su commit, su batería en verde y subida a `main` al terminarla.
@@ -485,8 +493,8 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **988 pruebas**: 861 unitarias + 127 contra
-PostgreSQL 17 real. Empezó esta sesión en 837.
+Estado en el checkpoint: **todo en verde en local**. **1001 pruebas**: 874 unitarias + 127 contra
+PostgreSQL 17 real. El checkpoint anterior tenía 988.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 151 pruebas nuevas de esta sesión —de `authoring-core` y una de
@@ -655,14 +663,14 @@ Antes de subir, las tres comprobaciones que importan:
    `git status --short` antes del commit: si aparece un `.env`, para y arréglalo.
 3. **El mensaje dice qué tarea cierra**, con su id `T-*`. El historial es parte de la evidencia.
 
-### CI necesita el secreto `CONTENT_TOKEN` (acción del propietario)
+### CI y el secreto `CONTENT_TOKEN`
 
 Desde que D-2 se cerró, `content/` es un submódulo que vive en **otro** repositorio privado, y
 `secrets.GITHUB_TOKEN` solo alcanza a `profe_ia`: el clon falla con `Repository not found`, que es lo
 que GitHub responde a un privado sin acceso, no a un repo inexistente. Los jobs `base` y `logic` lo
 necesitan; `arch`, `db`, `supply` y `mutation` no.
 
-Se resuelve con un PAT fine-grained de solo lectura guardado como secreto `CONTENT_TOKEN`:
+Se resolvió el 16-08 con un PAT fine-grained de solo lectura guardado como secreto `CONTENT_TOKEN`:
 
 - Resource owner `MEX-AmatsuMikaboshi`, **ambos** repositorios (`profe_ia` y `profe_ia_contenido`),
   permiso `Contents: Read`. Los dos, porque `checkout` usa el mismo token para el repo principal y
@@ -698,19 +706,17 @@ formalizado como submódulo** en `.gitmodules`: **D-2 cerrada** el 15-08-2026.
 En este orden.
 
 1. **Lee este archivo entero y después `PLAN_STATUS.md`.** No empieces por el código.
-2. **Mira si ya existe el secreto `CONTENT_TOKEN`:**
+2. **Observa la corrida de CI posterior al último push:**
 
    ```bash
    gh secret list --repo MEX-AmatsuMikaboshi/profe_ia
    ```
 
-   Si está, relanza la última corrida fallida y **observa** el resultado; si los seis jobs quedan en
-   verde, ese es el momento de empezar a mover tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`,
-   una por una y solo las que su check cubra. Si no está, no lo crees tú: es acción del propietario
-   (§8), y seguir trabajando no depende de ello.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **988 pruebas**. Si da
+   `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
+   tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1001 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F6 · H5 por `T-H5-09`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
+4. **Sigue F6 · H5 por `T-H5-10`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
@@ -720,11 +726,10 @@ En este orden.
 
 Ninguna bloquea el trabajo de código, pero las tres llevan tiempo esperando:
 
-1. **`CONTENT_TOKEN`** — bloquea todos los `VERIFICADA`. Instrucciones en §8.
-2. **Credenciales de proveedor y autorización de gasto** — bloquean `T-H4-10/11`, y con ellas la
+1. **Credenciales de proveedor y autorización de gasto** — bloquean `T-H4-10/11`, y con ellas la
    elección del modelo de la que depende F8. El tope declarado es ≈MXN 500/mes con bloqueo duro a los
    700, y el gate ya está implementado y probado.
-3. **Cuenta administrativa de Infisical** — hasta entonces los servicios leen credenciales de `.env`,
+2. **Cuenta administrativa de Infisical** — hasta entonces los servicios leen credenciales de `.env`,
    que es el modo de arranque, no el de destino.
 
-Las tres son acciones del propietario por naturaleza, no tareas pendientes de nadie más.
+Las dos son acciones del propietario por naturaleza, no tareas pendientes de nadie más.

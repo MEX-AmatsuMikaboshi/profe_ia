@@ -327,3 +327,20 @@ export class CritiqueError extends AuthoringCoreError {}
  * contenedores del agente ni de la aplicación web».
  */
 export class ReserveSeparationError extends AuthoringCoreError {}
+
+/**
+ * Se excedió un límite de regeneración o se intentó operar una familia
+ * inestable (T-H5-09 ← P-III §4.3).
+ *
+ * Los límites son parte del paquete congelable. Fallar cerrado evita que un
+ * generador siga gastando intentos, o que una familia con rechazo alto llegue
+ * al paquete por una ruta que olvidó consultar su estado.
+ */
+export class RegenerationLimitError extends AuthoringCoreError {}
+
+/**
+ * El registro de regeneración no concuerda con W3 o con el registro inmutable
+ * de familias: candidato desconocido, intento aceptado con rechazos, o una
+ * reasignación encubierta.
+ */
+export class RegenerationInputError extends AuthoringCoreError {}

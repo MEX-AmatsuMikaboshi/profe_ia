@@ -22,3 +22,4 @@ export * from './critique.js';
 export * from './coverage.js';
 export * from './family.js';
 export * from './generation.js';
+export * from './regeneration.js';
