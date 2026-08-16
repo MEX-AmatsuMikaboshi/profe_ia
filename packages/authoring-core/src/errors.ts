@@ -216,6 +216,17 @@ export class PedagogyPolicyError extends AuthoringCoreError {}
 export class AuthoritativeSolutionFromGeneratorError extends AuthoringCoreError {}
 
 /**
+ * La pertenencia a familia contradice P-I §7.8 / `DEC-FAMILY-001` (T-H5-07).
+ *
+ * El caso que importa es la **reasignación**: «el pipeline no puede reasignar
+ * familias después de conocer defectos para eludir umbrales». Reetiquetar la
+ * plantilla de un candidato defectuoso lo sacaría de la familia que va camino de
+ * quedar bloqueada por `T-H5-09`, y el umbral del 30 % se calcularía sobre otra
+ * cosa.
+ */
+export class FamilyAssignmentError extends AuthoringCoreError {}
+
+/**
  * Dos reservas se solapan (T-H5-06 ← P-I §7.7, §5.11).
  *
  * Distinta de `ReserveSeparationError`, que es dónde está archivado el fichero:

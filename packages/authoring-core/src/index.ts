@@ -19,4 +19,5 @@ export * from './pedagogy.js';
 export * from './reserves.js';
 export * from './hints.js';
 export * from './critique.js';
+export * from './family.js';
 export * from './generation.js';

@@ -37,6 +37,7 @@ import {
   W3InputError,
 } from './errors.js';
 import { assertCritique, critiqueRiskFlags, type CritiqueCriterion, type ItemCritique } from './critique.js';
+import { familyComponentsOf, FamilyRegistry } from './family.js';
 import { assertHintSet, undisclosedSolutionFormulas, type HintSet } from './hints.js';
 import { KC_IDS, type KcId } from './kc-map.js';
 import { collisionProhibited, effectiveReserve, RESERVES, type Reserve } from './reserves.js';
@@ -396,6 +397,16 @@ export interface W3ItemRecord {
   readonly complexityComparisonAvailable: false;
   /** Firma estructural de la solución; base del control de duplicados. */
   readonly structuralSignature?: string;
+  /**
+   * `item_family_id` inmutable (`T-H5-07` ← P-I §7.8). Se asigna aquí porque la
+   * norma lo quiere **antes de auditoría**, y W3 es lo que precede a W4.
+   *
+   * Ausente cuando el candidato no llegó a tener certificado: la pertenencia
+   * incluye la firma estructural del problema **y** la solución, así que sin
+   * solución no hay familia que derivar. Inventarle una agruparía por tres
+   * componentes lo que la norma agrupa por cuatro.
+   */
+  readonly itemFamilyId?: string;
   /** Criterios en los que Rol E dejó hallazgos. Señal para W4, no veredicto. */
   readonly criticRiskFlags: readonly CritiqueCriterion[];
   readonly criticised: boolean;
@@ -422,6 +433,13 @@ export interface W3Input {
   readonly corpusExercises: readonly CorpusExercise[];
   readonly hintSets: readonly HintSet[];
   readonly critiques: readonly ItemCritique[];
+  /**
+   * Registro de familias. Se pasa desde fuera para que **sobreviva a las
+   * regeneraciones**: la inmutabilidad de `item_family_id` (P-I §7.8) solo
+   * significa algo si el registro es el mismo entre corridas, y `T-H5-09`
+   * regenera. Sin él, cada corrida empezaría de cero y reasignar sería gratis.
+   */
+  readonly familyRegistry?: FamilyRegistry;
 }
 
 export interface W3Outcome {
@@ -494,6 +512,7 @@ export function assertCoherentW3Input(input: W3Input): void {
 export function runW3Generation(input: W3Input): W3Outcome {
   const variante = resolveValidityVariant(input.frozenOrder, input.benchReport);
 
+  const registroDeFamilias = input.familyRegistry ?? new FamilyRegistry();
   const items: W3ItemRecord[] = [];
   const privateSolutions: PrivateSolution[] = [];
   /** Aceptados hasta ahora: la comparación de duplicados es contra ellos. */
@@ -665,9 +684,38 @@ export function runW3Generation(input: W3Input): W3Outcome {
       }
     }
 
+    /**
+     * Paso previo a la auditoría: `item_family_id` inmutable (P-I §7.8).
+     *
+     * Solo cuando los componentes de pertenencia son válidos. Un candidato con
+     * una etiqueta KC que no existe o una función de banco que no es reserva ya
+     * está **rechazado por eso mismo**: derivarle una familia obligaría a usar
+     * el componente inválido, y hacerlo lanzar convertiría un defecto del
+     * candidato —regenerable— en un fallo del pipeline, dejando sin alcanzar
+     * los códigos de rechazo que lo describen.
+     */
+    const componentesInvalidos = rechazos.some(
+      (r) =>
+        r.code === 'kc_label_not_in_catalog' ||
+        r.code === 'kc_labels_missing' ||
+        r.code === 'bank_function_not_a_reserve',
+    );
+    const familia = componentesInvalidos
+      ? undefined
+      : registroDeFamilias.assign(
+          candidato.candidateId,
+          familyComponentsOf({
+            generatorTemplateId: candidato.generatorTemplateId,
+            bankFunction: candidato.bankFunction,
+            targetKcs: candidato.targetKcs,
+            proof: canonico,
+          }),
+        );
+
     const aceptado = rechazos.length === 0;
     items.push(
       Object.freeze({
+        ...(familia === undefined ? {} : { itemFamilyId: familia.itemFamilyId }),
         candidateId: candidato.candidateId,
         generatorTemplateId: candidato.generatorTemplateId,
         bankFunction: candidato.bankFunction,

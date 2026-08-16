@@ -18,6 +18,8 @@ import {
   AuthoritativeSolutionFromGeneratorError,
   CalibrationPendingError,
   canonicalStatement,
+  FamilyAssignmentError,
+  FamilyRegistry,
   findDuplicateAmong,
   PipelineOrderNotFrozenError,
   resolveValidityVariant,
@@ -302,6 +304,11 @@ describe('filtros deterministas del verificador de reactivos (P-I §7.5)', () =>
 
     const sinEtiqueta = runW3Generation(entrada({ candidates: [candidato({ targetKcs: [] })] }));
     expect(sinEtiqueta.items[0]?.rejections.map((r) => r.code)).toContain('kc_labels_missing');
+
+    // Y el defecto del candidato **no** se convierte en fallo del pipeline: sin
+    // familia derivable, el registro se queda sin ella en vez de lanzar.
+    expect(fuera.items[0]?.itemFamilyId).toBeUndefined();
+    expect(sinEtiqueta.items[0]?.itemFamilyId).toBeUndefined();
   });
 
   it('una fórmula que el cálculo no admite corta antes de buscar', () => {
@@ -502,6 +509,45 @@ describe('duplicados e isomorfismos (paso 6 de W3)', () => {
     expect(salida.items.map((i) => i.accepted)).toEqual([true, true]);
     expect(salida.items[0]?.structuralSignature).toBe(salida.items[1]?.structuralSignature);
     expect(salida.privateSolutions).toHaveLength(2);
+  });
+
+  it('los dos gemelos reciben el mismo `item_family_id`, antes de auditoría', () => {
+    // P-I §7.8: «Cada candidato recibe **antes de auditoría** un item_family_id
+    // inmutable», y W3 es lo que precede a W4.
+    const salida = runW3Generation(
+      entrada({
+        candidates: [
+          candidato({ candidateId: 'it-001', statement: { premises: ['A', 'B'], goal: 'A∧B' } }),
+          candidato({ candidateId: 'it-002', statement: { premises: ['P', 'Q'], goal: 'P∧Q' } }),
+        ],
+      }),
+    );
+    expect(salida.items[0]?.itemFamilyId).toBe(salida.items[1]?.itemFamilyId);
+    expect(salida.items[0]?.itemFamilyId).toMatch(/^fam-[0-9a-f]{32}$/u);
+  });
+
+  it('el registro de familias sobrevive a la regeneración y bloquea la reasignación', () => {
+    // Sin registro compartido entre corridas, cada regeneración empezaría de
+    // cero y reasignar sería gratis.
+    const registro = new FamilyRegistry();
+    runW3Generation(entrada({ familyRegistry: registro }));
+    expect(() =>
+      runW3Generation(
+        entrada({
+          familyRegistry: registro,
+          candidates: [candidato({ generatorTemplateId: 'tpl-reetiquetada' })],
+        }),
+      ),
+    ).toThrow(FamilyAssignmentError);
+  });
+
+  it('un candidato sin certificado no recibe familia inventada', () => {
+    // La pertenencia incluye la firma estructural del problema **y** la
+    // solución: sin solución no hay cuatro componentes que derivar.
+    const salida = runW3Generation(
+      entrada({ candidates: [candidato({ statement: { premises: ['A'], goal: 'B' } })] }),
+    );
+    expect(salida.items[0]?.itemFamilyId).toBeUndefined();
   });
 
   it('un candidato de reposición sin declarar a qué repone detiene el pipeline', () => {
