@@ -11,17 +11,16 @@ import { effectiveReserve, isMeasurementReserve, type Reserve } from './reserves
  * esta versión, no constantes científicas», que «se identifican en el registro
  * de parámetros y se congelan», y §7.8 remata: «heurísticas operativas del
  * proyecto derivadas del calendario, no mínimos psicométricos universales». Por
- * eso cada piso lleva aquí su `parameterId` y el informe declara que el registro
- * todavía no los tiene: `docs/params/registry.yaml` está vacío a propósito.
+ * eso cada piso lleva aquí su `parameterId`; su freeze queda visible en
+ * `docs/params/registry.yaml` junto con las calibraciones que lo habilitan.
  *
  * Y por eso mismo hay una frontera dura dentro de la tarea. Lo que la norma
  * **cifra** se comprueba: 6 actividades por KC, 3 niveles de pista, 1
  * transferencia, reserva de recuperación, trazabilidad, y el 20 % de reserva de
  * sondas. Lo que la norma **deriva del calendario** no se puede comprobar
- * todavía, porque el calendario se congela en `T-H5-11` y `T-H6-07`: «la
- * cantidad exacta se calcula desde el calendario». `requiredProbesForCalendar()`
- * falla cerrado en vez de devolver un número, que es lo único honesto —un número
- * inventado ahí decide si el piloto se abre—.
+ * antes de T-H5-11, porque «la cantidad exacta se calcula desde el calendario».
+ * Ahora `requiredProbesForCalendar()` exige el sobre congelado y deriva el
+ * total; el scheduler completo sigue correspondiendo a `T-H6-07`.
  */
 
 export interface CoverageParameter {
@@ -214,23 +213,134 @@ export function perKcCoverageGaps(input: PerKcCoverageInput): readonly KcCoverag
   return Object.freeze(huecos);
 }
 
-/**
- * Cuántas sondas únicas exige el calendario preinscrito. **No se puede
- * responder todavía.**
+/** Entrada mínima del sobre de cobertura congelado en H5 (T-H5-11).
  *
- * §7.8: «la cantidad exacta se calcula desde el calendario. Si la reserva no
- * alcanza, el piloto no se abre». El calendario SCED —`k_set`,
- * `min_valid_items_per_opportunity`, ventanas y separación mínima— se congela en
- * `T-H5-11` y se implementa en `T-H6-07`. Devolver un número aquí decidiría si
- * el piloto se abre con una cifra que nadie ha fijado.
+ * No es todavía el scheduler de T-H6-07: solo contiene cuántas oportunidades
+ * nominales debe poder servir cada conjunto y los dos parámetros que hacen de
+ * cada oportunidad una observación comparable.
  */
-export function requiredProbesForCalendar(experimentalSetId: string): never {
-  throw new CalibrationPendingError(
-    'CAL-01',
-    `no hay calendario congelado del que derivar cuántas sondas únicas necesita el conjunto ` +
-      `${experimentalSetId}; §7.8 dice que «la cantidad exacta se calcula desde el calendario»`,
-    'H5 / T-H5-11 y T-H6-07',
-  );
+export interface ScedProbeCoveragePlan {
+  readonly calibrationVersion: string;
+  readonly kSet: number;
+  readonly minValidItemsPerOpportunity: number;
+  readonly plannedOpportunitiesBySet: Readonly<Record<string, number>>;
+}
+
+function assertScedProbeCoveragePlan(plan: ScedProbeCoveragePlan): void {
+  if (plan.calibrationVersion.trim() === '') {
+    throw new CoverageError('El sobre SCED no identifica la versión de calibración congelada.');
+  }
+  if (!Number.isInteger(plan.kSet) || plan.kSet < 2) {
+    throw new CoverageError(`k_set=${plan.kSet} no define una microbatería de al menos dos ítems.`);
+  }
+  if (
+    !Number.isInteger(plan.minValidItemsPerOpportunity) ||
+    plan.minValidItemsPerOpportunity < 1 ||
+    plan.minValidItemsPerOpportunity > plan.kSet
+  ) {
+    throw new CoverageError(
+      `min_valid_items_per_opportunity=${plan.minValidItemsPerOpportunity} no cabe en k_set=${plan.kSet}.`,
+    );
+  }
+  if (plan.minValidItemsPerOpportunity <= plan.kSet / 2) {
+    throw new CoverageError(
+      'El mínimo válido no conserva la mayoría estricta predeclarada por la calibración H5.',
+    );
+  }
+  if (plan.kSet - 1 < plan.minValidItemsPerOpportunity) {
+    throw new CoverageError(
+      'La microbatería no tolera la invalidación de un reactivo como exige la calibración H5.',
+    );
+  }
+}
+
+/**
+ * Cuántas sondas únicas exige el calendario nominal para un conjunto.
+ *
+ * §7.8: «la cantidad exacta se calcula desde el calendario». Por eso la
+ * función multiplica oportunidades por el `k_set` **congelado** y no guarda un
+ * número paralelo que pueda divergir. La reserva adicional del 20 % se aplica
+ * después con `minimumProbeInventory()`.
+ */
+export function requiredProbesForCalendar(
+  experimentalSetId: string,
+  plan: ScedProbeCoveragePlan,
+): number {
+  assertScedProbeCoveragePlan(plan);
+  const oportunidades = plan.plannedOpportunitiesBySet[experimentalSetId];
+  if (oportunidades === undefined) {
+    throw new CoverageError(
+      `El conjunto ${experimentalSetId} no aparece en el sobre de cobertura ${plan.calibrationVersion}.`,
+    );
+  }
+  if (!Number.isInteger(oportunidades) || oportunidades < 1) {
+    throw new CoverageError(
+      `El conjunto ${experimentalSetId} declara ${oportunidades} oportunidades nominales; se espera un entero positivo.`,
+    );
+  }
+  return oportunidades * plan.kSet;
+}
+
+export interface ProbeInventoryGap {
+  readonly experimentalSetId: string;
+  readonly available: number;
+  readonly requiredByCalendar: number;
+  readonly requiredWithReserve: number;
+  readonly missing: number;
+}
+
+/** Verifica el banco real contra calendario nominal + reserva literal del 20 %. */
+export function probeInventoryGaps(
+  plan: ScedProbeCoveragePlan,
+  inventoryBySet: Readonly<Record<string, readonly string[]>>,
+): readonly ProbeInventoryGap[] {
+  assertScedProbeCoveragePlan(plan);
+  const gaps: ProbeInventoryGap[] = [];
+  for (const setId of Object.keys(plan.plannedOpportunitiesBySet)) {
+    const ids = inventoryBySet[setId];
+    const requiredByCalendar = requiredProbesForCalendar(setId, plan);
+    const requiredWithReserve = minimumProbeInventory(requiredByCalendar);
+    if (ids === undefined) {
+      gaps.push({
+        experimentalSetId: setId,
+        available: 0,
+        requiredByCalendar,
+        requiredWithReserve,
+        missing: requiredWithReserve,
+      });
+      continue;
+    }
+    const unique = new Set(ids);
+    if (unique.size !== ids.length) {
+      throw new CoverageError(
+        `El inventario de ${setId} repite IDs; una sonda consumida no puede volver al banco.`,
+      );
+    }
+    if (unique.size < requiredWithReserve) {
+      gaps.push({
+        experimentalSetId: setId,
+        available: unique.size,
+        requiredByCalendar,
+        requiredWithReserve,
+        missing: requiredWithReserve - unique.size,
+      });
+    }
+  }
+  return Object.freeze(gaps);
+}
+
+export function assertProbeInventoryCoverage(
+  plan: ScedProbeCoveragePlan,
+  inventoryBySet: Readonly<Record<string, readonly string[]>>,
+): void {
+  const gaps = probeInventoryGaps(plan, inventoryBySet);
+  if (gaps.length > 0) {
+    throw new CoverageError(
+      `Cobertura SCED insuficiente: ${gaps
+        .map((gap) => `${gap.experimentalSetId}: ${gap.available}/${gap.requiredWithReserve}`)
+        .join('; ')}. El piloto no abre.`,
+    );
+  }
 }
 
 /**

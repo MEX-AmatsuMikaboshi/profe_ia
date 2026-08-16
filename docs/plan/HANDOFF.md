@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09` (regeneración) y `T-H5-10` (`CAL-09`).
+**Qué se cerró aquí:** `T-H5-09…11` (regeneración, `CAL-09` y oportunidad SCED).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,11 +14,11 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
-con 10 de 17**: `T-H5-01…10`. La siguiente es **`T-H5-11`**, oportunidades SCED. Antes de
+con 11 de 17**: `T-H5-01…11`. La siguiente es **`T-H5-12`**, selección A/B/C. Antes de
 arrancarla lee §3, que dice qué se rompe fácil, y §7, que enumera lo que **no** está verificado.
 
-**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). Tras subir `T-H5-09` hay que observar CI; si
-los jobs quedan verdes, ya se pueden promover las tareas cubiertas de `HECHA` a `VERIFICADA`.
+**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31978986478` verificó T-H5-10 con los seis
+jobs verdes. Tras subir T-H5-11 hay que observar su corrida antes de promoverla a `VERIFICADA`.
 
 ---
 
@@ -49,10 +49,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **10 de 17.** `T-H5-01…10` cerradas; sigue `T-H5-11` |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **11 de 17.** `T-H5-01…11` cerradas; sigue `T-H5-12` |
 | F7–F16 | No empezadas |
 
-Van **62 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **63 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -76,19 +76,20 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H5-11` — oportunidades SCED
+### La tarea siguiente: `T-H5-12` — selección de conjuntos A/B/C
 
-F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las diez primeras
-están cerradas. Sigue `T-H5-11`: fijar `k_set` y `min_valid_items_per_opportunity` de la
-microbatería SCED y verificar que las reservas cubren el calendario completo más el 20 % adicional.
+F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las once primeras
+están cerradas. Sigue `T-H5-12`: proponer y validar los conjuntos A/B/C, simular el calendario,
+comprobar dependencias cruzadas y dificultad comparable, y congelar la selección.
 
 **Las tres cosas que conviene tener claras antes de empezarla:**
 
-1. El Maestro nombra ambos parámetros pero no da sus valores: son calibración, no literales.
-2. `requiredProbesForCalendar()` sigue fallando con `CAL-01`; este es el punto que T-H5-11 debe
-   cerrar con un calendario simulado y una definición ejecutable de oportunidad válida.
-3. La selección no puede hacer pasar cobertura por vacío: conjuntos, ventanas, reservas y el 20 %
-   adicional deben entrar declarados, y un faltante invalida el calendario en vez de reducirlo.
+1. `crossSetEdges()` ya separa aristas `FORMAL` y `POLITICA_CONTENIDO`; toda arista restante exige
+   justificación de interpretabilidad, no una suma global.
+2. La comparabilidad usa `cal-09-v1`; una diferencia estructural se registra y nunca se llama
+   equivalencia psicométrica.
+3. El calendario debe usar el sobre SCED congelado de 19 rondas/57 sondas nominales por conjunto;
+   la selección no puede acortarlo para hacer que un banco insuficiente parezca cubierto.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -114,8 +115,8 @@ Lo que ya está puesto y conviene usar en vez de rehacer:
   `T-H5-14` necesitan contar.
 - **`coverage.ts`** trae los pisos de P-III §4.2 como **datos con `parameterId`**, la regla del 20 %
   ya implementada y las tres entradas que se exigen declaradas (KC del piloto, puntos críticos, tipos
-  de error prioritarios). `requiredProbesForCalendar()` falla cerrado con `CAL-01` hasta que
-  `T-H5-11` congele el calendario.
+  de error prioritarios). `requiredProbesForCalendar()` recibe el sobre congelado por T-H5-11 y
+  deriva 57 sondas nominales; `probeInventoryGaps()` exige 69 con la reserva adicional.
 - **`complexityIndex()`** falla cerrado esperando a `T-H5-10` (`CAL-09`). H6 no abre sin eso, y
   `assertMeasuredMatchesTargetComplexity()` de `generation.ts` es el otro punto donde se enchufa.
 - **El orden del pipeline de validez sigue sin congelar** (`BENCH-04`): `resolveValidityVariant()`
@@ -151,6 +152,15 @@ Los pesos se derivan por concordancia ordinal y la prueba de drift reproduce man
 El índice queda acotado 0…100; baja/media/alta usan puntos medios entre medianas y la comparabilidad
 estructural máxima es `12.065296`, declarada expresamente como no psicométrica. W3 ya mide y rechaza
 la discrepancia contra el objetivo de Rol C. Son 10 pruebas nuevas, 1011 totales.
+
+### `T-H5-11` — oportunidad SCED y cobertura
+
+`sced-opportunity-h5-v1` fija `k_set=3` y mínimo válido `2` con un procedimiento de ingeniería
+reproducible: menor microbatería que conserva mayoría y tolera un ítem inválido, sin datos de
+participante ni pretensión psicométrica. El peor inicio permitido de C (14) más cinco observaciones
+posteriores produce 19 rondas válidas concurrentes: 57 sondas únicas nominales por conjunto y 69
+con la reserva mínima del 20 %. La cobertura rechaza conjuntos ausentes, planes incoherentes, IDs
+repetidos e inventario insuficiente. Son 9 pruebas nuevas, 1020 totales.
 
 ---
 
@@ -227,8 +237,8 @@ quedar bloqueada por `T-H5-09`. Eso lo cierra `FamilyRegistry`: la primera asign
 
 La frontera de la tarea es **qué cifra la norma y qué deriva del calendario**. Lo cifrado se
 comprueba (6 actividades por KC, 3 niveles de pista, 1 transferencia, recuperación, trazabilidad, y
-la reserva del 20 %); lo derivado del calendario **no se puede comprobar todavía**, así que
-`requiredProbesForCalendar()` falla cerrado con `CAL-01`: esa cifra decide si el piloto se abre.
+la reserva del 20 %). En ese checkpoint lo derivado del calendario todavía fallaba cerrado con
+`CAL-01`; T-H5-11 ya lo cerró mediante el sobre congelado y mantiene el bloqueo si el banco no llega.
 
 Los pisos van como **datos con `parameterId`**, no como números sueltos dentro de un `if`, porque
 §4.2 exige identificarlos en el registro de parámetros y congelarlos. Tres entradas se exigen
@@ -497,8 +507,8 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **1011 pruebas**: 884 unitarias + 127 contra
-PostgreSQL 17 real. El checkpoint anterior tenía 1001.
+Estado en el checkpoint: **todo en verde en local**. **1020 pruebas**: 893 unitarias + 127 contra
+PostgreSQL 17 real. El checkpoint anterior tenía 1011.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 151 pruebas nuevas de esta sesión —de `authoring-core` y una de
@@ -634,10 +644,9 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
 - **Los tokens vendorizados cargan Archivo desde Google Fonts** con un `@import`. Incompatible con
   local-first durante una corrida: hay que autoalojar la fuente antes de que `apps/web` los consuma.
 - **Calibraciones abiertas por diseño**: `CALC-03`, `CALC-05`, `CAL-04`, `CAL-07`, `CAL-08`,
-  `CAL-09` (pesos del índice de complejidad, H5), `CAL-SOURCE-SCORE` y `CAL-SATURATION` (H4.5),
-  `CAL-NLI` (H5), y los benchmarks `BENCH-01/02` (F4) y `BENCH-04` (orden del pipeline, F6).
-  `docs/params/registry.yaml` está vacío a propósito. **Todas tienen ya su punto de fallo escrito en
-  el código**: son el lugar donde se enchufa el valor congelado, no bugs que arreglar.
+  `CAL-SOURCE-SCORE` y `CAL-SATURATION` (H4.5), `CAL-NLI` (H5), y los benchmarks `BENCH-01/02`
+  (F4) y `BENCH-04` (orden del pipeline, F6). `CAL-09` y `CAL-SCED-OPPORTUNITY` ya están congeladas
+  en `docs/params/registry.yaml`. Las abiertas tienen su punto de fallo escrito en el código.
 - **`T-H2-05` aparece dos veces en la tabla de F2** de `PLAN_STATUS.md`. Las dieciséis tareas están
   hechas —el trabajo está—, pero **una de las dos filas lleva el id equivocado**. No se corrigió
   porque no consta cuál de los dos es el bueno, y elegir uno sería inventar trazabilidad.
@@ -718,9 +727,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1011 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1020 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F6 · H5 por `T-H5-11`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
+4. **Sigue F6 · H5 por `T-H5-12`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en

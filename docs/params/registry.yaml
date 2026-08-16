@@ -31,3 +31,30 @@ parameters:
     evidence:
       implementation: packages/proof-search/src/cal09.ts
       test: packages/proof-search/test/cal09.test.ts
+  - parameter_id: CAL-SCED-OPPORTUNITY
+    version: sced-opportunity-h5-v1
+    status: frozen
+    frozen_at: 2026-08-16
+    gate: H5
+    method: minimum_burden_majority_with_one_item_fault_tolerance_v1
+    data_policy: operational_constraints_no_participant_data
+    k_set: 3
+    min_valid_items_per_opportunity: 2
+    criteria:
+      - valid_observation_preserves_strict_majority_of_planned_items
+      - opportunity_tolerates_one_invalid_item
+      - minimize_planned_items_subject_to_constraints
+    coverage_envelope:
+      active_sets: [A, B, C]
+      latest_intervention_start: { A: 8, B: 11, C: 14 }
+      valid_intervention_observations_after_start: 5
+      required_valid_rounds: 19
+      planned_opportunities_per_set: 19
+      unique_items_per_set_before_reserve: 57
+      minimum_inventory_per_set_with_20_percent_reserve: 69
+    caveat: operational calibration; no psychometric optimality or participant evidence claimed
+    evidence:
+      implementation: packages/experiment/src/sced-opportunity.ts
+      tests:
+        - packages/experiment/test/sced-opportunity.test.ts
+        - packages/authoring-core/test/coverage.test.ts

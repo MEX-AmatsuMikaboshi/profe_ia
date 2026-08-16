@@ -5,6 +5,7 @@ import {
   assertHintCoveragePerErrorType,
   assertPerKcCoverage,
   assertPostMasteryReconfirmationCapacity,
+  assertProbeInventoryCoverage,
   assertRetentionReserveSufficient,
   CalibrationPendingError,
   countsAsOperationalOpportunity,
@@ -12,6 +13,7 @@ import {
   CoverageError,
   minimumProbeInventory,
   perKcCoverageGaps,
+  probeInventoryGaps,
   requiredProbesForCalendar,
   retentionCoverage,
   type CoverageItem,
@@ -177,12 +179,37 @@ describe('pisos por KC', () => {
   });
 });
 
-describe('sondas por conjunto: la regla sí, la entrada no (P-I §7.8)', () => {
-  it('cuántas sondas pide el calendario falla cerrado', () => {
-    // «La cantidad exacta se calcula desde el calendario», y el calendario se
-    // congela en T-H5-11 / T-H6-07. Un número aquí decide si el piloto se abre.
-    expect(() => requiredProbesForCalendar('A')).toThrow(CalibrationPendingError);
-    expect(() => requiredProbesForCalendar('A')).toThrow(/CAL-01/u);
+describe('sondas por conjunto: calendario nominal + reserva (P-I §7.8)', () => {
+  const plan = {
+    calibrationVersion: 'sced-opportunity-h5-v1',
+    kSet: 3,
+    minValidItemsPerOpportunity: 2,
+    plannedOpportunitiesBySet: { A: 19, B: 19, C: 19 },
+  } as const;
+
+  it('deriva las sondas únicas desde oportunidades y k_set congelado', () => {
+    expect(requiredProbesForCalendar('A', plan)).toBe(57);
+    expect(minimumProbeInventory(requiredProbesForCalendar('A', plan))).toBe(69);
+  });
+
+  it('falla cerrado ante un conjunto o plan no congelado/incoherente', () => {
+    expect(() => requiredProbesForCalendar('D', plan)).toThrow(CoverageError);
+    expect(() => requiredProbesForCalendar('A', { ...plan, calibrationVersion: '' })).toThrow(
+      CoverageError,
+    );
+    expect(() =>
+      requiredProbesForCalendar('A', { ...plan, minValidItemsPerOpportunity: 4 }),
+    ).toThrow(CoverageError);
+    expect(() =>
+      requiredProbesForCalendar('A', { ...plan, minValidItemsPerOpportunity: 1 }),
+    ).toThrow(/mayoría estricta/u);
+    expect(() =>
+      requiredProbesForCalendar('A', {
+        ...plan,
+        kSet: 2,
+        minValidItemsPerOpportunity: 2,
+      }),
+    ).toThrow(/invalidación de un reactivo/u);
   });
 
   it('la reserva del 20 % se implementa y redondea hacia arriba', () => {
@@ -197,6 +224,40 @@ describe('sondas por conjunto: la regla sí, la entrada no (P-I §7.8)', () => {
   it('rechaza una exigencia de calendario que no es un entero no negativo', () => {
     expect(() => minimumProbeInventory(-1)).toThrow(CoverageError);
     expect(() => minimumProbeInventory(1.5)).toThrow(CoverageError);
+  });
+
+  it('enumera faltantes por set contra calendario más 20 %', () => {
+    const ids = (prefix: string, length: number) =>
+      Array.from({ length }, (_, index) => `${prefix}-${index + 1}`);
+    expect(probeInventoryGaps(plan, { A: ids('a', 69), B: ids('b', 68), C: [] })).toEqual([
+      {
+        experimentalSetId: 'B',
+        available: 68,
+        requiredByCalendar: 57,
+        requiredWithReserve: 69,
+        missing: 1,
+      },
+      {
+        experimentalSetId: 'C',
+        available: 0,
+        requiredByCalendar: 57,
+        requiredWithReserve: 69,
+        missing: 69,
+      },
+    ]);
+  });
+
+  it('rechaza IDs reutilizados y bloquea el piloto si falta inventario', () => {
+    const ids = (prefix: string) => Array.from({ length: 69 }, (_, index) => `${prefix}-${index}`);
+    expect(() => probeInventoryGaps(plan, { A: ['x', 'x'], B: ids('b'), C: ids('c') })).toThrow(
+      /repite IDs/u,
+    );
+    expect(() => assertProbeInventoryCoverage(plan, { A: ids('a'), B: [], C: ids('c') })).toThrow(
+      /El piloto no abre/u,
+    );
+    expect(() =>
+      assertProbeInventoryCoverage(plan, { A: ids('a'), B: ids('b'), C: ids('c') }),
+    ).not.toThrow();
   });
 });
 
