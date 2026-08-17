@@ -7,3 +7,4 @@ export * from './sced-opportunity.js';
 export * from './sced-calendar.js';
 export * from './freeze.js';
 export * from './bkt-shadow.js';
+export * from './exposure.js';
