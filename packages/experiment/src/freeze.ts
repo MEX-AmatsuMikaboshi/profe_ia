@@ -33,6 +33,7 @@ import {
   type PackageLintReport,
 } from '@profesor-ia/authoring-core';
 import { SCED_OPPORTUNITY_H5_V1 } from './sced-opportunity.js';
+import { assertBktShadowH5Configuration } from './bkt-shadow.js';
 
 const SHA256 = /^[a-f0-9]{64}$/u;
 const PLACEHOLDER_TOKEN = /(?:^|[^a-z0-9])(placeholder|todo|tbd|pendiente)(?:$|[^a-z0-9])/iu;
@@ -468,16 +469,7 @@ function assertSectionSemantics(
   requireSha256(wheelSpinning, 'hash', 'wheel_spinning');
 
   const bkt = sectionInputContent(input, 'configuracion_bkt_sombra_si_se_habilita');
-  if (typeof bkt.enabled !== 'boolean') throw new FreezeError('configuracion_bkt.enabled debe ser booleano.');
-  if (bkt.enabled) {
-    requireString(bkt, 'parametersVersion', 'configuracion_bkt');
-    requireSha256(bkt, 'parametersHash', 'configuracion_bkt');
-    if (bkt.hiddenFromAgent !== true || bkt.authority !== 'none') {
-      throw new FreezeError('BKT habilitado debe permanecer invisible al agente y sin autoridad.');
-    }
-  } else {
-    requireString(bkt, 'reason', 'configuracion_bkt');
-  }
+  assertBktShadowH5Configuration(bkt);
 
   const providers = sectionInputContent(
     input,

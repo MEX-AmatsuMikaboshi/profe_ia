@@ -4,7 +4,10 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { FreezeManifest, FREEZE_MANIFEST_REQUIRED_SECTIONS } from '@profesor-ia/contracts';
-import { REQUIRED_FREEZE_ARTIFACT_RULES } from '@profesor-ia/experiment';
+import {
+  BKT_SHADOW_H5_CONFIGURATION,
+  REQUIRED_FREEZE_ARTIFACT_RULES,
+} from '@profesor-ia/experiment';
 import { COMMANDS, NOT_IMPLEMENTED_EXIT_CODE, USAGE_EXIT_CODE, run } from '../src/index.js';
 
 const SHA = 'a'.repeat(64);
@@ -138,7 +141,7 @@ function validFreezeInput(): unknown {
     version: 'wheel-v1', content: { version: 'wheel-v1', hash: SHA },
   };
   sections.configuracion_bkt_sombra_si_se_habilita = {
-    version: 'bkt-disabled-v1', content: { enabled: false, reason: 'optional_not_enabled' },
+    version: 'bkt-disabled-v1', content: BKT_SHADOW_H5_CONFIGURATION,
   };
   sections.proveedores_modelos_y_politicas_tts_stt_vision = {
     version: 'providers-v1',

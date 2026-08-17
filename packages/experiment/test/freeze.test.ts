@@ -8,6 +8,7 @@ import type { PackageLintFacts } from '@profesor-ia/authoring-core';
 
 import {
   FreezeError,
+  BKT_SHADOW_H5_CONFIGURATION,
   REQUIRED_FREEZE_ARTIFACT_RULES,
   assertFreezeManifest,
   createFreezeManifest,
@@ -166,7 +167,7 @@ function input(): FreezeInput {
   };
   sections.configuracion_bkt_sombra_si_se_habilita = {
     version: 'bkt-disabled-v1',
-    content: { enabled: false, reason: 'optional_not_enabled' },
+    content: BKT_SHADOW_H5_CONFIGURATION,
   };
   sections.proveedores_modelos_y_politicas_tts_stt_vision = {
     version: 'multimodal-providers-v1',
@@ -382,7 +383,7 @@ describe('T-H5-15: freeze firmado', () => {
         }),
         lintFacts(), privatePem, 'key',
       ),
-    ).toThrow(/sin autoridad/u);
+    ).toThrow(/CAL-11/u);
     expect(() =>
       createFreezeManifest(
         root,
