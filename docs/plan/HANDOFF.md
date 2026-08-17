@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…03` (estado, política y dominio operativo).
+**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…04` (estado, política, dominio y recuperación).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,11 +14,11 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8**, **F6
-con 17 de 17 mecanismos** y **F7 con 3 de 14**. La siguiente es **`T-H6-04`**, recuperación y límite
-pedagógico. Antes de arrancarla lee §3 y §7.
+con 17 de 17 mecanismos** y **F7 con 4 de 14**. La siguiente es **`T-H6-05`**, banco y autoridad
+de pistas. Antes de arrancarla lee §3 y §7.
 
-**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31986432630` verificó `T-H6-02` con los
-seis jobs verdes, incluida mutación. `T-H6-03` está cerrada en local y necesita su commit y su CI
+**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31987891381` verificó `T-H6-03` con los
+seis jobs verdes, incluida mutación. `T-H6-04` está cerrada en local y necesita su commit y su CI
 propios antes de pasar de `HECHA` a `VERIFICADA`.
 
 ---
@@ -51,10 +51,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
-| **F7 · H6** sesión determinista sin LLM | 3 de 14. `T-H6-01/02` VERIFICADAS y `T-H6-03` HECHA; sigue `T-H6-04` |
+| **F7 · H6** sesión determinista sin LLM | 4 de 14. `T-H6-01…03` VERIFICADAS y `T-H6-04` HECHA; sigue `T-H6-05` |
 | F8–F16 | No empezadas |
 
-Van **72 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **73 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -78,18 +78,18 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H6-04` — recuperación y límite pedagógico
+### La tarea siguiente: `T-H6-05` — banco y autoridad de pistas
 
-`T-H6-01` construye estado/replay, `T-H6-02` decide estrategia y `T-H6-03` deriva elegibilidad y
-dominio con CAL-09, transferencia y reconfirmaciones. `CAL-10/CAL-WHEEL` sigue pendiente en material
-y BKT sigue ausente por CAL-11.
+`T-H6-01…04` ya construyen estado/replay, decisión de estrategia, dominio/reconfirmaciones y la
+recuperación de tres ciclos más dos episodios posteriores por KC. `CAL-10/CAL-WHEEL` sigue pendiente
+en material y BKT sigue ausente por CAL-11.
 
-`T-H6-04` debe implementar exactamente tres ciclos de recuperación: (1) feedback específico,
-reexplicación/ejemplo y práctica guiada; (2) menor complejidad, prerrequisitos y scaffolding; (3)
-representación alternativa, autoexplicación selectiva y comprobación. Agotarlos deja el KC no
-dominado y programa recuperación posterior si existe reserva. Solo se permiten dos episodios
-posteriores por KC; tras dos fallidos se registra límite pedagógico y se cierran rutas dependientes.
-No existe ni debe aparecer `request_human_teacher`.
+`T-H6-05` debe materializar el banco congelado de pistas con los cinco niveles literales de P-I
+§8.6. Cada uso registra nivel y recalcula `masteryDisqualifying` por intento mediante la autoridad
+de `domain-engine`; la propuesta generativa nunca decide. Una pista no puede transformarse
+silenciosamente en solución y en `MEASUREMENT_MODE` queda deshabilitada. Debe reutilizar la
+separación de banco/solución y la política adelantada en `authoring-core`/`domain-engine`, no crear
+otra definición incompatible.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -268,6 +268,28 @@ historias terminales y se proyecta al estado reconstruible de sesión.
 Son 27 pruebas de dominio y una integración de sesión nuevas: **1152 totales** (1022 unitarias +
 130 PostgreSQL). `CAL-DOMAIN-POLICY/DUP-02` solo validan en seco la regla vigente; no se simuló
 calibración ni se cerró H10. Diseño: `docs/session/domain-engine.md`.
+
+### `T-H6-04` — recuperación y límite pedagógico
+
+`domain-engine` materializa los tres ciclos exactos de P-I §8.7 y congela política, grafo e
+identidad del inventario por corrida. Solo un fallo `PEDAGOGICAL` en `LEARNING_MODE` inicia: el
+feedback debe coincidir con el error observado; complejidad realmente baja; los KC revisados son
+prerrequisitos del grafo; scaffolding es contingente; la representación cambia y la
+autoexplicación queda selectiva. Material fallido o consumido no reaparece. Progreso vuelve a la
+evaluación de dominio sin declarar dominio desde una sola actividad; operación, interfaz,
+incidente, retirada o falta de reserva no se convierten en fallo conceptual.
+
+Los episodios posteriores exigen `recovery_reserve_registry`, inventario congelado, reserva
+`recovery`, mismo KC y material distinto. Programar no cuenta; iniciar sí. El contador y los fallos
+son por KC: dos episodios consumidos alcanzan el tope, pero solo dos fallidos declaran límite. En
+ese caso se cierran transitivamente las rutas FORMAL, POLITICA_CONTENIDO y PEDAGOGICA; C/A y
+ESTADISTICA no bloquean. Estado, contadores y caminos se derivan de historia y replay. Sesión
+proyecta estrategia, andamiaje, plan y próximo paso, con el transversal `recuperacion` como evento
+separado. No hay salida de rescate docente.
+
+Son 25 pruebas de recuperación y una integración de sesión nuevas: **1178 totales** (1048
+unitarias + 130 PostgreSQL). Los inventarios y grafos de prueba son `test_fixture`; no se fabricó
+inventario/corpus/firma/gate material. Diseño: `docs/session/recovery.md`.
 
 ---
 
@@ -614,17 +636,17 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local** para T-H6-03. **1152 pruebas**: 1022 unitarias
-y 130 contra PostgreSQL 17 real. El checkpoint anterior tenía 1124.
+Estado en el checkpoint: **todo en verde en local** para T-H6-04. **1178 pruebas**: 1048 unitarias
+y 130 contra PostgreSQL 17 real. El checkpoint anterior tenía 1152.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
-`logic-core`, así que las 28 pruebas nuevas o ampliadas de `domain-engine`/`session-engine` **no
+`logic-core`, así que las 26 pruebas nuevas o ampliadas de `domain-engine`/`session-engine` **no
 mueven el baseline de 90.31 %**. No lo leas como que la cobertura de mutación cayó ni subió: mide
 otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto para `T-H6-02` (corrida `31986432630`):
+Observado, no supuesto para `T-H6-03` (corrida `31987891381`):
 
 | Job | Resultado |
 |---|---|
@@ -635,7 +657,7 @@ Observado, no supuesto para `T-H6-02` (corrida `31986432630`):
 | `ci:lint · ci:typecheck · ci:unit · ci:build` | ✅ |
 | `ci:logic:golden · ci:logic:pbt · ci:logic:no-net` | ✅ |
 
-`T-H6-03` debe obtener su propia corrida verde después del push. Se comprueba job por
+`T-H6-04` debe obtener su propia corrida verde después del push. Se comprueba job por
 job con:
 
 ```bash
@@ -832,9 +854,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1152 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1178 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F7 · H6 por `T-H6-04`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
+4. **Sigue F7 · H6 por `T-H6-05`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en

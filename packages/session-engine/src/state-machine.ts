@@ -14,8 +14,11 @@ import {
 } from '@profesor-ia/contracts';
 import {
   DomainKcState,
+  RecoveryRunState,
   operationalMasteryProjection,
+  recoveryKcProjection,
   type DomainKcState as DomainKcStateValue,
+  type RecoveryRunState as RecoveryRunStateValue,
 } from '@profesor-ia/domain-engine';
 import { z } from 'zod';
 
@@ -463,6 +466,7 @@ export type SessionStateErrorCode =
   | 'INVALID_STATE'
   | 'INVALID_TRANSITION'
   | 'PERSISTENCE_MISMATCH'
+  | 'RECOVERY_PROJECTION_MISMATCH'
   | 'STATE_HASH_MISMATCH';
 
 export class SessionStateMachineError extends Error {
@@ -950,6 +954,92 @@ export function updateSessionFromDomainState(
               updatedAt: domainState.updatedAt,
             },
       },
+      nextSteps,
+    },
+    reasonCode,
+    metadata,
+  );
+}
+
+/**
+ * Proyecta la autoridad de recuperación al estado común de sesión. La entrada
+ * y salida del estado transversal `recuperacion` se registra aparte mediante
+ * `setTransverseSessionState`, para conservar una decisión/evento por acto.
+ */
+export function updateSessionFromRecoveryState(
+  current: SessionSnapshot,
+  recoveryStateValue: RecoveryRunStateValue,
+  kcId: string,
+  reasonCode: string,
+  metadata: SessionDecisionMetadata,
+): SessionMutation {
+  assertSnapshotIntegrity(current);
+  const recoveryState = RecoveryRunState.parse(recoveryStateValue);
+  if (
+    recoveryState.runId !== current.state.runId ||
+    recoveryState.participantPseudoId !== current.state.participantPseudoId
+  ) {
+    throw new SessionStateMachineError(
+      'RECOVERY_PROJECTION_MISMATCH',
+      'runId o participantPseudoId de recuperación no coincide con la sesión',
+    );
+  }
+  const projection = recoveryKcProjection(recoveryState, kcId);
+  if (projection.recoveryActive && current.state.pedagogicalMode !== 'LEARNING_MODE') {
+    throw new SessionStateMachineError(
+      'RECOVERY_PROJECTION_MISMATCH',
+      'una recuperación activa solo puede proyectarse desde LEARNING_MODE',
+    );
+  }
+  const stepId = `recovery:${kcId}`;
+  const nextSteps = current.state.nextSteps.filter((step) => step.stepId !== stepId);
+  if (projection.nextAction !== null) {
+    nextSteps.push({
+      stepId,
+      action: projection.nextAction,
+      targetId: kcId,
+      plannedAt: null,
+    });
+  }
+  let operationalMastery = current.state.operationalMastery;
+  if (projection.notMastered) {
+    const previous = current.state.operationalMastery[kcId];
+    operationalMastery = {
+      ...operationalMastery,
+      [kcId]: {
+        mastered: false,
+        eligibleConsecutiveCorrect: previous?.eligibleConsecutiveCorrect ?? 0,
+        highestEligibleComplexityIndex: previous?.highestEligibleComplexityIndex ?? null,
+        nearTransferSatisfied: previous?.nearTransferSatisfied ?? false,
+        reconfirmationPending: false,
+        lastChangedAt: projection.updatedAt,
+      },
+    };
+  }
+  const closesRoute = projection.pedagogicalLimitObserved || projection.routeClosed;
+  const activeKcIds = closesRoute
+    ? current.state.activeKcIds.filter((candidate) => candidate !== kcId)
+    : projection.recoveryActive && !current.state.activeKcIds.includes(kcId)
+      ? [...current.state.activeKcIds, kcId]
+      : current.state.activeKcIds;
+  return updateSessionProjection(
+    current,
+    {
+      activeKcIds,
+      operationalMastery,
+      selectedStrategy: projection.selectedStrategy,
+      assistanceLevel: projection.assistanceLevel,
+      masteryEligibility: false,
+      scaffoldingStage: projection.scaffoldingStage,
+      planChanges: [
+        ...current.state.planChanges,
+        {
+          changeId: metadata.eventId,
+          description: `recovery:${kcId}:${projection.status}`,
+          reasonCode,
+          occurredAt: metadata.occurredAt,
+        },
+      ],
       nextSteps,
     },
     reasonCode,

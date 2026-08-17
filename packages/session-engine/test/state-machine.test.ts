@@ -4,7 +4,10 @@ import {
   CAL09_DOMAIN_BINDING,
   DOMAIN_POLICY_V1,
   DeterministicDomainController,
+  DeterministicRecoveryController,
+  RECOVERY_GRAPH_SCHEMA_VERSION,
   compileDomainPolicy,
+  createRecoveryPolicyDefinition,
 } from '@profesor-ia/domain-engine';
 
 import {
@@ -21,6 +24,7 @@ import {
   toSessionStatePersistenceRow,
   transitionPrimarySessionState,
   updateSessionFromDomainState,
+  updateSessionFromRecoveryState,
   updateSessionProjection,
   type SessionDecisionMetadata,
   type SessionMutation,
@@ -681,6 +685,101 @@ describe('estado estructurado de sesión (T-H6-01)', () => {
         metadata('event-domain-mismatch', 4),
       ),
       'DOMAIN_PROJECTION_MISMATCH',
+    );
+  });
+
+  it('integra recuperación y límite como decisión reconstruible de sesión', () => {
+    const recoveryPolicy = createRecoveryPolicyDefinition({
+      policyVersion: 'recovery-session-test-v1',
+      purpose: 'test_fixture',
+    });
+    const recovery = new DeterministicRecoveryController(recoveryPolicy, {
+      schemaVersion: RECOVERY_GRAPH_SCHEMA_VERSION,
+      graphVersion: 'recovery-session-graph-v1',
+      purpose: 'test_fixture',
+      kcIds: ['KC02', 'KC03'],
+      edges: [{
+        dependentKcId: 'KC03',
+        prerequisiteKcId: 'KC02',
+        dependencyType: 'FORMAL',
+        blocksRoute: true,
+      }],
+    });
+    recovery.bindRun({
+      runId: 'run-fixture-1',
+      purpose: 'test_fixture',
+      policyVersion: recovery.policy.definition.policyVersion,
+      policyHash: recovery.policy.policyHash,
+      dependencyGraphVersion: recovery.graph.definition.graphVersion,
+      dependencyGraphHash: recovery.graph.graphHash,
+      recoveryInventoryVersion: 'recovery-inventory-fixture-v1',
+      recoveryInventoryHash: 'd'.repeat(64),
+    });
+    const recoveryState = recovery.replay([
+      {
+        eventId: 'recovery-session-event-0',
+        eventType: 'recovery.initialized',
+        sequenceNumber: 0,
+        occurredAt: AT,
+        payload: { runId: 'run-fixture-1', participantPseudoId: 'pseudo-fixture-1' },
+      },
+      {
+        eventId: 'recovery-session-event-1',
+        eventType: 'recovery.in_block.started',
+        sequenceNumber: 1,
+        occurredAt: at(1),
+        payload: {
+          kcId: 'KC03',
+          failureAttemptId: 'failed-attempt-session-1',
+          failedItemId: 'failed-item-session-1',
+          errorObservationId: 'error-session-1',
+          errorCode: 'WRONG_RULE',
+          failureAttribution: 'PEDAGOGICAL',
+          mode: 'LEARNING_MODE',
+        },
+      },
+    ]);
+    const initial = initialized();
+    const transverse = changeTransversalSessionState(
+      initial.snapshot,
+      'recuperacion',
+      true,
+      'RECOVERY_STARTED',
+      metadata('event-recovery-transverse', 2),
+    );
+    const projection = updateSessionFromRecoveryState(
+      transverse.snapshot,
+      recoveryState,
+      'KC03',
+      'RECOVERY_STATE_PROJECTED',
+      metadata('event-recovery-projection', 3),
+    );
+
+    expect(projection.snapshot.state.transverseStates).toContain('recuperacion');
+    expect(projection.snapshot.state.selectedStrategy).toBe('guided_practice');
+    expect(projection.snapshot.state.assistanceLevel).toBe(2);
+    expect(projection.snapshot.state.scaffoldingStage).toBe('scaffolding');
+    expect(projection.snapshot.state.masteryEligibility).toBe(false);
+    expect(projection.snapshot.state.nextSteps).toContainEqual({
+      stepId: 'recovery:KC03',
+      action: 'execute_recovery_cycle_1',
+      targetId: 'KC03',
+      plannedAt: null,
+    });
+    expect(replaySessionStateEvents([
+      initial.event,
+      transverse.event,
+      projection.event,
+    ])).toEqual(projection.snapshot);
+    expectCode(
+      () => updateSessionFromRecoveryState(
+        transverse.snapshot,
+        { ...recoveryState, runId: 'another-run' },
+        'KC03',
+        'RECOVERY_STATE_PROJECTED',
+        metadata('event-recovery-mismatch', 3),
+      ),
+      'RECOVERY_PROJECTION_MISMATCH',
     );
   });
 });

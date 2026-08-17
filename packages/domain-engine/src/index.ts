@@ -4,3 +4,4 @@ export const PACKAGE_NAME = "@profesor-ia/domain-engine" as const;
 
 export * from './hint-authority.js';
 export * from './mastery.js';
+export * from './recovery.js';
