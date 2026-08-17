@@ -1,4 +1,16 @@
-import { IncompleteTranslationTraceError, NliCalibrationPendingError } from './errors.js';
+import {
+  GroundednessCalibrationError,
+  IncompleteTranslationTraceError,
+  NliCalibrationPendingError,
+} from './errors.js';
+import {
+  requireDemonstratedNliStratum,
+  type GroundednessCalibrationReport,
+  type NliSignal,
+  type NliStratum,
+} from './groundedness-calibration.js';
+
+export type { NliSignal, NliStratum } from './groundedness-calibration.js';
 
 /**
  * Trazabilidad translingüe (T-H45-08 ← `DEC-LANGUAGE-001`, P-I §7.0).
@@ -66,44 +78,58 @@ export function attributionTarget(trace: TranslationTrace): string {
   return trace.sourceTextOriginal;
 }
 
-/** Estrato demostrado por `CAL-NLI`: par de idiomas + forma lógica relevante. */
-export interface NliStratum {
-  readonly sourceLanguage: string;
-  readonly targetLanguage: string;
-  readonly logicalForm: string;
+export function nliSignal(
+  supportScore: number,
+  stratum: NliStratum,
+  modelBinding: string,
+): NliSignal {
+  if (!Number.isFinite(supportScore) || supportScore < 0 || supportScore > 1) {
+    throw new GroundednessCalibrationError('supportScore debe estar en [0,1].');
+  }
+  if (modelBinding.trim() === '') {
+    throw new GroundednessCalibrationError('modelBinding es obligatorio para una señal NLI.');
+  }
+  return { supportScore, stratum, modelBinding, isVerdict: false };
 }
 
-/**
- * Señal auxiliar del NLI. Se puede producir y registrar: lo que no se puede es
- * usarla como gate sin estrato demostrado.
- */
-export interface NliSignal {
-  readonly supportScore: number;
-  readonly stratum: NliStratum;
-  /** Siempre `false`: una señal auxiliar no es un veredicto. */
+export interface NliGateScreening {
+  readonly passesCalibratedAuxiliaryGate: boolean;
+  readonly threshold: number;
+  readonly stratumId: string;
+  /** El NLI filtra; no emite el veredicto final de groundedness. */
   readonly isVerdict: false;
-}
-
-export function nliSignal(supportScore: number, stratum: NliStratum): NliSignal {
-  return { supportScore, stratum, isVerdict: false };
+  readonly independentGroundednessDecisionRequired: true;
 }
 
 /**
  * Usar el NLI como **gate**. Falla cerrado (`CAL-NLI`, se congela en H5).
  *
- * Ningún estrato tiene fiabilidad demostrada todavía, así que no hay par de
- * idioma en el que el gate pueda habilitarse. Devolver aquí un booleano
- * convertiría un verificador estadístico en autoridad determinista, que es lo
- * que el Maestro descarta por su nombre.
+ * Sin un reporte material el gate permanece cerrado. Con reporte, exige el
+ * binding y estrato completos y sólo devuelve un filtro auxiliar: nunca un
+ * veredicto de groundedness, que convertiría un clasificador estadístico en la
+ * autoridad determinista que el Maestro descarta.
  */
-export function nliGate(signal: NliSignal): never {
-  throw new NliCalibrationPendingError(
-    `no hay estrato con fiabilidad demostrada para ` +
-      `${signal.stratum.sourceLanguage}→${signal.stratum.targetLanguage} / ` +
-      `${signal.stratum.logicalForm}; el NLI es verificador estadístico auxiliar, no autoridad ` +
-      `determinista`,
-    'H5 (CAL-NLI), estratificado por forma lógica',
-  );
+export function nliGate(
+  signal: NliSignal,
+  report?: GroundednessCalibrationReport,
+): NliGateScreening {
+  if (report === undefined) {
+    throw new NliCalibrationPendingError(
+      `no hay estrato con fiabilidad demostrada para ` +
+        `${signal.stratum.sourceLanguage}→${signal.stratum.targetLanguage} / ` +
+        `${signal.stratum.logicalForm}; el NLI es verificador estadístico auxiliar, no autoridad ` +
+        `determinista`,
+      'H5 (CAL-NLI), estratificado por forma lógica/KC/idioma',
+    );
+  }
+  requireDemonstratedNliStratum(report, signal);
+  return Object.freeze({
+    passesCalibratedAuxiliaryGate: signal.supportScore >= report.decisionThreshold,
+    threshold: report.decisionThreshold,
+    stratumId: signal.stratum.stratumId,
+    isVerdict: false,
+    independentGroundednessDecisionRequired: true,
+  });
 }
 
 /**

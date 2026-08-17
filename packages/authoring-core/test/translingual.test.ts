@@ -24,10 +24,15 @@ function rastro(overrides: Partial<TranslationTrace> = {}): TranslationTrace {
 }
 
 const ESTRATO: NliStratum = {
+  stratumId: 'en-es-conjuncion-kc04-source',
   sourceLanguage: 'en',
   targetLanguage: 'es',
   logicalForm: 'conjuncion',
+  kcId: 'KC04',
+  claimType: 'source_assertion',
 };
+
+const MODEL_BINDING = 'nli-fixture-only-v1';
 
 describe('rastro de traducción (T-H45-08 ← DEC-LANGUAGE-001)', () => {
   it('exige los seis campos', () => {
@@ -69,7 +74,7 @@ describe('la atribuibilidad se juzga contra el original', () => {
     // Es una función y no un campo elegible justamente para eso: juzgar contra
     // la traducción mediría si el traductor fue coherente consigo mismo, no si
     // la fuente dice lo que se le atribuye.
-    const revision = translingualReview(rastro(), nliSignal(0.9, ESTRATO));
+    const revision = translingualReview(rastro(), nliSignal(0.9, ESTRATO, MODEL_BINDING));
 
     expect(revision.attributionJudgedAgainst).toBe(rastro().sourceTextOriginal);
   });
@@ -77,7 +82,7 @@ describe('la atribuibilidad se juzga contra el original', () => {
 
 describe('el NLI es señal auxiliar, no autoridad (CAL-NLI)', () => {
   it('una señal se puede producir y se marca como no veredicto', () => {
-    const s = nliSignal(0.87, ESTRATO);
+    const s = nliSignal(0.87, ESTRATO, MODEL_BINDING);
 
     expect(s.supportScore).toBe(0.87);
     expect(s.isVerdict).toBe(false);
@@ -87,13 +92,17 @@ describe('el NLI es señal auxiliar, no autoridad (CAL-NLI)', () => {
     // Un 0.99 no habilita nada: ningún estrato tiene fiabilidad demostrada, y
     // devolver un booleano convertiría un verificador estadístico en autoridad
     // determinista.
-    expect(() => nliGate(nliSignal(0.99, ESTRATO))).toThrow(NliCalibrationPendingError);
-    expect(() => nliGate(nliSignal(1, ESTRATO))).toThrow(NliCalibrationPendingError);
+    expect(() => nliGate(nliSignal(0.99, ESTRATO, MODEL_BINDING))).toThrow(
+      NliCalibrationPendingError,
+    );
+    expect(() => nliGate(nliSignal(1, ESTRATO, MODEL_BINDING))).toThrow(
+      NliCalibrationPendingError,
+    );
   });
 
   it('el error nombra el estrato y dónde se congela', () => {
     try {
-      nliGate(nliSignal(0.9, ESTRATO));
+      nliGate(nliSignal(0.9, ESTRATO, MODEL_BINDING));
       expect.unreachable('debía fallar cerrado');
     } catch (error) {
       const mensaje = (error as Error).message;
@@ -104,17 +113,17 @@ describe('el NLI es señal auxiliar, no autoridad (CAL-NLI)', () => {
   });
 
   it('mientras no haya gate, la revisión exige auditoría humana', () => {
-    const revision = translingualReview(rastro(), nliSignal(0.95, ESTRATO));
+    const revision = translingualReview(rastro(), nliSignal(0.95, ESTRATO, MODEL_BINDING));
 
     expect(revision.humanAuditRequired).toBe(true);
     expect(revision.nli.isVerdict).toBe(false);
   });
 
   it('la revisión no trae ningún campo que parezca un veredicto aprobado', () => {
-    const revision = translingualReview(rastro(), nliSignal(0.95, ESTRATO)) as unknown as Record<
-      string,
-      unknown
-    >;
+    const revision = translingualReview(
+      rastro(),
+      nliSignal(0.95, ESTRATO, MODEL_BINDING),
+    ) as unknown as Record<string, unknown>;
 
     for (const campo of ['passed', 'approved', 'entailed', 'verified']) {
       expect(revision[campo]).toBeUndefined();

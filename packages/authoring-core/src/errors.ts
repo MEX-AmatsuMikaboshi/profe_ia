@@ -107,6 +107,14 @@ export class NliCalibrationPendingError extends CalibrationPendingError {
 }
 
 /**
+ * La muestra AIS, su preinscripción o sus observaciones NLI no forman una
+ * calibración reproducible (T-H5-17). Distinto de `NliCalibrationPendingError`:
+ * este error señala una entrada incoherente; el otro señala evidencia ausente
+ * o insuficiente para habilitar un gate.
+ */
+export class GroundednessCalibrationError extends AuthoringCoreError {}
+
+/**
  * Lo cargado en W1 no tiene la identidad que W0 evaluó (T-H5-01 ← §12 «W1»,
  * paso 2). Cubre las dos mitades de esa identidad: los **bytes** —el SHA-256 no
  * reproduce el snapshot— y la **etiqueta de versión**, que viaja dentro del

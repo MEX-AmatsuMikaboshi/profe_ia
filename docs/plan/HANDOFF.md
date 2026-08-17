@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09…16` (regeneración, calibraciones, selección, linter, auditoría, freeze y BKT opcional).
+**Qué se cerró aquí:** `T-H5-09…17` (regeneración, calibraciones, selección, linter, auditoría, freeze, BKT opcional y arnés AIS/NLI).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,11 +14,11 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
-con 16 de 17**: `T-H5-01…16`. La siguiente es **`T-H5-17`**, CAL-06/CAL-NLI. Antes de
+con 17 de 17 mecanismos**: `T-H5-01…17`. La siguiente es **`T-H6-01`**, motor de estados de sesión. Antes de
 arrancarla lee §3 y §7, que enumera lo que **no** está verificado.
 
-**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31981812465` verificó `T-H5-11…15` con los
-seis jobs verdes, incluida mutación. `T-H5-16` conserva su commit y su CI propios.
+**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31982295591` verificó `T-H5-16` con los
+seis jobs verdes, incluida mutación. `T-H5-17` conserva su commit y su CI propios.
 
 ---
 
@@ -49,10 +49,11 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **16 de 17.** `T-H5-01…16` cerradas; sigue `T-H5-17` |
-| F7–F16 | No empezadas |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
+| **F7 · H6** sesión determinista sin LLM | No empezada. Sigue `T-H6-01` |
+| F8–F16 | No empezadas |
 
-Van **68 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **69 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -76,19 +77,20 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H5-17` — CAL-06/CAL-NLI
+### La tarea siguiente: `T-H6-01` — estados y replay de sesión
 
-F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las dieciséis primeras
-están cerradas. Sigue `T-H5-17`: construir la muestra dorada AIS estratificada por forma lógica,
-medir FP/FN por estrato y permitir NLI como gate solo donde la evidencia lo demuestre.
+F6 agotó sus **17 tareas** de mecanismo, aunque H5 no puede cerrarse sin sus entradas externas. Sigue
+F7, sesión determinista sin LLM. `T-H6-01` construye el estado literal completo, sus transversales y
+la reconstrucción desde eventos; no necesita fingir un corpus para modelar y probar esas invariantes.
 
 **Las tres cosas que conviene tener claras antes de empezarla:**
 
-1. La muestra real depende del corpus W1/W2, que sigue ausente; se puede implementar el arnés y su
-   bloqueo por vacío, pero no fabricar pares claim↔fragmento ni juicios AIS.
-2. FP/FN se reportan por forma lógica; un agregado global no habilita ningún estrato.
-3. NLI sigue siendo señal auxiliar por omisión. Solo un estrato con tamaño mínimo, cero errores y
-   capacidad declarada puede optar al gate; la decisión final nunca la toma el modelo NLI.
+1. Los estados principales y transversales son literales de P-II §7.1; no se simplifican a un enum de
+   pantallas ni se inventan transiciones silenciosas.
+2. El estado estructurado de §8.2 debe persistirse y el replay de eventos debe producir exactamente
+   la misma proyección (I-5); un snapshot sin historia no cubre la tarea.
+3. BKT quedó deshabilitado en `T-H5-16`: `masteryProbabilityShadow` no puede reaparecer con un valor
+   de fixture. Las pruebas de motor pueden usar eventos tipados, no un corpus simulado.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -210,6 +212,17 @@ El validador de freeze acepta únicamente ese literal; intentar habilitarlo con 
 con `CAL-11`. La barrera SQL ya implementada sigue siendo parte de la evidencia: `svc_session`
 puede escribir `shadow_metric`, pero la suite PostgreSQL demuestra que no puede leerlo y por tanto
 no puede devolverlo al agente o a la política. Son 4 pruebas nuevas, 1064 totales.
+
+### `T-H5-17` — arnés AIS y CAL-06/CAL-NLI
+
+El arnés exige preinscripción, binding, codebook, estratos idioma×forma lógica×KC×tipo, criterios
+aportados externamente, inventario hasheado y juicios AIS trazables. No trae umbrales por defecto.
+Verifica que el fragmento reproduzca el hash W1 y que el inventario material coincida con su hash;
+una muestra vacía falla `CAL-NLI`. Reporta TP/FP/TN/FN, tasas FP/FN, precisión y recall por estrato,
+con numeradores y denominadores; el agregado lleva `authorizesGate=false`. Un `test_fixture` jamás
+demuestra fiabilidad. `nliGate` requiere evidencia material del binding y estrato exactos y aun así
+no se convierte en veredicto final. No se creó muestra, informe ni gate real. Son 12 pruebas nuevas,
+1076 totales. Procedimiento: `docs/content/groundedness-calibration.md`.
 
 ---
 
@@ -556,8 +569,8 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **1064 pruebas**: 937 unitarias + 127 contra
-PostgreSQL 17 real. El checkpoint anterior tenía 1060.
+Estado en el checkpoint: **todo en verde en local**. **1076 pruebas**: 949 unitarias + 127 contra
+PostgreSQL 17 real. El checkpoint anterior tenía 1064.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 151 pruebas nuevas de esta sesión —de `authoring-core` y una de
@@ -776,9 +789,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1064 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1076 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F6 · H5 por `T-H5-17`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
+4. **Sigue F7 · H6 por `T-H6-01`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
