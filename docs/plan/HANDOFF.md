@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…06` (sesión, dominio y autoridad de medición).
+**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…07` (sesión, dominio, medición y calendario SCED).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,11 +14,12 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8**, **F6
-con 17 de 17 mecanismos** y **F7 con 6 de 14**. La siguiente es **`T-H6-07`**, calendario SCED.
+con 17 de 17 mecanismos** y **F7 con 7 de 14**. La siguiente es **`T-H6-08`**, interrupciones en
+modo de medición.
 Antes de arrancarla lee §3 y §7.
 
-**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31990745818` verificó `T-H6-05` con los
-seis jobs verdes, incluida mutación. `T-H6-06` está cerrada en local y necesita su commit y su CI
+**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31992531164` verificó `T-H6-06` con los
+seis jobs verdes, incluida mutación. `T-H6-07` está cerrada en local y necesita su commit y su CI
 propios antes de pasar de `HECHA` a `VERIFICADA`.
 
 ---
@@ -51,10 +52,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
-| **F7 · H6** sesión determinista sin LLM | 6 de 14. `T-H6-01…05` VERIFICADAS y `T-H6-06` HECHA; sigue `T-H6-07` |
+| **F7 · H6** sesión determinista sin LLM | 7 de 14. `T-H6-01…06` VERIFICADAS y `T-H6-07` HECHA; sigue `T-H6-08` |
 | F8–F16 | No empezadas |
 
-Van **75 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **76 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -66,8 +67,8 @@ inventa:
 
 | Hito | Qué significa | Avance |
 |---|---|---|
-| Sesión seca (fin de F7) | Una clase completa con guion fijo, sin IA en vivo | **69 %** |
-| Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **66 %** |
+| Sesión seca (fin de F7) | Una clase completa con guion fijo, sin IA en vivo | **71 %** |
+| Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **67 %** |
 | `LOCAL_SELF_USE` (F11) | El propietario lo usa de principio a fin, con voz y pizarrón | **51 %** |
 
 **Dos cosas que no se arreglan programando**, y por eso el porcentaje no cuenta toda la verdad:
@@ -78,20 +79,21 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H6-07` — calendario SCED
+### La tarea siguiente: `T-H6-08` — interrupciones en modo de medición
 
-`T-H6-01…06` ya construyen estado/replay, decisión de estrategia, dominio/reconfirmaciones,
-recuperación, pistas congeladas y la autoridad aislada que selecciona/consume/entrega una sonda.
-`CAL-10/CAL-WHEEL` sigue pendiente en material y BKT sigue ausente por CAL-11.
+`T-H6-01…07` ya construyen estado/replay, decisión de estrategia, dominio/reconfirmaciones,
+recuperación, pistas congeladas, autoridad aislada de sondas y calendario SCED global. `H6-07`
+produce las `ProbeRequest` que `measurement-worker` acepta sin que la sesión elija reactivo,
+reserva, tiempo, fase o validez. `CAL-10/CAL-WHEEL` sigue pendiente en material y BKT sigue ausente
+por CAL-11.
 
-`T-H6-07` debe materializar en `packages/experiment` la ronda global y su calendario: ventanas A
-6–8, B 9–11 y C 12–14 sobre rondas válidas; punto planificado por semilla congelada; separación
-mínima 3; elegibilidad de inicio por las tres/two observaciones literales; diferimiento y extensión
-máxima 2 sin salir de ventana. Una ronda sólo avanza si todos los conjuntos requeridos producen
-observación válida; bajo el mínimo se clasifica `schedule_invalid`. Transferencia, retención,
-familiarización, diagnóstico y reconfirmaciones no avanzan rondas. Retención es por conjunto a siete
-días de `set_mastery_timestamp`, con reserva exclusiva y sin reenseñanza dirigida en el intervalo.
-Debe registrar covariación sin reinterpretarla.
+`T-H6-08` debe implementar en `MEASUREMENT_MODE` las seis semánticas literales de P-II §7.1.1 y
+`DEC-MEAS-INTERRUPTION-001`: una pausa pre-ítem no consume; una pausa post-ítem conserva el consumo
+y produce `invalid_participant_pause`, sin feedback; una duda de contenido no recibe respuesta
+pedagógica ni amplía el reloj; `timeout` se decide por la rúbrica congelada; fin de sesión produce
+`missing_session_time`; retirada produce `withdrawal` sin reposición forzada. Todo incidente debe
+usar la taxonomía contractual y quedar enlazado al intento/ronda sin cambiar retrospectivamente el
+calendario ni la autoridad del worker.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -112,8 +114,8 @@ Lo que ya está puesto y conviene usar en vez de rehacer:
   paquete entero. La política compartida ya la aplica `T-H6-06`; el calendario sólo solicita la
   combinación conjunto/fase/tipo y nunca elige una reserva alternativa.
 - **`SCED_OPPORTUNITY_H5_V1`** (`packages/experiment/src/sced-opportunity.ts`) congela `k_set=3`,
-  mínimo válido 2 y el sobre conservador de oportunidades; `measurement-worker` ya rechaza un plan
-  primario que discrepe. `T-H6-07` debe consumir ese dato, no copiar los números en otra política.
+  mínimo válido 2 y el sobre conservador de oportunidades; `measurement-worker` y el calendario
+  rechazan un plan primario que discrepe.
 - **`FamilyRegistry`** (`family.ts`) fija el `item_family_id` en la primera asignación. **Pásaselo a
   `runW3Generation()` entre corridas**: con uno nuevo por corrida, reasignar familias es gratis y el
   umbral del 30 % de `T-H5-09` se calcula sobre otra cosa. `members()` es lo que `T-H5-09` y
@@ -338,7 +340,29 @@ usa un CTE compare-and-set y una prueba PostgreSQL con dos conexiones concurrent
 ganador y un solo consumo. Son 25 pruebas del worker, cuatro ampliaciones de contratos, dos de
 sesión y una PostgreSQL: **1234 totales** (1103 unitarias + 131 PostgreSQL). No se creó calendario,
 inventario, semilla, preinscripción, firma ni gate material. Diseño:
-`docs/session/measurement-authority.md`. Scheduler e interrupciones siguen en `T-H6-07/08`.
+`docs/session/measurement-authority.md`. El calendario se cerró en `T-H6-07`; las interrupciones
+siguen en `T-H6-08`.
+
+### `T-H6-07` — calendario SCED global
+
+`packages/experiment` contiene una política y una semilla estrictas, versionadas, hasheadas y
+ligadas inmutablemente por corrida. El modo material exige los hashes externos del freeze; ningún
+estado ni artefacto público expone la semilla. El triple planificado se deriva por SHA-256 solo de
+combinaciones que ya cumplen ventanas A 6–8, B 9–11, C 12–14 y separación mínima 3.
+
+Cada `probe_round` abre exactamente tres `ProbeRequest`, una por conjunto. Solo las tres
+observaciones válidas y compatibles con el 3/2 de H5 avanzan una vez el contador y alimentan las
+series; parciales y oportunidades bajo mínimo quedan descriptivas y `schedule_invalid`. La
+estabilidad, el diferimiento máximo de dos rondas válidas, el límite de ventana, la separación
+efectiva y el cierre en 19 rondas se rederivan en replay. Las actividades no-ronda nunca avanzan y
+la covariación se registra sin reinterpretarla.
+
+El dominio por conjunto agenda retención exactamente siete días después, con reserva exclusiva y
+sin `probe_round`; hasta resolverla, la reenseñanza dirigida del conjunto queda bloqueada. Son 25
+pruebas del calendario y una integración pública calendario→worker: **1260 totales** (1129
+unitarias + 131 PostgreSQL). Una mutación sembrada de `every` a `some` fue detectada por la prueba
+de ronda inválida. Los fixtures no afirman inventario, semilla, binding, preinscripción, firma ni
+gate materiales. Diseño: `docs/session/sced-calendar.md`.
 
 ---
 
@@ -685,8 +709,14 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local** para T-H6-06. **1234 pruebas**: 1103 unitarias
-y 131 contra PostgreSQL 17 real. El checkpoint anterior tenía 1202.
+Estado en el checkpoint: **toda la batería de código está verde en local** para T-H6-07: lint, 35
+typechecks, **1260 pruebas** (1129 unitarias + 131 contra PostgreSQL 17 real), 23 builds,
+arquitectura y mutaciones sembradas, lógica, gateway, grants, SBOM, suministro y 159 controles de
+hardening. El checkpoint anterior tenía 1234 pruebas. `ci:infra:compose-up` compiló los 23 paquetes
+dentro de la imagen, pero Docker Desktop falló al desempaquetar la capa común con `overlayfs:
+input/output error` y después dejó de responder; es un fallo local del motor, no una aspa de código,
+y no se borró caché ni almacenamiento del usuario para ocultarlo. La corrida de CI sigue siendo la
+verificación autoritativa de la tarea.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 26 pruebas nuevas o ampliadas de `domain-engine`/`session-engine` **no
@@ -695,7 +725,7 @@ otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto para `T-H6-05` (corrida `31990745818`):
+Observado, no supuesto para `T-H6-06` (corrida `31992531164`):
 
 | Job | Resultado |
 |---|---|
@@ -706,7 +736,7 @@ Observado, no supuesto para `T-H6-05` (corrida `31990745818`):
 | `ci:lint · ci:typecheck · ci:unit · ci:build` | ✅ |
 | `ci:logic:golden · ci:logic:pbt · ci:logic:no-net` | ✅ |
 
-`T-H6-06` debe obtener su propia corrida verde después del push. Se comprueba job por
+`T-H6-07` debe obtener su propia corrida verde después del push. Se comprueba job por
 job con:
 
 ```bash
@@ -765,7 +795,7 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
   `NO_IMPLEMENTADO` en vez de simular éxito; `proof-search` lanza `CertificateRejectedError` en vez
   de devolver «no encontré».
 - **Desviaciones documentadas.** Cualquier apartamiento del plan va a §«Decisiones de ingeniería» de
-  `PLAN_STATUS.md` con su causa. Van **D-1 a D-22**.
+  `PLAN_STATUS.md` con su causa. Van **D-1 a D-23**.
 - **Una siembra en verde no dice nada de los controles que faltan.** En `T-H5-05` se sembraron 36
   mutaciones y las 36 quedaron detectadas a la primera; y aun así, releyendo el módulo aparecieron
   cuatro huecos, entre ellos **una guarda exportada y probada que el pipeline nunca llamaba** y un
@@ -903,9 +933,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1234 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1260 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F7 · H6 por `T-H6-07`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
+4. **Sigue F7 · H6 por `T-H6-08`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en

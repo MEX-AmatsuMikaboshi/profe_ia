@@ -2,8 +2,8 @@
 
 Implementación de `Plan.md` `T-H6-06`, P-II §6 y `DEC-MEAS-AUTHORITY-001` en
 `apps/measurement-worker/src/authority.ts`. Este artefacto cierra el núcleo autoritativo de una
-oportunidad; el calendario SCED que decide cuándo abrirla pertenece a `T-H6-07` y las transiciones
-de interrupción pertenecen a `T-H6-08`.
+oportunidad; el calendario SCED que decide cuándo abrirla se implementó por separado en `T-H6-07` y
+las transiciones de interrupción pertenecen a `T-H6-08`.
 
 ## Frontera de autoridad
 
@@ -67,7 +67,8 @@ registra selección y consumo antes de exponer la entrega.
 ## Límites deliberados de esta tarea
 
 - No hay inventario, semilla ni política material creados; eso requeriría contenido y freeze reales.
-- El scheduler de rondas, ventanas, estabilidad, extensión, retención y covariación es T-H6-07.
+- El scheduler de rondas, ventanas, estabilidad, extensión, retención y covariación vive en
+  `packages/experiment/src/sced-calendar.ts` (`T-H6-07`).
 - Pausa, duda, timeout, fin de sesión, retirada e incidentes se convertirán en eventos exactos en
   T-H6-08. Los reason codes usados aquí prueban la autoridad de clasificación, no esa máquina de
   interrupciones ni una calibración material de timeout.

@@ -25,7 +25,7 @@ import {
 import { SCED_OPPORTUNITY_H5_V1 } from '@profesor-ia/experiment';
 import { z } from 'zod';
 
-/** T-H6-06 — autoridad exclusiva de medición, sin calendario SCED todavía. */
+/** T-H6-06 — autoridad de oportunidad; recibe solicitudes del calendario T-H6-07. */
 export const MEASUREMENT_POLICY_SCHEMA_VERSION = 'measurement-authority-policy-v1' as const;
 export const MEASUREMENT_INVENTORY_SCHEMA_VERSION = 'measurement-inventory-v1' as const;
 export const MEASUREMENT_SEED_SCHEMA_VERSION = 'measurement-seed-v1' as const;

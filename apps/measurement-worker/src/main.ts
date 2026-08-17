@@ -5,7 +5,9 @@ import { writeFileSync } from 'node:fs';
  *
  * La autoridad determinista de sondas ya está implementada en `authority.ts`.
  * Este proceso sigue siendo únicamente el heartbeat del contenedor: el
- * adaptador de transporte y el calendario SCED se cablean en T-H6-07.
+ * El calendario SCED determinista está en `@profesor-ia/experiment`. Este
+ * proceso sigue sin adaptador de transporte: el cableado de la sesión seca se
+ * completa con las tareas restantes de H6.
  *
  * Aislamiento medición/enseñanza (I-4): es el único servicio que monta las
  * reservas de sondas, y el pipeline de autoría no puede alcanzarlas —lo
@@ -31,7 +33,7 @@ heartbeat();
 log('started', {
   duty: 'autoridad aislada de medicion',
   status: 'AUTHORITY_CORE_READY',
-  calendar: 'T-H6-07_PENDING',
+  calendar: 'SCED_CALENDAR_CORE_READY',
   transport: 'NOT_WIRED',
 });
 const timer = setInterval(heartbeat, HEARTBEAT_MS);

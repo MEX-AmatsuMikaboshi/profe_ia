@@ -11,7 +11,7 @@
     "properties": [
       {
         "name": "profesor-ia:lockfile-sha256",
-        "value": "c4062a164f9286b1fcb1c345fdf20218fa3b9e291aaa84afe618df3d106064eb"
+        "value": "6e3d387e5c246ec678dad06f4176e0344ed49c67990e7e9e28053fcb4e4c0dd6"
       },
       {
         "name": "profesor-ia:node-version",
@@ -876,6 +876,19 @@
     },
     {
       "type": "library",
+      "name": "zod",
+      "version": "4.4.3",
+      "purl": "pkg:npm/zod@4.4.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "@profesor-ia/authoring-core",
       "version": "link:packages/authoring-core",
       "purl": "pkg:npm/%40profesor-ia%2Fauthoring-core@link:packages/authoring-core"
@@ -909,19 +922,6 @@
       "name": "@profesor-ia/domain-engine",
       "version": "link:packages/domain-engine",
       "purl": "pkg:npm/%40profesor-ia%2Fdomain-engine@link:packages/domain-engine"
-    },
-    {
-      "type": "library",
-      "name": "zod",
-      "version": "4.4.3",
-      "purl": "pkg:npm/zod@4.4.3",
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ]
     },
     {
       "type": "library",
