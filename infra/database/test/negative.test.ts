@@ -17,6 +17,12 @@ import {
   type SchemaName,
   type ServiceRole,
 } from '@profesor-ia/security-policy';
+import {
+  initializeSessionState,
+  restoreSessionStateSnapshot,
+  toSessionStatePersistenceRow,
+  type SessionStatePersistenceRow,
+} from '../../../packages/session-engine/src/index.js';
 import { expectDenied, startHarness, type Harness } from './harness.js';
 
 let h: Harness;
@@ -36,6 +42,48 @@ const as = (role: ServiceRole): Client => {
   if (!c) throw new Error(`sin conexión para ${role}`);
   return c;
 };
+
+function structuredSessionRow(sessionId: string, participantPseudoId: string): SessionStatePersistenceRow {
+  const initialized = initializeSessionState(
+    {
+      sessionId,
+      runId: 'run-1',
+      participantPseudoId,
+      courseId: 'c1',
+      packageVersion: {
+        artifactId: 'content-package-test-fixture',
+        version: 'test-fixture-v1',
+        hash: 'a'.repeat(64),
+      },
+      plannedDurationSeconds: 3_600,
+    },
+    { eventId: `event-${sessionId}-0`, occurredAt: '2026-08-16T12:00:00.000Z' },
+  );
+  return toSessionStatePersistenceRow(initialized.snapshot);
+}
+
+async function insertStructuredSession(row: SessionStatePersistenceRow): Promise<void> {
+  await h.admin.query(
+    `INSERT INTO pedagogy.session_state (
+       session_id, run_id, participant_pseudo_id, course_id, state, pedagogical_mode,
+       selected_strategy, assistance_level, structured_state, projection_hash, updated_at
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10, $11)
+     ON CONFLICT DO NOTHING`,
+    [
+      row.session_id,
+      row.run_id,
+      row.participant_pseudo_id,
+      row.course_id,
+      row.state,
+      row.pedagogical_mode,
+      row.selected_strategy,
+      row.assistance_level,
+      row.structured_state,
+      row.projection_hash,
+      row.updated_at,
+    ],
+  );
+}
 
 describe('los siete esquemas exactos (P-II §9.2)', () => {
   it('existen exactamente los siete, sin un octavo', async () => {
@@ -327,13 +375,75 @@ describe('RLS como segunda capa (P-II §11.2)', () => {
       ['s-alpha', 'pseudo-alpha'],
       ['s-beta', 'pseudo-beta'],
     ]) {
-      await h.admin.query(
-        `INSERT INTO pedagogy.session_state
-           (session_id, run_id, participant_pseudo_id, course_id, state, pedagogical_mode)
-         VALUES ('${id}', 'run-1', '${pseudo}', 'c1', 'preparada', 'LEARNING_MODE')
-         ON CONFLICT DO NOTHING`,
-      );
+      await insertStructuredSession(structuredSessionRow(id, pseudo));
     }
+  });
+
+  it('persiste y restaura el estado íntegro con el hash calculado por el motor', async () => {
+    const { rows } = await h.admin.query<SessionStatePersistenceRow>(
+      `SELECT session_id, run_id, participant_pseudo_id, course_id, state, pedagogical_mode,
+              selected_strategy, assistance_level, structured_state, projection_hash, updated_at
+         FROM pedagogy.session_state WHERE session_id = 's-alpha'`,
+    );
+    const row = rows[0];
+    expect(row).toBeDefined();
+    const restored = restoreSessionStateSnapshot(row!);
+    expect(restored.state.sessionId).toBe('s-alpha');
+    expect(restored.state.primaryState).toBe('preparada');
+    expect(restored.projectionHash).toBe(row?.projection_hash);
+  });
+
+  it('la BD rechaza columnas escalares que contradicen la proyección', async () => {
+    const row = structuredSessionRow('s-inconsistent', 'pseudo-inconsistent');
+    await expect(
+      h.admin.query(
+        `INSERT INTO pedagogy.session_state (
+           session_id, run_id, participant_pseudo_id, course_id, state, pedagogical_mode,
+           selected_strategy, assistance_level, structured_state, projection_hash, updated_at
+         ) VALUES ($1, $2, $3, $4, 'diagnostico', $5, $6, $7, $8::jsonb, $9, $10)`,
+        [
+          row.session_id,
+          row.run_id,
+          row.participant_pseudo_id,
+          row.course_id,
+          row.pedagogical_mode,
+          row.selected_strategy,
+          row.assistance_level,
+          row.structured_state,
+          row.projection_hash,
+          row.updated_at,
+        ],
+      ),
+    ).rejects.toThrow(/session_state_structured_scalar_match/u);
+  });
+
+  it('la BD también prohíbe masteryProbabilityShadow mientras BKT esté OFF', async () => {
+    const row = structuredSessionRow('s-bkt-forbidden', 'pseudo-bkt-forbidden');
+    const withInventedBkt = {
+      ...(row.structured_state as object),
+      masteryProbabilityShadow: 0.8,
+    };
+    await expect(
+      h.admin.query(
+        `INSERT INTO pedagogy.session_state (
+           session_id, run_id, participant_pseudo_id, course_id, state, pedagogical_mode,
+           selected_strategy, assistance_level, structured_state, projection_hash, updated_at
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10, $11)`,
+        [
+          row.session_id,
+          row.run_id,
+          row.participant_pseudo_id,
+          row.course_id,
+          row.state,
+          row.pedagogical_mode,
+          row.selected_strategy,
+          row.assistance_level,
+          withInventedBkt,
+          row.projection_hash,
+          row.updated_at,
+        ],
+      ),
+    ).rejects.toThrow(/session_state_bkt_shadow_absent/u);
   });
 
   it('FORCE ROW LEVEL SECURITY está activo en las tablas por participante', async () => {

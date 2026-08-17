@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09…17` (regeneración, calibraciones, selección, linter, auditoría, freeze, BKT opcional y arnés AIS/NLI).
+**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01` (hasta estado estructurado y replay de sesión).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -13,9 +13,9 @@ con qué comprobaciones, en §8.
 
 ### Por dónde empezar, en una línea
 
-F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
-con 17 de 17 mecanismos**: `T-H5-01…17`. La siguiente es **`T-H6-01`**, motor de estados de sesión. Antes de
-arrancarla lee §3 y §7, que enumera lo que **no** está verificado.
+F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8**, **F6
+con 17 de 17 mecanismos** y **F7 con 1 de 14**. La siguiente es **`T-H6-02`**, política pedagógica
+determinista y congelada por corrida. Antes de arrancarla lee §3 y §7.
 
 **`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31982295591` verificó `T-H5-16` con los
 seis jobs verdes, incluida mutación. `T-H5-17` conserva su commit y su CI propios.
@@ -50,10 +50,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
-| **F7 · H6** sesión determinista sin LLM | No empezada. Sigue `T-H6-01` |
+| **F7 · H6** sesión determinista sin LLM | 1 de 14. `T-H6-01` HECHA; sigue `T-H6-02` |
 | F8–F16 | No empezadas |
 
-Van **69 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **70 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -77,20 +77,16 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H6-01` — estados y replay de sesión
+### La tarea siguiente: `T-H6-02` — política pedagógica determinista
 
-F6 agotó sus **17 tareas** de mecanismo, aunque H5 no puede cerrarse sin sus entradas externas. Sigue
-F7, sesión determinista sin LLM. `T-H6-01` construye el estado literal completo, sus transversales y
-la reconstrucción desde eventos; no necesita fingir un corpus para modelar y probar esas invariantes.
+`T-H6-01` ya construye la secuencia literal, los ocho transversales, el estado completo de P-I §8.2,
+la cadena de hashes, el replay exacto y la persistencia JSON íntegra. BKT sigue ausente por CAL-11.
 
-**Las tres cosas que conviene tener claras antes de empezarla:**
-
-1. Los estados principales y transversales son literales de P-II §7.1; no se simplifican a un enum de
-   pantallas ni se inventan transiciones silenciosas.
-2. El estado estructurado de §8.2 debe persistirse y el replay de eventos debe producir exactamente
-   la misma proyección (I-5); un snapshot sin historia no cubre la tarea.
-3. BKT quedó deshabilitado en `T-H5-16`: `masteryProbabilityShadow` no puede reaparecer con un valor
-   de fixture. Las pruebas de motor pueden usar eventos tipados, no un corpus simulado.
+`T-H6-02` debe conectar el contrato `PedagogicalDecision` existente a una tabla de transiciones como
+datos, con versión e inmovilización por corrida. Debe respetar la jerarquía P-I §8.3.1, representar
+los patrones de §8.3.2 y mantener fading, autoexplicación, retrieval y spacing bajo código. Los
+umbrales CAL-10/CAL-WHEEL se reciben como calibración material o quedan pendientes; no se inventan
+para completar la tarea.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -223,6 +219,16 @@ con numeradores y denominadores; el agregado lleva `authorizesGate=false`. Un `t
 demuestra fiabilidad. `nliGate` requiere evidencia material del binding y estrato exactos y aun así
 no se convierte en veredicto final. No se creó muestra, informe ni gate real. Son 12 pruebas nuevas,
 1076 totales. Procedimiento: `docs/content/groundedness-calibration.md`.
+
+### `T-H6-01` — estado estructurado y replay
+
+`session-state-v1` implementa la secuencia primaria literal, los ocho transversales y todos los
+campos de P-I §8.2. Cada decisión agrega automáticamente decisor/autonomía; `model` no puede ser
+autoridad. Los eventos enlazan hash anterior/resultante sobre JSON canónico y el replay rechaza
+huecos, orden, tiempo, IDs o hashes adulterados. PostgreSQL persiste el JSON completo+hash y compara
+sus escalares; una instalación con filas históricas incompletas exige replay material en vez de un
+backfill inventado. BKT queda ausente en código y BD. Son 16 pruebas unitarias y 3 PostgreSQL nuevas:
+1095 totales. Diseño: `docs/session/state-machine.md`.
 
 ---
 
@@ -569,8 +575,8 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **1076 pruebas**: 949 unitarias + 127 contra
-PostgreSQL 17 real. El checkpoint anterior tenía 1064.
+Estado en el checkpoint: **todo en verde en local** para T-H6-01. **1095 pruebas**: 965 unitarias +
+130 contra PostgreSQL 17 real. El checkpoint anterior tenía 1076.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 151 pruebas nuevas de esta sesión —de `authoring-core` y una de
@@ -789,9 +795,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1076 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1095 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F7 · H6 por `T-H6-01`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
+4. **Sigue F7 · H6 por `T-H6-02`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en

@@ -317,6 +317,9 @@ importers:
       '@profesor-ia/pedagogy-policy':
         specifier: workspace:*
         version: link:../pedagogy-policy
+      zod:
+        specifier: ^4.1.13
+        version: 4.4.3
     devDependencies:
       typescript:
         specifier: 5.9.3
