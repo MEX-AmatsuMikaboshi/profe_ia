@@ -4,3 +4,4 @@
 export const PACKAGE_NAME = "@profesor-ia/experiment" as const;
 
 export * from './sced-opportunity.js';
+export * from './freeze.js';

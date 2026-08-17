@@ -118,7 +118,7 @@ export const CapabilityFlags = z.object({
   internalUiCapture: z.boolean(),
   /** Experimental; OFF por defecto (P-II §11.6). */
   externalScreenCapture: z.boolean(),
-});
+}).strict();
 export type CapabilityFlags = z.infer<typeof CapabilityFlags>;
 
 /** Configuración recomendada de la corrida H8 (T-H8-13). */

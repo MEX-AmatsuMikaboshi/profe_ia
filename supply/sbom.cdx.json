@@ -11,7 +11,7 @@
     "properties": [
       {
         "name": "profesor-ia:lockfile-sha256",
-        "value": "f748f17beda291ee0982628d1e36b1cbfde70041ff6bf65ecb63ab881a036d70"
+        "value": "9e74d960752363c3dad8f94d927e12b9fc8da91b678a7b61c728c7a97e3f8b0e"
       },
       {
         "name": "profesor-ia:node-version",
@@ -71,6 +71,18 @@
           }
         }
       ]
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/security-policy",
+      "version": "link:packages/security-policy",
+      "purl": "pkg:npm/%40profesor-ia%2Fsecurity-policy@link:packages/security-policy"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/contracts",
+      "version": "link:packages/contracts",
+      "purl": "pkg:npm/%40profesor-ia%2Fcontracts@link:packages/contracts"
     },
     {
       "type": "library",
@@ -153,31 +165,6 @@
       "name": "@turbo/windows-arm64",
       "version": "2.10.10",
       "purl": "pkg:npm/%40turbo%2Fwindows-arm64@2.10.10"
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/security-policy",
-      "version": "link:packages/security-policy",
-      "purl": "pkg:npm/%40profesor-ia%2Fsecurity-policy@link:packages/security-policy"
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/contracts",
-      "version": "link:packages/contracts",
-      "purl": "pkg:npm/%40profesor-ia%2Fcontracts@link:packages/contracts"
-    },
-    {
-      "type": "library",
-      "name": "zod",
-      "version": "4.4.3",
-      "purl": "pkg:npm/zod@4.4.3",
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ]
     },
     {
       "type": "library",
@@ -295,6 +282,48 @@
           }
         }
       ]
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/experiment",
+      "version": "link:packages/experiment",
+      "purl": "pkg:npm/%40profesor-ia%2Fexperiment@link:packages/experiment"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/authoring-core",
+      "version": "link:packages/authoring-core",
+      "purl": "pkg:npm/%40profesor-ia%2Fauthoring-core@link:packages/authoring-core"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/logic-core",
+      "version": "link:packages/logic-core",
+      "purl": "pkg:npm/%40profesor-ia%2Flogic-core@link:packages/logic-core"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/domain-engine",
+      "version": "link:packages/domain-engine",
+      "purl": "pkg:npm/%40profesor-ia%2Fdomain-engine@link:packages/domain-engine"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/proof-search",
+      "version": "link:packages/proof-search",
+      "purl": "pkg:npm/%40profesor-ia%2Fproof-search@link:packages/proof-search"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/content-schema",
+      "version": "link:packages/content-schema",
+      "purl": "pkg:npm/%40profesor-ia%2Fcontent-schema@link:packages/content-schema"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/isomorphism-canonicalizer",
+      "version": "link:packages/isomorphism-canonicalizer",
+      "purl": "pkg:npm/%40profesor-ia%2Fisomorphism-canonicalizer@link:packages/isomorphism-canonicalizer"
     },
     {
       "type": "library",
@@ -2858,6 +2887,19 @@
     },
     {
       "type": "library",
+      "name": "zod",
+      "version": "4.4.3",
+      "purl": "pkg:npm/zod@4.4.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "@better-auth/core",
       "version": "1.6.29",
       "purl": "pkg:npm/%40better-auth%2Fcore@1.6.29",
@@ -3189,33 +3231,15 @@
     },
     {
       "type": "library",
-      "name": "@profesor-ia/logic-core",
-      "version": "link:../../packages/logic-core",
-      "purl": "pkg:npm/%40profesor-ia%2Flogic-core@link:../../packages/logic-core"
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/content-schema",
-      "version": "link:../../packages/content-schema",
-      "purl": "pkg:npm/%40profesor-ia%2Fcontent-schema@link:../../packages/content-schema"
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/proof-search",
-      "version": "link:../../packages/proof-search",
-      "purl": "pkg:npm/%40profesor-ia%2Fproof-search@link:../../packages/proof-search"
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/isomorphism-canonicalizer",
-      "version": "link:../../packages/isomorphism-canonicalizer",
-      "purl": "pkg:npm/%40profesor-ia%2Fisomorphism-canonicalizer@link:../../packages/isomorphism-canonicalizer"
-    },
-    {
-      "type": "library",
       "name": "@profesor-ia/experiment",
       "version": "link:../../packages/experiment",
       "purl": "pkg:npm/%40profesor-ia%2Fexperiment@link:../../packages/experiment"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/logic-core",
+      "version": "link:../../packages/logic-core",
+      "purl": "pkg:npm/%40profesor-ia%2Flogic-core@link:../../packages/logic-core"
     },
     {
       "type": "library",
@@ -3237,6 +3261,12 @@
     },
     {
       "type": "library",
+      "name": "@profesor-ia/domain-engine",
+      "version": "link:../domain-engine",
+      "purl": "pkg:npm/%40profesor-ia%2Fdomain-engine@link:../domain-engine"
+    },
+    {
+      "type": "library",
       "name": "@profesor-ia/isomorphism-canonicalizer",
       "version": "link:../isomorphism-canonicalizer",
       "purl": "pkg:npm/%40profesor-ia%2Fisomorphism-canonicalizer@link:../isomorphism-canonicalizer"
@@ -3255,15 +3285,15 @@
     },
     {
       "type": "library",
-      "name": "@profesor-ia/security-policy",
-      "version": "link:../security-policy",
-      "purl": "pkg:npm/%40profesor-ia%2Fsecurity-policy@link:../security-policy"
+      "name": "@profesor-ia/authoring-core",
+      "version": "link:../authoring-core",
+      "purl": "pkg:npm/%40profesor-ia%2Fauthoring-core@link:../authoring-core"
     },
     {
       "type": "library",
-      "name": "@profesor-ia/domain-engine",
-      "version": "link:../domain-engine",
-      "purl": "pkg:npm/%40profesor-ia%2Fdomain-engine@link:../domain-engine"
+      "name": "@profesor-ia/security-policy",
+      "version": "link:../security-policy",
+      "purl": "pkg:npm/%40profesor-ia%2Fsecurity-policy@link:../security-policy"
     },
     {
       "type": "library",

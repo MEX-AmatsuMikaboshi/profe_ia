@@ -77,7 +77,8 @@
         "uiAnnotations",
         "internalUiCapture",
         "externalScreenCapture"
-      ]
+      ],
+      "additionalProperties": false
     },
     "environment": {
       "type": "string",

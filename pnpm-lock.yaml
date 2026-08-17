@@ -14,6 +14,9 @@ importers:
       '@eslint/js':
         specifier: ^9.39.0
         version: 9.39.5
+      '@profesor-ia/experiment':
+        specifier: workspace:*
+        version: link:packages/experiment
       '@profesor-ia/security-policy':
         specifier: workspace:*
         version: link:packages/security-policy
@@ -217,6 +220,9 @@ importers:
 
   packages/experiment:
     dependencies:
+      '@profesor-ia/authoring-core':
+        specifier: workspace:*
+        version: link:../authoring-core
       '@profesor-ia/contracts':
         specifier: workspace:*
         version: link:../contracts
@@ -350,6 +356,9 @@ importers:
       '@profesor-ia/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@profesor-ia/experiment':
+        specifier: workspace:*
+        version: link:../../packages/experiment
     devDependencies:
       typescript:
         specifier: 5.9.3

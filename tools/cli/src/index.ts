@@ -7,6 +7,7 @@ import {
   lintContentPackage,
   type PackageLintFacts,
 } from '@profesor-ia/authoring-core';
+import { freezeContentPackage, type FreezeInput } from '@profesor-ia/experiment';
 
 export const NOT_IMPLEMENTED_EXIT_CODE = 3;
 export const VALIDATION_FAILED_EXIT_CODE = 2;
@@ -60,7 +61,10 @@ export interface RunResult {
   readonly stderr: string;
 }
 
-export function run(argv: readonly string[]): RunResult {
+export function run(
+  argv: readonly string[],
+  environment: Readonly<Record<string, string | undefined>> = process.env,
+): RunResult {
   if (argv.length === 0 || argv[0] === '--help' || argv[0] === '-h') {
     return { exitCode: USAGE_EXIT_CODE, stdout: usage(), stderr: '' };
   }
@@ -113,6 +117,60 @@ export function run(argv: readonly string[]): RunResult {
         stderr: `PAQUETE_INVALIDO: lint-input.json ilegible o incompleto: ${
           error instanceof Error ? error.message : String(error)
         }\n`,
+      };
+    }
+  }
+  if (command.path[0] === 'experiment' && command.path[1] === 'freeze') {
+    const contentFlag = argv.indexOf('--content');
+    const packagePath = contentFlag >= 0 ? argv[contentFlag + 1] : undefined;
+    if (packagePath === undefined || packagePath.trim() === '') {
+      return {
+        exitCode: USAGE_EXIT_CODE,
+        stdout: '',
+        stderr: 'uso: profesor-ia experiment freeze --content <directorio-del-paquete>\n',
+      };
+    }
+    const root = resolve(packagePath);
+    const inputPath = resolve(root, 'freeze-input.json');
+    const lintPath = resolve(root, 'lint-input.json');
+    if (!existsSync(inputPath) || !existsSync(lintPath)) {
+      return {
+        exitCode: VALIDATION_FAILED_EXIT_CODE,
+        stdout: '',
+        stderr: 'FREEZE_BLOQUEADO: faltan freeze-input.json o lint-input.json; no se firma un placeholder.\n',
+      };
+    }
+    const privateKey = environment['PROFESOR_IA_FREEZE_PRIVATE_KEY_PEM'] ?? '';
+    const keyId = environment['PROFESOR_IA_FREEZE_KEY_ID'] ?? '';
+    if (privateKey.trim() === '' || keyId.trim() === '') {
+      return {
+        exitCode: VALIDATION_FAILED_EXIT_CODE,
+        stdout: '',
+        stderr: 'FREEZE_BLOQUEADO: faltan PROFESOR_IA_FREEZE_PRIVATE_KEY_PEM/KEY_ID.\n',
+      };
+    }
+    try {
+      const input = JSON.parse(readFileSync(inputPath, 'utf8')) as FreezeInput;
+      const lintFacts = JSON.parse(readFileSync(lintPath, 'utf8')) as PackageLintFacts;
+      const published = freezeContentPackage(root, input, lintFacts, privateKey, keyId);
+      return {
+        exitCode: 0,
+        stdout:
+          JSON.stringify(
+            {
+              manifestPath: published.manifestPath,
+              contentPackageHash: published.manifest.contentPackageHash,
+            },
+            null,
+            2,
+          ) + '\n',
+        stderr: '',
+      };
+    } catch (error) {
+      return {
+        exitCode: VALIDATION_FAILED_EXIT_CODE,
+        stdout: '',
+        stderr: `FREEZE_BLOQUEADO: ${error instanceof Error ? error.message : String(error)}\n`,
       };
     }
   }

@@ -32,5 +32,6 @@
     "uiAnnotations",
     "internalUiCapture",
     "externalScreenCapture"
-  ]
+  ],
+  "additionalProperties": false
 }

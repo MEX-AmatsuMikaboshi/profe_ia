@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "@profesor-ia/authoring-core": "workspace:*",
-    "@profesor-ia/contracts": "workspace:*"
+    "@profesor-ia/contracts": "workspace:*",
+    "@profesor-ia/experiment": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.9.3"

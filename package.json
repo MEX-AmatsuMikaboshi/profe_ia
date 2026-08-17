@@ -18,6 +18,7 @@
     "ci:arch:depcruise": "depcruise --config .dependency-cruiser.cjs apps packages tools",
     "ci:supply:sbom": "node scripts/supply/generate-sbom.mjs",
     "ci:supply:drift": "node scripts/supply/check-drift.mjs",
+    "ci:freeze:drift": "node scripts/content/check-freeze-drift.mjs",
     "ci:logic:golden": "vitest run --project unit packages/logic-core/test/golden.test.ts",
     "ci:logic:pbt": "vitest run --project unit packages/logic-core/test/pbt.test.ts",
     "ci:logic:no-net": "vitest run --project unit packages/logic-core/test/isolation.test.ts",
@@ -55,6 +56,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
+    "@profesor-ia/experiment": "workspace:*",
     "@profesor-ia/security-policy": "workspace:*",
     "@stryker-mutator/core": "^10.0.0",
     "@stryker-mutator/vitest-runner": "^10.0.0",

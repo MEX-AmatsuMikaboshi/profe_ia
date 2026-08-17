@@ -41,16 +41,51 @@ export const FREEZE_MANIFEST_REQUIRED_SECTIONS = [
   'identificador_unico_de_corrida',
 ] as const;
 
-export const FreezeManifest = z.object({
-  manifestVersion: z.literal('0'),
-  runId: Id,
-  createdAt: IsoDateTime,
-  contentPackageHash: Sha256Hex,
-  authorizedCalculusVersion: VersionRef,
-  artifacts: z.array(z.object({ path: z.string().min(1), hash: Sha256Hex })),
-  capabilityFlags: CapabilityFlags.optional(),
-  signature: ManifestSignature.optional(),
-});
+const FreezeArtifact = z
+  .object({
+    path: z.string().min(1),
+    hash: Sha256Hex,
+    bytes: z.number().int().nonnegative(),
+  })
+  .strict();
+
+const FreezeSignature = ManifestSignature.extend({
+  algorithm: z.literal('Ed25519'),
+  publicKeySha256: Sha256Hex,
+}).strict();
+
+const FreezeSections = z
+  .object(
+    Object.fromEntries(
+      FREEZE_MANIFEST_REQUIRED_SECTIONS.map((section) => [section, z.json()]),
+    ) as Record<(typeof FREEZE_MANIFEST_REQUIRED_SECTIONS)[number], ReturnType<typeof z.json>>,
+  )
+  .strict();
+
+/**
+ * Contrato material de W5. La versión 0 era deliberadamente un esqueleto de
+ * F0; un paquete publicable solo puede emitir la versión 1 completa y firmada.
+ */
+export const FreezeManifest = z
+  .object({
+    manifestVersion: z.literal('1'),
+    runId: Id,
+    createdAt: IsoDateTime,
+    contentPackageHash: Sha256Hex,
+    authorizedCalculusVersion: VersionRef,
+    artifacts: z.array(FreezeArtifact).min(1),
+    capabilityFlags: CapabilityFlags,
+    sections: FreezeSections,
+    lintReport: z
+      .object({
+        valid: z.literal(true),
+        checksRun: z.array(z.string().min(1)).min(1),
+        issues: z.array(z.never()).length(0),
+      })
+      .strict(),
+    signature: FreezeSignature,
+  })
+  .strict();
 export type FreezeManifest = z.infer<typeof FreezeManifest>;
 
 /** Asignación de personas a roles; H11 exige ≥2 personas naturales (P-I §14.1). */

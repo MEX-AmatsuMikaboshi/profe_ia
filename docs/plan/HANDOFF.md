@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09…14` (regeneración, calibraciones, selección, linter y auditoría).
+**Qué se cerró aquí:** `T-H5-09…15` (regeneración, calibraciones, selección, linter, auditoría y freeze).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,8 +14,8 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8** y **F6
-con 14 de 17**: `T-H5-01…14`. La siguiente es **`T-H5-15`**, freeze firmado. Antes de
-arrancarla lee §3, que dice qué se rompe fácil, y §7, que enumera lo que **no** está verificado.
+con 15 de 17**: `T-H5-01…15`. La siguiente es **`T-H5-16`**, BKT sombra opcional. Antes de
+arrancarla lee §3 y §7, que enumera lo que **no** está verificado.
 
 **`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31978986478` verificó T-H5-10 con los seis
 jobs verdes. Tras subir T-H5-11 hay que observar su corrida antes de promoverla a `VERIFICADA`.
@@ -49,10 +49,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
-| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **14 de 17.** `T-H5-01…14` cerradas; sigue `T-H5-15` |
+| **F6 · H5** ingesta, autoría y freeze (W1–W5) | **15 de 17.** `T-H5-01…15` cerradas; sigue `T-H5-16` |
 | F7–F16 | No empezadas |
 
-Van **66 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **67 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -76,20 +76,19 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H5-15` — freeze firmado y drift
+### La tarea siguiente: `T-H5-16` — BKT sombra opcional
 
-F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las catorce primeras
-están cerradas. Sigue `T-H5-15`: manifiesto completo, firma, publicación inmutable, permisos mínimos
-y detección de drift mediante `profesor-ia experiment freeze`.
+F6 es la fase más grande del plan: **17 tareas** (`T-H5-01…17`), `Plan.md` §F6. Las quince primeras
+están cerradas. Sigue `T-H5-16`, que es opcional: BKT solo puede operar en sombra, con parámetros
+congelados, invisible al agente si sesga y sin autoridad sobre dominio, avance o medición.
 
 **Las tres cosas que conviene tener claras antes de empezarla:**
 
-1. La lista de P-II §5.7 es íntegra; cada sección debe entrar al manifest con hash/versiones y el
-   contenido debe haber pasado linter y auditoría. Nada se firma sobre placeholders.
-2. La clave privada no puede vivir en el paquete ni en servicios de sesión; la firma requiere una
-   autoridad/clave configurada y su ausencia debe bloquear, no crear una clave de desarrollo.
-3. `ci:freeze:drift` debe recalcular hashes y fallar ante cualquier byte cambiado; publicar vuelve
-   el paquete inmutable y aplica permisos mínimos.
+1. `OPTIONAL` permite dejar BKT deshabilitado; no permite habilitarlo con parámetros inventados.
+2. Si se habilita, `CAL-11` necesita una calibración reproducible y el freeze debe incluir su versión
+   y hash. Sin esa evidencia, la única configuración válida es `enabled: false` con motivo.
+3. Ninguna probabilidad de BKT puede convertirse en autoridad: solo es métrica sombra y no entra en
+   prompts, decisiones pedagógicas, elegibilidad, dominio ni sonda.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -187,6 +186,21 @@ por función y uno por KC, e incluye todo alto riesgo sin desplazar pisos. El co
 gates son ejecutables; se conserva `x/n` y todo seleccionado exige juicio explícito. Un bloqueo solo
 se remedia regenerando la familia completa, con causa raíz, semilla nueva y regresión. La corrida
 real espera al paquete real. Son 11 pruebas nuevas, 1046 totales.
+
+### `T-H5-15` — freeze firmado, publicación y drift
+
+`experiment freeze` dejó de ser stub y el contrato `FreezeManifest` pasó del esqueleto v0 a una v1
+material: inventario no vacío, 18 secciones exactas, linter íntegro, siete capacidades exactas y
+firma Ed25519. El comando exige los grupos materiales de §4.3 —un README no cubre un banco—,
+versiona y hashea cada sección, enlaza cálculo/auditoría/SCED/capacidades y no acepta placeholders,
+symlinks, hardlinks, una clave ausente o un freeze previo. La publicación usa temporal exclusivo,
+`fsync`, rename, segundo inventario y modos `0400/0444/0555`; `ci:freeze:drift` informa bytes
+cambiados, añadidos y retirados. La documentación operativa está en `docs/content/freeze.md`.
+
+No se congeló el paquete real: siguen ausentes corpus, W3, auditoría, clave y aprobación. El check
+sobre el placeholder v0 falla cerrado y eso es evidencia correcta, no un rojo que deba silenciarse.
+Las firmas de la suite son claves efímeras de fixture. Son 14 pruebas nuevas respecto del checkpoint
+anterior y 1060 totales: 933 unitarias + 127 contra PostgreSQL real.
 
 ---
 
@@ -533,8 +547,8 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local**. **1046 pruebas**: 919 unitarias + 127 contra
-PostgreSQL 17 real. El checkpoint anterior tenía 1035.
+Estado en el checkpoint: **todo en verde en local**. **1060 pruebas**: 933 unitarias + 127 contra
+PostgreSQL 17 real. El checkpoint anterior tenía 1046.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 151 pruebas nuevas de esta sesión —de `authoring-core` y una de
@@ -753,9 +767,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1046 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1060 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F6 · H5 por `T-H5-15`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
+4. **Sigue F6 · H5 por `T-H5-16`.** Lee antes `Plan.md` §F6 entero —son 17 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en

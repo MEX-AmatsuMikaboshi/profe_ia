@@ -5,6 +5,7 @@ import {
   CapabilityFlags,
   DecisionMaker,
   EvidenceEvent,
+  FreezeManifest,
   H8_RECOMMENDED_CAPABILITY_FLAGS,
   INCIDENT_ACTION_BY_LEVEL,
   METRIC_IDS,
@@ -136,6 +137,18 @@ describe('Salida anclada — literal P-II §8.4', () => {
 });
 
 describe('Catálogos literales del cálculo, gateway y veredictos', () => {
+  it('el contrato de freeze rechaza el esqueleto v0 no firmado de F0', () => {
+    expect(
+      FreezeManifest.safeParse({
+        manifestVersion: '0',
+        runId: 'placeholder',
+        createdAt: null,
+        contentPackageHash: null,
+        artifacts: [],
+      }).success,
+    ).toBe(false);
+  });
+
   it('tiene los 18 códigos E-* de P-II §4.1.1', () => {
     expect(VerificationErrorCode.options).toHaveLength(18);
     expect(VerificationErrorCode.options).toContain('E-SEM-UNSOUND-STEP');
