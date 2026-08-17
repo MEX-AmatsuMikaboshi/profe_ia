@@ -2,28 +2,26 @@
   "name": "@profesor-ia/web",
   "version": "0.0.0",
   "private": true,
-  "description": "Cliente alumno + consolas externas (Next.js). F0: solo esqueleto.",
+  "description": "Cliente alumno + consolas externas (Next.js). T-H6-13: interfaz mínima de Clase.",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "build": "node ../../scripts/web/build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "dev": "next dev"
   },
   "dependencies": {
+    "@fontsource/archivo": "^5.3.0",
     "@profesor-ia/contracts": "workspace:*",
-    "@profesor-ia/ui-tokens": "workspace:*"
+    "@profesor-ia/logic-core": "workspace:*",
+    "@profesor-ia/session-engine": "workspace:*",
+    "@profesor-ia/ui-tokens": "workspace:*",
+    "next": "^16.3.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
     "typescript": "5.9.3"
   }
 }

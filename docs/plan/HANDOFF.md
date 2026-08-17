@@ -1,13 +1,18 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-17.
-**Qué se cerró aquí:** `T-H6-09…12` y `T-H6-14` (bitácora de evidencia, clasificación de dudas,
-exposición externa, `foundation_phase` y modo guion/degradado).
+**Qué se cerró aquí:** `T-H6-09…12`, `T-H6-14` y **`T-H6-13`** (bitácora de evidencia, clasificación
+de dudas, exposición externa, `foundation_phase`, modo guion/degradado y la interfaz mínima de
+Clase).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
-> **Lo primero:** F7 está a **13 de 14**. Falta **sólo `T-H6-13`**, la interfaz mínima de Clase, y
-> después el AC del gate: la suite `ci:e2e:dry-session` y `ci:mode-separation`. Es el último punto
-> del plan donde se puede cerrar una fase entera **sin corpus, sin proveedores y sin gasto**.
+> **Lo primero:** F7 está a **14 de 14 tareas**. Lo único que falta para cerrar la fase es el **AC
+> del gate H6**: `ci:e2e:dry-session` y `ci:mode-separation`, más la ejecución verde en `main`.
+> Sigue siendo el último punto del plan donde se cierra una fase entera **sin corpus, sin
+> proveedores y sin gasto**.
+>
+> Lo que `T-H6-13` dejó puesto y conviene no rehacer está en §3.0; el diseño completo, en
+> [`../session/clase-ui.md`](../session/clase-ui.md).
 >
 > **F11 no es alcanzable escribiendo código.** `T-LSU-01` *es* el propietario usando el sistema de
 > principio a fin; `T-H7-01` exige el ganador `BENCH-01`, que sigue bloqueado por credenciales y
@@ -24,27 +29,56 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8**, **F6
-con 17 de 17 mecanismos** y **F7 con 13 de 14**. La siguiente y última es **`T-H6-13`**, la interfaz
-mínima de Clase; después, el AC del gate H6.
+con 17 de 17 mecanismos** y **F7 con 14 de 14**. Lo siguiente **no es una tarea `T-*`**: es el AC del
+gate H6 — `ci:e2e:dry-session` (sesión seca E2E reconstruible desde eventos) y `ci:mode-separation`,
+con las propiedades que `Plan.md` §F7 enumera: reactivo consumido no reaparece, sonda nunca en
+contexto del agente, dominio no se alcanza sin transferencia, corrección no elimina original,
+intervención humana registrada.
 
-`T-H6-13` pide: chat textual de guion, **editor Fitch estructurado** (notación, resaltado de
-líneas/subpruebas, historial, exportación, validación sintáctica local **no autoritativa**, veredicto
-en servidor), rúbrica visible, pistas, pausa, aviso de sonda (UI-CORR-02), apelación/retirada y
-estado de guardado. Norma: P-I §8.9 y UIUX §6.5. Es la primera tarea real de `apps/web`, que hasta
-ahora responde `NO_IMPLEMENTADO` a todo salvo `/health` (D-11).
+**`CONTENT_TOKEN` ya existe.** Todo hasta `T-H6-09` está **VERIFICADA** con corrida observada en
+`main`. `T-H6-10…14` están `HECHA` y esperan observar sus corridas.
 
-**El punto que decide esa tarea:** la validación sintáctica del editor es **local y no
-autoritativa**; el veredicto lo da el servidor con `logic-core`. Si el editor pudiera afirmar
-validez, habría un segundo verificador con otra implementación, y la ruta de verificación dejaría de
-ser única. Los tokens vendorizados **cargan Archivo desde Google Fonts con un `@import`**: hay que
-autoalojar la fuente antes de que `apps/web` los consuma, o la sesión local deja de ser local (§7).
+**Docker Desktop no arranca en esta máquina** («unable to start»), así que las pruebas contra
+PostgreSQL no se pueden correr en local: sólo en CI. Las **1327 unitarias** sí. No se dio por verde
+lo que no se pudo ejecutar.
 
-**`CONTENT_TOKEN` ya existe.** `T-H6-08` y `T-H6-09` están **VERIFICADAS** con sus corridas verdes
-observadas en `main`. `T-H6-10…12` y `T-H6-14` están `HECHA` y esperan observar sus corridas.
+## 3.0 Lo que dejó `T-H6-13`, y que conviene no rehacer
 
-**Docker Desktop no arranca en esta máquina** («unable to start»), así que las 131 pruebas contra
-PostgreSQL no se pueden correr en local: sólo en CI. Las 1234 unitarias sí. No se dio por verde lo
-que no se pudo ejecutar.
+Diseño completo en [`../session/clase-ui.md`](../session/clase-ui.md). Lo imprescindible:
+
+- **`@profesor-ia/logic-core/syntax`** es la superficie **sin veredicto** del núcleo: tokenizador,
+  parser, AST, errores y `analyzeStructure`. Ni `verify`, ni `applyRule`, ni `entails`, ni el
+  cálculo. La regla `sin-verificador-fuera-del-verificador` prohíbe a `apps/web` **y a `apps/api`**
+  alcanzar el barrel, con siembra **y control positivo** en `verify-depcruise-catches.mjs` (D-27).
+- **`apps/api` no verifica**: `verdict-spool.ts` deja la derivación en el spool de `apps/verifier`
+  (D-12, I-3) y devuelve lo que este dijo. Escritura atómica; timeout, veredicto ilegible o fuera de
+  contrato **lanzan**; un fallo de canal es 502, nunca un veredicto. Es la única ruta de `apps/api`
+  implementada en F7; el resto sigue en `NO_IMPLEMENTADO` (D-11).
+- **Las citas del editor apuntan a `lineId`, no a números.** Los números 1-based sólo existen al
+  exportar. `toProofInput()` devuelve `{ proof, dangling }` y **no repara** una cita colgante.
+- **`buildClaseViewModel()` deriva la vista del estado de sesión y lanza** ante capacidad multimodal
+  encendida, estado de medición incoherente, feedback durante la sonda, turno del Profesor IA sin
+  procedencia de guion, o actividad puntuable sin rúbrica.
+- **`dry-session.ts`** monta la sesión seca con paquete sintético (`purpose: 'test_fixture'`, tiempos
+  fijos, sin azar). **Es el punto de partida natural de `ci:e2e:dry-session`.**
+- **La fuente ya no sale a la red.** `scripts/web/generate-tokens-css.mjs` retira el `@import` a
+  Google Fonts en un derivado comprobado por `ci:web:tokens`; el vendorizado no se toca y Archivo se
+  autoaloja con `@fontsource/archivo`, con su excepción de licencia **registrada** (D-28).
+- **Dentro de `apps/web` las importaciones relativas van sin extensión `.js`** (D-29). Es al revés
+  que en el resto del repo, y es correcto: Next resuelve con bundler, no con NodeNext.
+
+**Tres cosas que esa tarea destapó fuera de sí misma**, y que valen para todo el repo:
+
+1. **`exclude: '/dist/'` en depcruise vaciaba reglas** (D-25). Ya no se excluye. Si añades una regla
+   `from: apps/x → to: @profesor-ia/y`, ahora sí aplica cuando `y` está declarado como dependencia.
+2. **El contrato `VerificationResult` no validaba la salida real del verificador** — dos campos con
+   el tipo equivocado, uno con el nombre equivocado y `goalReached` ausente. Corregido por autoridad
+   superior. Lección: un contrato que nadie ha ejercitado contra su productor no está comprobado.
+3. **`ci:supply:sbom` no tenía dónde registrar una revisión de licencia** (D-28).
+
+**Nota aparte:** `pnpm run plan:status` apunta a `scripts/plan/check-status.mjs`, que **nunca ha
+existido** en el repositorio. No está en la batería de §4 ni en CI. No se arregló porque no consta
+qué debía comprobar, y elegirlo sería inventar.
 
 ---
 
@@ -76,7 +110,7 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
-| **F7 · H6** sesión determinista sin LLM | **13 de 14.** Falta sólo `T-H6-13` (interfaz de Clase) y el AC del gate |
+| **F7 · H6** sesión determinista sin LLM | **14 de 14.** Falta sólo el AC del gate: `ci:e2e:dry-session` y `ci:mode-separation` |
 | F8–F16 | No empezadas |
 
 ### Los tres muros que no se tiran con código

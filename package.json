@@ -42,6 +42,8 @@
     "dev:restore": "node scripts/dev/compose.mjs restore",
     "ci:infra:hardening": "node scripts/infra/check-compose-hardening.mjs",
     "ci:infra:compose-up": "node scripts/infra/compose-up-check.mjs",
+    "web:tokens": "node scripts/web/generate-tokens-css.mjs",
+    "ci:web:tokens": "node scripts/web/generate-tokens-css.mjs --check",
     "contracts:json-schema": "pnpm --filter @profesor-ia/contracts run emit:json-schema",
     "plan:status": "node scripts/plan/check-status.mjs"
   },

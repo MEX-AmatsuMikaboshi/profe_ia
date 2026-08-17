@@ -22,6 +22,7 @@
   "dependencies": {
     "@better-auth/passkey": "^1.6.29",
     "@profesor-ia/contracts": "workspace:*",
+    "@profesor-ia/logic-core": "workspace:*",
     "@profesor-ia/security-policy": "workspace:*",
     "better-auth": "^1.6.29",
     "pg": "^8.23.0"

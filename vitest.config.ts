@@ -9,12 +9,19 @@ export default defineConfig({
   test: {
     projects: [
       {
+        // El `tsconfig` de `apps/web` deja `jsx: preserve` porque Next hace la
+        // transformación. Vitest no pasa por Next, así que necesita el runtime
+        // automático declarado aquí; sin esto el `.tsx` compila a `React.
+        // createElement` y falla con «React is not defined».
+        esbuild: { jsx: 'automatic', jsxImportSource: 'react' },
         test: {
           name: 'unit',
+          // `.tsx` entra desde T-H6-13: la vista de Clase se comprueba
+          // renderizándola, no solo por su modelo.
           include: [
             'packages/*/test/**/*.test.ts',
             'tools/*/test/**/*.test.ts',
-            'apps/*/test/**/*.test.ts',
+            'apps/*/test/**/*.test.{ts,tsx}',
           ],
           environment: 'node',
         },

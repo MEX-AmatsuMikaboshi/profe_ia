@@ -31,6 +31,31 @@ const ALLOWED_LICENSES = new Set([
   'WTFPL',
 ]);
 
+/**
+ * Excepciones **registradas**, por paquete y licencia exactos.
+ *
+ * Existe para no resolver una revisión ampliando `ALLOWED_LICENSES`: eso
+ * autorizaría de paso cualquier dependencia futura con la misma licencia, sin
+ * que nadie la mirase. Aquí la autorización es de este paquete, esta licencia y
+ * este motivo, y el script la imprime en cada corrida.
+ */
+const REGISTERED_LICENSE_EXCEPTIONS = new Map([
+  [
+    '@fontsource/archivo',
+    {
+      license: 'OFL-1.1',
+      task: 'T-H6-13',
+      reason:
+        'SIL Open Font License 1.1. Se redistribuye la fuente Archivo sin modificar y embebida ' +
+        'en la app, que es el uso que la OFL autoriza expresamente; no se vende por separado ni ' +
+        'se renombra (cláusula de Reserved Font Name). Entra para autoalojar la tipografía y ' +
+        'retirar el @import a Google Fonts del CSS vendorizado, que rompía local-first ' +
+        '(P-II §0.3). La alternativa —descargar el binario a mano— evitaría el aviso dejando la ' +
+        'misma obligación sin registrar.',
+    },
+  ],
+]);
+
 function pnpmJson(args) {
   const out = runPnpm(args, { cwd: ROOT, maxBuffer: 64 * 1024 * 1024 });
   return JSON.parse(out);
@@ -97,20 +122,56 @@ writeFileSync(join(OUT_DIR, 'lockfile.digest'), lockDigest + '\n', 'utf8');
 
 // Política de licencias: lo no permitido se revisa explícitamente, no se ignora.
 const flagged = [];
+const appliedExceptions = [];
 for (const [name, license] of licensesByPackage) {
   const ids = String(license)
     .split(/\s+(?:OR|AND)\s+|[()]/)
     .map((s) => s.trim())
     .filter(Boolean);
-  if (!ids.some((id) => ALLOWED_LICENSES.has(id))) flagged.push(`${name}: ${license}`);
+  if (ids.some((id) => ALLOWED_LICENSES.has(id))) continue;
+
+  const exception = REGISTERED_LICENSE_EXCEPTIONS.get(name);
+  // La excepción vale para **esta** licencia y no para el paquete en general:
+  // si mañana relicencia, vuelve a revisión en vez de heredar el permiso.
+  if (exception !== undefined && exception.license === String(license)) {
+    appliedExceptions.push({ name, ...exception });
+    continue;
+  }
+  flagged.push(`${name}: ${license}`);
 }
+
+// Una excepción que ya no corresponde a nada se retira: un registro que
+// conserva permisos para dependencias que se fueron acaba autorizando por
+// inercia lo que nadie revisó.
+const staleExceptions = [...REGISTERED_LICENSE_EXCEPTIONS.keys()].filter(
+  (name) => !appliedExceptions.some((applied) => applied.name === name),
+);
 
 console.log(`SBOM: ${sbom.components.length} componentes → supply/sbom.cdx.json`);
 console.log(`lockfile sha256: ${lockDigest}`);
 
+// Las excepciones se **imprimen siempre**. Una excepción silenciosa es
+// indistinguible de una licencia permitida.
+for (const applied of appliedExceptions) {
+  console.log(
+    `excepción de licencia registrada: ${applied.name} (${applied.license}) — ${applied.task}: ${applied.reason}`,
+  );
+}
+
+if (staleExceptions.length > 0) {
+  console.error('\nExcepciones de licencia registradas que ya no aplican; retíralas:');
+  for (const name of staleExceptions) console.error(`  - ${name}`);
+  process.exit(1);
+}
+
 if (flagged.length > 0) {
   console.error('\nLicencias fuera de la política conservadora (requieren revisión registrada):');
   for (const f of flagged) console.error(`  - ${f}`);
+  console.error(
+    '\nSe registran en REGISTERED_LICENSE_EXCEPTIONS de este script, con tarea y motivo. ' +
+      'Ampliar ALLOWED_LICENSES autorizaría de paso cualquier dependencia futura con esa ' +
+      'misma licencia, que es justo lo que la revisión evita.',
+  );
   process.exit(1);
 }
 console.log('política de licencias: sin excepciones pendientes');

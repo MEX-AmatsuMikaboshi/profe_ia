@@ -6,6 +6,9 @@ export default tseslint.config(
     ignores: [
       '**/dist/**',
       '**/node_modules/**',
+      // Salida de `next build`: son cientos de bundles generados. Sin esto
+      // `ci:lint` deja de terminar.
+      '**/.next/**',
       '**/.turbo/**',
       '**/schema/**',
       '**/.stryker-tmp/**',

@@ -39,10 +39,21 @@ nombre. El manifiesto de tokens del design system es `_ds_manifest.json` (namesp
 que es la pieza que T-H0-09 describe. Se vendoriza con su nombre normalizado `ds-manifest.json`
 y su hash de origen registrado arriba.
 
-## Pendiente para WS-FE (no bloquea F0)
+## La dependencia de red, resuelta en la capa de la app (T-H6-13)
 
 `styles.css` abre con `@import url('https://fonts.googleapis.com/css2?family=Archivo…')`. Eso es
 una dependencia de red externa en tiempo de render, incompatible con la regla local-first
-(P-II §0.3) durante una corrida. La fuente Archivo debe autoalojarse antes de que `apps/web`
-consuma estos tokens en una sesión real. El archivo vendorizado **no se edita** para lograrlo:
-se resuelve en la capa de la app.
+(P-II §0.3) durante una corrida. El archivo vendorizado **no se edita** para resolverlo: sigue
+byte a byte como se recibió, y su hash de arriba lo comprueba.
+
+Lo que hay en su lugar, desde `T-H6-13`:
+
+- `scripts/web/generate-tokens-css.mjs` deriva `apps/web/src/app/tokens.generated.css` retirando
+  el `@import` remoto y **fallando** —en vez de limpiar— ante cualquier otra referencia remota o
+  ante un `@import` que nadie haya decidido qué hacer con él. La cabecera del archivo generado
+  cita textualmente lo retirado, que es la evidencia de qué se quitó.
+- `pnpm run ci:web:tokens` comprueba que el derivado corresponde al vendorizado vigente, y
+  `scripts/web/build.mjs` lo ejecuta antes de `next build`.
+- La fuente Archivo se autoaloja como dependencia `@fontsource/archivo`, que entra por el
+  lockfile, el SBOM y el control de drift como cualquier otra. No se descargó ningún binario a
+  mano: un blob sin procedencia no tendría cómo auditarse.

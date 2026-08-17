@@ -1,0 +1,19 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "typecheck": {
+      // `apps/web` es el único paquete cuyo typecheck depende de su **propio**
+      // build: `next-env.d.ts` y `.next/types/` los genera `next build`, y sin
+      // ellos `tsc` no conoce ni los tipos de las rutas ni la importación del
+      // CSS. Declararlo aquí evita depender de que los pasos de CI corran en
+      // cierto orden; turbo reutiliza el build cacheado, así que no lo repite.
+      "dependsOn": ["^build", "build"],
+      "outputs": []
+    }
+  }
+}

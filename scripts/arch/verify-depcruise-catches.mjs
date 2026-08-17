@@ -3,13 +3,47 @@
  * y pasa al retirarla».
  *
  * Siembra una violación real por cada regla crítica, comprueba que
- * dependency-cruiser la detecta, y la retira siempre (finally).
+ * dependency-cruiser la detecta, y la retira siempre (finally). Desde T-H6-13
+ * comprueba además el lado positivo: que las reglas **dejan pasar** lo que
+ * deben, porque una regla escrita de más deja el árbol verde por la razón
+ * equivocada.
  */
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 const ROOT = process.cwd();
+
+/**
+ * Retira los restos compilados de una siembra. `tsc` no borra salidas obsoletas,
+ * así que un `__arch_probe__.js` de una corrida anterior sobrevive en `dist/` y
+ * —desde que `dist` está dentro del grafo (D-25)— aparece como violación real en
+ * un árbol que está bien. Se limpia antes y después de sembrar.
+ */
+function cleanCompiledProbes() {
+  for (const group of ['apps', 'packages', 'tools']) {
+    const groupDir = join(ROOT, group);
+    let entries;
+    try {
+      entries = readdirSync(groupDir, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      const distDir = join(groupDir, entry.name, 'dist');
+      let files;
+      try {
+        files = readdirSync(distDir);
+      } catch {
+        continue;
+      }
+      for (const file of files) {
+        if (file.startsWith('__arch_probe')) rmSync(join(distDir, file), { force: true });
+      }
+    }
+  }
+}
 
 /** Cada sonda: archivo sembrado + regla que debe dispararse. */
 const PROBES = [
@@ -27,6 +61,40 @@ const PROBES = [
     file: 'apps/web/src/__arch_probe__.ts',
     rule: 'web-sin-claves-ni-gateway',
     code: `import { PACKAGE_NAME } from '@profesor-ia/model-gateway';\nexport const probe = PACKAGE_NAME;\n`,
+  },
+  {
+    // T-H6-13: el editor Fitch valida sintaxis en local, pero el veredicto es del
+    // servidor. Alcanzar el barrel de `logic-core` le daría `verify()`.
+    file: 'apps/web/src/__arch_probe_verifier__.ts',
+    rule: 'sin-verificador-fuera-del-verificador',
+    code: `import { verify } from '@profesor-ia/logic-core';\nexport const probe = verify;\n`,
+  },
+  {
+    // Y el orquestador tampoco: verificar en línea saltaría el contenedor sin red.
+    file: 'apps/api/src/__arch_probe_verifier__.ts',
+    rule: 'sin-verificador-fuera-del-verificador',
+    code: `import { verify } from '@profesor-ia/logic-core';\nexport const probe = verify;\n`,
+  },
+];
+
+/**
+ * Controles positivos: importaciones que **deben** seguir permitidas.
+ *
+ * Sin ellos, una regla escrita de más —prohibir `logic-core` entero— pasaría
+ * inadvertida: el árbol quedaría verde simplemente porque nadie importa nada, y
+ * la frontera diría lo que no dice. Es el mismo motivo por el que la suite
+ * negativa de privilegios lleva pruebas de que cada concesión sí funciona.
+ */
+const ALLOWED_PROBES = [
+  {
+    file: 'apps/web/src/__arch_probe_syntax__.ts',
+    rule: 'sin-verificador-fuera-del-verificador',
+    code: `import { tryParse } from '@profesor-ia/logic-core/syntax';\nexport const probe = tryParse;\n`,
+  },
+  {
+    file: 'apps/api/src/__arch_probe_syntax__.ts',
+    rule: 'sin-verificador-fuera-del-verificador',
+    code: `import type { ProofInput } from '@profesor-ia/logic-core/syntax';\nexport type Probe = ProofInput;\n`,
   },
 ];
 
@@ -48,6 +116,7 @@ function depcruise(targets) {
 }
 
 let failures = 0;
+cleanCompiledProbes();
 for (const probe of PROBES) {
   const abs = join(ROOT, probe.file);
   try {
@@ -65,7 +134,31 @@ for (const probe of PROBES) {
   }
 }
 
+for (const probe of ALLOWED_PROBES) {
+  const abs = join(ROOT, probe.file);
+  try {
+    mkdirSync(dirname(abs), { recursive: true });
+    writeFileSync(abs, probe.code, 'utf8');
+    const { failed, output } = depcruise([dirname(probe.file)]);
+    if (failed && output.includes(probe.rule)) {
+      console.error(
+        `FALLO: la regla "${probe.rule}" prohíbe de más — rechazó la importación permitida de ` +
+          `${probe.file}:\n${output}`,
+      );
+      failures += 1;
+    } else if (failed) {
+      console.error(`FALLO: ${probe.file} no pasa depcruise por otra regla:\n${output}`);
+      failures += 1;
+    } else {
+      console.log(`ok: "${probe.rule}" deja pasar la importación permitida`);
+    }
+  } finally {
+    rmSync(abs, { force: true });
+  }
+}
+
 // Retirada la siembra, el árbol debe quedar limpio.
+cleanCompiledProbes();
 const clean = depcruise(['apps', 'packages', 'tools']);
 if (clean.failed) {
   console.error('FALLO: el árbol sin siembra no pasa depcruise:\n' + clean.output);

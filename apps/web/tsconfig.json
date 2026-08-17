@@ -1,10 +1,22 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist"
+    // Next 16 resuelve con el bundler y emite él mismo: `module`/`moduleResolution`
+    // de la base (NodeNext) y la emisión a `dist/` no aplican aquí. Lo que **no**
+    // se relaja es la disciplina del repo: `strict`,
+    // `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess` y
+    // `verbatimModuleSyntax` siguen heredados de la base.
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "jsx": "preserve",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "allowJs": true,
+    "incremental": true,
+    "plugins": [{ "name": "next" }]
   },
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "next-env.d.ts", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", ".next"]
 }

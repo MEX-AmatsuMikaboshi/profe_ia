@@ -145,7 +145,10 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 
 | T-H6-14 | REQUIRED | HECHA (mecanismo; catálogo congelado material pendiente del freeze de F6) | `packages/session-engine/src/script-mode.ts`, `test/script-mode.test.ts` (13 pruebas), `docs/session/script-mode.md` | 2026-08-17 | **`script` y `degraded` son dos modos y no uno**, aunque ambos entreguen sólo contenido congelado y ninguno llame al proveedor: el guion es la sesión seca planificada y el degradado es la caída del modelo a mitad de sesión. Registrar una caída como guion borraría el fallo; registrar una sesión seca como degradado inventaría una caída que no ocurrió, y por eso `DegradedEntry` exige `providerFailureRef` y el guion no lo tiene. `deliver()` busca la clave exacta `kind+kcId+selectorKey` y **falla si no está**: devolver lo más parecido convertiría el degradado en generación silenciosa, que es lo que §15.3 prohíbe. `assertNoLiveGeneration()` siempre lanza fuera de `live`, y el controlador no expone `generate`/`complete`/`send`/`fallbackText`, con prueba de que no existen. **La solución no cabe en el tipo**: `ScriptedContent` no tiene campo para ella —como `W3ItemRecord`—, y `assertNoFrozenSolution()` recorre el objeto que llega y **rechaza en vez de limpiar**. **La marca de desviación es asimétrica a propósito**: §15.3 exige marcarla si el degradado altera sustantivamente la condición, «sustantivo» no lo fija ninguna autoridad y por eso se declara con justificación, pero declarar «sin alteración» con actos que el guion no pudo cubrir se **rechaza** con `SCRIPT_DEVIATION_UNDERSTATED` —si el guion no entregó lo que el bloque pedía, la condición cambió por definición, y aceptar ahí un «no sustantivo» dejaría la desviación fuera del registro justo en el caso en que más importa—. Declarar de más se admite; de menos no. Catálogo `test_fixture`; el contenido congelado material depende del freeze de F6. |
 
-**Gate H6:** abierto; falta `T-H6-13` y el AC de sesión seca completa.
+| T-H6-13 | REQUIRED | HECHA (interfaz; el bucle de sesión y la evidencia desde la API son `T-H7-01`) | `apps/web/src/clase/*` (`fitch-document.ts`, `local-review.ts`, `view-model.ts`, `verdict.ts`, `copy.ts`, `dry-session.ts`, `components/`), `apps/web/src/app/*` (Next 16 / React 19), `apps/api/src/verdict-spool.ts` + `clase-verdict-route.ts`, `packages/logic-core/src/syntax.ts`, `scripts/web/generate-tokens-css.mjs`, `scripts/web/build.mjs`, 88 pruebas nuevas (13 tokens, 16 documento, 12 revisión local, 15 modelo de vista, 7 canal, 14 render, 11 canal en API) + 5 de superficie en `logic-core`, `docs/session/clase-ui.md` | 2026-08-17 | Primera tarea real de `apps/web`; el resto de rutas sigue en `NO_IMPLEMENTADO` (D-11). **La decisión que gobierna la tarea es P-I §8.9: validación local no autoritativa, veredicto en servidor.** Se resuelve con tres piezas y una frontera ejecutable: el subpath `@profesor-ia/logic-core/syntax` (tokenizador, parser, AST, errores, `analyzeStructure`; sin `verify`, `applyRule`, `entails`, `construction` ni el cálculo), una `LocalReview` **sin ningún campo de veredicto** —no hay `valid`, `correct` ni `ok`, y una prueba comprueba que no aparecen— y un puerto que **pide** el veredicto. La frontera es D-27, con siembra y control positivo (D-26). Reescribir una segunda gramática en el cliente se descartó: separaría el editor del cálculo y el desajuste llegaría al alumno como un rechazo inexplicable. **`apps/api` tampoco verifica**: deja la derivación en el spool de `apps/verifier` (D-12, I-3), con escritura atómica —el verificador procesa todo `.json` que ve, así que escribir con el nombre final le deja leer un parcial y contestar «ilegible» a una derivación buena—, y agotar el plazo, un veredicto ilegible o fuera de contrato **lanzan**: un «no válido» producido por un timeout se registraría como el resultado del alumno. Un fallo del canal vuelve 502 y en la vista es una rama distinta, no un `valid: false`. **El editor es estructurado: las citas apuntan a `lineId`, no a números**, que sólo existen al exportar; con números guardados, insertar una línea delante dejaría la derivación citando otra sin que nadie tocara la cita. Borrar la línea citada **deja la cita colgando y lo dice** en vez de repararla sola, porque repararla cambiaría la derivación del alumno y figuraría como suya. `EDITOR_MAX_DEPTH=16` se mantiene separado del `MAX_DEPTH=64` del verificador; el historial es de edición y no de intentos —confundirlos permitiría «deshacer» un intento ya registrado—; la paleta ofrece símbolos canónicos y ningún alias, porque un botón «->» enseñaría notación que la evidencia no muestra; las subpruebas se marcan con sangría **y** con texto (UIUX §3); cada línea emite `fitch-line:N` para el overlay de F10. **El modelo de vista se deriva del estado de sesión y lo prohibido no se puede construir**: lanzan `CAPACIDAD_NO_IMPLEMENTADA` (T-H7-07: F7 es texto+Fitch; es donde F10 se enchufa), `MODO_MEDICION_INCOHERENTE`, `FEEDBACK_EN_MEDICION`, `ENTREGA_GENERADA_EN_VIVO` y `RUBRICA_AUSENTE`. UI-CORR-02 se emite con sus cuatro puntos exactos y las pistas no se pueden habilitar en medición. **La consecuencia de pausar se declara**: T-H6-08 congela que la pausa post-ítem deriva `invalid_participant_pause`, y callarlo dejaría al participante perder un reactivo sin haber podido saberlo. UI-CORR-04: `liveHumanPedagogicalIntervention` es `false` **en el tipo**, no en una comprobación. El estado de guardado tiene cuatro ramas y ninguna dice «guardado» sin estarlo. La sesión seca usa paquete sintético con `purpose: 'test_fixture'`, marcas de tiempo fijas y **declaración en pantalla** (UIUX §2). Local-first: el `@import` a Google Fonts se retira en un derivado comprobado por `ci:web:tokens` —el vendorizado no se toca— y Archivo se autoaloja como dependencia (D-28). **Tres hallazgos fuera de la tarea**: D-25 (una exclusión vaciaba reglas de arquitectura), la corrección del contrato `VerificationResult` por autoridad superior, y D-28. No hay corrida material, ni corpus, ni participante. |
+
+**Gate H6:** abierto; las 14 tareas están HECHAS y falta el AC: `ci:e2e:dry-session` y
+`ci:mode-separation`, más la ejecución verde en `main`.
 
 ## Fases siguientes
 
@@ -156,7 +159,7 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 | F4 | H4 · Pasarela de modelo | EN_CURSO | 9 de 12 tareas. Todo lo construible está hecho; `T-H4-09/10/11` esperan credenciales y autorización de gasto del propietario |
 | F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 17 de 17 tareas con mecanismo implementado; gate H5 abierto por corpus/freeze/auditoría y CAL-NLI materiales ausentes |
-| F7 | H6 · Sesión determinista sin LLM | EN_CURSO | 13 de 14 tareas; sigue `T-H6-13`, la interfaz mínima de Clase |
+| F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas HECHAS.** Falta el AC del gate: `ci:e2e:dry-session` y `ci:mode-separation` |
 | F8–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
 
 ## Entorno de ejecución (verificado 2026-08-14)
@@ -175,6 +178,12 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 Una consola abierta **antes** de instalar Docker conserva el `PATH` viejo y Testcontainers falla con
 `spawn docker-credential-desktop ENOENT`. Basta con abrir una consola nueva, o anteponer
 `C:\Program Files\Docker\Docker\resources\bin` al `PATH`.
+
+## Correcciones por autoridad superior (17-08-2026)
+
+| Contrato | Qué estaba mal | Corrección |
+|---|---|---|
+| `VerificationResult` (`packages/contracts`) | El contrato que gobierna el veredicto **no validaba la salida real del verificador**, y nadie lo había notado porque hasta `T-H6-13` nadie la había parseado contra él. Tres divergencias: (1) `authorizedCalculusVersion` y `verifierVersion` tipados como `VersionRef` —objeto— cuando el Maestro los fija como **cadena** (P-I §1 línea 213, `DEC-CALCULUS-001`), que es lo que emiten `logic-core` y `domain-engine`; (2) el contrato declaraba `trace`, que **nada emite**, mientras el verificador produce `detail`, así que Zod lo descartaba en silencio y el alumno se quedaba sin la explicación del error; (3) faltaba `goalReached`, presente en `logic-core` desde T-H2-06, sin el cual un cliente sólo ve `valid: true` y lo lee como «resolvió el ejercicio» — justo la confusión que D-9 separa | Se corrige el **contrato**, no la implementación: era el contrato el que contradecía al Maestro (§0.1). `authorizedCalculusVersion`/`verifierVersion` pasan a cadena, `trace` se renombra a `detail` y se añade `goalReached` opcional. `manifests.ts` y `freeze.ts` conservan `VersionRef` a propósito: ahí sí se referencia un artefacto con su hash. 19 JSON Schema reemitidos |
 
 ## Correcciones por autoridad superior (15-08-2026)
 
@@ -340,4 +349,46 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   incidente sistémico usa el `validityEffect=invalidate_run` declarado en la taxonomía congelada y
   por eso no convierte parciales previos en observación primaria; los fixtures sólo prueban el
   mecanismo y no crean taxonomía material.
+- **D-25 — `dist/` deja de excluirse del grafo de dependency-cruiser.** `exclude` no sólo deja de
+  recorrer un módulo: lo borra del grafo, también como **destino** de dependencia. Los paquetes del
+  workspace resuelven por `exports` a `dist/`, así que con `/dist/` excluido toda dependencia
+  **declarada** entre paquetes desaparecía y con ella la regla que la vigilaba: `web-sin-soluciones`
+  y `web-sin-claves-ni-gateway` sólo disparaban porque esos paquetes no estaban en el `package.json`
+  de `apps/web`, y bastaba declarar uno para que el control pasara por vacío sin que nada lo dijera.
+  Se descubrió en T-H6-13 al sembrar `apps/web → @profesor-ia/logic-core` con la dependencia ya
+  declarada: la violación no se detectaba. Con `dist` dentro el árbol sigue limpio (394 módulos, 827
+  dependencias) y las reglas aplican a lo declarado. Coste asumido: un `__arch_probe*` compilado de
+  una siembra anterior ensucia el recorrido, así que `verify-depcruise-catches.mjs` lo retira antes y
+  después. `.next/` y `next-env.d.ts` **sí** se excluyen, y no es la misma decisión: son salida
+  generada que nadie importa, así que excluirlos no borra ninguna arista real.
+- **D-26 — Las reglas de arquitectura llevan control positivo.** `verify-depcruise-catches.mjs`
+  comprobaba sólo que cada regla **detecta** una violación sembrada. Desde T-H6-13 comprueba también
+  que **deja pasar** lo permitido —`apps/web`/`apps/api` importando `@profesor-ia/logic-core/syntax`—,
+  porque una regla escrita de más deja el árbol verde por la razón equivocada y nadie lo notaría. Es
+  el mismo motivo por el que la suite negativa de privilegios lleva pruebas de que cada concesión sí
+  funciona.
+- **D-27 — El editor Fitch no puede alcanzar el verificador, y tampoco el orquestador.** La regla
+  `sin-verificador-fuera-del-verificador` prohíbe a `apps/web` y `apps/api` el barrel de
+  `logic-core`; ambos entran sólo por el subpath `./syntax` (tokenizador, parser, AST, errores,
+  `analyzeStructure`). En el cliente, porque P-I §8.9 exige que la validación local **no** sea
+  autoritativa y un segundo `verify()` haría que la ruta de verificación dejara de ser única. En
+  `apps/api`, porque verificar en línea sería un verificador fuera del contenedor sin red y saltaría
+  el spool (D-12, I-3). Escribir una segunda gramática en el cliente se descartó por lo contrario:
+  separaría el editor del cálculo congelado y el desajuste llegaría al alumno como un rechazo
+  inexplicable del servidor.
+- **D-28 — Registro de excepciones de licencia en lugar de ampliar la política.** `ci:supply:sbom`
+  decía «requieren revisión registrada» y no tenía dónde registrarla: el único camino era añadir la
+  licencia a `ALLOWED_LICENSES`, lo que autorizaría de paso cualquier dependencia futura con esa
+  misma licencia. Ahora hay `REGISTERED_LICENSE_EXCEPTIONS`, por paquete y licencia **exactos**, con
+  tarea y motivo, que se imprime en cada corrida —una excepción silenciosa es indistinguible de una
+  licencia permitida— y **falla si conserva una excepción que ya no aplica**, para que el registro no
+  autorice por inercia. Primera y única entrada: `@fontsource/archivo` (OFL-1.1), T-H6-13.
+- **D-29 — `apps/web` no compila a `dist/`.** Es una app, no una biblioteca: Next posee su build
+  (`next build` vía `scripts/web/build.mjs`, que apaga la telemetría explícitamente porque un envío
+  a un endpoint externo durante una corrida contradice local-first) y el `typecheck` sigue siendo
+  `tsc --noEmit`. Su `tsconfig` sobrescribe `module`/`moduleResolution`/`jsx` de la base porque Next
+  resuelve con bundler, y **conserva** `strict`, `exactOptionalPropertyTypes`,
+  `noUncheckedIndexedAccess` y `verbatimModuleSyntax`. Consecuencia: dentro de `apps/web` las
+  importaciones relativas van **sin** extensión `.js` —el resolvedor de Next no mapea `.js` a
+  `.tsx`—, al revés que en el resto del repo, que es NodeNext.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

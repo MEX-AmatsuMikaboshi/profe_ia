@@ -1,5 +1,10 @@
 node_modules/
 dist/
+# Salida y andamiaje de `next build` (T-H6-13). `next-env.d.ts` importa de
+# `.next/types/`, así que versionarlo no independizaría el typecheck del build:
+# esa dependencia se declara en `apps/web/turbo.json`.
+.next/
+next-env.d.ts
 .turbo/
 coverage/
 *.tsbuildinfo

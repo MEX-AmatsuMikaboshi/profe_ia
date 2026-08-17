@@ -11,7 +11,7 @@
     "properties": [
       {
         "name": "profesor-ia:lockfile-sha256",
-        "value": "6e3d387e5c246ec678dad06f4176e0344ed49c67990e7e9e28053fcb4e4c0dd6"
+        "value": "4a1842fada1b55b448415164fe5a0fdd5a8b9c4d10e64c9d55fda543de2590c5"
       },
       {
         "name": "profesor-ia:node-version",
@@ -2803,6 +2803,12 @@
     },
     {
       "type": "library",
+      "name": "@profesor-ia/logic-core",
+      "version": "link:../../packages/logic-core",
+      "purl": "pkg:npm/%40profesor-ia%2Flogic-core@link:../../packages/logic-core"
+    },
+    {
+      "type": "library",
       "name": "@profesor-ia/security-policy",
       "version": "link:../../packages/security-policy",
       "purl": "pkg:npm/%40profesor-ia%2Fsecurity-policy@link:../../packages/security-policy"
@@ -3237,15 +3243,124 @@
     },
     {
       "type": "library",
-      "name": "@profesor-ia/logic-core",
-      "version": "link:../../packages/logic-core",
-      "purl": "pkg:npm/%40profesor-ia%2Flogic-core@link:../../packages/logic-core"
+      "name": "@fontsource/archivo",
+      "version": "5.3.0",
+      "purl": "pkg:npm/%40fontsource%2Farchivo@5.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "OFL-1.1"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "next",
+      "version": "16.3.1",
+      "purl": "pkg:npm/next@16.3.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "react",
+      "version": "19.2.8",
+      "purl": "pkg:npm/react@19.2.8",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "react-dom",
+      "version": "19.2.8",
+      "purl": "pkg:npm/react-dom@19.2.8",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
     },
     {
       "type": "library",
       "name": "@profesor-ia/ui-tokens",
       "version": "link:../../packages/ui-tokens",
       "purl": "pkg:npm/%40profesor-ia%2Fui-tokens@link:../../packages/ui-tokens"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/session-engine",
+      "version": "link:../../packages/session-engine",
+      "purl": "pkg:npm/%40profesor-ia%2Fsession-engine@link:../../packages/session-engine"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/domain-engine",
+      "version": "link:../../packages/domain-engine",
+      "purl": "pkg:npm/%40profesor-ia%2Fdomain-engine@link:../../packages/domain-engine"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/evidence",
+      "version": "link:../../packages/evidence",
+      "purl": "pkg:npm/%40profesor-ia%2Fevidence@link:../../packages/evidence"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/pedagogy-policy",
+      "version": "link:../../packages/pedagogy-policy",
+      "purl": "pkg:npm/%40profesor-ia%2Fpedagogy-policy@link:../../packages/pedagogy-policy"
+    },
+    {
+      "type": "library",
+      "name": "@types/react",
+      "version": "19.2.18",
+      "purl": "pkg:npm/%40types%2Freact@19.2.18",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "csstype",
+      "version": "3.2.3",
+      "purl": "pkg:npm/csstype@3.2.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/react-dom",
+      "version": "19.2.4",
+      "purl": "pkg:npm/%40types%2Freact-dom@19.2.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
     },
     {
       "type": "library",

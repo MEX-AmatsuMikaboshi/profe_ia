@@ -99,6 +99,22 @@ module.exports = {
       to: { path: `(${SOLUTIONS_AND_RESERVES}|${MEASUREMENT_AND_PROBES})` },
     },
     {
+      name: 'sin-verificador-fuera-del-verificador',
+      severity: 'error',
+      comment:
+        'T-H6-13 ← P-I §8.9 / I-3 / D-12: el veredicto lo emite `apps/verifier`, que corre sin ' +
+        'red y se habla por spool. Ni el cliente ni el orquestador pueden alcanzar `verify()`: ' +
+        'en el cliente la validación es local y **no autoritativa**, y en `apps/api` un verify ' +
+        'en línea sería un segundo verificador fuera del contenedor aislado, saltándose la ' +
+        'única ruta de verificación. Ambos entran solo por el subpath sin veredicto ' +
+        '`@profesor-ia/logic-core/syntax`.',
+      from: { path: '^apps/(web|api)' },
+      to: {
+        path: VERIFICATION_PATH,
+        pathNot: '(@profesor-ia/logic-core/syntax|^packages/logic-core/(src|dist)/syntax\\.)',
+      },
+    },
+    {
       name: 'sin-dependencias-no-resueltas',
       severity: 'error',
       comment: 'Una importación que no resuelve invalida el análisis arquitectónico.',
@@ -108,13 +124,35 @@ module.exports = {
   ],
   options: {
     doNotFollow: { path: 'node_modules' },
-    exclude: { path: '(node_modules|/dist/|\\.test\\.ts$)' },
+    // `/dist/` **no** se excluye, y la diferencia no es cosmética (T-H6-13, D-25).
+    //
+    // `exclude` no solo deja de recorrer un módulo: lo borra del grafo, también
+    // como destino de dependencia. Los paquetes del workspace resuelven por
+    // `exports` a `dist/`, así que con `/dist/` excluido toda dependencia
+    // **declarada** entre paquetes desaparecía, y con ella la regla que la
+    // vigilaba. Las reglas `web-sin-*` parecían verdes porque esos paquetes no
+    // estaban en el `package.json` de `apps/web`: en cuanto uno se declaraba,
+    // el control pasaba por vacío sin que nada lo dijera. Se descubrió al
+    // sembrar `apps/web → @profesor-ia/logic-core` con la dependencia ya
+    // declarada: la violación no se detectaba.
+    //
+    // Con `dist` dentro, un artefacto compilado rancio de una siembra anterior
+    // ensucia el recorrido; por eso `verify-depcruise-catches.mjs` retira
+    // también los `__arch_probe*` compilados.
+    //
+    // `.next/` y `next-env.d.ts` sí se excluyen, y no es la misma decisión: son
+    // salida y andamiaje que genera `next build`, y **nada los importa**. A
+    // diferencia de `dist/`, excluirlos no borra ninguna arista real del grafo.
+    exclude: { path: '(node_modules|\\.next/|next-env\\.d\\.ts$|\\.test\\.tsx?$)' },
     tsPreCompilationDeps: true,
     tsConfig: { fileName: 'tsconfig.base.json' },
     enhancedResolveOptions: {
       exportsFields: ['exports'],
       conditionNames: ['import', 'require', 'node', 'default', 'types'],
-      extensions: ['.js', '.ts', '.mjs', '.cjs', '.json'],
+      // `.tsx`/`.jsx` entran con la vista de Clase (T-H6-13). Sin ellos, sus
+      // importaciones quedan «no resueltas» y las reglas de `apps/web` no ven
+      // el grafo que deben vigilar.
+      extensions: ['.js', '.ts', '.tsx', '.jsx', '.mjs', '.cjs', '.json'],
     },
     reporterOptions: {
       text: { highlightFocused: true },
