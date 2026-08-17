@@ -20,9 +20,11 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@profesor-ia/contracts": "workspace:*"
+    "@profesor-ia/contracts": "workspace:*",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@profesor-ia/proof-search": "workspace:*",
     "typescript": "5.9.3"
   }
 }

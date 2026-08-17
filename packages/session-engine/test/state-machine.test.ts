@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { SESSION_STATES, SESSION_TRANSVERSAL_STATES } from '@profesor-ia/contracts';
+import {
+  CAL09_DOMAIN_BINDING,
+  DOMAIN_POLICY_V1,
+  DeterministicDomainController,
+  compileDomainPolicy,
+} from '@profesor-ia/domain-engine';
 
 import {
   SESSION_BKT_SHADOW_ENABLED,
@@ -14,6 +20,7 @@ import {
   sessionStateHash,
   toSessionStatePersistenceRow,
   transitionPrimarySessionState,
+  updateSessionFromDomainState,
   updateSessionProjection,
   type SessionDecisionMetadata,
   type SessionMutation,
@@ -568,5 +575,112 @@ describe('estado estructurado de sesión (T-H6-01)', () => {
         metadata('event-invalid-wheel', 1),
       ),
     ).toThrow();
+  });
+
+  it('integra la proyección autoritativa de domain-engine en el replay de sesión', () => {
+    const policyHash = compileDomainPolicy(DOMAIN_POLICY_V1).policyHash;
+    const controller = new DeterministicDomainController(DOMAIN_POLICY_V1, {
+      expectedHash: policyHash,
+    });
+    controller.bindRun({
+      runId: 'run-fixture-1',
+      purpose: 'material',
+      policyVersion: DOMAIN_POLICY_V1.policyVersion,
+      policyHash,
+    });
+    const common = (sequenceNumber: number) => ({
+      attemptId: `domain-attempt-${sequenceNumber}`,
+      itemId: `domain-item-${sequenceNumber}`,
+      itemFamilyId: `domain-family-${sequenceNumber}`,
+      mode: 'LEARNING_MODE' as const,
+      outcome: 'correct' as const,
+      complexityIndex: sequenceNumber,
+      complexityCalibrationVersion: 'cal-09-v1' as const,
+      complexityCalibrationSampleHash: CAL09_DOMAIN_BINDING.sampleHash,
+      hints: [],
+    });
+    const domainState = controller.replay([
+      {
+        eventId: 'domain-session-event-0',
+        eventType: 'domain.initialized',
+        sequenceNumber: 0,
+        occurredAt: AT,
+        payload: {
+          runId: 'run-fixture-1',
+          participantPseudoId: 'pseudo-fixture-1',
+          kcId: 'KC03',
+        },
+      },
+      {
+        eventId: 'domain-session-event-1',
+        eventType: 'domain.attempt.observed',
+        sequenceNumber: 1,
+        occurredAt: at(1),
+        payload: { ...common(1), activityKind: 'practice', reserve: 'independent_practice' },
+      },
+      {
+        eventId: 'domain-session-event-2',
+        eventType: 'domain.attempt.observed',
+        sequenceNumber: 2,
+        occurredAt: at(2),
+        payload: { ...common(2), activityKind: 'practice', reserve: 'independent_practice' },
+      },
+      {
+        eventId: 'domain-session-event-3',
+        eventType: 'domain.attempt.observed',
+        sequenceNumber: 3,
+        occurredAt: at(3),
+        payload: {
+          ...common(3),
+          activityKind: 'near_transfer',
+          reserve: 'TRANSFER_MASTERY',
+          nonIsomorphismEvidence: {
+            authority: 'isomorphism_canonicalizer',
+            canonicalizerVersion: 'test-fixture-v1',
+            evidenceHash: 'c'.repeat(64),
+            comparedImmediatePracticeItemIds: ['domain-item-1', 'domain-item-2'],
+            nonIsomorphic: true,
+          },
+        },
+      },
+    ]);
+    const mutation = updateSessionFromDomainState(
+      initialized().snapshot,
+      domainState,
+      'DOMAIN_STATE_PROJECTED',
+      metadata('event-domain-projection', 4),
+    );
+
+    expect(mutation.snapshot.state.operationalMastery.KC03).toMatchObject({
+      mastered: true,
+      eligibleConsecutiveCorrect: 3,
+      nearTransferSatisfied: true,
+      reconfirmationPending: true,
+    });
+    expect(mutation.snapshot.state.attemptMasteryEligibility).toHaveLength(3);
+    expect(mutation.snapshot.state.nearTransfer.KC03).toMatchObject({
+      status: 'satisfied',
+      attemptId: 'domain-attempt-3',
+    });
+    expect(mutation.snapshot.state.nextSteps).toContainEqual({
+      stepId: 'post-mastery-reconfirmation:KC03',
+      action: 'post_mastery_reconfirmation_pending',
+      targetId: 'KC03',
+      plannedAt: null,
+    });
+    expect(replaySessionStateEvents([
+      initialized().event,
+      mutation.event,
+    ])).toEqual(mutation.snapshot);
+
+    expectCode(
+      () => updateSessionFromDomainState(
+        initialized().snapshot,
+        { ...domainState, runId: 'another-run' },
+        'DOMAIN_STATE_PROJECTED',
+        metadata('event-domain-mismatch', 4),
+      ),
+      'DOMAIN_PROJECTION_MISMATCH',
+    );
   });
 });

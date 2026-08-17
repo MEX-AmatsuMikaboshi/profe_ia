@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…02` (estado/replay y política pedagógica).
+**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…03` (estado, política y dominio operativo).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,11 +14,12 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8**, **F6
-con 17 de 17 mecanismos** y **F7 con 2 de 14**. La siguiente es **`T-H6-03`**, dominio operativo
-determinista. Antes de arrancarla lee §3 y §7.
+con 17 de 17 mecanismos** y **F7 con 3 de 14**. La siguiente es **`T-H6-04`**, recuperación y límite
+pedagógico. Antes de arrancarla lee §3 y §7.
 
-**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31985023277` verificó `T-H6-01` con los
-seis jobs verdes, incluida mutación. `T-H6-02` conserva su commit y su CI propios.
+**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31986432630` verificó `T-H6-02` con los
+seis jobs verdes, incluida mutación. `T-H6-03` está cerrada en local y necesita su commit y su CI
+propios antes de pasar de `HECHA` a `VERIFICADA`.
 
 ---
 
@@ -50,10 +51,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
-| **F7 · H6** sesión determinista sin LLM | 2 de 14. `T-H6-01` VERIFICADA y `T-H6-02` HECHA; sigue `T-H6-03` |
+| **F7 · H6** sesión determinista sin LLM | 3 de 14. `T-H6-01/02` VERIFICADAS y `T-H6-03` HECHA; sigue `T-H6-04` |
 | F8–F16 | No empezadas |
 
-Van **71 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **72 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -77,18 +78,18 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H6-03` — dominio operativo determinista
+### La tarea siguiente: `T-H6-04` — recuperación y límite pedagógico
 
-`T-H6-01` ya construye estado/replay y `T-H6-02` decide estrategia mediante una tabla tipada,
-versionada, hasheada y congelada por corrida. `CAL-10/CAL-WHEEL` sigue pendiente en material y BKT
-sigue ausente por CAL-11.
+`T-H6-01` construye estado/replay, `T-H6-02` decide estrategia y `T-H6-03` deriva elegibilidad y
+dominio con CAL-09, transferencia y reconfirmaciones. `CAL-10/CAL-WHEEL` sigue pendiente en material
+y BKT sigue ausente por CAL-11.
 
-`T-H6-03` debe completar `domain-engine`: dominio solo con tres respuestas consecutivas elegibles,
-complejidad no decreciente según `cal-09-v1` y al menos una transferencia cercana elegible. La
-descalificación por ayuda ya tiene una función autoritativa mínima adelantada en `T-H5-13`, pero hay
-que integrarla por intento, exigir reconfirmación tras ayuda decisiva y programar una
-`post_mastery_reconfirmation_pending` en la primera oportunidad elegible de `LEARNING_MODE`, sin
-usar reserva de medición. La ausencia válida queda como faltante, nunca como falso dominio.
+`T-H6-04` debe implementar exactamente tres ciclos de recuperación: (1) feedback específico,
+reexplicación/ejemplo y práctica guiada; (2) menor complejidad, prerrequisitos y scaffolding; (3)
+representación alternativa, autoexplicación selectiva y comprobación. Agotarlos deja el KC no
+dominado y programa recuperación posterior si existe reserva. Solo se permiten dos episodios
+posteriores por KC; tras dos fallidos se registra límite pedagógico y se cierran rutas dependientes.
+No existe ni debe aparecer `request_human_teacher`.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -246,6 +247,27 @@ reasignación tras reinicio. La política material incluida conserva `CAL-10/CAL
 valores de las pruebas son `test_fixture` y no autorizan corrida material. Son 29 pruebas nuevas:
 1124 totales. Diseño:
 `docs/session/pedagogy-policy.md`.
+
+### `T-H6-03` — dominio operativo y reconfirmación
+
+`domain-engine` aplica la regla literal versionada y congelada por corrida: tres correctas
+elegibles consecutivas con complejidad CAL-09 no decreciente y al menos una transferencia cercana
+elegible. La identidad CAL-09 se compara contra el manifiesto congelado de H5; no se recalibra ni
+reordena. La autoridad de ayuda se deriva por código: el nivel 1 solo conserva elegibilidad como
+recordatorio puro, mientras niveles 2–5, selección de regla/paso y contenido decisivo siempre
+descalifican. El modelo y BKT no tienen entrada autoritativa.
+
+Los aciertos con ayuda decisiva requieren reconfirmación enlazada. Cada declaración crea un
+`post_mastery_reconfirmation_pending`; la primera oportunidad disponible de práctica independiente
+en `LEARNING_MODE` se programa, y hasta resolverla quedan bloqueadas la práctica ordinaria que la
+saltaría, la reenseñanza deliberada y la siguiente sesión que vuelva a hacer objetivo al KC. Una
+incorrecta observada registra `reconfirmation_failed`; retirada, cierre, incidente o ausencia
+válida son `missing`, no falso dominio. Replay conserva todas las declaraciones, evaluaciones e
+historias terminales y se proyecta al estado reconstruible de sesión.
+
+Son 27 pruebas de dominio y una integración de sesión nuevas: **1152 totales** (1022 unitarias +
+130 PostgreSQL). `CAL-DOMAIN-POLICY/DUP-02` solo validan en seco la regla vigente; no se simuló
+calibración ni se cerró H10. Diseño: `docs/session/domain-engine.md`.
 
 ---
 
@@ -592,16 +614,17 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local** para T-H6-02. **1124 pruebas**: 994 unitarias +
-130 contra PostgreSQL 17 real. El checkpoint anterior tenía 1095.
+Estado en el checkpoint: **todo en verde en local** para T-H6-03. **1152 pruebas**: 1022 unitarias
+y 130 contra PostgreSQL 17 real. El checkpoint anterior tenía 1124.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
-`logic-core`, así que las 29 pruebas nuevas de `pedagogy-policy` **no mueven el baseline de 90.31
-%**. No lo leas como que la cobertura de mutación cayó ni subió: mide otra cosa.
+`logic-core`, así que las 28 pruebas nuevas o ampliadas de `domain-engine`/`session-engine` **no
+mueven el baseline de 90.31 %**. No lo leas como que la cobertura de mutación cayó ni subió: mide
+otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto para `T-H6-01` (corrida `31985023277`):
+Observado, no supuesto para `T-H6-02` (corrida `31986432630`):
 
 | Job | Resultado |
 |---|---|
@@ -612,7 +635,7 @@ Observado, no supuesto para `T-H6-01` (corrida `31985023277`):
 | `ci:lint · ci:typecheck · ci:unit · ci:build` | ✅ |
 | `ci:logic:golden · ci:logic:pbt · ci:logic:no-net` | ✅ |
 
-`T-H6-02` debe obtener su propia corrida verde después del push. Se comprueba job por
+`T-H6-03` debe obtener su propia corrida verde después del push. Se comprueba job por
 job con:
 
 ```bash
@@ -809,9 +832,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1124 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1152 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F7 · H6 por `T-H6-03`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
+4. **Sigue F7 · H6 por `T-H6-04`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en

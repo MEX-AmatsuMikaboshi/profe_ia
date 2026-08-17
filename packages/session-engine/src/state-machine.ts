@@ -12,6 +12,11 @@ import {
   SESSION_STATES,
   SESSION_TRANSVERSAL_STATES,
 } from '@profesor-ia/contracts';
+import {
+  DomainKcState,
+  operationalMasteryProjection,
+  type DomainKcState as DomainKcStateValue,
+} from '@profesor-ia/domain-engine';
 import { z } from 'zod';
 
 /**
@@ -452,6 +457,7 @@ export type SessionInitializationMetadata = z.infer<typeof SessionInitialization
 
 export type SessionStateErrorCode =
   | 'BKT_SHADOW_DISABLED'
+  | 'DOMAIN_PROJECTION_MISMATCH'
   | 'INVALID_EVENT'
   | 'INVALID_EVENT_SEQUENCE'
   | 'INVALID_STATE'
@@ -875,6 +881,80 @@ export function updateSessionProjection(
     payload: { changes, reasonCode },
   });
   return finalizedMutation(current, draft);
+}
+
+/**
+ * Integra la proyección autoritativa de `domain-engine` sin aceptar escalares
+ * recalculados por el llamador. El evento de sesión conserva el replay común.
+ */
+export function updateSessionFromDomainState(
+  current: SessionSnapshot,
+  domainStateValue: DomainKcStateValue,
+  reasonCode: string,
+  metadata: SessionDecisionMetadata,
+): SessionMutation {
+  assertSnapshotIntegrity(current);
+  const domainState = DomainKcState.parse(domainStateValue);
+  if (
+    domainState.runId !== current.state.runId ||
+    domainState.participantPseudoId !== current.state.participantPseudoId
+  ) {
+    throw new SessionStateMachineError(
+      'DOMAIN_PROJECTION_MISMATCH',
+      'runId o participantPseudoId de dominio no coincide con la sesión',
+    );
+  }
+  const kcId = domainState.kcId;
+  const domainAttemptIds = new Set(domainState.attemptEvaluations.map((evaluation) => evaluation.attemptId));
+  const attemptMasteryEligibility = [
+    ...current.state.attemptMasteryEligibility.filter(
+      (record) => record.kcId !== kcId && !domainAttemptIds.has(record.attemptId),
+    ),
+    ...domainState.attemptEvaluations.map((evaluation) => ({
+      attemptId: evaluation.attemptId,
+      kcId,
+      eligible: evaluation.eligible,
+      reasonCode: evaluation.reasonCode,
+    })),
+  ];
+  const stepId = `post-mastery-reconfirmation:${kcId}`;
+  const nextSteps = current.state.nextSteps.filter((step) => step.stepId !== stepId);
+  const post = domainState.postMasteryReconfirmation;
+  if (post.status === 'pending' || post.status === 'scheduled') {
+    nextSteps.push({
+      stepId,
+      action: post.status === 'pending'
+        ? 'post_mastery_reconfirmation_pending'
+        : 'post_mastery_reconfirmation_scheduled',
+      targetId: post.status === 'scheduled' ? post.itemId : kcId,
+      plannedAt: post.status === 'scheduled' ? post.scheduledAt : null,
+    });
+  }
+  const lastEvaluation = domainState.attemptEvaluations.at(-1);
+  return updateSessionProjection(
+    current,
+    {
+      operationalMastery: {
+        ...current.state.operationalMastery,
+        [kcId]: operationalMasteryProjection(domainState),
+      },
+      masteryEligibility: lastEvaluation?.eligible ?? false,
+      attemptMasteryEligibility,
+      nearTransfer: {
+        ...current.state.nearTransfer,
+        [kcId]: domainState.eligibleNearTransferAttemptId === null
+          ? { status: 'pending', attemptId: null, updatedAt: domainState.updatedAt }
+          : {
+              status: 'satisfied',
+              attemptId: domainState.eligibleNearTransferAttemptId,
+              updatedAt: domainState.updatedAt,
+            },
+      },
+      nextSteps,
+    },
+    reasonCode,
+    metadata,
+  );
 }
 
 /** Replay total: no tolera huecos, reordenamientos, duplicados ni alteraciones. */
