@@ -4,10 +4,16 @@ import {
   CAL09_DOMAIN_BINDING,
   DOMAIN_POLICY_V1,
   DeterministicDomainController,
+  DeterministicHintController,
   DeterministicRecoveryController,
+  HINT_BANK_SCHEMA_VERSION,
+  HINT_LEVELS,
   RECOVERY_GRAPH_SCHEMA_VERSION,
   compileDomainPolicy,
+  createHintPolicyDefinition,
   createRecoveryPolicyDefinition,
+  hintValidatedContentHash,
+  masteryDisqualifying,
 } from '@profesor-ia/domain-engine';
 
 import {
@@ -24,6 +30,7 @@ import {
   toSessionStatePersistenceRow,
   transitionPrimarySessionState,
   updateSessionFromDomainState,
+  updateSessionFromHintState,
   updateSessionFromRecoveryState,
   updateSessionProjection,
   type SessionDecisionMetadata,
@@ -68,6 +75,87 @@ function initialized(sessionId = 'session-fixture-1'): SessionMutation {
     },
     { eventId: `event-${sessionId}-0`, occurredAt: AT },
   );
+}
+
+function hintController(): DeterministicHintController {
+  const policy = createHintPolicyDefinition({
+    policyVersion: 'hint-session-test-v1',
+    purpose: 'test_fixture',
+  });
+  const entries = HINT_LEVELS.map((level) => {
+    const analogousExampleEvidence = level === 4
+      ? {
+          authority: 'isomorphism_canonicalizer' as const,
+          canonicalizerVersion: 'canonicalizer-session-test-v1',
+          evidenceHash: 'b'.repeat(64),
+          nonIsomorphic: true as const,
+        }
+      : null;
+    const text = `Pista de sesión nivel ${level}`;
+    const anchors = [`fragment-session-${level}`];
+    const facts = {
+      level,
+      levelOneReminderOnly: level === 1,
+      selectsRuleOrNextStep: level === 2 || level === 3,
+      containsDecisiveContent: false,
+    };
+    const hintId = `hint-session-${level}`;
+    const itemId = 'item-session-hints';
+    const kcId = 'KC03';
+    return {
+      hintId,
+      itemId,
+      kcId,
+      level,
+      text,
+      anchors,
+      facts,
+      proposedMasteryDisqualifying: masteryDisqualifying(facts),
+      nonRevelationEvidence: {
+        authority: 'authoring_hint_validator' as const,
+        validatorVersion: 'authoring-session-test-v1',
+        validatedContentHash: hintValidatedContentHash({
+          hintId,
+          itemId,
+          kcId,
+          level,
+          text,
+          anchors,
+          facts,
+          analogousExampleEvidence,
+        }),
+        literalLeakCheckPassed: true as const,
+        detectionScope: 'literal_not_paraphrase' as const,
+        paraphraseAuditRequired: true as const,
+        anchorsValidated: true as const,
+        solutionSeparated: true as const,
+      },
+      analogousExampleEvidence,
+    };
+  });
+  const value = new DeterministicHintController(policy, {
+    schemaVersion: HINT_BANK_SCHEMA_VERSION,
+    bankVersion: 'hint-bank-session-test-v1',
+    purpose: 'test_fixture',
+    packageVersion: {
+      artifactId: 'content-package-fixture',
+      version: 'fixture-v1',
+      hash: 'a'.repeat(64),
+    },
+    authoringPipelineVersion: 'authoring-session-test-v1',
+    supportedLevels: [1, 2, 3, 4, 5],
+    entries,
+  });
+  value.bindRun({
+    runId: 'run-fixture-1',
+    purpose: 'test_fixture',
+    policyVersion: value.policy.definition.policyVersion,
+    policyHash: value.policy.policyHash,
+    bankVersion: value.bank.definition.bankVersion,
+    bankHash: value.bank.bankHash,
+    packageVersion: value.bank.definition.packageVersion,
+  });
+  return value;
 }
 
 function fullProjection(current: SessionSnapshot): SessionMutation {
@@ -685,6 +773,74 @@ describe('estado estructurado de sesión (T-H6-01)', () => {
         metadata('event-domain-mismatch', 4),
       ),
       'DOMAIN_PROJECTION_MISMATCH',
+    );
+  });
+
+  it('integra pistas por intento sin aceptar la propuesta generativa como autoridad', () => {
+    const hints = hintController();
+    const hintEvents = [
+      {
+        eventId: 'hint-session-event-0',
+        eventType: 'hints.initialized' as const,
+        sequenceNumber: 0 as const,
+        occurredAt: AT,
+        payload: { runId: 'run-fixture-1', participantPseudoId: 'pseudo-fixture-1' },
+      },
+      {
+        eventId: 'hint-session-event-1',
+        eventType: 'hints.requested' as const,
+        sequenceNumber: 1,
+        occurredAt: at(1),
+        payload: {
+          requestId: 'hint-session-request-1',
+          attemptId: 'attempt-session-hints',
+          itemId: 'item-session-hints',
+          mode: 'LEARNING_MODE' as const,
+          authorizedAssistanceLevel: 1,
+        },
+      },
+      {
+        eventId: 'hint-session-event-2',
+        eventType: 'hints.requested' as const,
+        sequenceNumber: 2,
+        occurredAt: at(2),
+        payload: {
+          requestId: 'hint-session-request-2',
+          attemptId: 'attempt-session-hints',
+          itemId: 'item-session-hints',
+          mode: 'LEARNING_MODE' as const,
+          authorizedAssistanceLevel: 3,
+        },
+      },
+    ];
+    const hintState = hints.replay(hintEvents);
+    const initial = initialized();
+    const projection = updateSessionFromHintState(
+      initial.snapshot,
+      hintState,
+      'attempt-session-hints',
+      'HINT_STATE_PROJECTED',
+      metadata('event-hint-projection', 3),
+    );
+
+    expect(projection.snapshot.state.assistanceLevel).toBe(3);
+    expect(projection.snapshot.state.masteryEligibility).toBe(false);
+    expect(projection.snapshot.state.assistanceByAttempt).toEqual([{
+      attemptId: 'attempt-session-hints',
+      hintLevelsUsed: [1, 3],
+      maximumHintLevel: 3,
+      masteryDisqualifying: true,
+    }]);
+    expect(replaySessionStateEvents([initial.event, projection.event])).toEqual(projection.snapshot);
+    expectCode(
+      () => updateSessionFromHintState(
+        initial.snapshot,
+        { ...hintState, runId: 'another-run' },
+        'attempt-session-hints',
+        'HINT_STATE_PROJECTED',
+        metadata('event-hint-mismatch', 3),
+      ),
+      'HINT_PROJECTION_MISMATCH',
     );
   });
 

@@ -14,10 +14,13 @@ import {
 } from '@profesor-ia/contracts';
 import {
   DomainKcState,
+  HintSessionState,
   RecoveryRunState,
+  hintAttemptProjection,
   operationalMasteryProjection,
   recoveryKcProjection,
   type DomainKcState as DomainKcStateValue,
+  type HintSessionState as HintSessionStateValue,
   type RecoveryRunState as RecoveryRunStateValue,
 } from '@profesor-ia/domain-engine';
 import { z } from 'zod';
@@ -461,6 +464,7 @@ export type SessionInitializationMetadata = z.infer<typeof SessionInitialization
 export type SessionStateErrorCode =
   | 'BKT_SHADOW_DISABLED'
   | 'DOMAIN_PROJECTION_MISMATCH'
+  | 'HINT_PROJECTION_MISMATCH'
   | 'INVALID_EVENT'
   | 'INVALID_EVENT_SEQUENCE'
   | 'INVALID_STATE'
@@ -955,6 +959,54 @@ export function updateSessionFromDomainState(
             },
       },
       nextSteps,
+    },
+    reasonCode,
+    metadata,
+  );
+}
+
+/**
+ * Proyecta únicamente el registro por intento ya recalculado por
+ * `domain-engine`. La sesión no recibe la propuesta del generador ni tiene
+ * acceso a la solución privada; sólo conserva niveles, máximo y elegibilidad.
+ */
+export function updateSessionFromHintState(
+  current: SessionSnapshot,
+  hintStateValue: HintSessionStateValue,
+  attemptId: string,
+  reasonCode: string,
+  metadata: SessionDecisionMetadata,
+): SessionMutation {
+  assertSnapshotIntegrity(current);
+  const hintState = HintSessionState.parse(hintStateValue);
+  if (
+    hintState.runId !== current.state.runId ||
+    hintState.participantPseudoId !== current.state.participantPseudoId ||
+    hintState.packageVersion.artifactId !== current.state.packageVersion.artifactId ||
+    hintState.packageVersion.version !== current.state.packageVersion.version ||
+    hintState.packageVersion.hash !== current.state.packageVersion.hash
+  ) {
+    throw new SessionStateMachineError(
+      'HINT_PROJECTION_MISMATCH',
+      'corrida, participante o paquete del banco de pistas no coincide con la sesión',
+    );
+  }
+  const projection = hintAttemptProjection(hintState, attemptId);
+  const assistance = AttemptAssistance.parse({
+    attemptId,
+    hintLevelsUsed: projection.deliveries.map((delivery) => delivery.level),
+    maximumHintLevel: projection.maximumHintLevel,
+    masteryDisqualifying: projection.masteryDisqualifying,
+  });
+  return updateSessionProjection(
+    current,
+    {
+      assistanceLevel: assistance.maximumHintLevel,
+      masteryEligibility: current.state.masteryEligibility && !assistance.masteryDisqualifying,
+      assistanceByAttempt: [
+        ...current.state.assistanceByAttempt.filter((candidate) => candidate.attemptId !== attemptId),
+        assistance,
+      ],
     },
     reasonCode,
     metadata,

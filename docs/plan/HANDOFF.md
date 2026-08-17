@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…04` (estado, política, dominio y recuperación).
+**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…05` (estado, política, dominio, recuperación y pistas).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,11 +14,11 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8**, **F6
-con 17 de 17 mecanismos** y **F7 con 4 de 14**. La siguiente es **`T-H6-05`**, banco y autoridad
-de pistas. Antes de arrancarla lee §3 y §7.
+con 17 de 17 mecanismos** y **F7 con 5 de 14**. La siguiente es **`T-H6-06`**, autoridad aislada
+de medición. Antes de arrancarla lee §3 y §7.
 
-**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31987891381` verificó `T-H6-03` con los
-seis jobs verdes, incluida mutación. `T-H6-04` está cerrada en local y necesita su commit y su CI
+**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31989526297` verificó `T-H6-04` con los
+seis jobs verdes, incluida mutación. `T-H6-05` está cerrada en local y necesita su commit y su CI
 propios antes de pasar de `HECHA` a `VERIFICADA`.
 
 ---
@@ -51,10 +51,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
-| **F7 · H6** sesión determinista sin LLM | 4 de 14. `T-H6-01…03` VERIFICADAS y `T-H6-04` HECHA; sigue `T-H6-05` |
+| **F7 · H6** sesión determinista sin LLM | 5 de 14. `T-H6-01…04` VERIFICADAS y `T-H6-05` HECHA; sigue `T-H6-06` |
 | F8–F16 | No empezadas |
 
-Van **73 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **74 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -78,18 +78,18 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H6-05` — banco y autoridad de pistas
+### La tarea siguiente: `T-H6-06` — autoridad aislada de medición
 
-`T-H6-01…04` ya construyen estado/replay, decisión de estrategia, dominio/reconfirmaciones y la
-recuperación de tres ciclos más dos episodios posteriores por KC. `CAL-10/CAL-WHEEL` sigue pendiente
-en material y BKT sigue ausente por CAL-11.
+`T-H6-01…05` ya construyen estado/replay, decisión de estrategia, dominio/reconfirmaciones,
+recuperación y pistas congeladas. `CAL-10/CAL-WHEEL` sigue pendiente en material y BKT sigue
+ausente por CAL-11.
 
-`T-H6-05` debe materializar el banco congelado de pistas con los cinco niveles literales de P-I
-§8.6. Cada uso registra nivel y recalcula `masteryDisqualifying` por intento mediante la autoridad
-de `domain-engine`; la propuesta generativa nunca decide. Una pista no puede transformarse
-silenciosamente en solución y en `MEASUREMENT_MODE` queda deshabilitada. Debe reutilizar la
-separación de banco/solución y la política adelantada en `authoring-core`/`domain-engine`, no crear
-otra definición incompatible.
+`T-H6-06` debe convertir `measurement-worker` en la autoridad exclusiva sobre calendario, reserva,
+reactivo, semilla, consumo atómico, tiempo, fase y validez operacional (`valid|invalid|missing` con
+reason code). Debe materializar los contratos `Probe*`, entregar un solo reactivo por vez y mantener
+agente, pistas y feedback fuera de `MEASUREMENT_MODE`. El motor sólo solicita conjunto experimental,
+fase y tipo de medida; no elige reactivo ni semilla. Reutiliza las reservas y exclusiones ya
+congeladas en H5 y no inventa un calendario SCED: éste pertenece a `T-H6-07`.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -290,6 +290,29 @@ separado. No hay salida de rescate docente.
 Son 25 pruebas de recuperación y una integración de sesión nuevas: **1178 totales** (1048
 unitarias + 130 PostgreSQL). Los inventarios y grafos de prueba son `test_fixture`; no se fabricó
 inventario/corpus/firma/gate material. Diseño: `docs/session/recovery.md`.
+
+### `T-H6-05` — banco y autoridad de pistas
+
+`domain-engine` fija una política hasheada con los cinco niveles literales y un banco congelado por
+corrida. Cada reactivo debe traer exactamente un registro por nivel y un solo KC. Reactivo, KC,
+nivel, hechos, texto, anclajes, pipeline, paquete y evidencias quedan ligados: el nivel 4 exige la constancia no isomorfa del
+canonicalizador, y la validación de no revelación cubre el contenido exacto que se entrega. El
+runtime no carga soluciones ni transforma texto. La detección automática de autoría se declara
+literal, no de paráfrasis; W4 sigue siendo necesaria y no se simuló.
+
+La autoridad decide por item+nivel exactos, sin fallback. `MEASUREMENT_MODE` y nivel 0 se resuelven
+antes de consultar si existe el item. Repetir una pista no duplica la entrega y un intento no puede
+cambiar de reactivo. Nivel máximo y `masteryDisqualifying` se derivan de las entregas mediante
+`domain-engine`: nivel 1 sólo conserva elegibilidad como recordatorio puro; niveles 2–5 y contenido
+decisivo descalifican. La propuesta del generador debe coincidir para pasar el linter, pero nunca se
+copia como autoridad.
+
+El binding persistible fija política+banco+paquete y material exige hashes externos. Replay valida
+historia y, al continuar desde un snapshot, vuelve a contrastar cada entrega completa contra el
+banco. `session-engine` proyecta sólo niveles/máximo/bandera con identidad coincidente, nunca texto
+ni solución. Son 23 pruebas de pistas y una integración de sesión nuevas: **1202 totales** (1072
+unitarias + 130 PostgreSQL). Sólo se usaron bancos `test_fixture`; no se fabricó banco, corpus,
+auditoría, firma ni gate material. Diseño: `docs/session/hint-bank.md`.
 
 ---
 
@@ -636,8 +659,8 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local** para T-H6-04. **1178 pruebas**: 1048 unitarias
-y 130 contra PostgreSQL 17 real. El checkpoint anterior tenía 1152.
+Estado en el checkpoint: **todo en verde en local** para T-H6-05. **1202 pruebas**: 1072 unitarias
+y 130 contra PostgreSQL 17 real. El checkpoint anterior tenía 1178.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 26 pruebas nuevas o ampliadas de `domain-engine`/`session-engine` **no
@@ -646,7 +669,7 @@ otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto para `T-H6-03` (corrida `31987891381`):
+Observado, no supuesto para `T-H6-04` (corrida `31989526297`):
 
 | Job | Resultado |
 |---|---|
@@ -657,7 +680,7 @@ Observado, no supuesto para `T-H6-03` (corrida `31987891381`):
 | `ci:lint · ci:typecheck · ci:unit · ci:build` | ✅ |
 | `ci:logic:golden · ci:logic:pbt · ci:logic:no-net` | ✅ |
 
-`T-H6-04` debe obtener su propia corrida verde después del push. Se comprueba job por
+`T-H6-05` debe obtener su propia corrida verde después del push. Se comprueba job por
 job con:
 
 ```bash
@@ -854,9 +877,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1178 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1202 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F7 · H6 por `T-H6-05`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
+4. **Sigue F7 · H6 por `T-H6-06`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en

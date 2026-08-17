@@ -2,7 +2,7 @@
   "name": "@profesor-ia/domain-engine",
   "version": "0.0.0",
   "private": true,
-  "description": "Dominio y recuperación (T-H6-03/04).",
+  "description": "Dominio, recuperación y pistas (T-H6-03/04/05).",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
