@@ -15,6 +15,7 @@ import {
   hintValidatedContentHash,
   masteryDisqualifying,
 } from '@profesor-ia/domain-engine';
+import { classifyDoubt } from '@profesor-ia/pedagogy-policy';
 
 import {
   SESSION_BKT_SHADOW_ENABLED,
@@ -34,6 +35,7 @@ import {
   toSessionStatePersistenceRow,
   transitionPrimarySessionState,
   updateSessionFromDomainState,
+  updateSessionFromDoubtClassification,
   updateSessionFromHintState,
   updateSessionFromRecoveryState,
   updateSessionProjection,
@@ -1198,6 +1200,100 @@ describe('estado estructurado de sesión (T-H6-01)', () => {
         metadata('event-recovery-mismatch', 3),
       ),
       'RECOVERY_PROJECTION_MISMATCH',
+    );
+  });
+});
+
+describe('T-H6-10 — el motor aplica la clasificación de dudas', () => {
+  function doubtFacts(overrides: Record<string, unknown> = {}) {
+    return {
+      doubtId: 'doubt-session-1',
+      occurredAt: at(4),
+      pedagogicalMode: 'LEARNING_MODE' as const,
+      safetyBlocked: false,
+      blockingPrerequisiteKcIds: [] as string[],
+      resolvedFragmentIds: ['fragment-session-1'],
+      fragmentIdsInCurrentBlock: ['fragment-session-1'],
+      anchorSufficient: true,
+      scorableActivityOpen: false,
+      ...overrides,
+    };
+  }
+
+  it('deja pendiente la duda diferida con su alcance y la reconstruye por replay', () => {
+    const initial = initialized();
+    const outcome = classifyDoubt(doubtFacts({ fragmentIdsInCurrentBlock: [] }));
+    const projection = updateSessionFromDoubtClassification(
+      initial.snapshot,
+      outcome,
+      'DOUBT_CLASSIFIED',
+      metadata('event-doubt-later', 4),
+    );
+
+    expect(projection.snapshot.state.pendingDoubts).toEqual([
+      { doubtId: 'doubt-session-1', scope: 'later_in_unit', raisedAt: at(4) },
+    ]);
+    expect(replaySessionStateEvents([initial.event, projection.event])).toEqual(projection.snapshot);
+  });
+
+  /** Clasificar no es resolver: una duda del bloque sigue pendiente hasta responderse. */
+  it('deja pendiente también la duda del bloque, con su alcance', () => {
+    const initial = initialized();
+    const projection = updateSessionFromDoubtClassification(
+      initial.snapshot,
+      classifyDoubt(doubtFacts()),
+      'DOUBT_CLASSIFIED',
+      metadata('event-doubt-current', 4),
+    );
+    expect(projection.snapshot.state.pendingDoubts).toEqual([
+      { doubtId: 'doubt-session-1', scope: 'current_block', raisedAt: at(4) },
+    ]);
+  });
+
+  it('la proyección no cambia estrategia, ayuda ni elegibilidad', () => {
+    const initial = initialized();
+    const projection = updateSessionFromDoubtClassification(
+      initial.snapshot,
+      classifyDoubt(doubtFacts({ blockingPrerequisiteKcIds: ['KC03'] })),
+      'DOUBT_CLASSIFIED',
+      metadata('event-doubt-prereq', 4),
+    );
+    expect(projection.snapshot.state.selectedStrategy).toBe(initial.snapshot.state.selectedStrategy);
+    expect(projection.snapshot.state.assistanceLevel).toBe(initial.snapshot.state.assistanceLevel);
+    expect(projection.snapshot.state.masteryEligibility).toBe(
+      initial.snapshot.state.masteryEligibility,
+    );
+  });
+
+  it('rechaza una clasificación cuyo modo no corresponde al de la sesión', () => {
+    const initial = initialized();
+    expectCode(
+      () => updateSessionFromDoubtClassification(
+        initial.snapshot,
+        classifyDoubt(doubtFacts({ pedagogicalMode: 'MEASUREMENT_MODE' })),
+        'DOUBT_CLASSIFIED',
+        metadata('event-doubt-mode', 4),
+      ),
+      'DOUBT_PROJECTION_MISMATCH',
+    );
+  });
+
+  it('rechaza registrar dos veces la misma duda', () => {
+    const initial = initialized();
+    const first = updateSessionFromDoubtClassification(
+      initial.snapshot,
+      classifyDoubt(doubtFacts({ fragmentIdsInCurrentBlock: [] })),
+      'DOUBT_CLASSIFIED',
+      metadata('event-doubt-dup-1', 4),
+    );
+    expectCode(
+      () => updateSessionFromDoubtClassification(
+        first.snapshot,
+        classifyDoubt(doubtFacts({ fragmentIdsInCurrentBlock: [] })),
+        'DOUBT_CLASSIFIED',
+        metadata('event-doubt-dup-2', 5),
+      ),
+      'DOUBT_PROJECTION_MISMATCH',
     );
   });
 });

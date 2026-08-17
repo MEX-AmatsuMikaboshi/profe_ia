@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import {
+  DoubtScope,
   EventAutonomyStatus,
   Id,
   IsoDateTime,
@@ -29,6 +30,7 @@ import {
   type HintSessionState as HintSessionStateValue,
   type RecoveryRunState as RecoveryRunStateValue,
 } from '@profesor-ia/domain-engine';
+import type { DoubtOutcome } from '@profesor-ia/pedagogy-policy';
 import { z } from 'zod';
 
 /**
@@ -203,10 +205,17 @@ export const WheelSpinningState = z
     }
   });
 
+/**
+ * «Dudas pendientes» de P-I §8.2. `scope` es el alcance que **el motor** derivó
+ * (T-H6-10); queda ausente en `MEASUREMENT_MODE`, donde no se clasifica porque la
+ * duda no recibe respuesta pedagógica. `artifactRef` sólo existe cuando la duda se
+ * levantó sobre un artefacto concreto, como la instancia de sonda de T-H6-08.
+ */
 export const PendingDoubt = z
   .object({
     doubtId: Id,
-    artifactRef: Id,
+    artifactRef: Id.optional(),
+    scope: DoubtScope.optional(),
     raisedAt: IsoDateTime,
   })
   .strict();
@@ -480,6 +489,7 @@ export type SessionInitializationMetadata = z.infer<typeof SessionInitialization
 export type SessionStateErrorCode =
   | 'BKT_SHADOW_DISABLED'
   | 'DOMAIN_PROJECTION_MISMATCH'
+  | 'DOUBT_PROJECTION_MISMATCH'
   | 'HINT_PROJECTION_MISMATCH'
   | 'INVALID_EVENT'
   | 'INVALID_EVENT_SEQUENCE'
@@ -1134,6 +1144,58 @@ export function updateSessionFromHintState(
       assistanceByAttempt: [
         ...current.state.assistanceByAttempt.filter((candidate) => candidate.attemptId !== attemptId),
         assistance,
+      ],
+    },
+    reasonCode,
+    metadata,
+  );
+}
+
+/**
+ * T-H6-10 — «el modelo propone, el motor aplica». Recibe el resultado ya
+ * clasificado por `pedagogy-policy`, nunca una propuesta de modelo ni el texto de
+ * la pregunta. Sólo se anota lo que P-I §8.2 exige conservar: la duda pendiente y
+ * su alcance. **No cambia ruta ni estrategia**: la jerarquía de §8.3.1 es del
+ * motor pedagógico, y un `blocking_prerequisite` lo encamina esa política, no
+ * esta proyección.
+ */
+export function updateSessionFromDoubtClassification(
+  current: SessionSnapshot,
+  outcome: DoubtOutcome,
+  reasonCode: string,
+  metadata: SessionDecisionMetadata,
+): SessionMutation {
+  assertSnapshotIntegrity(current);
+  if (current.state.pendingDoubts.some((doubt) => doubt.doubtId === outcome.doubtId)) {
+    throw new SessionStateMachineError(
+      'DOUBT_PROJECTION_MISMATCH',
+      `la duda ${outcome.doubtId} ya está registrada como pendiente`,
+    );
+  }
+  const measurementMode = current.state.pedagogicalMode === 'MEASUREMENT_MODE';
+  if (outcome.suppressed !== measurementMode) {
+    throw new SessionStateMachineError(
+      'DOUBT_PROJECTION_MISMATCH',
+      'el modo pedagógico de la sesión no corresponde con el de la clasificación',
+    );
+  }
+  /**
+   * Toda duda clasificada entra pendiente. Clasificar no es resolver: incluso una
+   * `current_block` sigue pendiente hasta que se responde, y la resolución es un
+   * acto posterior. Filtrar aquí por `deferredToLaterOpportunity` —que dice si la
+   * duda podrá atenderse en este bloque, no si está resuelta— dejaría fuera del
+   * estado dudas realmente abiertas.
+   */
+  return updateSessionProjection(
+    current,
+    {
+      pendingDoubts: [
+        ...current.state.pendingDoubts,
+        PendingDoubt.parse({
+          doubtId: outcome.doubtId,
+          raisedAt: outcome.occurredAt,
+          ...(outcome.suppressed ? {} : { scope: outcome.scope }),
+        }),
       ],
     },
     reasonCode,
