@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "@profesor-ia/contracts": "workspace:*",
-    "@profesor-ia/experiment": "workspace:*"
+    "@profesor-ia/experiment": "workspace:*",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "typescript": "5.9.3"

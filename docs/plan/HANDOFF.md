@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…05` (estado, política, dominio, recuperación y pistas).
+**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…06` (sesión, dominio y autoridad de medición).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,11 +14,11 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8**, **F6
-con 17 de 17 mecanismos** y **F7 con 5 de 14**. La siguiente es **`T-H6-06`**, autoridad aislada
-de medición. Antes de arrancarla lee §3 y §7.
+con 17 de 17 mecanismos** y **F7 con 6 de 14**. La siguiente es **`T-H6-07`**, calendario SCED.
+Antes de arrancarla lee §3 y §7.
 
-**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31989526297` verificó `T-H6-04` con los
-seis jobs verdes, incluida mutación. `T-H6-05` está cerrada en local y necesita su commit y su CI
+**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31990745818` verificó `T-H6-05` con los
+seis jobs verdes, incluida mutación. `T-H6-06` está cerrada en local y necesita su commit y su CI
 propios antes de pasar de `HECHA` a `VERIFICADA`.
 
 ---
@@ -51,10 +51,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
-| **F7 · H6** sesión determinista sin LLM | 5 de 14. `T-H6-01…04` VERIFICADAS y `T-H6-05` HECHA; sigue `T-H6-06` |
+| **F7 · H6** sesión determinista sin LLM | 6 de 14. `T-H6-01…05` VERIFICADAS y `T-H6-06` HECHA; sigue `T-H6-07` |
 | F8–F16 | No empezadas |
 
-Van **74 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **75 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -66,8 +66,8 @@ inventa:
 
 | Hito | Qué significa | Avance |
 |---|---|---|
-| Sesión seca (fin de F7) | Una clase completa con guion fijo, sin IA en vivo | **68 %** |
-| Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **65 %** |
+| Sesión seca (fin de F7) | Una clase completa con guion fijo, sin IA en vivo | **69 %** |
+| Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **66 %** |
 | `LOCAL_SELF_USE` (F11) | El propietario lo usa de principio a fin, con voz y pizarrón | **51 %** |
 
 **Dos cosas que no se arreglan programando**, y por eso el porcentaje no cuenta toda la verdad:
@@ -78,18 +78,20 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H6-06` — autoridad aislada de medición
+### La tarea siguiente: `T-H6-07` — calendario SCED
 
-`T-H6-01…05` ya construyen estado/replay, decisión de estrategia, dominio/reconfirmaciones,
-recuperación y pistas congeladas. `CAL-10/CAL-WHEEL` sigue pendiente en material y BKT sigue
-ausente por CAL-11.
+`T-H6-01…06` ya construyen estado/replay, decisión de estrategia, dominio/reconfirmaciones,
+recuperación, pistas congeladas y la autoridad aislada que selecciona/consume/entrega una sonda.
+`CAL-10/CAL-WHEEL` sigue pendiente en material y BKT sigue ausente por CAL-11.
 
-`T-H6-06` debe convertir `measurement-worker` en la autoridad exclusiva sobre calendario, reserva,
-reactivo, semilla, consumo atómico, tiempo, fase y validez operacional (`valid|invalid|missing` con
-reason code). Debe materializar los contratos `Probe*`, entregar un solo reactivo por vez y mantener
-agente, pistas y feedback fuera de `MEASUREMENT_MODE`. El motor sólo solicita conjunto experimental,
-fase y tipo de medida; no elige reactivo ni semilla. Reutiliza las reservas y exclusiones ya
-congeladas en H5 y no inventa un calendario SCED: éste pertenece a `T-H6-07`.
+`T-H6-07` debe materializar en `packages/experiment` la ronda global y su calendario: ventanas A
+6–8, B 9–11 y C 12–14 sobre rondas válidas; punto planificado por semilla congelada; separación
+mínima 3; elegibilidad de inicio por las tres/two observaciones literales; diferimiento y extensión
+máxima 2 sin salir de ventana. Una ronda sólo avanza si todos los conjuntos requeridos producen
+observación válida; bajo el mínimo se clasifica `schedule_invalid`. Transferencia, retención,
+familiarización, diagnóstico y reconfirmaciones no avanzan rondas. Retención es por conjunto a siete
+días de `set_mastery_timestamp`, con reserva exclusiva y sin reenseñanza dirigida en el intervalo.
+Debe registrar covariación sin reinterpretarla.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -107,8 +109,11 @@ Lo que ya está puesto y conviene usar en vez de rehacer:
 - **`reserves.ts`** trae las diez reservas, su directorio, la separación física y la **semántica**:
   `collisionProhibited()` es la regla de qué colisión está prohibida y vive en un solo sitio;
   `MEASUREMENT_RESERVES` se deriva del contrato de sondas; `assertReserveDisjointness()` comprueba el
-  paquete entero. `CONSUMPTION_EXCLUSIONS` es la tabla literal de §7.7 que `T-H6-06` tendrá que
-  aplicar.
+  paquete entero. La política compartida ya la aplica `T-H6-06`; el calendario sólo solicita la
+  combinación conjunto/fase/tipo y nunca elige una reserva alternativa.
+- **`SCED_OPPORTUNITY_H5_V1`** (`packages/experiment/src/sced-opportunity.ts`) congela `k_set=3`,
+  mínimo válido 2 y el sobre conservador de oportunidades; `measurement-worker` ya rechaza un plan
+  primario que discrepe. `T-H6-07` debe consumir ese dato, no copiar los números en otra política.
 - **`FamilyRegistry`** (`family.ts`) fija el `item_family_id` en la primera asignación. **Pásaselo a
   `runW3Generation()` entre corridas**: con uno nuevo por corrida, reasignar familias es gratis y el
   umbral del 30 % de `T-H5-09` se calcula sobre otra cosa. `members()` es lo que `T-H5-09` y
@@ -313,6 +318,27 @@ banco. `session-engine` proyecta sólo niveles/máximo/bandera con identidad coi
 ni solución. Son 23 pruebas de pistas y una integración de sesión nuevas: **1202 totales** (1072
 unitarias + 130 PostgreSQL). Sólo se usaron bancos `test_fixture`; no se fabricó banco, corpus,
 auditoría, firma ni gate material. Diseño: `docs/session/hint-bank.md`.
+
+### `T-H6-06` — autoridad aislada de medición
+
+Los contratos `Probe*` quedaron estrictos y comparten con autoría un único catálogo de reservas,
+mapeo solicitud→reserva y exclusiones por consumo. La sesión sólo puede pedir conjunto, fase y tipo;
+entrar fuerza `MEASUREMENT_MODE`, ayuda cero y no elegibilidad, y salir consume el resultado del
+worker sin poder reclasificar validez.
+
+`measurement-worker` liga por corrida política, inventario y semilla versionados/hasheados. Material
+exige hashes externos; los fixtures no los suplantan. El plan primario debe coincidir con el freeze
+H5 de 3 ítems/mínimo 2. La selección SHA-256 usa semilla privada, entrega un solo prompt por vez y
+registra selección+consumo antes de devolverlo. No expone banco, semilla, familia, firma estructural,
+solución, pista ni feedback. Tiempo/verificador salen del inventario y la validez se deriva de una
+política de reason codes; reserva agotada queda faltante salvo mínimo ya alcanzado.
+
+Replay/restauración rederivan plan, ranking, prompt, ordinal, consumo y resultado. La persistencia
+usa un CTE compare-and-set y una prueba PostgreSQL con dos conexiones concurrentes demuestra un solo
+ganador y un solo consumo. Son 25 pruebas del worker, cuatro ampliaciones de contratos, dos de
+sesión y una PostgreSQL: **1234 totales** (1103 unitarias + 131 PostgreSQL). No se creó calendario,
+inventario, semilla, preinscripción, firma ni gate material. Diseño:
+`docs/session/measurement-authority.md`. Scheduler e interrupciones siguen en `T-H6-07/08`.
 
 ---
 
@@ -659,8 +685,8 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **todo en verde en local** para T-H6-05. **1202 pruebas**: 1072 unitarias
-y 130 contra PostgreSQL 17 real. El checkpoint anterior tenía 1178.
+Estado en el checkpoint: **todo en verde en local** para T-H6-06. **1234 pruebas**: 1103 unitarias
+y 131 contra PostgreSQL 17 real. El checkpoint anterior tenía 1202.
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 26 pruebas nuevas o ampliadas de `domain-engine`/`session-engine` **no
@@ -669,7 +695,7 @@ otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto para `T-H6-04` (corrida `31989526297`):
+Observado, no supuesto para `T-H6-05` (corrida `31990745818`):
 
 | Job | Resultado |
 |---|---|
@@ -680,7 +706,7 @@ Observado, no supuesto para `T-H6-04` (corrida `31989526297`):
 | `ci:lint · ci:typecheck · ci:unit · ci:build` | ✅ |
 | `ci:logic:golden · ci:logic:pbt · ci:logic:no-net` | ✅ |
 
-`T-H6-05` debe obtener su propia corrida verde después del push. Se comprueba job por
+`T-H6-06` debe obtener su propia corrida verde después del push. Se comprueba job por
 job con:
 
 ```bash
@@ -877,9 +903,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1202 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1234 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F7 · H6 por `T-H6-06`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
+4. **Sigue F7 · H6 por `T-H6-07`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en

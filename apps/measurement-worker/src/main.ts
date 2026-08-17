@@ -3,8 +3,9 @@ import { writeFileSync } from 'node:fs';
 /**
  * Entrypoint de contenedor de `measurement-worker` (Plan.md T-H3-01).
  *
- * Sondas y calendario SCED son de F7. Este proceso arranca y declara que no
- * ejecuta ninguna sonda todavía.
+ * La autoridad determinista de sondas ya está implementada en `authority.ts`.
+ * Este proceso sigue siendo únicamente el heartbeat del contenedor: el
+ * adaptador de transporte y el calendario SCED se cablean en T-H6-07.
  *
  * Aislamiento medición/enseñanza (I-4): es el único servicio que monta las
  * reservas de sondas, y el pipeline de autoría no puede alcanzarlas —lo
@@ -27,7 +28,12 @@ function heartbeat(): void {
 }
 
 heartbeat();
-log('started', { duty: 'sondas y calendario SCED', status: 'NO_IMPLEMENTADO', implementedIn: 'F7' });
+log('started', {
+  duty: 'autoridad aislada de medicion',
+  status: 'AUTHORITY_CORE_READY',
+  calendar: 'T-H6-07_PENDING',
+  transport: 'NOT_WIRED',
+});
 const timer = setInterval(heartbeat, HEARTBEAT_MS);
 
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {

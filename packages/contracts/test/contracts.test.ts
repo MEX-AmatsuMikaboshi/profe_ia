@@ -13,12 +13,15 @@ import {
   PedagogicalDecision,
   PedagogicalStrategy,
   PedagogicalVerdict,
+  ProbeDelivery,
   ProbeOpportunityResult,
   ProbeRequest,
   VERDICT_ORDER,
   VerificationErrorCode,
+  consumptionBlocksMeasurement,
   pendingCatalog,
   pendingCatalogs,
+  probeReserveFor,
 } from '../src/index.js';
 
 describe('EvidenceEvent — literal P-II §9.1', () => {
@@ -119,6 +122,86 @@ describe('Contrato de medición — literal P-II §6.3', () => {
       reasonCode: 'missing_session_time',
     });
     expect(r.success).toBe(true);
+  });
+
+  it('el motor no puede introducir item, semilla, tiempo ni una combinación fuera de serie', () => {
+    const base = {
+      runId: 'r1',
+      participantPseudoId: 'p1',
+      probeRoundId: 'round-1',
+      opportunityId: 'o1',
+      experimentalSet: 'A',
+      phase: 'baseline' as const,
+      measureKind: 'primary_probe' as const,
+    };
+    expect(ProbeRequest.safeParse({ ...base, itemId: 'forzado' }).success).toBe(false);
+    expect(ProbeRequest.safeParse({ ...base, seed: 'forzada' }).success).toBe(false);
+    expect(ProbeRequest.safeParse({ ...base, timeLimitSeconds: 999 }).success).toBe(false);
+    expect(ProbeRequest.safeParse({ ...base, probeRoundId: null }).success).toBe(false);
+    expect(ProbeRequest.safeParse({ ...base, phase: 'retention' }).success).toBe(false);
+    expect(ProbeRequest.safeParse({
+      ...base,
+      probeRoundId: null,
+      phase: 'intervention',
+      measureKind: 'retention_probe',
+    }).success).toBe(false);
+  });
+
+  it('la entrega es de un solo ítem, sin solución, y su ordinal cabe en la microbatería', () => {
+    const delivery = {
+      probeInstanceId: 'probe-1',
+      opportunityId: 'o1',
+      itemOrdinal: 1,
+      batchSize: 3,
+      prompt: {
+        itemId: 'item-1',
+        statement: 'Demuestra la meta.',
+        premises: ['A'],
+        goal: 'A',
+        responseFormat: 'fitch_proof' as const,
+      },
+      timeLimitSeconds: 60,
+      verifierContract: 'authorized-calculus-v1',
+    };
+    expect(ProbeDelivery.safeParse(delivery).success).toBe(true);
+    expect(ProbeDelivery.safeParse({ ...delivery, itemOrdinal: 4 }).success).toBe(false);
+    expect(ProbeDelivery.safeParse({
+      ...delivery,
+      prompt: { ...delivery.prompt, solution: 'A premise' },
+    }).success).toBe(false);
+  });
+
+  it('la reserva y las exclusiones de consumo se derivan en un solo contrato', () => {
+    expect(probeReserveFor('primary_probe', 'baseline')).toBe('probes_baseline');
+    expect(probeReserveFor('primary_probe', 'intervention')).toBe('probes_intervention');
+    expect(probeReserveFor('transfer_measurement', 'baseline')).toBe('TRANSFER_MEASUREMENT');
+    expect(probeReserveFor('retention_probe', 'retention')).toBe('retention');
+    expect(probeReserveFor('retention_probe', 'baseline')).toBeNull();
+    expect(consumptionBlocksMeasurement('guided_practice', 'probes_baseline')).toBe(true);
+    expect(consumptionBlocksMeasurement('TRANSFER_MASTERY', 'TRANSFER_MEASUREMENT')).toBe(true);
+    expect(consumptionBlocksMeasurement('diagnostic', 'probes_baseline')).toBe(false);
+  });
+
+  it('un resultado válido o faltante debe ser aritmética y semánticamente coherente', () => {
+    const valid = {
+      opportunityId: 'o1',
+      probeRoundId: 'round-1',
+      plannedItems: 3,
+      validScoredItems: 2,
+      correctValidItems: 1,
+      observation: 0.5,
+      operationalValidity: 'valid' as const,
+      reasonCode: null,
+    };
+    expect(ProbeOpportunityResult.safeParse(valid).success).toBe(true);
+    expect(ProbeOpportunityResult.safeParse({ ...valid, correctValidItems: 3 }).success).toBe(false);
+    expect(ProbeOpportunityResult.safeParse({ ...valid, observation: 0.75 }).success).toBe(false);
+    expect(ProbeOpportunityResult.safeParse({
+      ...valid,
+      operationalValidity: 'missing',
+      observation: null,
+      reasonCode: null,
+    }).success).toBe(false);
   });
 });
 

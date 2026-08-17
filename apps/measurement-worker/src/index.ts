@@ -1,4 +1,5 @@
-// @profesor-ia/measurement-worker — Sondas y calendario aislados (I-4, DEC-MEAS-AUTHORITY-001).
-// F0/H0: esqueleto sin lógica. Ver docs/plan/PLAN_STATUS.md.
+// @profesor-ia/measurement-worker — Autoridad aislada de sondas (I-4, DEC-MEAS-AUTHORITY-001).
 
 export const PACKAGE_NAME = "@profesor-ia/measurement-worker" as const;
+
+export * from './authority.js';

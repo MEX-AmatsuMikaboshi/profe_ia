@@ -20,9 +20,12 @@ import {
   SESSION_BKT_SHADOW_ENABLED,
   SESSION_STATE_GENESIS,
   SESSION_STATE_SCHEMA_VERSION,
+  MeasurementSessionIntent,
   SessionStateMachineError,
   applySessionStateEvent,
   changeTransversalSessionState,
+  enterMeasurementModeForProbe,
+  exitMeasurementModeFromProbeResult,
   initializeSessionState,
   replaySessionStateEvents,
   restoreSessionStateSnapshot,
@@ -841,6 +844,97 @@ describe('estado estructurado de sesión (T-H6-01)', () => {
         metadata('event-hint-mismatch', 3),
       ),
       'HINT_PROJECTION_MISMATCH',
+    );
+  });
+
+  it('el motor sólo emite intención y entra/sale de MEASUREMENT_MODE por eventos', () => {
+    const initial = initialized();
+    const populated = fullProjection(initial.snapshot);
+    const entry = enterMeasurementModeForProbe(
+      populated.snapshot,
+      { experimentalSet: 'A', phase: 'baseline', measureKind: 'primary_probe' },
+      'MEASUREMENT_REQUESTED',
+      metadata('event-measurement-entry', 3),
+    );
+
+    expect(entry.intent).toEqual({
+      experimentalSet: 'A',
+      phase: 'baseline',
+      measureKind: 'primary_probe',
+    });
+    expect(entry.mutation.snapshot.state).toMatchObject({
+      pedagogicalMode: 'MEASUREMENT_MODE',
+      selectedStrategy: null,
+      assistanceLevel: 0,
+      masteryEligibility: false,
+    });
+    expect(entry.mutation.snapshot.state.nextSteps).toContainEqual({
+      stepId: 'measurement-mode:event-measurement-entry',
+      action: 'measurement_mode_active',
+      targetId: 'A',
+      plannedAt: null,
+    });
+
+    const exit = exitMeasurementModeFromProbeResult(
+      entry.mutation.snapshot,
+      {
+        opportunityId: 'opportunity-session-measurement-1',
+        probeRoundId: 'probe-round-session-1',
+        plannedItems: 3,
+        validScoredItems: 2,
+        correctValidItems: 1,
+        observation: 0.5,
+        operationalValidity: 'valid',
+        reasonCode: null,
+      },
+      'MEASUREMENT_RESULT_CONSUMED',
+      metadata('event-measurement-exit', 4),
+    );
+
+    expect(exit.mutation.snapshot.state.pedagogicalMode).toBe('LEARNING_MODE');
+    expect(exit.mutation.snapshot.state.nextSteps).not.toContainEqual(
+      expect.objectContaining({ action: 'measurement_mode_active' }),
+    );
+    expect(exit.mutation.snapshot.state.planChanges.at(-1)?.description).toBe(
+      'measurement:opportunity-session-measurement-1:valid:none',
+    );
+    expect(replaySessionStateEvents([
+      initial.event,
+      populated.event,
+      entry.mutation.event,
+      exit.mutation.event,
+    ])).toEqual(exit.mutation.snapshot);
+  });
+
+  it('la intención rechaza ronda, item, semilla, tiempo y validez del motor', () => {
+    const base = { experimentalSet: 'A', phase: 'baseline', measureKind: 'primary_probe' };
+    for (const extra of [
+      { probeRoundId: 'round-forzada' },
+      { opportunityId: 'opportunity-forzada' },
+      { itemId: 'item-forzado' },
+      { seed: 'seed-forzada' },
+      { timeLimitSeconds: 999 },
+      { operationalValidity: 'valid' },
+    ]) {
+      expect(MeasurementSessionIntent.safeParse({ ...base, ...extra }).success).toBe(false);
+    }
+    expectCode(
+      () => exitMeasurementModeFromProbeResult(
+        initialized().snapshot,
+        {
+          opportunityId: 'o1',
+          probeRoundId: null,
+          plannedItems: 1,
+          validScoredItems: 0,
+          correctValidItems: 0,
+          observation: null,
+          operationalValidity: 'missing',
+          reasonCode: 'withdrawal',
+        },
+        'MEASUREMENT_RESULT_CONSUMED',
+        metadata('event-measurement-outside-mode', 1),
+      ),
+      'MEASUREMENT_PROJECTION_MISMATCH',
     );
   });
 

@@ -3,14 +3,18 @@ import {
   EventAutonomyStatus,
   Id,
   IsoDateTime,
+  MeasureKind,
   PedagogicalMode,
   PedagogicalStrategy,
+  ProbeOpportunityResult,
+  ScedPhase,
   SessionState as PrimarySessionState,
   SessionTransversalState,
   Sha256Hex,
   VersionRef,
   SESSION_STATES,
   SESSION_TRANSVERSAL_STATES,
+  type ProbeOpportunityResult as ProbeOpportunityResultValue,
 } from '@profesor-ia/contracts';
 import {
   DomainKcState,
@@ -470,6 +474,7 @@ export type SessionStateErrorCode =
   | 'INVALID_STATE'
   | 'INVALID_TRANSITION'
   | 'PERSISTENCE_MISMATCH'
+  | 'MEASUREMENT_PROJECTION_MISMATCH'
   | 'RECOVERY_PROJECTION_MISMATCH'
   | 'STATE_HASH_MISMATCH';
 
@@ -1011,6 +1016,121 @@ export function updateSessionFromHintState(
     reasonCode,
     metadata,
   );
+}
+
+/**
+ * Única forma de solicitud que el motor de sesión puede emitir. Corrida,
+ * seudónimo, ronda, oportunidad, ítem, semilla, tiempo y validez quedan fuera
+ * porque pertenecen a `measurement-worker`.
+ */
+export const MeasurementSessionIntent = z
+  .object({
+    experimentalSet: NonEmptyText,
+    phase: ScedPhase,
+    measureKind: MeasureKind,
+  })
+  .strict();
+export type MeasurementSessionIntent = z.infer<typeof MeasurementSessionIntent>;
+
+export interface SessionMeasurementEntry {
+  readonly intent: MeasurementSessionIntent;
+  readonly mutation: SessionMutation;
+}
+
+export function enterMeasurementModeForProbe(
+  current: SessionSnapshot,
+  intentValue: unknown,
+  reasonCode: string,
+  metadata: SessionDecisionMetadata,
+): SessionMeasurementEntry {
+  assertSnapshotIntegrity(current);
+  if (current.state.pedagogicalMode === 'MEASUREMENT_MODE') {
+    throw new SessionStateMachineError(
+      'MEASUREMENT_PROJECTION_MISMATCH',
+      'la sesión ya está en MEASUREMENT_MODE',
+    );
+  }
+  const parsed = MeasurementSessionIntent.safeParse(intentValue);
+  if (!parsed.success) {
+    throw new SessionStateMachineError(
+      'MEASUREMENT_PROJECTION_MISMATCH',
+      z.prettifyError(parsed.error),
+    );
+  }
+  const intent = Object.freeze(parsed.data);
+  const mutation = updateSessionProjection(
+    current,
+    {
+      pedagogicalMode: 'MEASUREMENT_MODE',
+      selectedStrategy: null,
+      assistanceLevel: 0,
+      masteryEligibility: false,
+      nextSteps: [
+        ...current.state.nextSteps.filter((step) => step.action !== 'measurement_mode_active'),
+        {
+          stepId: `measurement-mode:${metadata.eventId}`,
+          action: 'measurement_mode_active',
+          targetId: intent.experimentalSet,
+          plannedAt: null,
+        },
+      ],
+    },
+    reasonCode,
+    metadata,
+  );
+  return Object.freeze({ intent, mutation });
+}
+
+export interface SessionMeasurementExit {
+  readonly result: ProbeOpportunityResultValue;
+  readonly mutation: SessionMutation;
+}
+
+export function exitMeasurementModeFromProbeResult(
+  current: SessionSnapshot,
+  resultValue: unknown,
+  reasonCode: string,
+  metadata: SessionDecisionMetadata,
+): SessionMeasurementExit {
+  assertSnapshotIntegrity(current);
+  if (current.state.pedagogicalMode !== 'MEASUREMENT_MODE') {
+    throw new SessionStateMachineError(
+      'MEASUREMENT_PROJECTION_MISMATCH',
+      'no se puede consumir un resultado de sonda fuera de MEASUREMENT_MODE',
+    );
+  }
+  const parsed = ProbeOpportunityResult.safeParse(resultValue);
+  if (!parsed.success) {
+    throw new SessionStateMachineError(
+      'MEASUREMENT_PROJECTION_MISMATCH',
+      z.prettifyError(parsed.error),
+    );
+  }
+  const result = Object.freeze(parsed.data);
+  const mutation = updateSessionProjection(
+    current,
+    {
+      pedagogicalMode: 'LEARNING_MODE',
+      selectedStrategy: null,
+      assistanceLevel: 0,
+      masteryEligibility: false,
+      planChanges: [
+        ...current.state.planChanges,
+        {
+          changeId: metadata.eventId,
+          description:
+            `measurement:${result.opportunityId}:${result.operationalValidity}:` +
+            `${result.reasonCode ?? 'none'}`,
+          reasonCode,
+          occurredAt: metadata.occurredAt,
+        },
+      ],
+      nextSteps: current.state.nextSteps.filter((step) => step.action !== 'measurement_mode_active'),
+    },
+    reasonCode,
+    metadata,
+  );
+  return Object.freeze({ result, mutation });
 }
 
 /**

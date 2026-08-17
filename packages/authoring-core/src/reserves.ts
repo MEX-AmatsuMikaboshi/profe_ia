@@ -1,4 +1,13 @@
-import { MeasureKind, ScedPhase, TransferBank } from '@profesor-ia/contracts';
+import {
+  MEASUREMENT_CONSUMPTION_EXCLUSIONS,
+  MEASUREMENT_RESERVES as CONTRACT_MEASUREMENT_RESERVES,
+  RESERVES,
+  TransferBank,
+  probeReserveFor,
+  type MeasureKind,
+  type Reserve,
+  type ScedPhase,
+} from '@profesor-ia/contracts';
 import {
   canonicalForm,
   structuralSignature,
@@ -30,20 +39,8 @@ import {
  * otro medio. Es D-20.
  */
 
-/** Las diez reservas literales de P-I §7.7, en su orden. */
-export const RESERVES = [
-  'diagnostic',
-  'guided_practice',
-  'independent_practice',
-  'recovery',
-  'probes_baseline',
-  'probes_intervention',
-  'TRANSFER_MASTERY',
-  'TRANSFER_MEASUREMENT',
-  'retention',
-  'replacement',
-] as const;
-export type Reserve = (typeof RESERVES)[number];
+/** API histórica de autoría; la definición única vive en `contracts/probe`. */
+export { RESERVES, type Reserve } from '@profesor-ia/contracts';
 
 /** Directorio de soluciones. «No se monta en los contenedores del agente ni de web» (P-II §3.2). */
 export const SOLUTIONS_DIRECTORY = 'solutions-private' as const;
@@ -208,10 +205,8 @@ export function assertPhysicalSeparation(
  * medida.
  */
 export function measurementReserveFor(measureKind: MeasureKind, phase: ScedPhase): Reserve {
-  if (measureKind === 'transfer_measurement') return 'TRANSFER_MEASUREMENT';
-  if (measureKind === 'retention_probe' && phase === 'retention') return 'retention';
-  if (measureKind === 'primary_probe' && phase === 'baseline') return 'probes_baseline';
-  if (measureKind === 'primary_probe' && phase === 'intervention') return 'probes_intervention';
+  const reserve = probeReserveFor(measureKind, phase);
+  if (reserve !== null) return reserve;
   throw new ReserveOverlapError(
     `Ninguna autoridad dice de qué reserva sale una medida ${measureKind} en fase ${phase}. ` +
       `Elegir una decidiría por cuenta propia de qué banco se toma una medida.`,
@@ -224,21 +219,9 @@ export function measurementReserveFor(measureKind: MeasureKind, phase: ScedPhase
  * lo seguiría o la combinación nueva lanzaría, en vez de quedarse corta en
  * silencio.
  */
-export const MEASUREMENT_RESERVES: readonly Reserve[] = Object.freeze(
-  [
-    ...new Set(
-      MeasureKind.options.flatMap((kind) =>
-        ScedPhase.options.flatMap((phase) => {
-          try {
-            return [measurementReserveFor(kind, phase)];
-          } catch {
-            return [];
-          }
-        }),
-      ),
-    ),
-  ].sort(),
-);
+export const MEASUREMENT_RESERVES: readonly Reserve[] = Object.freeze([
+  ...CONTRACT_MEASUREMENT_RESERVES,
+]);
 
 /**
  * Reserva efectiva de un reactivo a efectos de disjunción.
@@ -324,32 +307,7 @@ export function collisionProhibited(a: Reserve, b: Reserve): boolean {
  * `measurement-worker` (`T-H6-06`); esta tabla es la razón por la que los
  * bancos tienen que estar separados antes, y la que aquel tendrá que aplicar.
  */
-export const CONSUMPTION_EXCLUSIONS: Readonly<Record<string, readonly Reserve[]>> = Object.freeze({
-  guided_practice: Object.freeze<Reserve[]>([
-    'probes_baseline',
-    'probes_intervention',
-    'TRANSFER_MEASUREMENT',
-    'retention',
-  ]),
-  independent_practice: Object.freeze<Reserve[]>([
-    'probes_baseline',
-    'probes_intervention',
-    'TRANSFER_MEASUREMENT',
-    'retention',
-  ]),
-  recovery: Object.freeze<Reserve[]>([
-    'probes_baseline',
-    'probes_intervention',
-    'TRANSFER_MEASUREMENT',
-    'retention',
-  ]),
-  TRANSFER_MASTERY: Object.freeze<Reserve[]>([
-    'probes_baseline',
-    'probes_intervention',
-    'TRANSFER_MEASUREMENT',
-    'retention',
-  ]),
-});
+export const CONSUMPTION_EXCLUSIONS = MEASUREMENT_CONSUMPTION_EXCLUSIONS;
 
 export interface PackageItem {
   readonly itemId: string;

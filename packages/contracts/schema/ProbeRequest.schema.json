@@ -58,5 +58,6 @@
     "experimentalSet",
     "phase",
     "measureKind"
-  ]
+  ],
+  "additionalProperties": false
 }

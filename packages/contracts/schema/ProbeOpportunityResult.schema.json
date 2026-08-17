@@ -21,7 +21,7 @@
     },
     "plannedItems": {
       "type": "integer",
-      "minimum": 0,
+      "exclusiveMinimum": 0,
       "maximum": 9007199254740991
     },
     "validScoredItems": {
@@ -37,7 +37,9 @@
     "observation": {
       "anyOf": [
         {
-          "type": "number"
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
         },
         {
           "type": "null"
@@ -55,7 +57,8 @@
     "reasonCode": {
       "anyOf": [
         {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         {
           "type": "null"
@@ -72,5 +75,6 @@
     "observation",
     "operationalValidity",
     "reasonCode"
-  ]
+  ],
+  "additionalProperties": false
 }

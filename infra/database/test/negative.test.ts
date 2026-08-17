@@ -23,6 +23,7 @@ import {
   toSessionStatePersistenceRow,
   type SessionStatePersistenceRow,
 } from '../../../packages/session-engine/src/index.js';
+import { ATOMIC_PROBE_CONSUMPTION_SQL } from '../../../apps/measurement-worker/src/index.js';
 import { expectDenied, startHarness, type Harness } from './harness.js';
 
 let h: Harness;
@@ -101,6 +102,58 @@ describe('los siete esquemas exactos (P-II §9.2)', () => {
       'pedagogy',
       'private_solutions',
     ]);
+  });
+});
+
+describe('consumo atómico de sondas (T-H6-06)', () => {
+  it('dos reclamos concurrentes consumen e insertan exactamente una vez', async () => {
+    const opportunityId = 'opportunity-atomic-fixture';
+    const itemId = 'probe-item-atomic-fixture';
+    await h.admin.query(
+      `INSERT INTO measurement.probe_opportunity (
+         opportunity_id, probe_round_id, experimental_set, phase, measure_kind, planned_items
+       ) VALUES ($1, NULL, 'A', 'intervention', 'transfer_measurement', 1)`,
+      [opportunityId],
+    );
+    await h.admin.query(
+      `INSERT INTO measurement.probe_reserve_item (
+         item_id, reserve, experimental_set, item_family_id, structural_signature
+       ) VALUES ($1, 'TRANSFER_MEASUREMENT', 'A', 'family-atomic-fixture', 'signature-atomic-fixture')`,
+      [itemId],
+    );
+    const second = await h.connectAs('svc_measurement');
+    try {
+      const [firstResult, secondResult] = await Promise.all([
+        as('svc_measurement').query(ATOMIC_PROBE_CONSUMPTION_SQL, [
+          'consumption-atomic-a',
+          opportunityId,
+          itemId,
+          'TRANSFER_MEASUREMENT',
+          'A',
+          1,
+        ]),
+        second.query(ATOMIC_PROBE_CONSUMPTION_SQL, [
+          'consumption-atomic-b',
+          opportunityId,
+          itemId,
+          'TRANSFER_MEASUREMENT',
+          'A',
+          1,
+        ]),
+      ]);
+      expect([firstResult.rowCount, secondResult.rowCount].sort()).toEqual([0, 1]);
+      const { rows } = await h.admin.query<{ consumed: boolean; consumption_count: string }>(
+        `SELECT r.consumed,
+                (SELECT count(*)::text FROM measurement.probe_consumption c WHERE c.item_id = r.item_id)
+                  AS consumption_count
+           FROM measurement.probe_reserve_item r
+          WHERE r.item_id = $1`,
+        [itemId],
+      );
+      expect(rows).toEqual([{ consumed: true, consumption_count: '1' }]);
+    } finally {
+      await second.end();
+    }
   });
 });
 
