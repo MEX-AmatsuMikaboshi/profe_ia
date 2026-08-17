@@ -11,7 +11,7 @@
     "properties": [
       {
         "name": "profesor-ia:lockfile-sha256",
-        "value": "75b676aee7144cf4ab7ac870ee48d035ad0bbad34b91f75435a1345433ce39d5"
+        "value": "20a44ec333658e763bdaba83d25538c45d77678c422fcae86b74820bf9d43ba6"
       },
       {
         "name": "profesor-ia:node-version",
