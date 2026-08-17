@@ -41,6 +41,7 @@ describe('EvidenceEvent — literal P-II §9.1', () => {
     occurredAt: '2026-08-14T10:00:00.000Z',
     previousHash: 'GENESIS',
     hash: 'a'.repeat(64),
+    validity: 'valid' as const,
   };
 
   it('acepta el evento mínimo', () => {
@@ -60,6 +61,16 @@ describe('EvidenceEvent — literal P-II §9.1', () => {
 
   it('rechaza un autonomyStatus fuera del enum', () => {
     expect(EvidenceEvent.safeParse({ ...valid, autonomyStatus: 'not-evaluated' }).success).toBe(
+      false,
+    );
+  });
+
+  it('exige la validez literal y rechaza campos que no pertenecen al evento', () => {
+    const withoutValidity: Record<string, unknown> = { ...valid };
+    Reflect.deleteProperty(withoutValidity, 'validity');
+    expect(EvidenceEvent.safeParse(withoutValidity).success).toBe(false);
+    expect(EvidenceEvent.safeParse({ ...valid, validity: 'missing' }).success).toBe(false);
+    expect(EvidenceEvent.safeParse({ ...valid, realIdentity: 'persona@example.test' }).success).toBe(
       false,
     );
   });

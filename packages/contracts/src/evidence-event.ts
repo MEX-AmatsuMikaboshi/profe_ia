@@ -54,7 +54,8 @@ export const EvidenceEvent = z.object({
   correctionOfEventId: Id.optional(),
   previousHash: z.string().min(1),
   hash: Sha256Hex,
-});
+  validity: EventValidity,
+}).strict();
 export type EvidenceEvent = z.infer<typeof EvidenceEvent>;
 
 /**
