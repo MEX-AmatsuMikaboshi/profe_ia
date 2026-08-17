@@ -3,11 +3,11 @@ import { writeFileSync } from 'node:fs';
 /**
  * Entrypoint de contenedor de `measurement-worker` (Plan.md T-H3-01).
  *
- * La autoridad determinista de sondas ya está implementada en `authority.ts`.
- * Este proceso sigue siendo únicamente el heartbeat del contenedor: el
- * El calendario SCED determinista está en `@profesor-ia/experiment`. Este
- * proceso sigue sin adaptador de transporte: el cableado de la sesión seca se
- * completa con las tareas restantes de H6.
+ * La autoridad determinista de sondas e interrupciones está implementada en
+ * `authority.ts`; el calendario SCED vive en `@profesor-ia/experiment`. Este
+ * proceso sigue siendo únicamente el heartbeat del contenedor y no tiene aún
+ * adaptador de transporte: el cableado de la sesión seca se completa con las
+ * tareas restantes de H6.
  *
  * Aislamiento medición/enseñanza (I-4): es el único servicio que monta las
  * reservas de sondas, y el pipeline de autoría no puede alcanzarlas —lo
@@ -34,6 +34,7 @@ log('started', {
   duty: 'autoridad aislada de medicion',
   status: 'AUTHORITY_CORE_READY',
   calendar: 'SCED_CALENDAR_CORE_READY',
+  interruptions: 'MEASUREMENT_INTERRUPTION_CORE_READY',
   transport: 'NOT_WIRED',
 });
 const timer = setInterval(heartbeat, HEARTBEAT_MS);

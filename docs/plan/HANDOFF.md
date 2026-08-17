@@ -1,7 +1,7 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-16.
-**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…07` (sesión, dominio, medición y calendario SCED).
+**Qué se cerró aquí:** `T-H5-09…17` y `T-H6-01…08` (sesión, dominio, medición, calendario SCED e interrupciones).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
@@ -14,12 +14,12 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8**, **F6
-con 17 de 17 mecanismos** y **F7 con 7 de 14**. La siguiente es **`T-H6-08`**, interrupciones en
-modo de medición.
+con 17 de 17 mecanismos** y **F7 con 8 de 14**. La siguiente es **`T-H6-09`**, la bitácora
+reconstruible de evidencia.
 Antes de arrancarla lee §3 y §7.
 
-**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31992531164` verificó `T-H6-06` con los
-seis jobs verdes, incluida mutación. `T-H6-07` está cerrada en local y necesita su commit y su CI
+**`CONTENT_TOKEN` ya existe** (comprobado el 16-08). CI `31994856509` verificó `T-H6-07` con los
+seis jobs verdes, incluida mutación. `T-H6-08` está cerrada en local y necesita su commit y su CI
 propios antes de pasar de `HECHA` a `VERIFICADA`.
 
 ---
@@ -52,10 +52,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
-| **F7 · H6** sesión determinista sin LLM | 7 de 14. `T-H6-01…06` VERIFICADAS y `T-H6-07` HECHA; sigue `T-H6-08` |
+| **F7 · H6** sesión determinista sin LLM | 8 de 14. `T-H6-01…07` VERIFICADAS y `T-H6-08` HECHA; sigue `T-H6-09` |
 | F8–F16 | No empezadas |
 
-Van **76 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
+Van **77 de 148 tareas** del plan (contadas sobre `PLAN_STATUS.md`). Detalle tarea por tarea, con
 evidencia y fechas: [`PLAN_STATUS.md`](PLAN_STATUS.md).
 Actas de gate: [`../gates/`](../gates/) — `H0.md`, `H1.md`, `H2.md`, `H3.md`, todas **abiertas**.
 No hay acta de `H4` ni de `H4.5`: ninguna de las dos fases está en condiciones de firmarse.
@@ -67,9 +67,9 @@ inventa:
 
 | Hito | Qué significa | Avance |
 |---|---|---|
-| Sesión seca (fin de F7) | Una clase completa con guion fijo, sin IA en vivo | **71 %** |
-| Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **67 %** |
-| `LOCAL_SELF_USE` (F11) | El propietario lo usa de principio a fin, con voz y pizarrón | **51 %** |
+| Sesión seca (fin de F7) | Una clase completa con guion fijo, sin IA en vivo | **72 %** |
+| Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **68 %** |
+| `LOCAL_SELF_USE` (F11) | El propietario lo usa de principio a fin, con voz y pizarrón | **52 %** |
 
 **Dos cosas que no se arreglan programando**, y por eso el porcentaje no cuenta toda la verdad:
 falta elegir el modelo (`T-H4-10/11` necesita credenciales y autorización de gasto) y falta corpus
@@ -79,21 +79,20 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H6-08` — interrupciones en modo de medición
+### La tarea siguiente: `T-H6-09` — bitácora de evidencia reconstruible
 
-`T-H6-01…07` ya construyen estado/replay, decisión de estrategia, dominio/reconfirmaciones,
-recuperación, pistas congeladas, autoridad aislada de sondas y calendario SCED global. `H6-07`
-produce las `ProbeRequest` que `measurement-worker` acepta sin que la sesión elija reactivo,
-reserva, tiempo, fase o validez. `CAL-10/CAL-WHEEL` sigue pendiente en material y BKT sigue ausente
-por CAL-11.
+`T-H6-01…08` ya construyen estado/replay, decisión de estrategia, dominio/reconfirmaciones,
+recuperación, pistas congeladas, autoridad aislada de sondas, calendario SCED global e
+interrupciones tipadas. `H6-08` separa el reloj de reactivo, que decide `measurement-worker`, del
+deadline de sesión, que aporta el motor; proyecta los efectos sin conceder autoridad pedagógica ni
+reclasificar validez. `CAL-10/CAL-WHEEL` sigue pendiente en material y BKT sigue ausente por CAL-11.
 
-`T-H6-08` debe implementar en `MEASUREMENT_MODE` las seis semánticas literales de P-II §7.1.1 y
-`DEC-MEAS-INTERRUPTION-001`: una pausa pre-ítem no consume; una pausa post-ítem conserva el consumo
-y produce `invalid_participant_pause`, sin feedback; una duda de contenido no recibe respuesta
-pedagógica ni amplía el reloj; `timeout` se decide por la rúbrica congelada; fin de sesión produce
-`missing_session_time`; retirada produce `withdrawal` sin reposición forzada. Todo incidente debe
-usar la taxonomía contractual y quedar enlazado al intento/ronda sin cambiar retrospectivamente el
-calendario ni la autoridad del worker.
+`T-H6-09` debe emitir un `EvidenceEvent` por cada acto, con `previousHash/hash`, `decisionMaker`,
+`autonomyStatus`, versiones y validez. Las correcciones deben quedar enlazadas como
+detección→clasificación→invalidación→reposición→resolución, sin reescribir historia. Desde el ledger
+se deben reconstruir las proyecciones de sesión, dominio, cobertura, estrategia, elegibilidad,
+wheel-spinning, intervención, carga, incidentes y resultados. La implementación debe reutilizar el
+contrato y la cadena hash ya existentes, no crear una segunda fuente de verdad.
 
 Lo que ya está puesto y conviene usar en vez de rehacer:
 
@@ -341,7 +340,7 @@ ganador y un solo consumo. Son 25 pruebas del worker, cuatro ampliaciones de con
 sesión y una PostgreSQL: **1234 totales** (1103 unitarias + 131 PostgreSQL). No se creó calendario,
 inventario, semilla, preinscripción, firma ni gate material. Diseño:
 `docs/session/measurement-authority.md`. El calendario se cerró en `T-H6-07`; las interrupciones
-siguen en `T-H6-08`.
+se cerraron en `T-H6-08`.
 
 ### `T-H6-07` — calendario SCED global
 
@@ -363,6 +362,31 @@ pruebas del calendario y una integración pública calendario→worker: **1260 t
 unitarias + 131 PostgreSQL). Una mutación sembrada de `every` a `some` fue detectada por la prueba
 de ronda inválida. Los fixtures no afirman inventario, semilla, binding, preinscripción, firma ni
 gate materiales. Diseño: `docs/session/sced-calendar.md`.
+
+### `T-H6-08` — interrupciones en modo de medición
+
+`measurement-authority-policy-v2` congela las semánticas literales, el mapeo de reason codes y una
+taxonomía explícita código+nivel+efecto. La pausa pre-ítem no selecciona ni consume; la post-ítem
+conserva el consumo previo, deriva `invalid_participant_pause`, no da feedback y exige reanudación
+enlazada. Una duda sólo permite silencio o información de derechos/procedimiento, conserva el
+deadline exacto y nunca entrega ayuda pedagógica.
+
+El timeout interno se verifica contra `selectedAt + timeLimitSeconds` del inventario y conserva la
+rúbrica congelada. El fin de sesión recibe un `sessionDeadlineAt` explícito de la autoridad de
+sesión, exige que haya vencido y fuerza `missing_session_time`; retirada exige referencia a la
+decisión de consentimiento, fuerza `withdrawal` y prohíbe reposición. Los incidentes usan el
+contrato canónico: nivel 1 continúa, nivel 2 invalida el acto enlazado y deja una posible reposición
+independiente al calendario, y nivel 3 invalida la corrida y la suspende.
+
+El resultado genérico ya no admite reason codes inyectados: el worker los deriva de eventos
+tipados. Un contrato público proyecta pausa, duda, invalidación, incidente o retirada en
+`session-engine`, con hash/replay y sin exponer banco, solución, semilla ni autoridad pedagógica.
+Restauración vuelve a derivar tiempo, rúbrica, resultados no válidos, pausa, taxonomía, disposición
+y cierres. Son 13 pruebas nuevas del worker y una ampliación de sesión: **1274 totales** esperadas
+(1143 unitarias + 131 PostgreSQL). Las mutaciones pre↔post y de omisión de la revalidación de
+rúbrica quedaron detectadas. Los
+fixtures no afirman taxonomía, deadline, inventario, manifiesto, firma ni gate materiales. Diseño:
+`docs/session/measurement-interruptions.md` y decisión D-24.
 
 ---
 
@@ -709,8 +733,8 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado en el checkpoint: **toda la batería de código está verde en local** para T-H6-07: lint, 35
-typechecks, **1260 pruebas** (1129 unitarias + 131 contra PostgreSQL 17 real), 23 builds,
+Estado del último cierre completo: **toda la batería de código quedó verde en local** para T-H6-07:
+lint, 35 typechecks, **1260 pruebas** (1129 unitarias + 131 contra PostgreSQL 17 real), 23 builds,
 arquitectura y mutaciones sembradas, lógica, gateway, grants, SBOM, suministro y 159 controles de
 hardening. El checkpoint anterior tenía 1234 pruebas. `ci:infra:compose-up` compiló los 23 paquetes
 dentro de la imagen, pero Docker Desktop falló al desempaquetar la capa común con `overlayfs:
@@ -725,7 +749,7 @@ otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto para `T-H6-06` (corrida `31992531164`):
+Observado, no supuesto para `T-H6-07` (corrida `31994856509`):
 
 | Job | Resultado |
 |---|---|
@@ -736,7 +760,7 @@ Observado, no supuesto para `T-H6-06` (corrida `31992531164`):
 | `ci:lint · ci:typecheck · ci:unit · ci:build` | ✅ |
 | `ci:logic:golden · ci:logic:pbt · ci:logic:no-net` | ✅ |
 
-`T-H6-07` debe obtener su propia corrida verde después del push. Se comprueba job por
+`T-H6-08` debe obtener su propia corrida verde después del push. Se comprueba job por
 job con:
 
 ```bash
@@ -795,7 +819,7 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
   `NO_IMPLEMENTADO` en vez de simular éxito; `proof-search` lanza `CertificateRejectedError` en vez
   de devolver «no encontré».
 - **Desviaciones documentadas.** Cualquier apartamiento del plan va a §«Decisiones de ingeniería» de
-  `PLAN_STATUS.md` con su causa. Van **D-1 a D-23**.
+  `PLAN_STATUS.md` con su causa. Van **D-1 a D-24**.
 - **Una siembra en verde no dice nada de los controles que faltan.** En `T-H5-05` se sembraron 36
   mutaciones y las 36 quedaron detectadas a la primera; y aun así, releyendo el módulo aparecieron
   cuatro huecos, entre ellos **una guarda exportada y probada que el pipeline nunca llamaba** y un
@@ -826,9 +850,9 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
 
 ## 7. Lo que no está verificado y conviene no olvidar
 
-- **Ninguna tarea está `VERIFICADA`.** Todo lo que dice `HECHA` está verificado **localmente** y es
-  reproducible, pero §0.4 exige el check en verde en `main`. No marques `VERIFICADA` por el hecho de
-  haber subido el código.
+- **`HECHA` no equivale a `VERIFICADA`.** Las tareas hasta `T-H6-07` que llevan corrida CI observada
+  ya están `VERIFICADA`; `T-H6-08` sigue `HECHA` hasta que sus seis jobs propios queden verdes en
+  `main`. No cambies ese estado sólo por haber subido el código.
 - **F6 ha construido mecanismos, no contenido.** Las ocho tareas cerradas producen validadores y
   catálogos —`T-H5-05` incluida: W3 es el pipeline, no una corrida—, pero **todos los artefactos de
   `content/` siguen siendo placeholders de ~140 bytes**:
@@ -933,9 +957,9 @@ En este orden.
 
    `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
    tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1260 pruebas**. Si da
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1274 pruebas**. Si da
    menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F7 · H6 por `T-H6-08`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
+4. **Sigue F7 · H6 por `T-H6-09`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
    condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
    Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
@@ -943,7 +967,7 @@ En este orden.
 
 ### Preguntas abiertas para el propietario
 
-Ninguna bloquea el trabajo de código, pero las tres llevan tiempo esperando:
+Ninguna bloquea el trabajo de código, pero las dos llevan tiempo esperando:
 
 1. **Credenciales de proveedor y autorización de gasto** — bloquean `T-H4-10/11`, y con ellas la
    elección del modelo de la que depende F8. El tope declarado es ≈MXN 500/mes con bloqueo duro a los

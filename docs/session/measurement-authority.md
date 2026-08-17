@@ -2,8 +2,8 @@
 
 Implementación de `Plan.md` `T-H6-06`, P-II §6 y `DEC-MEAS-AUTHORITY-001` en
 `apps/measurement-worker/src/authority.ts`. Este artefacto cierra el núcleo autoritativo de una
-oportunidad; el calendario SCED que decide cuándo abrirla se implementó por separado en `T-H6-07` y
-las transiciones de interrupción pertenecen a `T-H6-08`.
+oportunidad; el calendario SCED que decide cuándo abrirla se implementó por separado en `T-H6-07`
+y las transiciones de interrupción en `T-H6-08`.
 
 ## Frontera de autoridad
 
@@ -46,9 +46,10 @@ un `StructuredItemPrompt`. Mientras exista un ítem pendiente no se entrega otro
 contiene banco, familia, firma estructural, semilla, solución, pistas ni feedback; el resultado de
 ítem tampoco devuelve corrección inmediata.
 
-Tiempo y contrato del verificador salen del inventario congelado. El evento observado sólo aporta
-una puntuación o un `reasonCode` preinscrito; el worker deriva `valid|invalid|missing` desde su
-política. Una oportunidad válida calcula exactamente `correctValidItems / validScoredItems`; una
+Tiempo y contrato del verificador salen del inventario congelado. El evento ordinario observado
+sólo aporta la puntuación; pausa, timeout, fin de sesión, retirada e incidente tienen eventos
+propios y el worker deriva de ellos el `reasonCode` y `valid|invalid|missing`. Una oportunidad
+válida calcula exactamente `correctValidItems / validScoredItems`; una
 oportunidad por debajo del mínimo no se imputa. `reserve_exhausted` es `missing`, salvo que ya se
 haya alcanzado el mínimo válido.
 
@@ -69,8 +70,7 @@ registra selección y consumo antes de exponer la entrega.
 - No hay inventario, semilla ni política material creados; eso requeriría contenido y freeze reales.
 - El scheduler de rondas, ventanas, estabilidad, extensión, retención y covariación vive en
   `packages/experiment/src/sced-calendar.ts` (`T-H6-07`).
-- Pausa, duda, timeout, fin de sesión, retirada e incidentes se convertirán en eventos exactos en
-  T-H6-08. Los reason codes usados aquí prueban la autoridad de clasificación, no esa máquina de
-  interrupciones ni una calibración material de timeout.
+- Pausa, duda, timeout, fin de sesión, retirada e incidentes viven en esta misma autoridad desde
+  T-H6-08; su diseño detallado está en `docs/session/measurement-interruptions.md`.
 - `main.ts` sólo declara el núcleo listo; transporte y calendario permanecen explícitamente sin
   cablear, por lo que no se simula una operación real ni se cierra T-H3-05.

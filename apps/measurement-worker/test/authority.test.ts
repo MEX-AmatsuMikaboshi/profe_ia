@@ -45,6 +45,11 @@ const POLICY = createMeasurementAuthorityPolicyDefinition({
     { reasonCode: 'incident', operationalValidity: 'invalid' },
     { reasonCode: 'reserve_exhausted', operationalValidity: 'missing' },
   ],
+  incidentTaxonomy: [
+    { incidentCode: 'fixture_minor', level: 1, validityEffect: 'continue' },
+    { incidentCode: 'fixture_localized', level: 2, validityEffect: 'invalidate_act' },
+    { incidentCode: 'fixture_systemic', level: 3, validityEffect: 'invalidate_run' },
+  ],
 });
 
 function item(
@@ -431,18 +436,16 @@ describe('selección, entrega y consumo', () => {
 });
 
 describe('validez operacional y cierre de oportunidad', () => {
-  function runPrimary(outcomes: readonly ({ kind: 'scored'; correct: boolean } | {
-    kind: 'operational_reason'; reasonCode: 'invalid_participant_pause' | 'missing_session_time';
-  })[]) {
+  function runPrimary(correctness: readonly boolean[]) {
     const value = authority();
     let state = open(value);
     let result = null;
-    for (const [index, outcome] of outcomes.entries()) {
+    for (const [index, correct] of correctness.entries()) {
       const sequence = 2 + index * 2;
       const delivered = value.applyEvent(state, deliveryEvent(sequence));
       const observed = value.applyEvent(
         delivered.state,
-        outcomeEvent(sequence + 1, delivered.delivery?.probeInstanceId ?? '', outcome),
+        outcomeEvent(sequence + 1, delivered.delivery?.probeInstanceId ?? '', { kind: 'scored', correct }),
       );
       state = observed.state;
       result = observed.result;
@@ -451,11 +454,7 @@ describe('validez operacional y cierre de oportunidad', () => {
   }
 
   it('cierra 2/3 correctas como observación válida exacta', () => {
-    const { state, result } = runPrimary([
-      { kind: 'scored', correct: true },
-      { kind: 'scored', correct: false },
-      { kind: 'scored', correct: true },
-    ]);
+    const { state, result } = runPrimary([true, false, true]);
 
     expect(result).toEqual({
       opportunityId: 'opportunity-primary-1',
@@ -471,11 +470,33 @@ describe('validez operacional y cierre de oportunidad', () => {
   });
 
   it('tolera un inválido cuando conserva el mínimo H5 de dos puntuados', () => {
-    const { result } = runPrimary([
-      { kind: 'scored', correct: true },
-      { kind: 'operational_reason', reasonCode: 'invalid_participant_pause' },
-      { kind: 'scored', correct: false },
-    ]);
+    const value = authority();
+    let state = open(value);
+    let delivered = value.applyEvent(state, deliveryEvent(2));
+    state = value.applyEvent(
+      delivered.state,
+      outcomeEvent(3, delivered.delivery?.probeInstanceId ?? '', { kind: 'scored', correct: true }),
+    ).state;
+    delivered = value.applyEvent(state, deliveryEvent(4));
+    const paused = value.applyEvent(delivered.state, {
+      eventId: 'measurement-event-5',
+      eventType: 'measurement.pause.requested',
+      sequenceNumber: 5,
+      occurredAt: at(5),
+      payload: { opportunityId: 'opportunity-primary-1' },
+    });
+    state = value.applyEvent(paused.state, {
+      eventId: 'measurement-event-6',
+      eventType: 'measurement.pause.resumed',
+      sequenceNumber: 6,
+      occurredAt: at(6),
+      payload: { pauseEffectId: 'measurement-event-5' },
+    }).state;
+    delivered = value.applyEvent(state, deliveryEvent(7));
+    const result = value.applyEvent(
+      delivered.state,
+      outcomeEvent(8, delivered.delivery?.probeInstanceId ?? '', { kind: 'scored', correct: false }),
+    ).result;
 
     expect(result).toMatchObject({
       validScoredItems: 2,
@@ -487,18 +508,48 @@ describe('validez operacional y cierre de oportunidad', () => {
   });
 
   it('deriva invalid y missing desde la política, no desde el evento', () => {
-    const invalid = runPrimary([
-      { kind: 'scored', correct: true },
-      { kind: 'operational_reason', reasonCode: 'invalid_participant_pause' },
-      { kind: 'operational_reason', reasonCode: 'invalid_participant_pause' },
-    ]).result;
+    const invalidWorker = authority();
+    let invalidState = open(invalidWorker);
+    let delivered = invalidWorker.applyEvent(invalidState, deliveryEvent(2));
+    invalidState = invalidWorker.applyEvent(
+      delivered.state,
+      outcomeEvent(3, delivered.delivery?.probeInstanceId ?? '', { kind: 'scored', correct: true }),
+    ).state;
+    delivered = invalidWorker.applyEvent(invalidState, deliveryEvent(4));
+    let paused = invalidWorker.applyEvent(delivered.state, {
+      eventId: 'measurement-event-5',
+      eventType: 'measurement.pause.requested',
+      sequenceNumber: 5,
+      occurredAt: at(5),
+      payload: { opportunityId: 'opportunity-primary-1' },
+    });
+    invalidState = invalidWorker.applyEvent(paused.state, {
+      eventId: 'measurement-event-6',
+      eventType: 'measurement.pause.resumed',
+      sequenceNumber: 6,
+      occurredAt: at(6),
+      payload: { pauseEffectId: 'measurement-event-5' },
+    }).state;
+    delivered = invalidWorker.applyEvent(invalidState, deliveryEvent(7));
+    paused = invalidWorker.applyEvent(delivered.state, {
+      eventId: 'measurement-event-8',
+      eventType: 'measurement.pause.requested',
+      sequenceNumber: 8,
+      occurredAt: at(8),
+      payload: { opportunityId: 'opportunity-primary-1' },
+    });
+    const invalid = paused.result;
     expect(invalid).toMatchObject({ operationalValidity: 'invalid', reasonCode: 'invalid_participant_pause' });
 
-    const missing = runPrimary([
-      { kind: 'operational_reason', reasonCode: 'missing_session_time' },
-      { kind: 'operational_reason', reasonCode: 'missing_session_time' },
-      { kind: 'operational_reason', reasonCode: 'missing_session_time' },
-    ]).result;
+    const missingWorker = authority();
+    const shown = missingWorker.applyEvent(open(missingWorker), deliveryEvent(2));
+    const missing = missingWorker.applyEvent(shown.state, {
+      eventId: 'measurement-event-3',
+      eventType: 'measurement.session_time.expired',
+      sequenceNumber: 3,
+      occurredAt: at(3),
+      payload: { opportunityId: 'opportunity-primary-1', sessionDeadlineAt: at(3) },
+    }).result;
     expect(missing).toMatchObject({
       validScoredItems: 0,
       observation: null,
@@ -507,33 +558,31 @@ describe('validez operacional y cierre de oportunidad', () => {
     });
   });
 
-  it('rechaza reason code conocido pero no preinscrito por la política de la corrida', () => {
-    const sparsePolicy = createMeasurementAuthorityPolicyDefinition({
-      policyVersion: 'measurement-authority-sparse-test-v1',
-      purpose: 'test_fixture',
-      reasonPolicy: [{ reasonCode: 'reserve_exhausted', operationalValidity: 'missing' }],
-    });
-    const value = new DeterministicMeasurementAuthority(sparsePolicy, inventory(), seed());
-    value.bindRun({
-      runId: 'run-measurement-1',
-      purpose: 'test_fixture',
-      policyVersion: value.policy.definition.policyVersion,
-      policyHash: value.policy.policyHash,
-      inventoryVersion: value.inventory.definition.inventoryVersion,
-      inventoryHash: value.inventory.inventoryHash,
-      seedVersion: value.seed.definition.seedVersion,
-      seedHash: value.seed.seedHash,
-      packageVersion: value.inventory.definition.packageVersion,
-    });
+  it('rechaza un incident code que no pertenece a la taxonomía congelada', () => {
+    const value = authority();
     const delivered = value.applyEvent(open(value), deliveryEvent(2));
 
     expectCode(() => value.applyEvent(
       delivered.state,
-      outcomeEvent(3, delivered.delivery?.probeInstanceId ?? '', {
-        kind: 'operational_reason',
-        reasonCode: 'incident',
-      }),
-    ), 'INVALID_EVENT');
+      {
+        eventId: 'measurement-event-3',
+        eventType: 'measurement.incident.recorded',
+        sequenceNumber: 3,
+        occurredAt: at(3),
+        payload: {
+          opportunityId: 'opportunity-primary-1',
+          incident: {
+            incidentId: 'incident-unfrozen',
+            incidentCode: 'not_in_frozen_taxonomy',
+            level: 2,
+            action: 'invalidar_acto_o_bloque',
+            detectedAt: at(3),
+            affectedEventIds: [delivered.delivery?.probeInstanceId ?? ''],
+            invalidatedOpportunityIds: ['opportunity-primary-1'],
+          },
+        },
+      },
+    ), 'INCIDENT_TAXONOMY_MISMATCH');
   });
 
   it('reserva insuficiente produce missing reserve_exhausted sin generar en caliente', () => {

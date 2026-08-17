@@ -4,6 +4,7 @@ import {
   Id,
   IsoDateTime,
   MeasureKind,
+  MeasurementControlEffect,
   PedagogicalMode,
   PedagogicalStrategy,
   ProbeOpportunityResult,
@@ -15,6 +16,7 @@ import {
   SESSION_STATES,
   SESSION_TRANSVERSAL_STATES,
   type ProbeOpportunityResult as ProbeOpportunityResultValue,
+  type MeasurementControlEffect as MeasurementControlEffectValue,
 } from '@profesor-ia/contracts';
 import {
   DomainKcState,
@@ -237,6 +239,7 @@ export const SessionDecisionAutonomy = z
       'session.primary.transitioned',
       'session.transversal.changed',
       'session.projection.updated',
+      'session.measurement.control_projected',
     ]),
     decisionMaker: AuthoritativeDecisionMaker,
     autonomyStatus: EventAutonomyStatus,
@@ -440,11 +443,20 @@ export const SessionProjectionUpdatedEvent = z
   })
   .strict();
 
+export const SessionMeasurementControlProjectedEvent = z
+  .object({
+    ...DecisionEventCommonShape,
+    eventType: z.literal('session.measurement.control_projected'),
+    payload: z.object({ effect: MeasurementControlEffect, reasonCode: NonEmptyText }).strict(),
+  })
+  .strict();
+
 export const SessionStateEvent = z.discriminatedUnion('eventType', [
   SessionInitializedEvent,
   SessionPrimaryTransitionedEvent,
   SessionTransversalChangedEvent,
   SessionProjectionUpdatedEvent,
+  SessionMeasurementControlProjectedEvent,
 ]);
 export type SessionStateEvent = z.infer<typeof SessionStateEvent>;
 export type SessionInitializedEvent = z.infer<typeof SessionInitializedEvent>;
@@ -743,6 +755,93 @@ function reduceDecisionEvent(
       rejectBktShadowProperty(event.payload.changes);
       changed = { ...current, ...event.payload.changes };
       break;
+    case 'session.measurement.control_projected': {
+      if (event.decisionMaker !== 'engine') {
+        throw new SessionStateMachineError(
+          'INVALID_TRANSITION',
+          'solo el motor proyecta un efecto autoritativo de measurement-worker',
+        );
+      }
+      if (current.pedagogicalMode !== 'MEASUREMENT_MODE') {
+        throw new SessionStateMachineError(
+          'MEASUREMENT_PROJECTION_MISMATCH',
+          'un efecto de medición no puede proyectarse fuera de MEASUREMENT_MODE',
+        );
+      }
+      const effect = event.payload.effect;
+      if (effect.runId !== current.runId || effect.participantPseudoId !== current.participantPseudoId) {
+        throw new SessionStateMachineError(
+          'MEASUREMENT_PROJECTION_MISMATCH',
+          'corrida o participante del efecto no coincide con la sesión',
+        );
+      }
+      if (
+        Date.parse(effect.occurredAt) < Date.parse(current.updatedAt) ||
+        Date.parse(effect.occurredAt) > Date.parse(event.occurredAt)
+      ) {
+        throw new SessionStateMachineError(
+          'MEASUREMENT_PROJECTION_MISMATCH',
+          'tiempo del efecto no cabe entre el estado previo y su proyección',
+        );
+      }
+      const transverse = new Set(current.transverseStates);
+      if (effect.kind === 'pre_item_pause' || effect.kind === 'post_item_pause') {
+        transverse.add('pausa');
+      }
+      if (effect.kind === 'pause_resumed') transverse.delete('pausa');
+      if (effect.kind === 'content_question') transverse.add('duda');
+      if (
+        effect.kind === 'post_item_pause' ||
+        effect.kind === 'probe_timeout' ||
+        effect.kind === 'session_time_expired' ||
+        (effect.kind === 'incident' && effect.reasonCode === 'incident')
+      ) {
+        transverse.add('invalidacion');
+      }
+      if (effect.kind === 'withdrawal') transverse.add('retirada');
+      if (effect.kind === 'incident') transverse.add('incidente');
+      const transverseStates = [...transverse].sort(
+        (left, right) => (TRANSVERSAL_ORDER.get(left) ?? 0) - (TRANSVERSAL_ORDER.get(right) ?? 0),
+      );
+      const pendingDoubts = effect.kind === 'content_question'
+        ? [
+            ...current.pendingDoubts,
+            {
+              doubtId: effect.effectId,
+              artifactRef: effect.probeInstanceId,
+              raisedAt: effect.occurredAt,
+            },
+          ]
+        : current.pendingDoubts;
+      const incidents = effect.kind === 'incident'
+        ? [
+            ...current.incidents,
+            {
+              incidentId: effect.incident.incidentId,
+              taxonomyCode: effect.incident.incidentCode,
+              scope: effect.scope,
+              status: 'open' as const,
+              occurredAt: effect.occurredAt,
+            },
+          ]
+        : current.incidents;
+      changed = {
+        ...current,
+        transverseStates,
+        pendingDoubts,
+        incidents,
+        planChanges: [
+          ...current.planChanges,
+          {
+            changeId: effect.effectId,
+            description: `measurement_control:${effect.kind}:${effect.opportunityId}`,
+            reasonCode: event.payload.reasonCode,
+            occurredAt: effect.occurredAt,
+          },
+        ],
+      };
+      break;
+    }
   }
 
   return parseState({
@@ -873,6 +972,30 @@ export function changeTransversalSessionState(
     payload: { state, active, reasonCode },
   });
   return finalizedMutation(current, draft);
+}
+
+/** Proyecta en la sesión un efecto ya derivado por la autoridad de medición. */
+export function projectMeasurementControlEffect(
+  current: SessionSnapshot,
+  effectValue: unknown,
+  reasonCode: string,
+  metadata: SessionDecisionMetadata,
+): { readonly effect: MeasurementControlEffectValue; readonly mutation: SessionMutation } {
+  assertSnapshotIntegrity(current);
+  const parsed = MeasurementControlEffect.safeParse(effectValue);
+  if (!parsed.success) {
+    throw new SessionStateMachineError(
+      'MEASUREMENT_PROJECTION_MISMATCH',
+      z.prettifyError(parsed.error),
+    );
+  }
+  const effect = Object.freeze(parsed.data);
+  const draft = SessionMeasurementControlProjectedEvent.parse({
+    ...decisionHeader(current, metadata),
+    eventType: 'session.measurement.control_projected',
+    payload: { effect, reasonCode },
+  });
+  return deepFreeze({ effect, mutation: finalizedMutation(current, draft) });
 }
 
 /**

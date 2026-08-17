@@ -59,7 +59,19 @@ describe('T-H6-07: frontera calendario → measurement-worker', () => {
     const workerPolicy = createMeasurementAuthorityPolicyDefinition({
       policyVersion: 'calendar-worker-measurement-policy-v1',
       purpose: 'test_fixture',
-      reasonPolicy: [{ reasonCode: 'reserve_exhausted', operationalValidity: 'missing' }],
+      reasonPolicy: [
+        { reasonCode: 'invalid_participant_pause', operationalValidity: 'invalid' },
+        { reasonCode: 'missing_session_time', operationalValidity: 'missing' },
+        { reasonCode: 'withdrawal', operationalValidity: 'missing' },
+        { reasonCode: 'timeout', operationalValidity: 'invalid' },
+        { reasonCode: 'incident', operationalValidity: 'invalid' },
+        { reasonCode: 'reserve_exhausted', operationalValidity: 'missing' },
+      ],
+      incidentTaxonomy: [{
+        incidentCode: 'fixture_calendar_incident',
+        level: 2,
+        validityEffect: 'invalidate_act',
+      }],
     });
     const items = Array.from({ length: 3 }, (_, index) => {
       const itemId = `calendar-worker-item-${index + 1}`;

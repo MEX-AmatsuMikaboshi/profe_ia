@@ -27,6 +27,7 @@ import {
   enterMeasurementModeForProbe,
   exitMeasurementModeFromProbeResult,
   initializeSessionState,
+  projectMeasurementControlEffect,
   replaySessionStateEvents,
   restoreSessionStateSnapshot,
   sessionStateHash,
@@ -936,6 +937,173 @@ describe('estado estructurado de sesión (T-H6-01)', () => {
       ),
       'MEASUREMENT_PROJECTION_MISMATCH',
     );
+  });
+
+  it('proyecta pausa, duda e incidente del worker sin conceder autoridad pedagógica', () => {
+    const initial = initialized();
+    const populated = fullProjection(initial.snapshot);
+    const entry = enterMeasurementModeForProbe(
+      populated.snapshot,
+      { experimentalSet: 'A', phase: 'baseline', measureKind: 'primary_probe' },
+      'MEASUREMENT_REQUESTED',
+      metadata('event-measurement-control-entry', 3),
+    );
+    const common = {
+      runId: 'run-fixture-1',
+      participantPseudoId: 'pseudo-fixture-1',
+      opportunityId: 'opportunity-control-1',
+      itemConsumedByEffect: false as const,
+      immediateFeedbackProvided: false as const,
+      pedagogicalResponseProvided: false as const,
+      clockExtended: false as const,
+    };
+    const paused = projectMeasurementControlEffect(
+      entry.mutation.snapshot,
+      {
+        ...common,
+        effectId: 'worker-effect-pause',
+        kind: 'pre_item_pause',
+        probeInstanceId: null,
+        occurredAt: at(4),
+        reasonCode: null,
+        opportunityClosed: false,
+        runDisposition: 'paused',
+        replacementDisposition: 'not_applicable',
+      },
+      'MEASUREMENT_PRE_ITEM_PAUSE',
+      metadata('event-measurement-control-pause', 4),
+    );
+    expect(paused.mutation.snapshot.state.transverseStates).toContain('pausa');
+
+    const resumed = projectMeasurementControlEffect(
+      paused.mutation.snapshot,
+      {
+        ...common,
+        effectId: 'worker-effect-resume',
+        kind: 'pause_resumed',
+        pauseEffectId: 'worker-effect-pause',
+        probeInstanceId: null,
+        occurredAt: at(5),
+        reasonCode: null,
+        opportunityClosed: false,
+        runDisposition: 'active',
+        replacementDisposition: 'not_applicable',
+      },
+      'MEASUREMENT_RESUMED',
+      metadata('event-measurement-control-resume', 5),
+    );
+    expect(resumed.mutation.snapshot.state.transverseStates).not.toContain('pausa');
+
+    const doubt = projectMeasurementControlEffect(
+      resumed.mutation.snapshot,
+      {
+        ...common,
+        effectId: 'worker-effect-doubt',
+        kind: 'content_question',
+        probeInstanceId: 'probe-control-1',
+        responseKind: 'rights_or_procedure',
+        deadlineBeforeQuestion: at(20),
+        deadlineAfterQuestion: at(20),
+        occurredAt: at(6),
+        reasonCode: null,
+        opportunityClosed: false,
+        runDisposition: 'active',
+        replacementDisposition: 'not_applicable',
+      },
+      'MEASUREMENT_CONTENT_QUESTION',
+      metadata('event-measurement-control-doubt', 6),
+    );
+    expect(doubt.mutation.snapshot.state.transverseStates).toContain('duda');
+    expect(doubt.mutation.snapshot.state.pendingDoubts).toContainEqual({
+      doubtId: 'worker-effect-doubt',
+      artifactRef: 'probe-control-1',
+      raisedAt: at(6),
+    });
+
+    const incident = projectMeasurementControlEffect(
+      doubt.mutation.snapshot,
+      {
+        ...common,
+        effectId: 'worker-effect-incident',
+        kind: 'incident',
+        probeInstanceId: 'probe-control-1',
+        occurredAt: at(7),
+        incident: {
+          incidentId: 'incident-control-1',
+          incidentCode: 'fixture_localized',
+          level: 2,
+          action: 'invalidar_acto_o_bloque',
+          detectedAt: at(7),
+          affectedEventIds: ['probe-control-1'],
+          invalidatedOpportunityIds: ['opportunity-control-1'],
+        },
+        scope: 'localized',
+        reasonCode: 'incident',
+        opportunityClosed: false,
+        runDisposition: 'active',
+        replacementDisposition: 'calendar_independent_only',
+      },
+      'MEASUREMENT_LOCALIZED_INCIDENT',
+      metadata('event-measurement-control-incident', 7),
+    );
+    expect(incident.mutation.snapshot.state.transverseStates).toEqual(
+      expect.arrayContaining(['duda', 'incidente', 'invalidacion']),
+    );
+    expect(incident.mutation.snapshot.state.incidents).toContainEqual({
+      incidentId: 'incident-control-1',
+      taxonomyCode: 'fixture_localized',
+      scope: 'localized',
+      status: 'open',
+      occurredAt: at(7),
+    });
+    expect(incident.mutation.snapshot.state.planChanges.map((change) => change.changeId)).toEqual(
+      expect.arrayContaining([
+        'worker-effect-pause',
+        'worker-effect-resume',
+        'worker-effect-doubt',
+        'worker-effect-incident',
+      ]),
+    );
+    expect(replaySessionStateEvents([
+      initial.event,
+      populated.event,
+      entry.mutation.event,
+      paused.mutation.event,
+      resumed.mutation.event,
+      doubt.mutation.event,
+      incident.mutation.event,
+    ])).toEqual(incident.mutation.snapshot);
+
+    expectCode(() => projectMeasurementControlEffect(
+      entry.mutation.snapshot,
+      {
+        ...paused.effect,
+        effectId: 'worker-effect-other-run',
+        runId: 'another-run',
+      },
+      'MEASUREMENT_MISMATCH',
+      metadata('event-measurement-control-mismatch', 4),
+    ), 'MEASUREMENT_PROJECTION_MISMATCH');
+    expectCode(() => projectMeasurementControlEffect(
+      entry.mutation.snapshot,
+      {
+        ...paused.effect,
+        effectId: 'worker-effect-before-session-state',
+        occurredAt: at(2),
+      },
+      'MEASUREMENT_TIME_MISMATCH',
+      metadata('event-measurement-control-time-mismatch', 4),
+    ), 'MEASUREMENT_PROJECTION_MISMATCH');
+    expectCode(() => projectMeasurementControlEffect(
+      entry.mutation.snapshot,
+      {
+        ...paused.effect,
+        effectId: 'worker-effect-after-projection',
+        occurredAt: at(5),
+      },
+      'MEASUREMENT_TIME_MISMATCH',
+      metadata('event-measurement-control-time-mismatch-future', 4),
+    ), 'MEASUREMENT_PROJECTION_MISMATCH');
   });
 
   it('integra recuperación y límite como decisión reconstruible de sesión', () => {
