@@ -4,3 +4,4 @@ export const PACKAGE_NAME = "@profesor-ia/session-engine" as const;
 
 export * from './state-machine.js';
 export * from './evidence.js';
+export * from './script-mode.js';
