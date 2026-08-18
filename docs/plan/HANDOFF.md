@@ -1,17 +1,21 @@
 # HANDOFF — punto de continuación
 
-**Fecha del checkpoint:** 2026-08-18.
-**Qué se cerró aquí:** `T-H6-09…14` (F7 completa) y **`T-H4-09`** (refresco documental de
-candidatos).
+**Fecha del checkpoint:** 2026-08-18 (segunda sesión del día).
+**Qué se cerró aquí:** el arranque de **Docker** (D-31), el **harness de BENCH-01 con corrida
+piloto medida** (`T-H4-10`, `EN_CURSO`) y **`ci:mode-separation`**, primera mitad del AC del gate H6.
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
-> **Lo primero, y es una novedad:** el propietario tiene ya las **cuatro claves de proveedor** y las
-> pega en `infra/compose/.env` (ver §3.0.b). En cuanto estén, `T-H4-10` (BENCH-01) es lo siguiente
-> ejecutable, y con ello se abre el camino a F8.
+> **Lo primero: tres commits en `main` están `HECHA` y no `VERIFICADA`.** `7848b42` (Docker),
+> `306517a` (harness + piloto) y `06c2eab` (`ci:mode-separation`). **Nadie ha observado el check
+> verde en Actions.** Eso es lo primero que hay que hacer: mirar la pestaña Actions del remoto job
+> por job y, sólo entonces, mover los estados. Que esté subido no basta.
 >
-> **F7 está completa y verificada**: 14 de 14 tareas con corrida observada. Falta sólo el **AC del
-> gate H6** —`ci:e2e:dry-session` y `ci:mode-separation`—, que no es una tarea `T-*` y **no cuesta
-> ni un centavo**. Es la vía barata para firmar una fase entera.
+> **Se gastó dinero real por primera vez: MXN 1.51 (≈ USD 0.09)** en tres corridas piloto. El
+> propietario autorizó un piloto acotado, **no la corrida material**. Volver a gastar exige
+> volver a preguntar.
+>
+> **Lo siguiente es `ci:e2e:dry-session`**, la otra mitad del AC del gate H6. No cuesta nada y
+> cierra F7 entera. Ver §3.1.
 >
 > **F11 sigue sin ser alcanzable escribiendo código.** `T-LSU-01` *es* el propietario usando el
 > sistema de principio a fin. Ver §2.
@@ -25,16 +29,16 @@ con qué comprobaciones, en §8.
 
 ### Por dónde empezar, en una línea
 
-F0–F3 cerradas salvo `T-H3-05`; **F4 con 9 de 12** (todo lo construible), **F5 con 8 de 8**, **F6
-con 17 de 17 mecanismos** y **F7 con 14 de 14**. Lo siguiente **no es una tarea `T-*`**: es el AC del
-gate H6 — `ci:e2e:dry-session` (sesión seca E2E reconstruible desde eventos) y `ci:mode-separation`,
-con las propiedades que `Plan.md` §F7 enumera: reactivo consumido no reaparece, sonda nunca en
-contexto del agente, dominio no se alcanza sin transferencia, corrección no elimina original,
-intervención humana registrada.
+F0–F3 cerradas salvo `T-H3-05`; **F4 con 10 de 12 más `T-H4-10` en curso**, **F5 con 8 de 8**, **F6
+con 17 de 17 mecanismos** y **F7 con 14 de 14**. Lo siguiente **no es una tarea `T-*`**: es la mitad
+que falta del AC del gate H6 — **`ci:e2e:dry-session`**, sesión seca E2E reconstruible desde
+eventos, con las cinco propiedades que `Plan.md` §F7 enumera: reactivo consumido no reaparece, sonda
+nunca en contexto del agente, dominio no se alcanza sin transferencia, corrección no elimina
+original, intervención humana registrada. **`ci:mode-separation` ya está**, con 12 propiedades.
 
-**`CONTENT_TOKEN` ya existe.** **No queda ninguna tarea esperando corrida**: las catorce de F7 con
-la corrida `32082985975`, y `T-H4-09` con la `32103802556`, las dos observadas job por job en
-`main`.
+**`CONTENT_TOKEN` ya existe.** **Tres commits esperan que alguien observe su corrida**: `7848b42`,
+`306517a` y `06c2eab`. Las catorce de F7 (`32082985975`) y `T-H4-09` (`32103802556`) sí están
+observadas job por job.
 
 **Docker Desktop ya arranca** (2026-08-18), con `pnpm run dev:docker` y sólo con él: arrancarlo a
 mano vuelve a fallar. Las pruebas contra PostgreSQL **ya corren en local**; 131 en verde por primera
@@ -65,37 +69,77 @@ Diseño completo en [`../session/clase-ui.md`](../session/clase-ui.md). Lo impre
 - **Dentro de `apps/web` las importaciones relativas van sin extensión `.js`** (D-29). Es al revés
   que en el resto del repo, y es correcto: Next resuelve con bundler, no con NodeNext.
 
-## 3.0.b Credenciales de proveedor — dónde están y qué desbloquean
+## 3.0.b Credenciales, gasto y lo que dejó el piloto de BENCH-01
 
-`T-H4-09` dejó el hueco declarado. **El propietario dijo tener las cuatro claves listas para pegar**
-en `infra/compose/.env` (archivo no versionado; la plantilla vacía está en `.env.example`):
+**Las cuatro claves están en `infra/compose/.env` y se comprobó por hash que las dos de un mismo
+proveedor difieren**, que es lo que P-II §8.2 exige para que la separación `SESION`/`AUTORIA`
+proteja de algo. No se imprimieron ni se copiaron a ningún sitio.
 
-```
-MODEL_CREDENTIAL_ANTHROPIC_SESION=
-MODEL_CREDENTIAL_ANTHROPIC_AUTORIA=
-MODEL_CREDENTIAL_OPENAI_SESION=
-MODEL_CREDENTIAL_OPENAI_AUTORIA=
-```
+**Decisiones del propietario tomadas el 2026-08-18**, todas registradas:
 
-**Cuatro y no dos**, por dos ejes distintos: por perfil, porque P-II §8.2 congela que `SESION` y
-`AUTORIA` usan credenciales separadas —y la separación sólo protege si las cadenas difieren de
-verdad—; por proveedor, porque en BENCH-01 los dos compiten por el mismo perfil y en BENCH-02 el
-generador y el crítico deben ser de familias distintas.
+| Decisión | Valor | Dónde consta |
+|---|---|---|
+| Ventana de frescura del refresco documental | **24 horas** | `REFRESH_WINDOW_24H` en `tools/bench/src/refresh-2026-08-18.ts` |
+| Moneda del manifiesto de precios | **MXN con FIX declarado** | D-33 en `PLAN_STATUS.md` |
+| Política de bloque de código | **`unwrap` autorizado explícitamente** | D-34 |
+| Gasto | **Piloto acotado; la corrida material NO está autorizada** | Este documento |
 
-**Lo primero que debe hacer la siguiente sesión con ellas:** comprobar que están y que las dos de un
-mismo proveedor **no son la misma cadena**. Una credencial ausente o en blanco produce
-`MissingCredentialError` y nunca cae a la de otro perfil; eso ya está probado.
+**Gasto real hasta hoy: MXN 1.51 (≈ USD 0.09)** en tres corridas piloto. El saldo del propietario
+es de **USD 14 en Anthropic y USD 10 en OpenAI**, prepagado. Ojo con esto: el tope real **no** es el
+bloqueo de MXN 700, es el saldo. El bloqueo está por encima de lo que hay, así que quien frenaría
+primero es el proveedor con un error de crédito agotado.
 
-Con ellas se puede ejecutar `T-H4-10` (BENCH-01). Ojo con el orden que la norma fija: **la corrida
-del refresco documental va pegada al benchmark**, no antes — el mecanismo está hecho, la corrida no.
-Falta además fijar la ventana de frescura, que es una decisión de protocolo del propietario y no un
-valor por omisión (`docs/model/documentary-refresh.md`).
+### Lo que midió el piloto, y por qué cambia los planes
 
-El control de gasto ya está implementado: objetivo ≈MXN 500/mes, bloqueo duro a MXN 700, sin
-`unblock`/`reset`/`force` y con pruebas de que no existen. **No hay estimación de costo del
-benchmark**: no existe ningún manifiesto con precios reales, y los pisos de `T-H4-10` son 200 casos
-mínimos por modelo más repeticiones. Inventar una cifra en pesos sería exactamente lo que este
-proyecto no hace.
+**465 tokens de entrada y 208 de salida por llamada**, sobre 14 casos reales. La estimación previa
+asumía 2000/800 y era **cuatro veces alta**. Con lo medido, 200 casos por modelo:
+
+| Modelo | USD | MXN |
+|---|---:|---:|
+| `claude-haiku-4-5-20251001` | 0.321 | 5.46 |
+| `claude-sonnet-5` | 0.642 | 10.93 |
+| `gpt-5.6-luna` | 0.073 | 1.25 |
+| `gpt-5` | 0.572 | 9.74 |
+
+**El par fuerte con tres repeticiones sale en USD 3.64.** BENCH-01 completo cabe de sobra en el
+saldo. Lo caro de esa tarea **no es el dinero: son los 200 casos escritos a mano.**
+
+**Salvedad que no se debe olvidar: 465 de entrada es un piso.** El piloto no manda corpus porque no
+existe. Una sesión real llevará fragmentos anclados y estado de sesión encima, y el costo subirá.
+
+### Cuatro cosas que el piloto destapó y que hay que resolver antes de la corrida material
+
+1. **`gpt-5.6-luna` no publica snapshot fechado.** Sin snapshot, §8.1 exige huella de comportamiento
+   sobre el set canario, y `assertRefreshAuthorizesBenchmark` lo rechaza con `UnpinnedBindingError`
+   **incluso en piloto**. Quedó fuera y eso está como prueba. **Antes de escribir 200 casos conviene
+   comprobar si `gpt-5` u otro modelo de OpenAI sí publica snapshot fechado**: si ninguno lo hace,
+   BENCH-01 tendría un solo proveedor y BENCH-02 —que exige familias distintas— quedaría bloqueado.
+2. **`claude-haiku-4-5-20251001` se retira el 2026-10-15**, la fecha más próxima de los modelos
+   vigentes de Anthropic. Coronarlo ganador ataría el sistema a un modelo que se apaga en dos meses.
+3. **Los 20 casos de `failure_or_invalid_output` no simulan nada.** Pedirle al modelo que devuelva
+   XML o sólo «ERROR» hace que ignore la instrucción y responda bien. **Un fallo simulado se inyecta
+   en el transporte**, no se le pide al modelo. Hay que rediseñarlos.
+4. **`entregaSolucion` lo autoreporta el modelo.** Un modelo que filtrara la derivación y respondiera
+   `false` pasaría el gate de fugas. El gate **no puede depender del autoreporte**: la corrida
+   material tiene que inspeccionar la respuesta.
+
+### Lo que está construido y no hay que rehacer
+
+- **`packages/model-gateway/src/transport.ts`** — el único punto del repo que abre una conexión a un
+  proveedor. No reintenta (un reintento sobre una petición que ya llegó la cobra dos veces), no
+  sigue redirecciones (un 3xx en un POST autenticado reenviaría la credencial), no registra cuerpos
+  ni cabeceras, y exige timeout explícito.
+- **`pricing-manifest.ts`** — precios en MXN **derivados en código** desde el precio publicado en USD
+  y el FIX de Banxico, los dos con URL y fecha. Un cambio de tarifa **no se edita**: produce un
+  `pricingManifestId` nuevo.
+- **Extracción de `usage`** en ambos adaptadores. Un `usage` ausente queda en `undefined` y jamás en
+  ceros. Se conserva también cuando la salida se descarta: **un rechazo también se cobra**.
+- **`tools/bench/`** (D-32) — siete familias con los pisos de P-III §6.1, partición por semilla
+  reconstruible **dentro de cada familia**, los seis gates de §6.2 con denominador declarado y cota
+  `3/n`, y el runner. `verdictFor()` **impide que un piloto dictamine**.
+- **El refresco documental material del 2026-08-18** con seis fuentes, hash **de los bytes** y la
+  ventana de 24 h. Caduca el 2026-08-19 a las 07:39 UTC: **para una corrida material hay que
+  rehacerlo**, y rehacerlo es gratis.
 
 ## 3.0.c Docker Desktop — resuelto (2026-08-18)
 
@@ -155,6 +199,52 @@ qué debía comprobar, y elegirlo sería inventar.
 
 ---
 
+## 3.1 Lo siguiente: `ci:e2e:dry-session`
+
+Es la mitad que falta del AC del gate H6, **no cuesta nada** y cierra F7 entera.
+
+**Punto de partida:** `apps/web/src/clase/dry-session.ts` monta la sesión seca con paquete sintético
+(`purpose: 'test_fixture'`, tiempos fijos, sin azar). `replaySessionStateEvents()` en
+`packages/session-engine/src/state-machine.ts` ya reconstruye desde eventos.
+
+**Lo que hay que demostrar** (Plan.md §F7, literal):
+
+| Propiedad | Dónde vive el mecanismo |
+|---|---|
+| Sesión completa reconstruible desde eventos | `replaySessionStateEvents()` |
+| Reactivo consumido no reaparece | `priorConsumptionBlocks()` en `apps/measurement-worker/src/authority.ts`, sobre `consumptionBlocksMeasurement()` de `contracts/probe.ts` |
+| Sonda nunca en contexto del agente | El catálogo de `script-mode` no lleva entradas de sonda; la separación de reservas la fija `authoring-core/reserves.ts` |
+| Dominio no se alcanza sin transferencia | `domain-engine` + `updateSessionFromDomainState()` |
+| Corrección no elimina original | Cadena de evidencia (`session-engine/src/evidence.ts`, `T-H6-09`): una corrección es un evento nuevo enlazado |
+| Intervención humana registrada | `decisionMaker`/`autonomyStatus` en `SessionDecisionMetadata` |
+
+**Modelo a seguir:** `packages/session-engine/test/mode-separation.test.ts`, que ya está y pasa. Ahí
+se ve el patrón de fixtures (`metadata()`, `sesionEnPractica()`) y, sobre todo, el criterio: atacar
+la propiedad **por la vía genérica** en vez de por el camino que uno espera, para que si hay puerta
+lateral se encuentre.
+
+**Un hallazgo que ahorra tiempo:** la separación de modos **no** depende de guardas por función.
+Está en el invariante del esquema `SessionStructuredState`, que rechaza cualquier estado en
+`MEASUREMENT_MODE` con estrategia, ayuda o elegibilidad. Antes de escribir una guarda nueva en
+cualquier sitio, mira si el invariante correspondiente ya existe en el esquema: es donde este
+repositorio los pone.
+
+**Cuando las dos mitades estén y se observe la corrida verde**, el gate H6 se puede firmar con acta
+en `docs/gates/`, y F7 queda cerrada.
+
+---
+
+## 3.2 Deuda técnica que esta sesión destapó y no arregló
+
+- **Los archivos de prueba no se typechequean.** `tsc -p tsconfig.json` incluye sólo `src/**/*.ts` en
+  todos los paquetes, y vitest no typechequea. Consecuencia real y observada: un error de nombres de
+  campo en una prueba (`tokensIn` en vez de `inputTokens`) salió en ejecución y no en compilación.
+  No se arregló porque activar el typecheck de pruebas probablemente destape errores en las 85
+  suites, y eso es una tarea con su propio alcance. **Pero conviene saberlo: una prueba que compila
+  en tu cabeza no compila en ningún sitio.**
+
+---
+
 ## 1. Qué es esto
 
 Ejecución del `Plan.md` que está en la raíz del repositorio. Jerarquía de autoridad (§0.1):
@@ -180,10 +270,10 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F1 · H1** BD, roles, evidencia | Completa. El gate solo espera firma y ejecución en `main` |
 | **F2 · H2** verificador | 16 de 16 tareas. **Todo el AC cubierto**; el gate solo espera firma y ejecución en `main` |
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
-| **F4 · H4** pasarela de modelo | **10 de 12.** `T-H4-09` cerrada. `T-H4-10/11` esperan **sólo** que las claves estén pegadas y el gasto autorizado |
+| **F4 · H4** pasarela de modelo | **10 de 12 + `T-H4-10` en curso.** Harness construido y piloto corrido (MXN 1.51). Falta el conjunto material de 200 casos y resolver los cuatro puntos de §3.0.b. `T-H4-11` (BENCH-02) sigue bloqueada: exige dos proveedores y OpenAI aún no puede entrar |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
-| **F7 · H6** sesión determinista sin LLM | **14 de 14.** Falta sólo el AC del gate: `ci:e2e:dry-session` y `ci:mode-separation` |
+| **F7 · H6** sesión determinista sin LLM | **14 de 14.** `ci:mode-separation` **hecho** (12 propiedades). Falta `ci:e2e:dry-session` — ver §3.1 |
 | F8–F16 | No empezadas |
 
 ### Los tres muros que no se tiran con código
@@ -766,7 +856,7 @@ releyendo `ingestion.ts` ya escrito: la etiqueta de versión no se comprobaba co
 
 ## 3.c De sesiones anteriores
 
-### F4 · H4 — pasarela de modelo: 9 de 12
+### F4 · H4 — pasarela de modelo: 10 de 12 + T-H4-10 en curso
 
 Hecho: adaptadores propios, capacidades por binding, validación fail-closed de la salida, contexto de
 sesión por whitelist con filtro de egreso, canarios, `pricing-manifest` + `cost-ledger`, control de
@@ -1119,12 +1209,11 @@ En este orden.
 
 ### Preguntas abiertas para el propietario
 
-1. **Autorización de gasto** — las claves ya están; falta el visto bueno explícito para hacer
-   llamadas facturables. Tope declarado ≈MXN 500/mes con bloqueo duro a 700, ya implementado y
-   probado. **No hay estimación de costo** y no se debe inventar una: no existe manifiesto con
-   precios reales.
-2. **Ventana de frescura del refresco documental** — «inmediatamente antes» no es un número y ninguna
-   autoridad lo fija. Es una decisión de protocolo, no un valor por omisión.
+1. **Autorización de la corrida material de BENCH-01** — el piloto está autorizado y hecho
+   (MXN 1.51). La corrida material **no**. Ahora sí hay cifra: **USD 3.64** con el par fuerte y tres
+   repeticiones, calculada sobre tokens **medidos**, no estimados. Antes de pedirla, resolver los
+   cuatro puntos de §3.0.b.
+2. ~~**Ventana de frescura**~~ — **fijada en 24 h** el 2026-08-18. Ver §3.0.b.
 3. ~~**Docker Desktop**~~ — resuelto el 2026-08-18 con `pnpm run dev:docker`; ver §3.0.c.
 4. **Cuenta administrativa de Infisical** — bloqueada por lo anterior: necesita el stack levantado.
    Hasta entonces los servicios leen de `.env`, que es el modo de arranque, no el de destino.
