@@ -11,7 +11,7 @@
     "properties": [
       {
         "name": "profesor-ia:lockfile-sha256",
-        "value": "e0aa19290444dd23f48806a8df27de1ecdd15ac55c1e1ddfe1bc4b10dcfbca08"
+        "value": "b9c8b5368f18dbafa62c053a234a9ae351697b8bf92c1762bc421f28f5438ddd"
       },
       {
         "name": "profesor-ia:node-version",
@@ -2828,6 +2828,194 @@
     },
     {
       "type": "library",
+      "name": "@profesor-ia/observability",
+      "version": "link:../../tools/observability",
+      "purl": "pkg:npm/%40profesor-ia%2Fobservability@link:../../tools/observability"
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/api",
+      "version": "1.9.1",
+      "purl": "pkg:npm/%40opentelemetry%2Fapi@1.9.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/resources",
+      "version": "1.30.1",
+      "purl": "pkg:npm/%40opentelemetry%2Fresources@1.30.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/sdk-metrics",
+      "version": "1.30.1",
+      "purl": "pkg:npm/%40opentelemetry%2Fsdk-metrics@1.30.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/semantic-conventions",
+      "version": "1.43.0",
+      "purl": "pkg:npm/%40opentelemetry%2Fsemantic-conventions@1.43.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/exporter-trace-otlp-http",
+      "version": "0.57.2",
+      "purl": "pkg:npm/%40opentelemetry%2Fexporter-trace-otlp-http@0.57.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/core",
+      "version": "1.30.1",
+      "purl": "pkg:npm/%40opentelemetry%2Fcore@1.30.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/otlp-exporter-base",
+      "version": "0.57.2",
+      "purl": "pkg:npm/%40opentelemetry%2Fotlp-exporter-base@0.57.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/otlp-transformer",
+      "version": "0.57.2",
+      "purl": "pkg:npm/%40opentelemetry%2Fotlp-transformer@0.57.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/sdk-trace-base",
+      "version": "1.30.1",
+      "purl": "pkg:npm/%40opentelemetry%2Fsdk-trace-base@1.30.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/sdk-trace-node",
+      "version": "1.30.1",
+      "purl": "pkg:npm/%40opentelemetry%2Fsdk-trace-node@1.30.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/context-async-hooks",
+      "version": "1.30.1",
+      "purl": "pkg:npm/%40opentelemetry%2Fcontext-async-hooks@1.30.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/propagator-b3",
+      "version": "1.30.1",
+      "purl": "pkg:npm/%40opentelemetry%2Fpropagator-b3@1.30.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/propagator-jaeger",
+      "version": "1.30.1",
+      "purl": "pkg:npm/%40opentelemetry%2Fpropagator-jaeger@1.30.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@opentelemetry/exporter-metrics-otlp-http",
+      "version": "0.57.2",
+      "purl": "pkg:npm/%40opentelemetry%2Fexporter-metrics-otlp-http@0.57.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "@better-auth/passkey",
       "version": "1.6.29",
       "purl": "pkg:npm/%40better-auth%2Fpasskey@1.6.29",
@@ -2913,19 +3101,6 @@
         {
           "license": {
             "id": "MIT"
-          }
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "name": "@opentelemetry/semantic-conventions",
-      "version": "1.43.0",
-      "purl": "pkg:npm/%40opentelemetry%2Fsemantic-conventions@1.43.0",
-      "licenses": [
-        {
-          "license": {
-            "id": "Apache-2.0"
           }
         }
       ]

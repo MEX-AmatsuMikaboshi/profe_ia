@@ -115,6 +115,18 @@ module.exports = {
       },
     },
     {
+      name: 'verificacion-sin-telemetria-de-red',
+      severity: 'error',
+      comment:
+        'I-3 / T-H3-05: el verificador corre con `network_mode: none` y su telemetria sale por ' +
+        'archivo, que el receptor `filelog` del colector lee. Importar `@profesor-ia/observability` ' +
+        'meteria un exportador OTLP —un cliente HTTP— en la ruta de verificacion, que es justo lo ' +
+        'que I-3 prohibe. Es tambien la razon por la que este arranque no vive en `contracts`: de ' +
+        '`contracts` depende `logic-core`, asi que la dependencia llegaria sola.',
+      from: { path: VERIFICATION_PATH },
+      to: { path: '(^tools/observability|@profesor-ia/observability)' },
+    },
+    {
       name: 'sin-dependencias-no-resueltas',
       severity: 'error',
       comment: 'Una importación que no resuelve invalida el análisis arquitectónico.',
