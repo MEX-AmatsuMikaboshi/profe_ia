@@ -35,8 +35,9 @@ con las propiedades que `Plan.md` §F7 enumera: reactivo consumido no reaparece,
 contexto del agente, dominio no se alcanza sin transferencia, corrección no elimina original,
 intervención humana registrada.
 
-**`CONTENT_TOKEN` ya existe.** Todo hasta `T-H6-09` está **VERIFICADA** con corrida observada en
-`main`. `T-H6-10…14` están `HECHA` y esperan observar sus corridas.
+**`CONTENT_TOKEN` ya existe.** **Las catorce tareas de F7 están `VERIFICADA`**: la corrida
+`32082985975` sobre `8670f63` dejó los seis jobs en verde en `main`, observados job por job. No
+queda ninguna tarea de F7 esperando corrida.
 
 **Docker Desktop no arranca en esta máquina** («unable to start»), así que las pruebas contra
 PostgreSQL no se pueden correr en local: sólo en CI. Las **1327 unitarias** sí. No se dio por verde
@@ -831,7 +832,7 @@ otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto para `T-H6-07` (corrida `31994856509`):
+Observado, no supuesto, para `T-H6-13` y todo lo anterior (corrida `32082985975` sobre `8670f63`):
 
 | Job | Resultado |
 |---|---|
@@ -842,8 +843,8 @@ Observado, no supuesto para `T-H6-07` (corrida `31994856509`):
 | `ci:lint · ci:typecheck · ci:unit · ci:build` | ✅ |
 | `ci:logic:golden · ci:logic:pbt · ci:logic:no-net` | ✅ |
 
-`T-H6-08` debe obtener su propia corrida verde después del push. Se comprueba job por
-job con:
+Las catorce tareas de F7 quedan `VERIFICADA` con esa corrida. La siguiente tarea que se suba debe
+obtener la suya: se comprueba job por job con:
 
 ```bash
 gh api repos/MEX-AmatsuMikaboshi/profe_ia/actions/runs/<id>/jobs --jq '.jobs[] | select(.conclusion=="failure") | .name, (.steps[] | select(.conclusion=="failure") | .name)'
