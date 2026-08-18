@@ -391,4 +391,15 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   `noUncheckedIndexedAccess` y `verbatimModuleSyntax`. Consecuencia: dentro de `apps/web` las
   importaciones relativas van **sin** extensión `.js` —el resolvedor de Next no mapea `.js` a
   `.tsx`—, al revés que en el resto del repo, que es NodeNext.
+- **D-30 — `sharp` fuera del árbol en vez de una excepción de licencia.** Next declara `sharp`
+  como dependencia opcional para optimizar imágenes, y arrastra `@img/sharp-libvips-*` bajo
+  **LGPL-3.0-or-later**, fuera de la política conservadora. No se le registró excepción porque
+  `apps/web` **no usa `next/image` en ningún sitio**: asumir las obligaciones de una copyleft a
+  cambio de nada es peor negocio que quitarla. Se excluye con
+  `pnpm.ignoredOptionalDependencies` —337 líneas menos de lockfile— y `next.config.mjs` declara
+  `images: { unoptimized: true }` para que el apagado sea explícito y no un fallback en runtime.
+  **Lo que este episodio enseña vale más que la decisión:** el control de licencias es
+  **dependiente de plataforma**. En Windows la variante Linux ni se instala, así que
+  `ci:supply:sbom` pasaba en local y fallaba en CI. Un verde local de ese check no dice nada del
+  verde en Linux; el único juez es la corrida de CI.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

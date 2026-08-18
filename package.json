@@ -51,6 +51,33 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ],
+    "_ignoredOptionalDependencies_comment": "`sharp` es dependencia opcional de Next para optimizar imágenes, y arrastra `@img/sharp-libvips-*` bajo LGPL-3.0-or-later, fuera de la política conservadora de licencias. No se registra una excepción porque `apps/web` **no usa `next/image` en ningún sitio**: tomar una dependencia copyleft que no se usa sería asumir sus obligaciones a cambio de nada. `next.config.mjs` declara `images.unoptimized` para que el comportamiento sea explícito y no un fallback en runtime. Se descubrió en CI y no en local: las variantes son por plataforma, así que en Windows la de Linux ni se instala (T-H6-13).",
+    "ignoredOptionalDependencies": [
+      "@img/sharp-darwin-arm64",
+      "@img/sharp-darwin-x64",
+      "@img/sharp-freebsd-wasm32",
+      "@img/sharp-libvips-darwin-arm64",
+      "@img/sharp-libvips-darwin-x64",
+      "@img/sharp-libvips-linux-arm",
+      "@img/sharp-libvips-linux-arm64",
+      "@img/sharp-libvips-linux-ppc64",
+      "@img/sharp-libvips-linux-s390x",
+      "@img/sharp-libvips-linux-x64",
+      "@img/sharp-libvips-linuxmusl-arm64",
+      "@img/sharp-libvips-linuxmusl-x64",
+      "@img/sharp-linux-arm",
+      "@img/sharp-linux-arm64",
+      "@img/sharp-linux-ppc64",
+      "@img/sharp-linux-s390x",
+      "@img/sharp-linux-x64",
+      "@img/sharp-linuxmusl-arm64",
+      "@img/sharp-linuxmusl-x64",
+      "@img/sharp-wasm32",
+      "@img/sharp-win32-arm64",
+      "@img/sharp-win32-ia32",
+      "@img/sharp-win32-x64",
+      "sharp"
+    ],
     "_overrides_comment": "GHSA-q8mj-m7cp-5q26 (qs <=6.15.1, DoS) llega por @stryker-mutator/core > typed-rest-client. Se resuelve elevando la versión, no documentando una excepción: Plan.md §3 exige que un advisory aplicable sin mitigación bloquee el gate.",
     "overrides": {
       "qs": "^6.15.3"

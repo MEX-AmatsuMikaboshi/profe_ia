@@ -16,6 +16,12 @@ const nextConfig = {
   env: {},
   // `poweredByHeader` anuncia la pila al exterior sin dar nada a cambio.
   poweredByHeader: false,
+  // El optimizador de imágenes queda declarado como apagado, no como algo que
+  // se cae en runtime. Necesita `sharp`, que arrastra `@img/sharp-libvips-*`
+  // bajo LGPL-3.0-or-later; la app no usa `next/image` en ningún sitio, así
+  // que la dependencia se excluye del árbol (`ignoredOptionalDependencies` en
+  // la raíz) en vez de registrarle una excepción de licencia.
+  images: { unoptimized: true },
 };
 
 export default nextConfig;

@@ -76,6 +76,12 @@ Diseño completo en [`../session/clase-ui.md`](../session/clase-ui.md). Lo impre
    superior. Lección: un contrato que nadie ha ejercitado contra su productor no está comprobado.
 3. **`ci:supply:sbom` no tenía dónde registrar una revisión de licencia** (D-28).
 
+**El control de licencias depende de la plataforma, y muerde.** `ci:supply:sbom` pasó en local y
+falló en CI: Next arrastra `sharp`, cuyas variantes `@img/sharp-libvips-*` son **LGPL-3.0-or-later**,
+y en Windows la variante Linux ni se instala. Se resolvió sacando `sharp` del árbol —`apps/web` no
+usa `next/image`— en vez de registrarle una excepción (D-30). **Regla que queda:** un verde local de
+`ci:supply:sbom` no dice nada del verde en Linux.
+
 **Nota aparte:** `pnpm run plan:status` apunta a `scripts/plan/check-status.mjs`, que **nunca ha
 existido** en el repositorio. No está en la batería de §4 ni en CI. No se arregló porque no consta
 qué debía comprobar, y elegirlo sería inventar.
