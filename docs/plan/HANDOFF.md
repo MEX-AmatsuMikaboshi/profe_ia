@@ -1,23 +1,20 @@
 # HANDOFF — punto de continuación
 
-**Fecha del checkpoint:** 2026-08-17.
-**Qué se cerró aquí:** `T-H6-09…12`, `T-H6-14` y **`T-H6-13`** (bitácora de evidencia, clasificación
-de dudas, exposición externa, `foundation_phase`, modo guion/degradado y la interfaz mínima de
-Clase).
+**Fecha del checkpoint:** 2026-08-18.
+**Qué se cerró aquí:** `T-H6-09…14` (F7 completa) y **`T-H4-09`** (refresco documental de
+candidatos).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
-> **Lo primero:** F7 está a **14 de 14 tareas**. Lo único que falta para cerrar la fase es el **AC
-> del gate H6**: `ci:e2e:dry-session` y `ci:mode-separation`, más la ejecución verde en `main`.
-> Sigue siendo el último punto del plan donde se cierra una fase entera **sin corpus, sin
-> proveedores y sin gasto**.
+> **Lo primero, y es una novedad:** el propietario tiene ya las **cuatro claves de proveedor** y las
+> pega en `infra/compose/.env` (ver §3.0.b). En cuanto estén, `T-H4-10` (BENCH-01) es lo siguiente
+> ejecutable, y con ello se abre el camino a F8.
 >
-> Lo que `T-H6-13` dejó puesto y conviene no rehacer está en §3.0; el diseño completo, en
-> [`../session/clase-ui.md`](../session/clase-ui.md).
+> **F7 está completa y verificada**: 14 de 14 tareas con corrida observada. Falta sólo el **AC del
+> gate H6** —`ci:e2e:dry-session` y `ci:mode-separation`—, que no es una tarea `T-*` y **no cuesta
+> ni un centavo**. Es la vía barata para firmar una fase entera.
 >
-> **F11 no es alcanzable escribiendo código.** `T-LSU-01` *es* el propietario usando el sistema de
-> principio a fin; `T-H7-01` exige el ganador `BENCH-01`, que sigue bloqueado por credenciales y
-> autorización de gasto; y F10 exige proveedores de voz de pago. Lo construible de F8/F9/F10 puede
-> hacerse, pero **ninguno de esos gates puede cerrarse** por mucho código que se escriba. Ver §2.
+> **F11 sigue sin ser alcanzable escribiendo código.** `T-LSU-01` *es* el propietario usando el
+> sistema de principio a fin. Ver §2.
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
 [`PLAN_STATUS.md`](PLAN_STATUS.md), que es la fuente de verdad de avance (§12 del plan).
@@ -35,9 +32,9 @@ con las propiedades que `Plan.md` §F7 enumera: reactivo consumido no reaparece,
 contexto del agente, dominio no se alcanza sin transferencia, corrección no elimina original,
 intervención humana registrada.
 
-**`CONTENT_TOKEN` ya existe.** **Las catorce tareas de F7 están `VERIFICADA`**: la corrida
-`32082985975` sobre `8670f63` dejó los seis jobs en verde en `main`, observados job por job. No
-queda ninguna tarea de F7 esperando corrida.
+**`CONTENT_TOKEN` ya existe.** **No queda ninguna tarea esperando corrida**: las catorce de F7 con
+la corrida `32082985975`, y `T-H4-09` con la `32103802556`, las dos observadas job por job en
+`main`.
 
 **Docker Desktop no arranca en esta máquina** («unable to start»), así que las pruebas contra
 PostgreSQL no se pueden correr en local: sólo en CI. Las **1327 unitarias** sí. No se dio por verde
@@ -67,6 +64,53 @@ Diseño completo en [`../session/clase-ui.md`](../session/clase-ui.md). Lo impre
   autoaloja con `@fontsource/archivo`, con su excepción de licencia **registrada** (D-28).
 - **Dentro de `apps/web` las importaciones relativas van sin extensión `.js`** (D-29). Es al revés
   que en el resto del repo, y es correcto: Next resuelve con bundler, no con NodeNext.
+
+## 3.0.b Credenciales de proveedor — dónde están y qué desbloquean
+
+`T-H4-09` dejó el hueco declarado. **El propietario dijo tener las cuatro claves listas para pegar**
+en `infra/compose/.env` (archivo no versionado; la plantilla vacía está en `.env.example`):
+
+```
+MODEL_CREDENTIAL_ANTHROPIC_SESION=
+MODEL_CREDENTIAL_ANTHROPIC_AUTORIA=
+MODEL_CREDENTIAL_OPENAI_SESION=
+MODEL_CREDENTIAL_OPENAI_AUTORIA=
+```
+
+**Cuatro y no dos**, por dos ejes distintos: por perfil, porque P-II §8.2 congela que `SESION` y
+`AUTORIA` usan credenciales separadas —y la separación sólo protege si las cadenas difieren de
+verdad—; por proveedor, porque en BENCH-01 los dos compiten por el mismo perfil y en BENCH-02 el
+generador y el crítico deben ser de familias distintas.
+
+**Lo primero que debe hacer la siguiente sesión con ellas:** comprobar que están y que las dos de un
+mismo proveedor **no son la misma cadena**. Una credencial ausente o en blanco produce
+`MissingCredentialError` y nunca cae a la de otro perfil; eso ya está probado.
+
+Con ellas se puede ejecutar `T-H4-10` (BENCH-01). Ojo con el orden que la norma fija: **la corrida
+del refresco documental va pegada al benchmark**, no antes — el mecanismo está hecho, la corrida no.
+Falta además fijar la ventana de frescura, que es una decisión de protocolo del propietario y no un
+valor por omisión (`docs/model/documentary-refresh.md`).
+
+El control de gasto ya está implementado: objetivo ≈MXN 500/mes, bloqueo duro a MXN 700, sin
+`unblock`/`reset`/`force` y con pruebas de que no existen. **No hay estimación de costo del
+benchmark**: no existe ningún manifiesto con precios reales, y los pisos de `T-H4-10` son 200 casos
+mínimos por modelo más repeticiones. Inventar una cifra en pesos sería exactamente lo que este
+proyecto no hace.
+
+## 3.0.c Docker Desktop — diagnosticado, sin resolver
+
+`com.docker.service` estaba detenido; el propietario lo puso en `Running`/`Automatic` y **el motor
+siguió sin arrancar**. El fallo real es otro: Docker Desktop **no puede crear sockets AF_UNIX en
+`%LOCALAPPDATA%`**, y falla idéntico en dos subsistemas independientes (`Inference manager` y
+`Secrets Engine`), también sobre archivos que él mismo acaba de crear. Descartados: redirección de
+carpeta, antivirus exótico (sólo Defender) y versión rara (4.86.0).
+
+Pendiente del propietario, en este orden: **reiniciar el equipo** (nunca se hizo y libera el estado
+de sockets del kernel) y, si persiste, *Repair* o reinstalación. Quedaron dos directorios huérfanos
+renombrados que se pueden borrar tras el reinicio: `%LOCALAPPDATA%\Docker\run.roto` y
+`%LOCALAPPDATA%\docker-secrets-engine.roto`.
+
+Consecuencia mientras tanto: **las pruebas contra PostgreSQL sólo corren en CI**. Ahí pasan.
 
 **Tres cosas que esa tarea destapó fuera de sí misma**, y que valen para todo el repo:
 
@@ -114,7 +158,7 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F1 · H1** BD, roles, evidencia | Completa. El gate solo espera firma y ejecución en `main` |
 | **F2 · H2** verificador | 16 de 16 tareas. **Todo el AC cubierto**; el gate solo espera firma y ejecución en `main` |
 | **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
-| **F4 · H4** pasarela de modelo | **9 de 12.** Todo lo construible está hecho. `T-H4-09/10/11` esperan credenciales de proveedor y autorización de gasto |
+| **F4 · H4** pasarela de modelo | **10 de 12.** `T-H4-09` cerrada. `T-H4-10/11` esperan **sólo** que las claves estén pegadas y el gasto autorizado |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
 | **F7 · H6** sesión determinista sin LLM | **14 de 14.** Falta sólo el AC del gate: `ci:e2e:dry-session` y `ci:mode-separation` |
@@ -832,7 +876,7 @@ otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto, para `T-H6-13` y todo lo anterior (corrida `32082985975` sobre `8670f63`):
+Observado, no supuesto, para `T-H4-09` y todo lo anterior (corrida `32103802556` sobre `e8cede1`):
 
 | Job | Resultado |
 |---|---|
@@ -1032,30 +1076,36 @@ formalizado como submódulo** en `.gitmodules`: **D-2 cerrada** el 15-08-2026.
 En este orden.
 
 1. **Lee este archivo entero y después `PLAN_STATUS.md`.** No empieces por el código.
-2. **Observa la corrida de CI posterior al último push:**
-
-   ```bash
-   gh secret list --repo MEX-AmatsuMikaboshi/profe_ia
-   ```
-
-   `CONTENT_TOKEN` ya está configurado. Si los seis jobs quedan en verde, ese es el momento de mover
-   tareas de `HECHA` a `VERIFICADA` en `PLAN_STATUS.md`, una por una y solo las que su check cubra.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1274 pruebas**. Si da
-   menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó.
-4. **Sigue F7 · H6 por `T-H6-09`.** Lee antes `Plan.md` §F7 entero —son 14 tareas y varias se
-   condicionan entre sí— y navega el Maestro solo por lo que cada tarea cite (`^#{1,3} ` con Grep).
-   Empieza por §3, que enumera las tres cosas que conviene tener claras antes de tocar esa tarea.
+2. **Comprueba las credenciales.** El propietario dijo dejar las cuatro pegadas en
+   `infra/compose/.env` (§3.0.b). Comprueba que están y que **las dos de un mismo proveedor no son
+   la misma cadena**: si lo fueran, la separación `SESION`/`AUTORIA` de P-II §8.2 dejaría de
+   proteger de nada. No las copies a ningún otro sitio y no las imprimas.
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1351 pruebas unitarias**.
+   Si da menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó. Las de
+   PostgreSQL sólo corren en CI mientras Docker siga sin arrancar (§3.0.c).
+4. **Elige rama, y son dos opciones legítimas:**
+   - **Barata y cierra fase:** el **AC del gate H6** —`ci:e2e:dry-session` y `ci:mode-separation`—.
+     No cuesta nada, no necesita proveedores y firma F7 entera. `apps/web/src/clase/dry-session.ts`
+     es el punto de partida natural: sesión seca reproducible, sin reloj ni azar.
+   - **Desbloquea F8:** `T-H4-10` (BENCH-01). Requiere las claves y la autorización de gasto. Lee
+     antes `docs/model/documentary-refresh.md`: la corrida del refresco documental va **pegada** al
+     benchmark, y falta fijar la ventana de frescura, que es decisión del propietario.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
-   verde y `git push origin main`. Si tocas `content/`, **primero el submódulo** (§8).
+   verde y `git push origin main`. Después **observa la corrida** job por job (§4) antes de mover
+   nada a `VERIFICADA`. Si tocas `content/`, **primero el submódulo** (§8).
 
 ### Preguntas abiertas para el propietario
 
-Ninguna bloquea el trabajo de código, pero las dos llevan tiempo esperando:
-
-1. **Credenciales de proveedor y autorización de gasto** — bloquean `T-H4-10/11`, y con ellas la
-   elección del modelo de la que depende F8. El tope declarado es ≈MXN 500/mes con bloqueo duro a los
-   700, y el gate ya está implementado y probado.
-2. **Cuenta administrativa de Infisical** — hasta entonces los servicios leen credenciales de `.env`,
-   que es el modo de arranque, no el de destino.
-
-Las dos son acciones del propietario por naturaleza, no tareas pendientes de nadie más.
+1. **Autorización de gasto** — las claves ya están; falta el visto bueno explícito para hacer
+   llamadas facturables. Tope declarado ≈MXN 500/mes con bloqueo duro a 700, ya implementado y
+   probado. **No hay estimación de costo** y no se debe inventar una: no existe manifiesto con
+   precios reales.
+2. **Ventana de frescura del refresco documental** — «inmediatamente antes» no es un número y ninguna
+   autoridad lo fija. Es una decisión de protocolo, no un valor por omisión.
+3. **Docker Desktop** — reiniciar el equipo; ver §3.0.c.
+4. **Cuenta administrativa de Infisical** — bloqueada por lo anterior: necesita el stack levantado.
+   Hasta entonces los servicios leen de `.env`, que es el modo de arranque, no el de destino.
+5. **W0 sobre fuentes reales** — ojo, **no es sólo una acción del propietario**: no hay comando de
+   W0 en el CLI y `authoring-worker` no ejecuta ninguna etapa. F5 construyó validadores, no un
+   orquestador. Además `suitabilityScore()` y `shouldStopDiscovery()` fallan cerrado esperando
+   calibración *con el corpus real*, o sea durante la propia corrida.
