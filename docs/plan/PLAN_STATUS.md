@@ -66,9 +66,9 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 | T-H3-02 | REQUIRED | HECHA | `scripts/dev/compose.mjs`, `scripts/dev/generate-env.mjs`, `scripts/db/apply-migrations.mjs` | 2026-08-15 | `dev:env`/`dev:up`/`dev:seed`/`dev:backup`/`dev:restore` (+ `down`, `status`, `logs`). `dev:seed` ejecutado contra el entorno real: **6 migraciones aplicadas y 7 roles acreditados**. Corre **dentro** de la red interna: la base nunca se publica al host. `dev:env` no sobreescribe un `.env` existente. |
 | T-H3-03 | REQUIRED | HECHA | `docs/env/windows.md` | 2026-08-15 | Windows 11 Pro 10.0.26200, Docker 29.7.2 motor Linux, WSL2, Node 24.16.0, PostgreSQL 17.11. Con tiempos base medidos y las cinco trampas del entorno, incluida la nueva: el Bash de Git rompe `$APPDATA` y pnpm no resuelve. |
 | T-H3-04 | CRITICAL | HECHA | `scripts/infra/check-compose-hardening.mjs` — **159 comprobaciones en verde** | 2026-08-15 | Lee la configuración **resuelta** por Docker, no el YAML. Socket de Docker sin montar en ningún servicio, `no-new-privileges`, `cap_drop ALL`, raíz de solo lectura, sin root, seccomp activo, puertos solo en `127.0.0.1`. Y las tres fronteras: `verifier` con `network_mode: none` (I-3), `solutions-private` solo en autoría (I-2), sondas solo en medición (I-4). Cuatro imposibilidades técnicas registradas y **impresas en cada corrida**. |
-| T-H3-05 | REQUIRED | EN_CURSO | `infra/compose/otel-collector.yaml` | 2026-08-15 | Colector local con OTLP y `filelog` (única vía del verificador, que no tiene red). **Los servicios no emiten spans**: no hay operación que trazar hasta F7/F8, y un span de «arranqué» para poder decir que hay trazas sería éxito simulado. Se cierra con la primera operación real. |
+| T-H3-05 | REQUIRED | EN_CURSO (rama `t-h3-05-observabilidad`, sin mezclar: `ci:supply:drift` en rojo) | `infra/compose/otel-collector.yaml` | 2026-08-15 | Colector local con OTLP y `filelog` (única vía del verificador, que no tiene red). **Los servicios no emiten spans**: no hay operación que trazar hasta F7/F8, y un span de «arranqué» para poder decir que hay trazas sería éxito simulado. Se cierra con la primera operación real. |
 
-**Gate H3:** `docs/gates/H3.md` — abierto. Falta `T-H3-05`, la inicialización de Infisical (acción del propietario) y la ejecución en `main`.
+**Gate H3:** `docs/gates/H3.md` — abierto. Falta `T-H3-05` —**empezada** el 2026-08-18 en la rama `t-h3-05-observabilidad`, bloqueada por dos advisories de la línea 1.x de OpenTelemetry; ver [`../session/observabilidad.md`](../session/observabilidad.md)—, la inicialización de Infisical (acción del propietario) y la ejecución en `main`.
 
 ## F4 — H4 · Pasarela de modelo y benchmark (9 de 12 tareas; 3 bloqueadas por acción del propietario)
 
@@ -163,7 +163,7 @@ en que un reactivo consumido reaparece. Detalle en
 
 | Fase | Hito | Estado | Bloqueo actual |
 |---|---|---|---|
-| F3 | H3 · Entorno local | EN_CURSO | 4 de 5 tareas; `T-H3-05` espera la primera operación instrumentable |
+| F3 | H3 · Entorno local | EN_CURSO | 4 de 5 tareas; `T-H3-05` **empezada** en la rama `t-h3-05-observabilidad` y bloqueada por advisories de OTel 1.x (subir a 2.x) |
 | F2 | H2 · cierre del gate | EN_CURSO | Las 16 tareas están HECHAS; falta la ejecución en `main` |
 | F4 | H4 · Pasarela de modelo | EN_CURSO | **10 de 12 tareas + `T-H4-10` en curso.** Harness y piloto verificados (CI `32114293161`); falta el conjunto material de 200 casos y la autorización de gasto de la corrida material. `T-H4-11` sigue bloqueada: exige dos proveedores |
 | F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |

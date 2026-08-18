@@ -20,7 +20,13 @@ criterio técnico de F7** y trae el acta [`../gates/H6.md`](../gates/H6.md).
 >
 > **La corrida está observada:** `32164277686` sobre `5217680`, **los siete jobs en verde**, incluido
 > `ci:mode-separation · ci:e2e:dry-session`. F7 queda con el AC cubierto y el acta **sólo espera
-> firmas**. Ver §3.1 para elegir rama.
+> firmas**.
+>
+> **`T-H3-05` se empezó y está a medias en la rama `t-h3-05-observabilidad`**, que **no está en
+> `main` a propósito**: `ci:supply:drift` está en rojo. La línea 1.x del SDK de OpenTelemetry
+> arrastra dos advisories con parche aguas arriba, así que la mitigación es **subir a la 2.x**, no
+> registrar una excepción — D-28 existe justo para que ese atajo no se tome por inercia. Estado
+> completo en [`../session/observabilidad.md`](../session/observabilidad.md); resumen en §3.1.b.
 >
 > **Se gastó dinero real por primera vez: MXN 1.51 (≈ USD 0.09)** en tres corridas piloto. El
 > propietario autorizó un piloto acotado, **no la corrida material**. Volver a gastar exige
@@ -218,9 +224,8 @@ gate H6 (`32164277686`, siete de siete). [`../gates/H6.md`](../gates/H6.md) tien
 
 Hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» sin más:
 
-1. **`T-H3-05` — trazas.** Es la que acaba de desbloquearse y la más barata: la sesión seca completa
-   es la primera operación real que trazar, que era exactamente lo que faltaba. El colector ya está
-   en `infra/compose/otel-collector.yaml`. Cierra F3 y quita una excepción del acta de H3.
+1. **`T-H3-05` — trazas. EMPEZADA, a medias, en la rama `t-h3-05-observabilidad`.** Ver §3.1.b: lo
+   siguiente concreto es subir OTel a la 2.x y escribir `ci:infra:otel`.
 2. **Mecanismos de F8 contra transporte inyectado.** Anclaje obligatorio, filtro de egreso y suite
    adversarial **sí** se construyen sin proveedor (§2, muro 1). Lo que no se puede es firmar el gate
    H7, que exige una sesión real con el binding ganador.
@@ -235,6 +240,37 @@ Hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» si
 Mi recomendación, si hay que elegir una: **la 1**, porque es la única que cierra una fase entera y
 acaba de dejar de estar bloqueada; y la **4** en paralelo, porque es la que desatasca F8 y la parte
 lenta es humana, no de código.
+
+### 3.1.b `T-H3-05` a medias: dónde está y qué falta
+
+**Rama `t-h3-05-observabilidad`**, commit `3010fc5`, empujada al remoto. **No mezclar con `main`
+hasta que `ci:supply:drift` esté en verde.**
+
+**El bloqueo, primero.** `pnpm audit` reporta dos advisories aplicables sobre la línea 1.x del SDK
+que se fijó: `@opentelemetry/propagator-jaeger` (high, parcheado en `>=2.9.0`) y
+`@opentelemetry/core` (moderate, `>=2.8.0`). Los dos se arreglan **subiendo a la línea 2.x**, que
+cambia la superficie —`Resource` deja de ser clase y se usa `resourceFromAttributes()`— pero el
+cambio vive entero en `tools/observability/src/index.ts`. **No se registró una excepción para
+seguir**: hay parche aguas arriba, así que la mitigación es actualizar (D-28).
+
+**Lo que ya está y no hay que rehacer:** `tools/observability` (D-36, con la justificación de por qué
+no puede ir en `contracts`), el canal de veredicto de `apps/api` instrumentado con los dos tramos del
+spool medidos por separado, el verificador escribiendo al archivo que lee `filelog` —brecha real: el
+colector *decía* leerlo y el verificador escribía sólo a stdout sin montar el volumen—, la regla
+`verificacion-sin-telemetria-de-red` con dos siembras y un control positivo, y el endpoint OTLP en los
+cinco servicios con red. `ci:infra:hardening` sigue en 159.
+
+**Lo que falta, en orden:** (1) OTel 2.x; (2) **`ci:infra:otel`**, el check con stack real, que es la
+prueba que el propietario eligió y la única que afirma que las trazas llegan; (3) decidir la
+verbosidad del exportador `debug`, hoy `normal`, que no imprime atributos y por tanto no permite
+comprobar ni los atributos ni la ausencia de fuga; (4) instrumentar web y workers cuando tengan
+operación, en F8; (5) retirar la excepción nº 3 del acta de H3.
+
+**Lo que no se afirma:** nadie ha visto todavía un span llegar al colector. El código exporta y el
+compose lo cablea, pero sin (2) eso no tiene evidencia — y es exactamente la distinción que mantuvo
+esta tarea abierta desde F3, así que no se cierra por analogía.
+
+---
 
 ### Lo que dejó `ci:e2e:dry-session`, y que conviene no rehacer
 
