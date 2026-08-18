@@ -1,7 +1,7 @@
 import { context, trace, type Attributes, type AttributeValue, type Span, type Tracer } from '@opentelemetry/api';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
-import { Resource } from '@opentelemetry/resources';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { BatchSpanProcessor, NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
@@ -158,7 +158,11 @@ export function startTelemetry(options: TelemetryOptions): TelemetryHandle {
     );
   }
 
-  const resource = new Resource({
+  // OTel 2.x: `Resource` dejó de ser clase y se construye por función. El
+  // cambio entró al subir de la línea 1.x, que arrastraba dos advisories con
+  // parche aguas arriba (GHSA-45rx-2jwx-cxfr, GHSA-8988-4f7v-96qf); por D-28 la
+  // mitigación de un advisory con parche es actualizar, no registrar excepción.
+  const resource = resourceFromAttributes({
     [ATTR_SERVICE_NAME]: options.service,
     ...(options.version === undefined ? {} : { [ATTR_SERVICE_VERSION]: options.version }),
   });
