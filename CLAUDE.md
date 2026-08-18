@@ -47,7 +47,7 @@ pnpm run ci:lint && pnpm run ci:typecheck && pnpm run ci:unit && pnpm run ci:bui
 Verificación completa de que todo sigue en pie (~1 min sin Docker):
 
 ```bash
-pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net && pnpm run db:grants:check && pnpm run ci:db:negative && pnpm run ci:supply:sbom && pnpm run ci:supply:drift && pnpm run ci:infra:hardening
+pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && pnpm run ci:mode-separation && pnpm run ci:e2e:dry-session && pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net && pnpm run db:grants:check && pnpm run ci:db:negative && pnpm run ci:supply:sbom && pnpm run ci:supply:drift && pnpm run ci:infra:hardening
 ```
 
 | Comando | Qué hace |
@@ -58,6 +58,7 @@ pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && 
 | `node scripts/arch/verify-depcruise-catches.mjs` | Que esas reglas **detectan** una violación sembrada |
 | `pnpm run ci:logic:golden` / `:pbt` / `:no-net` | Conjunto dorado (413 casos) / propiedades fast-check / pureza del verificador |
 | `pnpm run ci:logic:mutation` | Stryker sobre `logic-core` (~8–9 min; se corre aparte) |
+| `pnpm run ci:mode-separation` / `ci:e2e:dry-session` | El AC del gate H6: separación de modos (12 propiedades) y sesión seca E2E reconstruible desde eventos (33) |
 | `pnpm run ci:gateway:fail-closed` | Que la pasarela no envía parámetros no declarados por el binding ni acepta un binding sin snapshot ni huella |
 | `pnpm run db:grants:check` | Que la migración de `GRANT` corresponde a la matriz vigente |
 | `pnpm run ci:supply:sbom` / `:drift` | SBOM CycloneDX + digest de lockfile / drift y advisories (bloqueante) |
@@ -190,12 +191,22 @@ Son reales y cuestan una hora cada una si no se conocen (`docs/env/windows.md`).
    `%LOCALAPPDATA%\Docker\run` **y** `%LOCALAPPDATA%\docker-secrets-engine` —los dos, limpiar uno
    sólo mueve el fallo al otro— antes de lanzarlo. Desde el icono seguirá fallando (D-31).
 
-## 6. Estado actual (2026-08-15)
+## 6. Estado actual (2026-08-18)
 
-F0/H0, F1/H1 y F2/H2 completas; F3/H3 con 4 de 5 tareas (`T-H3-05`, trazas, espera la primera
-operación instrumentable en F7/F8 — un span de «arranqué» sería éxito simulado). F4–F16 no empezadas.
-505 pruebas en verde: 378 unitarias + 127 contra PostgreSQL 17 real. Mutation testing en 90.31 % con
-cero mutantes sin cobertura.
+F0/H0, F1/H1 y F2/H2 completas. F3/H3 con 4 de 5 (`T-H3-05`, trazas: **ya no está bloqueada**, la
+sesión seca completa es la primera operación instrumentable, pero nadie la ha instrumentado; un span
+de «arranqué» sería éxito simulado). F4/H4 con 10 de 12 más `T-H4-10` en curso — harness de BENCH-01
+y piloto medido, **la corrida material no está autorizada**. F5/H4.5 con 8 de 8 y F6/H5 con 17 de 17
+**mecanismos, no contenido**: `content/` y `research/` siguen en placeholders porque nadie ha corrido
+W0 sobre fuentes reales. F7/H6 con 14 de 14 y **el AC del gate cubierto**
+(`ci:mode-separation` + `ci:e2e:dry-session`). F8–F16 no empezadas.
+
+**1618 pruebas en verde: 1487 unitarias + 131 contra PostgreSQL 17 real.** Mutation testing en
+90.31 % con cero mutantes sin cobertura (Stryker muta sólo `logic-core`: las pruebas de otros
+paquetes no mueven ese número en ninguna dirección).
+
+**El estado tarea por tarea, con evidencia, está en `docs/plan/PLAN_STATUS.md`, y por dónde seguir en
+`docs/plan/HANDOFF.md` §3.1.** Este apartado se queda rancio entre sesiones; esos dos no.
 
 **Remoto del monorepo:** <https://github.com/MEX-AmatsuMikaboshi/profe_ia.git> (`origin/main`).
 **Al terminar una tarea `T-*`, se sube**: un commit por tarea, con `PLAN_STATUS.md` actualizado en el

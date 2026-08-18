@@ -193,4 +193,6 @@ correcciones por autoridad superior de `PLAN_STATUS.md`.
   y nada más; el bucle de sesión es `T-H7-01` (F8).
 - **No hay voz, pizarrón, anotaciones ni captura.** Llegan en F10 (`T-H8-01…06`), y encenderlas hoy
   lanza.
-- **No cierra el gate H6.** Falta el AC: `ci:e2e:dry-session` y `ci:mode-separation`.
+- **No cerraba el gate H6** por sí sola. El AC —`ci:mode-separation` y `ci:e2e:dry-session`— se
+  cubrió el 2026-08-18; `dry-session.ts` fue el punto de partida de la suite E2E, que vive en
+  `session-engine` y `measurement-worker` (ver [`dry-session.md`](dry-session.md)).

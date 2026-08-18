@@ -100,6 +100,24 @@ export const SessionBlock = z
   })
   .strict();
 
+/**
+ * `dominio no se alcanza sin transferencia` (Plan.md §F7, AC del gate H6; P-I
+ * §5.3): el invariante va **en el esquema** y no en una guarda por función,
+ * porque así vale para todo camino que produzca un estado — incluidos los que
+ * todavía no existen. Sin él, `updateSessionProjection()` aceptaba un
+ * `operationalMastery` escrito a mano con `mastered: true` y
+ * `nearTransferSatisfied: false`, y esa proyección **es** la que la bitácora
+ * registra como evidencia de dominio (`session-engine/src/evidence.ts`): un
+ * falso dominio escrito ahí queda en el ledger indistinguible de uno real.
+ *
+ * La racha **no** entra en el invariante, y se intentó refutar antes de
+ * escribirlo: tras declarar dominio, un intento elegible incorrecto vacía
+ * `eligibleCorrectStreak` y `masteryStatus` sigue en `mastered`
+ * (`domain-engine/src/mastery.ts`), así que `mastered: true` con racha 0 es un
+ * estado autoritativo legítimo. Exigir un mínimo de racha aquí rompería la
+ * proyección real y además duplicaría `correctConsecutiveRequired`, que es
+ * política de dominio y tiene un solo sitio.
+ */
 export const OperationalMastery = z
   .object({
     mastered: z.boolean(),
@@ -109,7 +127,16 @@ export const OperationalMastery = z
     reconfirmationPending: z.boolean(),
     lastChangedAt: IsoDateTime.nullable(),
   })
-  .strict();
+  .strict()
+  .superRefine((mastery, context) => {
+    if (mastery.mastered && !mastery.nearTransferSatisfied) {
+      context.addIssue({
+        code: 'custom',
+        message: 'no hay dominio sin transferencia cercana elegible',
+        path: ['nearTransferSatisfied'],
+      });
+    }
+  });
 
 export const ScaffoldingStage = z.enum(['none', 'scaffolding', 'fading', 'independent']);
 
@@ -493,6 +520,7 @@ export type SessionStateErrorCode =
   | 'HINT_PROJECTION_MISMATCH'
   | 'INVALID_EVENT'
   | 'INVALID_EVENT_SEQUENCE'
+  | 'INVALID_PROJECTION'
   | 'INVALID_STATE'
   | 'INVALID_TRANSITION'
   | 'PERSISTENCE_MISMATCH'
@@ -703,6 +731,37 @@ function decisionRecord(event: SessionDecisionEvent): z.infer<typeof SessionDeci
   };
 }
 
+/**
+ * `reactivo consumido no reaparece` (Plan.md §F7, AC del gate H6).
+ *
+ * Es un invariante de **transición**, no de estado: un estado suelto con
+ * `consumedActivityIds` corto es perfectamente válido, y por eso el esquema no
+ * puede expresarlo. Va en el reductor —y no en `updateSessionProjection()`—
+ * para que lo aplique también `applySessionStateEvent()`: con la guarda sólo en
+ * el ayudante, un evento forjado a mano pasaría el replay y el estado
+ * reconstruido diferiría del que nadie pudo escribir.
+ *
+ * El registro sólo crece. Retirar un id ya consumido no «corrige» nada: deja el
+ * reactivo disponible otra vez, y volver a presentarlo es exactamente lo que la
+ * propiedad prohíbe. El duplicado dentro del propio array ya lo rechaza
+ * `uniqueArray`, que es otra cosa.
+ */
+function assertConsumptionIsMonotonic(
+  current: SessionStructuredState,
+  changes: SessionProjectionChanges,
+): void {
+  const next = changes.consumedActivityIds;
+  if (next === undefined) return;
+  const retained = new Set(next);
+  const dropped = current.consumedActivityIds.filter((id) => !retained.has(id));
+  if (dropped.length > 0) {
+    throw new SessionStateMachineError(
+      'INVALID_PROJECTION',
+      `un reactivo consumido no se retira del registro: ${dropped.join(', ')}`,
+    );
+  }
+}
+
 function reduceDecisionEvent(
   snapshotValue: SessionSnapshot,
   event: SessionDecisionEvent,
@@ -761,10 +820,12 @@ function reduceDecisionEvent(
       changed = { ...current, transverseStates };
       break;
     }
-    case 'session.projection.updated':
+    case 'session.projection.updated': {
       rejectBktShadowProperty(event.payload.changes);
+      assertConsumptionIsMonotonic(current, event.payload.changes);
       changed = { ...current, ...event.payload.changes };
       break;
+    }
     case 'session.measurement.control_projected': {
       if (event.decisionMaker !== 'engine') {
         throw new SessionStateMachineError(

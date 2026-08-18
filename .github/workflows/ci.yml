@@ -58,6 +58,37 @@ jobs:
       - name: ci:build
         run: pnpm run ci:build
 
+  h6:
+    # AC del gate H6 (Plan.md §F7). Va en su propio job y no como paso de
+    # `base` porque §0.4 cuenta un AC como cumplido sólo con **el check que
+    # cita** en verde: dentro de `ci:unit` estas pruebas corren, pero el acta no
+    # podría citar nada que se pueda mirar por separado en Actions.
+    #
+    # No necesita el submódulo de contenido: la sesión seca usa paquete
+    # sintético de desarrollo, que es lo que §F7 admite mientras no haya corpus.
+    name: ci:mode-separation · ci:e2e:dry-session
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Las pruebas entran por `@profesor-ia/*`, que resuelve a `dist/`.
+      - name: build
+        run: pnpm run ci:build
+      # LEARNING/MEASUREMENT separados por pruebas; la sonda desactiva la ayuda.
+      - name: ci:mode-separation
+        run: pnpm run ci:mode-separation
+      # Sesión seca completa reconstruible desde eventos, con las cinco
+      # propiedades de §F7.
+      - name: ci:e2e:dry-session
+        run: pnpm run ci:e2e:dry-session
+
   arch:
     name: ci:arch:depcruise
     runs-on: ubuntu-latest

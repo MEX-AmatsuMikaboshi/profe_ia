@@ -1,21 +1,29 @@
 # HANDOFF — punto de continuación
 
-**Fecha del checkpoint:** 2026-08-18 (segunda sesión del día).
-**Qué se cerró aquí:** el arranque de **Docker** (D-31), el **harness de BENCH-01 con corrida
-piloto medida** (`T-H4-10`, `EN_CURSO`) y **`ci:mode-separation`**, primera mitad del AC del gate H6.
+**Fecha del checkpoint:** 2026-08-18 (tercera sesión del día).
+**Qué se cerró aquí:** las **tres corridas pendientes observadas job por job** (los tres commits
+pasan a `VERIFICADA`) y **`ci:e2e:dry-session`**, la otra mitad del AC del gate H6, que **completa el
+criterio técnico de F7** y trae el acta [`../gates/H6.md`](../gates/H6.md).
 **Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
 
-> **Lo primero: tres commits en `main` están `HECHA` y no `VERIFICADA`.** `7848b42` (Docker),
-> `306517a` (harness + piloto) y `06c2eab` (`ci:mode-separation`). **Nadie ha observado el check
-> verde en Actions.** Eso es lo primero que hay que hacer: mirar la pestaña Actions del remoto job
-> por job y, sólo entonces, mover los estados. Que esté subido no basta.
+> **El AC del gate H6 está cubierto.** `ci:mode-separation` (12 propiedades) y `ci:e2e:dry-session`
+> (33), los dos como job propio `ci:mode-separation · ci:e2e:dry-session` en CI, porque §0.4 cuenta
+> un AC por **el check que cita** y dentro de `ci:unit` no habría nada que mirar por separado.
+>
+> **La suite destapó dos puertas laterales reales y las cerró (D-35):** se podía escribir dominio a
+> mano sin transferencia, y se podía **retirar** un reactivo del registro de consumo —que es la forma
+> en que un reactivo consumido reaparece—. Detalle en
+> [`../session/dry-session.md`](../session/dry-session.md). **Dos de las pruebas nuevas pasaban por
+> vacío** antes de endurecerlas: el evento forjado moría por `STATE_HASH_MISMATCH` sin llegar al
+> invariante que decían medir. Vale como recordatorio general: una prueba que espera un `throw`
+> puede estar verde por el motivo equivocado.
+>
+> **Lo primero de la próxima sesión: observar la corrida de este commit** job por job y sólo entonces
+> mover F7 y el acta. Que esté subido no basta. Ver §3.1.
 >
 > **Se gastó dinero real por primera vez: MXN 1.51 (≈ USD 0.09)** en tres corridas piloto. El
 > propietario autorizó un piloto acotado, **no la corrida material**. Volver a gastar exige
 > volver a preguntar.
->
-> **Lo siguiente es `ci:e2e:dry-session`**, la otra mitad del AC del gate H6. No cuesta nada y
-> cierra F7 entera. Ver §3.1.
 >
 > **F11 sigue sin ser alcanzable escribiendo código.** `T-LSU-01` *es* el propietario usando el
 > sistema de principio a fin. Ver §2.
@@ -30,15 +38,17 @@ con qué comprobaciones, en §8.
 ### Por dónde empezar, en una línea
 
 F0–F3 cerradas salvo `T-H3-05`; **F4 con 10 de 12 más `T-H4-10` en curso**, **F5 con 8 de 8**, **F6
-con 17 de 17 mecanismos** y **F7 con 14 de 14**. Lo siguiente **no es una tarea `T-*`**: es la mitad
-que falta del AC del gate H6 — **`ci:e2e:dry-session`**, sesión seca E2E reconstruible desde
-eventos, con las cinco propiedades que `Plan.md` §F7 enumera: reactivo consumido no reaparece, sonda
-nunca en contexto del agente, dominio no se alcanza sin transferencia, corrección no elimina
-original, intervención humana registrada. **`ci:mode-separation` ya está**, con 12 propiedades.
+con 17 de 17 mecanismos** y **F7 con 14 de 14 y el AC del gate cubierto**. Lo siguiente es una
+elección de rama, no una tarea obvia: ver §3.1.
 
-**`CONTENT_TOKEN` ya existe.** **Tres commits esperan que alguien observe su corrida**: `7848b42`,
-`306517a` y `06c2eab`. Las catorce de F7 (`32082985975`) y `T-H4-09` (`32103802556`) sí están
-observadas job por job.
+**`T-H3-05` (trazas) acaba de dejar de estar bloqueada.** Estaba esperando «la primera operación
+instrumentable en F7/F8», y la sesión seca completa **es** esa operación. Sigue `EN_CURSO` porque
+nadie la ha instrumentado, no porque falte de qué.
+
+**`CONTENT_TOKEN` ya existe.** Las corridas de `7848b42` (`32108984268`), `306517a`
+(`32114293161`) y `06c2eab` (`32115140133`) están **observadas job por job, seis de seis en verde
+cada una**; los tres commits pasan a `VERIFICADA`. Las catorce de F7 (`32082985975`) y `T-H4-09`
+(`32103802556`) ya lo estaban. **La corrida de este commit no.**
 
 **Docker Desktop ya arranca** (2026-08-18), con `pnpm run dev:docker` y sólo con él: arrancarlo a
 mano vuelve a fallar. Las pruebas contra PostgreSQL **ya corren en local**; 131 en verde por primera
@@ -199,43 +209,71 @@ qué debía comprobar, y elegirlo sería inventar.
 
 ---
 
-## 3.1 Lo siguiente: `ci:e2e:dry-session`
+## 3.1 Lo siguiente: observar la corrida, y después elegir rama
 
-Es la mitad que falta del AC del gate H6, **no cuesta nada** y cierra F7 entera.
+**Primero, y no es opcional:** observar en Actions la corrida de este commit job por job, con el
+comando de §4, y sólo entonces marcar el AC del gate H6 como verde en `main` y firmar
+[`../gates/H6.md`](../gates/H6.md). El acta ya está escrita con esa fila en `⏳` a propósito.
 
-**Punto de partida:** `apps/web/src/clase/dry-session.ts` monta la sesión seca con paquete sintético
-(`purpose: 'test_fixture'`, tiempos fijos, sin azar). `replaySessionStateEvents()` en
-`packages/session-engine/src/state-machine.ts` ya reconstruye desde eventos.
+Después hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» sin más:
 
-**Lo que hay que demostrar** (Plan.md §F7, literal):
+1. **`T-H3-05` — trazas.** Es la que acaba de desbloquearse y la más barata: la sesión seca completa
+   es la primera operación real que trazar, que era exactamente lo que faltaba. El colector ya está
+   en `infra/compose/otel-collector.yaml`. Cierra F3 y quita una excepción del acta de H3.
+2. **Mecanismos de F8 contra transporte inyectado.** Anclaje obligatorio, filtro de egreso y suite
+   adversarial **sí** se construyen sin proveedor (§2, muro 1). Lo que no se puede es firmar el gate
+   H7, que exige una sesión real con el binding ganador.
+3. **`kc/map.yaml` desde `KC_CATALOG`.** El único artefacto de `content/` que **no** depende del
+   corpus: es literal del Maestro. Va con su propia tarea y recordando que `content/` se sube
+   **primero** (§8).
+4. **`T-H4-10` material (BENCH-01).** La más valiosa y la que no depende de escribir código: requiere
+   autorización de gasto (**USD 3.64**, cifra medida) y resolver los cuatro puntos de §3.0.b, entre
+   ellos que los 20 casos de `failure_or_invalid_output` no simulan nada y que `entregaSolucion` lo
+   autoreporta el modelo. Lo caro son los **200 casos escritos a mano**, no el dinero.
 
-| Propiedad | Dónde vive el mecanismo |
-|---|---|
-| Sesión completa reconstruible desde eventos | `replaySessionStateEvents()` |
-| Reactivo consumido no reaparece | `priorConsumptionBlocks()` en `apps/measurement-worker/src/authority.ts`, sobre `consumptionBlocksMeasurement()` de `contracts/probe.ts` |
-| Sonda nunca en contexto del agente | El catálogo de `script-mode` no lleva entradas de sonda; la separación de reservas la fija `authoring-core/reserves.ts` |
-| Dominio no se alcanza sin transferencia | `domain-engine` + `updateSessionFromDomainState()` |
-| Corrección no elimina original | Cadena de evidencia (`session-engine/src/evidence.ts`, `T-H6-09`): una corrección es un evento nuevo enlazado |
-| Intervención humana registrada | `decisionMaker`/`autonomyStatus` en `SessionDecisionMetadata` |
+Mi recomendación, si hay que elegir una: **la 1**, porque es la única que cierra una fase entera y
+acaba de dejar de estar bloqueada; y la **4** en paralelo, porque es la que desatasca F8 y la parte
+lenta es humana, no de código.
 
-**Modelo a seguir:** `packages/session-engine/test/mode-separation.test.ts`, que ya está y pasa. Ahí
-se ve el patrón de fixtures (`metadata()`, `sesionEnPractica()`) y, sobre todo, el criterio: atacar
-la propiedad **por la vía genérica** en vez de por el camino que uno espera, para que si hay puerta
-lateral se encuentre.
+### Lo que dejó `ci:e2e:dry-session`, y que conviene no rehacer
 
-**Un hallazgo que ahorra tiempo:** la separación de modos **no** depende de guardas por función.
-Está en el invariante del esquema `SessionStructuredState`, que rechaza cualquier estado en
-`MEASUREMENT_MODE` con estrategia, ayuda o elegibilidad. Antes de escribir una guarda nueva en
-cualquier sitio, mira si el invariante correspondiente ya existe en el esquema: es donde este
-repositorio los pone.
+Documentación completa en [`../session/dry-session.md`](../session/dry-session.md). Lo imprescindible:
 
-**Cuando las dos mitades estén y se observe la corrida verde**, el gate H6 se puede firmar con acta
-en `docs/gates/`, y F7 queda cerrada.
+- **La suite está en dos archivos y eso es deliberado.**
+  `packages/session-engine/test/dry-session-e2e.test.ts` (26) y
+  `apps/measurement-worker/test/dry-session-consumption.test.ts` (7). El motor no importa al worker y
+  el worker no importa al motor: eso *es* `DEC-MEAS-AUTHORITY-001`. Un archivo único tendría que
+  abrir una dependencia que la arquitectura niega — y **`depcruise` excluye los `*.test.ts`**, así que
+  la regla no habría fallado: simplemente no habría mirado. Ojo con eso en general.
+- **`sesionSeca()`** monta la clase entera de `preparada` a `cierre` y devuelve mutaciones, eventos,
+  snapshot final y entregas del guion. Es el punto de partida natural de cualquier prueba E2E futura,
+  incluida la de F8.
+- **La política de dominio de la sesión seca es la real** (`purpose: 'material'`). Lo sintético es el
+  paquete de contenido, no la regla de dominio: probar la propiedad contra una política de juguete no
+  diría nada de la que va a correr.
+- **Dos invariantes nuevos, cada uno en su capa** (D-35). `mastered ⇒ nearTransferSatisfied` va en el
+  **esquema** `OperationalMastery`: al vivir ahí, el estado con falso dominio no tiene hash válido y
+  ningún evento puede declararlo, ni escrito ni forjado. La monotonía de `consumedActivityIds` va en
+  el **reductor** y no en `updateSessionProjection()`, porque es un invariante de **transición** y
+  tiene que aplicar también en replay. Código nuevo de error: `INVALID_PROJECTION`.
+- **La regla que este repositorio ya tenía y que aquí se confirma:** antes de escribir una guarda,
+  mirar si el invariante cabe en el esquema. Y si no cabe —porque compara dos estados—, ponerlo en el
+  reductor, nunca en el ayudante.
 
 ---
 
 ## 3.2 Deuda técnica que esta sesión destapó y no arregló
 
+- **Sólo `consumedActivityIds` es monótono en el estado de sesión.** Otras colecciones
+  (`incidents`, `planChanges`) se pueden reescribir por proyección, y retirar un incidente sería
+  también una reescritura de historia. **No se añadió una regla**: ninguna propiedad del AC lo exige
+  y ninguna autoridad lo dice, así que inventarla sería exactamente lo que §0.3 prohíbe. Queda
+  anotado porque el día que alguien lo necesite conviene que sepa que no está.
+- **Una prueba que espera un `throw` puede estar verde por el motivo equivocado.** Pasó con dos de
+  las cuatro pruebas nuevas de D-35: el evento forjado heredaba el `resultingStateHash` del evento del
+  que se copiaba, así que el replay lo rechazaba por `STATE_HASH_MISMATCH` **antes** de llegar al
+  invariante — pasaban con la guarda y sin ella. El control positivo (retirar la guarda y comprobar
+  que la prueba cae) es lo que lo destapó; sin él se habrían quedado así.
 - **Los archivos de prueba no se typechequean.** `tsc -p tsconfig.json` incluye sólo `src/**/*.ts` en
   todos los paquetes, y vitest no typechequea. Consecuencia real y observada: un error de nombres de
   campo en una prueba (`tokensIn` en vez de `inputTokens`) salió en ejecución y no en compilación.
@@ -269,11 +307,11 @@ intentes leerlo entero, navega por secciones con Grep (`^#{1,3} `) y lee solo lo
 | **F0 · H0** repositorio, contratos, CI | Completa. Gate abierto solo por falta de ejecución verde en `main` |
 | **F1 · H1** BD, roles, evidencia | Completa. El gate solo espera firma y ejecución en `main` |
 | **F2 · H2** verificador | 16 de 16 tareas. **Todo el AC cubierto**; el gate solo espera firma y ejecución en `main` |
-| **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas, espera operación real en F7/F8) |
+| **F3 · H3** entorno local | 4 de 5. Falta `T-H3-05` (trazas). **Ya no está bloqueada:** la sesión seca completa es la primera operación instrumentable |
 | **F4 · H4** pasarela de modelo | **10 de 12 + `T-H4-10` en curso.** Harness construido y piloto corrido (MXN 1.51). Falta el conjunto material de 200 casos y resolver los cuatro puntos de §3.0.b. `T-H4-11` (BENCH-02) sigue bloqueada: exige dos proveedores y OpenAI aún no puede entrar |
 | **F5 · H4.5** investigación de fuentes (W0) | **8 de 8.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | **F6 · H5** ingesta, autoría y freeze (W1–W5) | **17 de 17 mecanismos.** Gate abierto: faltan corpus, corrida W1–W5, auditoría, CAL-NLI material, clave y firma reales |
-| **F7 · H6** sesión determinista sin LLM | **14 de 14.** `ci:mode-separation` **hecho** (12 propiedades). Falta `ci:e2e:dry-session` — ver §3.1 |
+| **F7 · H6** sesión determinista sin LLM | **14 de 14 y AC del gate cubierto.** `ci:mode-separation` (12 propiedades) + `ci:e2e:dry-session` (33). Sólo falta observar la corrida en `main` y firmar el acta |
 | F8–F16 | No empezadas |
 
 ### Los tres muros que no se tiran con código
@@ -318,7 +356,13 @@ real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el
 
 ## 3. Por dónde seguir
 
-### La tarea siguiente: `T-H6-09` — bitácora de evidencia reconstruible
+### Nota: este apartado quedó rancio y se conserva como referencia
+
+Encabezaba «la tarea siguiente: `T-H6-09`», que está **`VERIFICADA` desde el 17-08** (CI
+`32058743421`). Lo que sigue vale como mapa de qué mecanismos existen y no hay que rehacer; **para
+saber por dónde seguir, §3.1**.
+
+#### `T-H6-09` — bitácora de evidencia reconstruible
 
 `T-H6-01…08` ya construyen estado/replay, decisión de estrategia, dominio/reconfirmaciones,
 recuperación, pistas congeladas, autoridad aislada de sondas, calendario SCED global e
@@ -961,6 +1005,7 @@ pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs
 pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net
 pnpm run ci:gateway:fail-closed && pnpm run ci:gateway:contracts
 pnpm run ci:canary && pnpm run ci:cost:ledger
+pnpm run ci:mode-separation && pnpm run ci:e2e:dry-session
 pnpm run db:grants:check && pnpm run ci:db:negative
 pnpm run ci:supply:sbom && pnpm run ci:supply:drift
 pnpm run ci:infra:hardening
@@ -972,10 +1017,12 @@ El entorno local se comprueba aparte, porque necesita Docker y tarda:
 pnpm run ci:infra:compose-up
 ```
 
-Estado del último cierre completo: **toda la batería de código quedó verde en local** para T-H6-07:
-lint, 35 typechecks, **1260 pruebas** (1129 unitarias + 131 contra PostgreSQL 17 real), 23 builds,
-arquitectura y mutaciones sembradas, lógica, gateway, grants, SBOM, suministro y 159 controles de
-hardening. El checkpoint anterior tenía 1234 pruebas. `ci:infra:compose-up` compiló los 23 paquetes
+Estado del último cierre completo (2026-08-18, `ci:e2e:dry-session`): **toda la batería quedó verde
+en local**: lint, 39 typechecks, **1618 pruebas** (1487 unitarias + 131 contra PostgreSQL 17 real),
+24 builds, arquitectura con violación sembrada y sus controles positivos, lógica, gateway, canarios,
+ledger de costos, grants, SBOM, suministro, tokens de web y 159 controles de hardening. Las de
+PostgreSQL corrieron **en local**, no sólo en CI. El checkpoint anterior tenía 1260 (1129 + 131);
+véase el aviso de §9 sobre por qué el número que este documento traía se había quedado corto. `ci:infra:compose-up` compiló los 23 paquetes
 dentro de la imagen, pero Docker Desktop falló al desempaquetar la capa común con `overlayfs:
 input/output error` y después dejó de responder; es un fallo local del motor, no una aspa de código,
 y no se borró caché ni almacenamiento del usuario para ocultarlo. La corrida de CI sigue siendo la
@@ -988,7 +1035,12 @@ otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto, para `T-H4-09` y todo lo anterior (corrida `32103802556` sobre `e8cede1`):
+Observado, no supuesto. **Tres corridas más quedaron observadas en esta sesión**, seis de seis jobs
+en verde cada una: `32108984268` (`7848b42`, Docker/D-31), `32114293161` (`306517a`, harness y piloto
+de BENCH-01) y `32115140133` (`06c2eab`, `ci:mode-separation`). **La de este commit no está
+observada**: es lo primero de la próxima sesión (§3.1).
+
+Para `T-H4-09` y todo lo anterior (corrida `32103802556` sobre `e8cede1`):
 
 | Job | Resultado |
 |---|---|
@@ -1089,9 +1141,10 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
 
 ## 7. Lo que no está verificado y conviene no olvidar
 
-- **`HECHA` no equivale a `VERIFICADA`.** Las tareas hasta `T-H6-07` que llevan corrida CI observada
-  ya están `VERIFICADA`; `T-H6-08` sigue `HECHA` hasta que sus seis jobs propios queden verdes en
-  `main`. No cambies ese estado sólo por haber subido el código.
+- **`HECHA` no equivale a `VERIFICADA`.** Todas las tareas hasta F7 llevan su corrida observada y
+  están `VERIFICADA`. Lo que queda sin observar es **la corrida de este commit**, que es la que
+  sostiene el AC del gate H6: hasta verla, el acta se queda con esa fila en `⏳`. No cambies ese
+  estado sólo por haber subido el código.
 - **F6 ha construido mecanismos, no contenido.** Las ocho tareas cerradas producen validadores y
   catálogos —`T-H5-05` incluida: W3 es el pipeline, no una corrida—, pero **todos los artefactos de
   `content/` siguen siendo placeholders de ~140 bytes**:
@@ -1192,17 +1245,19 @@ En este orden.
    `infra/compose/.env` (§3.0.b). Comprueba que están y que **las dos de un mismo proveedor no son
    la misma cadena**: si lo fueran, la separación `SESION`/`AUTORIA` de P-II §8.2 dejaría de
    proteger de nada. No las copies a ningún otro sitio y no las imprimas.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1351 pruebas unitarias**.
-   Si da menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó. Las de
-   PostgreSQL **ya corren en local**: `pnpm run dev:docker` y luego `pnpm run ci:db:negative`
-   (§3.0.c).
-4. **Elige rama, y son dos opciones legítimas:**
-   - **Barata y cierra fase:** el **AC del gate H6** —`ci:e2e:dry-session` y `ci:mode-separation`—.
-     No cuesta nada, no necesita proveedores y firma F7 entera. `apps/web/src/clase/dry-session.ts`
-     es el punto de partida natural: sesión seca reproducible, sin reloj ni azar.
-   - **Desbloquea F8:** `T-H4-10` (BENCH-01). Requiere las claves y la autorización de gasto. Lee
-     antes `docs/model/documentary-refresh.md`: la corrida del refresco documental va **pegada** al
-     benchmark, y falta fijar la ventana de frescura, que es decisión del propietario.
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1487 pruebas
+   unitarias** más **131 contra PostgreSQL real** (`pnpm run ci:unit` corre los dos proyectos y
+   reporta **1618**). Si da menos, algo se perdió; si da más sin que nadie haya trabajado, algo se
+   duplicó. Las de PostgreSQL **ya corren en local**: `pnpm run dev:docker` y luego
+   `pnpm run ci:db:negative` (§3.0.c).
+
+   **Aviso sobre el número anterior:** este documento decía 1351 y el árbol daba 1454 antes de esta
+   sesión. No se había perdido ni duplicado nada: 1351 era el conteo **anterior** a los tests de
+   `306517a` (91) y `06c2eab` (12), que suman exactamente 103. Se comprobó contando `it(` en los
+   archivos de esos dos commits antes de dar el número por bueno, en vez de suponer cuál de las dos
+   cifras era la correcta.
+4. **Elige rama.** El AC del gate H6 ya está cubierto; las cuatro opciones vivas y su
+   recomendación están en **§3.1**.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
    verde y `git push origin main`. Después **observa la corrida** job por job (§4) antes de mover
    nada a `VERIFICADA`. Si tocas `content/`, **primero el submódulo** (§8).
