@@ -41,14 +41,31 @@ export const NO_PARAMETERS = Object.freeze({}) as AuthorizedParameters;
  *    escrito, y elegir una de las dos ramas decidiría por cuenta propia si un
  *    parámetro sale hacia el proveedor.
  */
-export function assertBindingUsable(binding: ModelBinding): void {
-  if (binding.snapshot === undefined && binding.behaviorFingerprint === undefined) {
+/**
+ * Identidad fijada: snapshot fechado, o huella sobre el set canario congelado.
+ *
+ * Está extraída de `assertBindingUsable` porque el refresco documental de
+ * T-H4-09 necesita la misma regla **antes** de que exista un binding. La
+ * alternativa era construir allí un `ModelBinding` de mentira solo para poder
+ * llamar aquí, lo que obligaba a inventarle capacidades —`batch`, `caching`,
+ * `reasoning`— que el refresco nunca afirmó. Una regla en un sitio y dos
+ * llamantes; no dos copias que puedan divergir.
+ */
+export function assertPinnedIdentity(
+  label: string,
+  identity: { readonly snapshot?: string | undefined; readonly behaviorFingerprint?: string | undefined },
+): void {
+  if (identity.snapshot === undefined && identity.behaviorFingerprint === undefined) {
     throw new UnpinnedBindingError(
-      `El binding ${binding.bindingId} no fija snapshot ni huella de comportamiento. ` +
+      `${label} no fija snapshot ni huella de comportamiento. ` +
         `Un alias sin snapshot puede cambiar de modelo sin aviso, así que exige huella sobre el ` +
         `set canario congelado (T-H4-02).`,
     );
   }
+}
+
+export function assertBindingUsable(binding: ModelBinding): void {
+  assertPinnedIdentity(`El binding ${binding.bindingId}`, binding);
 
   const { supportedParameters, rejectedParameters } = binding.capabilities;
   const rejected = new Set(rejectedParameters);

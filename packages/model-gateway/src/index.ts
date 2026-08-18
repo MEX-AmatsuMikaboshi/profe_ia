@@ -90,14 +90,36 @@ export {
 } from './output.js';
 
 export {
+  assertRefreshAuthorizesBenchmark,
+  verifiedAtFromRefresh,
+  CandidateDataPolicy,
+  CandidateDeprecation,
+  CandidateRefresh,
+  DocumentaryFact,
+  DocumentaryRefreshError,
+  DocumentaryRefreshRecord,
+  DocumentarySource,
+  DOCUMENTARY_REFRESH_SCHEMA_VERSION,
+  RefreshWindowParameter,
+  type BenchmarkRun,
+  type RefreshAuthorization,
+} from './documentary-refresh.js';
+
+export {
   assertBindingUsable,
+  assertPinnedIdentity,
   authorizeParameters,
   NO_PARAMETERS,
   type AuthorizedParameters,
 } from './capabilities.js';
 
 export { MODEL_OPERATIONS, MODEL_PROFILES, isModelOperation } from './operations.js';
-export { ProfileCredential, type CredentialResolver } from './credentials.js';
+export {
+  ProfileCredential,
+  credentialEnvVar,
+  envCredentialResolver,
+  type CredentialResolver,
+} from './credentials.js';
 export type {
   BuildRequestInput,
   ProviderAdapter,
