@@ -18,8 +18,9 @@ criterio técnico de F7** y trae el acta [`../gates/H6.md`](../gates/H6.md).
 > invariante que decían medir. Vale como recordatorio general: una prueba que espera un `throw`
 > puede estar verde por el motivo equivocado.
 >
-> **Lo primero de la próxima sesión: observar la corrida de este commit** job por job y sólo entonces
-> mover F7 y el acta. Que esté subido no basta. Ver §3.1.
+> **La corrida está observada:** `32164277686` sobre `5217680`, **los siete jobs en verde**, incluido
+> `ci:mode-separation · ci:e2e:dry-session`. F7 queda con el AC cubierto y el acta **sólo espera
+> firmas**. Ver §3.1 para elegir rama.
 >
 > **Se gastó dinero real por primera vez: MXN 1.51 (≈ USD 0.09)** en tres corridas piloto. El
 > propietario autorizó un piloto acotado, **no la corrida material**. Volver a gastar exige
@@ -45,10 +46,10 @@ elección de rama, no una tarea obvia: ver §3.1.
 instrumentable en F7/F8», y la sesión seca completa **es** esa operación. Sigue `EN_CURSO` porque
 nadie la ha instrumentado, no porque falte de qué.
 
-**`CONTENT_TOKEN` ya existe.** Las corridas de `7848b42` (`32108984268`), `306517a`
-(`32114293161`) y `06c2eab` (`32115140133`) están **observadas job por job, seis de seis en verde
-cada una**; los tres commits pasan a `VERIFICADA`. Las catorce de F7 (`32082985975`) y `T-H4-09`
-(`32103802556`) ya lo estaban. **La corrida de este commit no.**
+**`CONTENT_TOKEN` ya existe.** Todas las corridas pendientes quedaron observadas job por job:
+`32108984268` (`7848b42`), `32114293161` (`306517a`) y `32115140133` (`06c2eab`), seis de seis cada
+una, y **`32164277686` (`5217680`, el AC del gate H6), siete de siete**. Las catorce de F7
+(`32082985975`) y `T-H4-09` (`32103802556`) ya lo estaban. **No queda ninguna corrida sin observar.**
 
 **Docker Desktop ya arranca** (2026-08-18), con `pnpm run dev:docker` y sólo con él: arrancarlo a
 mano vuelve a fallar. Las pruebas contra PostgreSQL **ya corren en local**; 131 en verde por primera
@@ -209,13 +210,13 @@ qué debía comprobar, y elegirlo sería inventar.
 
 ---
 
-## 3.1 Lo siguiente: observar la corrida, y después elegir rama
+## 3.1 Lo siguiente: elegir rama
 
-**Primero, y no es opcional:** observar en Actions la corrida de este commit job por job, con el
-comando de §4, y sólo entonces marcar el AC del gate H6 como verde en `main` y firmar
-[`../gates/H6.md`](../gates/H6.md). El acta ya está escrita con esa fila en `⏳` a propósito.
+**Lo que ya no hay que hacer:** observar corridas. Están todas observadas, incluida la del AC del
+gate H6 (`32164277686`, siete de siete). [`../gates/H6.md`](../gates/H6.md) tiene esa fila en ✅ y
+**sólo espera firmas**, que son del propietario y no se pueden producir escribiendo código.
 
-Después hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» sin más:
+Hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» sin más:
 
 1. **`T-H3-05` — trazas.** Es la que acaba de desbloquearse y la más barata: la sesión seca completa
    es la primera operación real que trazar, que era exactamente lo que faltaba. El colector ya está
@@ -1035,10 +1036,20 @@ otra cosa.
 
 ### Estado de CI en `main` al cerrar
 
-Observado, no supuesto. **Tres corridas más quedaron observadas en esta sesión**, seis de seis jobs
-en verde cada una: `32108984268` (`7848b42`, Docker/D-31), `32114293161` (`306517a`, harness y piloto
-de BENCH-01) y `32115140133` (`06c2eab`, `ci:mode-separation`). **La de este commit no está
-observada**: es lo primero de la próxima sesión (§3.1).
+Observado, no supuesto. **Cuatro corridas quedaron observadas en esta sesión:** `32108984268`
+(`7848b42`, Docker/D-31), `32114293161` (`306517a`, harness y piloto de BENCH-01) y `32115140133`
+(`06c2eab`, `ci:mode-separation`), seis de seis jobs cada una; y **`32164277686`** (`5217680`, el AC
+del gate H6) con **siete de siete**, que es la que sostiene el criterio de aceptación de F7:
+
+| Job | Resultado |
+|---|---|
+| `ci:mode-separation · ci:e2e:dry-session` | ✅ |
+| `ci:lint · ci:typecheck · ci:unit · ci:build` | ✅ |
+| `ci:arch:depcruise` | ✅ |
+| `ci:db:testcontainers · ci:db:negative` | ✅ |
+| `ci:logic:golden · ci:logic:pbt · ci:logic:no-net` | ✅ |
+| `ci:logic:mutation` | ✅ |
+| `ci:supply:sbom · ci:supply:drift` | ✅ |
 
 Para `T-H4-09` y todo lo anterior (corrida `32103802556` sobre `e8cede1`):
 
@@ -1141,10 +1152,9 @@ No son preferencias de estilo; son lo que hace que este proyecto valga algo.
 
 ## 7. Lo que no está verificado y conviene no olvidar
 
-- **`HECHA` no equivale a `VERIFICADA`.** Todas las tareas hasta F7 llevan su corrida observada y
-  están `VERIFICADA`. Lo que queda sin observar es **la corrida de este commit**, que es la que
-  sostiene el AC del gate H6: hasta verla, el acta se queda con esa fila en `⏳`. No cambies ese
-  estado sólo por haber subido el código.
+- **`HECHA` no equivale a `VERIFICADA`.** Ahora mismo no queda ninguna corrida sin observar: todas
+  las tareas hasta F7 y el AC del gate H6 llevan la suya. La regla sigue viva para lo que venga: una
+  tarea nueva es `HECHA` hasta que alguien mire sus jobs, no por haber subido el código.
 - **F6 ha construido mecanismos, no contenido.** Las ocho tareas cerradas producen validadores y
   catálogos —`T-H5-05` incluida: W3 es el pipeline, no una corrida—, pero **todos los artefactos de
   `content/` siguen siendo placeholders de ~140 bytes**:
