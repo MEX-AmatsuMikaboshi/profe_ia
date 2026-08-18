@@ -63,6 +63,7 @@ pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && 
 | `pnpm run ci:supply:sbom` / `:drift` | SBOM CycloneDX + digest de lockfile / drift y advisories (bloqueante) |
 | `pnpm run ci:infra:hardening` | 159 propiedades sobre la config **resuelta** por Docker |
 | `pnpm run ci:infra:compose-up` | Arranque limpio del stack + verificador por spool + prueba de que `core` no sale a Internet |
+| `pnpm run dev:docker` | **Arranca Docker Desktop.** A mano no arranca: ver trampa 6. También `dev:docker:clean/stop` |
 | `pnpm run dev:env` → `dev:up` → `dev:seed` | Levantar el entorno local (`infra/runbooks/local.md`); además `dev:down/status/logs/backup/restore` |
 | `pnpm run logic:golden:generate` | Regenera el conjunto dorado; **el diff debe ser vacío** |
 | `pnpm run contracts:json-schema` | Emite los JSON Schema desde `packages/contracts` |
@@ -183,6 +184,11 @@ Son reales y cuestan una hora cada una si no se conocen (`docs/env/windows.md`).
    reemplazo no distingue dos mutantes distintos de la misma línea, y leerlo mal produce conclusiones
    falsas en ambas direcciones. `.stryker-tmp/` contiene copias completas del repo: **exclúyela de
    toda búsqueda** (glob/grep) o los resultados vendrán multiplicados por seis.
+6. **Docker Desktop no arranca dos veces seguidas.** Deja sus sockets AF_UNIX en disco como reparse
+   points que Windows después no deja borrar (error 1920), y el `remove` previo al rebind tumba el
+   backend. Arráncalo **siempre con `pnpm run dev:docker`**, que limpia
+   `%LOCALAPPDATA%\Docker\run` **y** `%LOCALAPPDATA%\docker-secrets-engine` —los dos, limpiar uno
+   sólo mueve el fallo al otro— antes de lanzarlo. Desde el icono seguirá fallando (D-31).
 
 ## 6. Estado actual (2026-08-15)
 

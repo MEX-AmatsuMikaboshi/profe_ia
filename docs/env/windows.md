@@ -28,7 +28,7 @@ umbrales ni compromisos.
 | `ci:logic:mutation` (1 166 mutantes, concurrencia 4) | ~7,5 min |
 | `ci:arch:depcruise` (58 módulos) | ~2 s |
 
-## Las cinco trampas de esta máquina
+## Las seis trampas de esta máquina
 
 Son reales y cuestan una hora cada una si no se conocen.
 
@@ -49,6 +49,59 @@ Son reales y cuestan una hora cada una si no se conocen.
    descubrimiento automático) y no acepta `vitest.project`. Ver además la nota de paralelismo en
    `docs/quality/mutation-baseline.md`: con archivos de prueba en paralelo, la cobertura `perTest`
    se atribuye mal y aparecen **falsos supervivientes**.
+6. **Sockets AF_UNIX fantasma: Docker Desktop no arranca dos veces seguidas.** Ver abajo.
+
+## Trampa nº 6 — sockets AF_UNIX fantasma (2026-08-18)
+
+**Síntoma.** Docker Desktop muestra «An unexpected error occurred» y el backend deja en
+`%LOCALAPPDATA%\Docker\log\host\com.docker.backend.exe.log`:
+
+```
+backend crashed … starting services: initializing Inference manager:
+listening on unix://C:/Users/…/Docker/run/dockerInference:
+remove C:/Users/…/Docker/run/dockerInference:
+The file cannot be accessed by the system.
+```
+
+**Causa real.** Docker Desktop crea sus sockets AF_UNIX como reparse points de cero bytes. En esta
+máquina esos archivos **sobreviven al apagado, limpio o no**, y una vez huérfanos Windows no los
+deja ni borrar ni consultar: `DeleteFile`, `Remove-Item`, `del` y `fsutil reparsepoint query`
+devuelven todos el error **1920 (`ERROR_CANT_ACCESS_FILE`)**. Al arrancar, Docker intenta *remover*
+el socket anterior antes de rebindear, ese `remove` falla y el backend se cae.
+
+**Crear los sockets sí funciona.** Lo único roto es borrar los que ya están. Por eso el fallo es
+**recurrente y determinista**: cada arranque deja los sockets que harán fallar al siguiente.
+
+**Son dos directorios, no uno.** Limpiar sólo `%LOCALAPPDATA%\Docker\run` mueve el fallo al
+`Secrets Engine`, que usa `%LOCALAPPDATA%\docker-secrets-engine`. Con los dos limpios el motor
+levanta en 5 s.
+
+**Qué se descartó, con evidencia:**
+
+- No es `%LOCALAPPDATA%` como ubicación: el fallo es por archivo huérfano, no por carpeta.
+- No es estado del kernel: **reiniciar el equipo no lo cura**, porque los archivos están en disco.
+  Se reinició el 2026-08-18 y el socket seguía sin poder borrarse.
+- No es el driver: `afunix.sys` 10.0.26100.8972 está presente y el servicio `afunix` en `RUNNING`.
+- No es el sistema de archivos: `C:` es NTFS.
+- No es Defender: `EnableControlledFolderAccess = 0` y sin reglas ASR.
+- No es `com.docker.service`: está en `Running`/`Automatic`.
+
+**Solución.** `pnpm run dev:docker` — `scripts/dev/docker-desktop.mjs`. Vacía los dos directorios
+antes de lanzar Docker Desktop y espera al motor. Lo que no se deja borrar lo aparta moviendo el
+directorio padre a `<dir>.fantasma\<n>`: mover el padre sí está permitido aunque su contenido sea
+inaccesible. Si el fallo apareciera en un tercer directorio, lo limpia, reintenta y **dice la ruta**
+para añadirla a `DIRECTORIOS_SOCKET`.
+
+`dev:docker:clean` limpia sin arrancar y `dev:docker:stop` apaga. Arrancar Docker Desktop **a mano**
+(icono o menú de inicio) vuelve a fallar: no hay atajo, hay que pasar por el script.
+
+**Lo que queda sucio.** Los directorios `*.fantasma\<n>` y los `*.roto*` de sesiones anteriores
+contienen archivos de 0 bytes que nadie puede borrar. Son inertes. El script reintenta purgarlos en
+cada arranque por si alguna vez se dejan.
+
+**Sin resolver:** por qué esos reparse points quedan inaccesibles. Diagnosticarlo más a fondo exige
+elevación (`fltmc filters`, `fsutil fsinfo`), que no se tuvo. El arreglo evita la causa, no la
+explica.
 
 ## Docker Desktop: cómo está configurado
 

@@ -36,9 +36,9 @@ intervención humana registrada.
 la corrida `32082985975`, y `T-H4-09` con la `32103802556`, las dos observadas job por job en
 `main`.
 
-**Docker Desktop no arranca en esta máquina** («unable to start»), así que las pruebas contra
-PostgreSQL no se pueden correr en local: sólo en CI. Las **1327 unitarias** sí. No se dio por verde
-lo que no se pudo ejecutar.
+**Docker Desktop ya arranca** (2026-08-18), con `pnpm run dev:docker` y sólo con él: arrancarlo a
+mano vuelve a fallar. Las pruebas contra PostgreSQL **ya corren en local**; 131 en verde por primera
+vez fuera de CI. El diagnóstico anterior era incorrecto y el correcto está en §3.0.c.
 
 ## 3.0 Lo que dejó `T-H6-13`, y que conviene no rehacer
 
@@ -97,20 +97,42 @@ benchmark**: no existe ningún manifiesto con precios reales, y los pisos de `T-
 mínimos por modelo más repeticiones. Inventar una cifra en pesos sería exactamente lo que este
 proyecto no hace.
 
-## 3.0.c Docker Desktop — diagnosticado, sin resolver
+## 3.0.c Docker Desktop — resuelto (2026-08-18)
 
-`com.docker.service` estaba detenido; el propietario lo puso en `Running`/`Automatic` y **el motor
-siguió sin arrancar**. El fallo real es otro: Docker Desktop **no puede crear sockets AF_UNIX en
-`%LOCALAPPDATA%`**, y falla idéntico en dos subsistemas independientes (`Inference manager` y
-`Secrets Engine`), también sobre archivos que él mismo acaba de crear. Descartados: redirección de
-carpeta, antivirus exótico (sólo Defender) y versión rara (4.86.0).
+**El diagnóstico anterior era falso en su parte central.** Decía que Docker «no puede crear sockets
+AF_UNIX en `%LOCALAPPDATA%`». Crearlos funciona perfectamente; lo que no funciona es **borrar los
+que ya están**. Docker, al arrancar, intenta remover el socket de la corrida anterior antes de
+rebindear, ese `remove` falla, y el backend se cae. Cada arranque deja los sockets que harán fallar
+al siguiente: el fallo es recurrente y determinista, no intermitente.
 
-Pendiente del propietario, en este orden: **reiniciar el equipo** (nunca se hizo y libera el estado
-de sockets del kernel) y, si persiste, *Repair* o reinstalación. Quedaron dos directorios huérfanos
-renombrados que se pueden borrar tras el reinicio: `%LOCALAPPDATA%\Docker\run.roto` y
-`%LOCALAPPDATA%\docker-secrets-engine.roto`.
+Los sockets son reparse points de cero bytes que sobreviven al apagado —limpio o no— y quedan
+inaccesibles: `DeleteFile`, `Remove-Item`, `del` y `fsutil reparsepoint query` devuelven todos el
+error **1920 (`ERROR_CANT_ACCESS_FILE`)**.
 
-Consecuencia mientras tanto: **las pruebas contra PostgreSQL sólo corren en CI**. Ahí pasan.
+**Reiniciar el equipo no lo curó**, y no podía: los archivos están en disco, no en el estado del
+kernel. Se reinició y `dockerInference` seguía sin poder borrarse.
+
+**Son dos directorios, no uno.** Limpiar sólo `%LOCALAPPDATA%\Docker\run` mueve el fallo al
+`Secrets Engine`, que usa `%LOCALAPPDATA%\docker-secrets-engine`. Con los dos limpios, el motor
+levanta en 5 s.
+
+**La solución es `pnpm run dev:docker`** (`scripts/dev/docker-desktop.mjs`, D-31): vacía los dos
+directorios y luego lanza Docker Desktop esperando al motor. Lo que no se deja borrar lo aparta
+moviendo el directorio padre a `<dir>.fantasma\<n>`. **Arrancar Docker a mano sigue fallando**: no
+hay atajo. También `dev:docker:clean` y `dev:docker:stop`.
+
+Con eso, `pnpm run ci:db:negative` dio **131 en verde en local**, por primera vez fuera de CI.
+
+Descartados con evidencia: driver (`afunix.sys` presente, servicio en `RUNNING`), sistema de
+archivos (`C:` es NTFS), Defender (CFA en 0, sin reglas ASR), `com.docker.service` (en
+`Running`/`Automatic`) y la ubicación `%LOCALAPPDATA%` como tal.
+
+**Queda sin explicar** por qué esos reparse points se vuelven inaccesibles. Diagnosticarlo exige
+elevación (`fltmc filters`, `fsutil fsinfo`), que no se tuvo. El arreglo evita la causa, no la
+explica. Detalle completo en [`../env/windows.md`](../env/windows.md), trampa nº 6.
+
+**Aviso aparte, no relacionado:** `C:` tiene **8,3 GB libres de 254 GB**. Con imágenes de Docker eso
+se agota pronto.
 
 **Tres cosas que esa tarea destapó fuera de sí misma**, y que valen para todo el repo:
 
@@ -1082,7 +1104,8 @@ En este orden.
    proteger de nada. No las copies a ningún otro sitio y no las imprimas.
 3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1351 pruebas unitarias**.
    Si da menos, algo se perdió; si da más sin que nadie haya trabajado, algo se duplicó. Las de
-   PostgreSQL sólo corren en CI mientras Docker siga sin arrancar (§3.0.c).
+   PostgreSQL **ya corren en local**: `pnpm run dev:docker` y luego `pnpm run ci:db:negative`
+   (§3.0.c).
 4. **Elige rama, y son dos opciones legítimas:**
    - **Barata y cierra fase:** el **AC del gate H6** —`ci:e2e:dry-session` y `ci:mode-separation`—.
      No cuesta nada, no necesita proveedores y firma F7 entera. `apps/web/src/clase/dry-session.ts`
@@ -1102,7 +1125,7 @@ En este orden.
    precios reales.
 2. **Ventana de frescura del refresco documental** — «inmediatamente antes» no es un número y ninguna
    autoridad lo fija. Es una decisión de protocolo, no un valor por omisión.
-3. **Docker Desktop** — reiniciar el equipo; ver §3.0.c.
+3. ~~**Docker Desktop**~~ — resuelto el 2026-08-18 con `pnpm run dev:docker`; ver §3.0.c.
 4. **Cuenta administrativa de Infisical** — bloqueada por lo anterior: necesita el stack levantado.
    Hasta entonces los servicios leen de `.env`, que es el modo de arranque, no el de destino.
 5. **W0 sobre fuentes reales** — ojo, **no es sólo una acción del propietario**: no hay comando de

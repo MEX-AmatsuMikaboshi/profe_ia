@@ -402,4 +402,18 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   **dependiente de plataforma**. En Windows la variante Linux ni se instala, así que
   `ci:supply:sbom` pasaba en local y fallaba en CI. Un verde local de ese check no dice nada del
   verde en Linux; el único juez es la corrida de CI.
+- **D-31 — Arranque de Docker Desktop por script en vez de a mano.** En esta máquina Docker Desktop
+  **no arranca dos veces seguidas**: sus sockets AF_UNIX quedan en disco como reparse points de cero
+  bytes que Windows luego no deja borrar ni consultar (error 1920, `ERROR_CANT_ACCESS_FILE`), y el
+  `remove` previo al rebind tumba el backend. Crear los sockets sí funciona; sólo falla borrarlos,
+  así que cada arranque siembra el fallo del siguiente. `scripts/dev/docker-desktop.mjs`
+  (`pnpm run dev:docker`) vacía **los dos** directorios implicados —`%LOCALAPPDATA%\Docker\run` y
+  `%LOCALAPPDATA%\docker-secrets-engine`, limpiar sólo el primero mueve el fallo al `Secrets
+  Engine`— y luego lanza Docker esperando al motor. Es el mismo criterio de D-1 sobre el `PATH` de
+  Docker: una trampa conocida del entorno se resuelve en el script, no en la documentación con la
+  esperanza de que se lea. **Consecuencia de operación:** arrancar Docker desde el icono sigue
+  fallando; el camino es el script. **No es una tarea `T-*`** y no altera ningún AC: desbloquea
+  ejecutar en local lo que ya pasaba en CI (`ci:db:negative`, 131 en verde). Lo que no explica es
+  **por qué** esos reparse points quedan inaccesibles: diagnosticarlo exige elevación que no se
+  tuvo, así que evita la causa sin entenderla, y eso queda dicho en vez de disimulado.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.
