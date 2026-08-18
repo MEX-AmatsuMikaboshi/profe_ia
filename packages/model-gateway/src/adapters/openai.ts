@@ -5,7 +5,7 @@ import type {
   ProviderResponse,
 } from '../adapter.js';
 import { UnknownProviderContractError } from '../errors.js';
-import type { ProviderOutcome } from '../output.js';
+import type { ProviderOutcome, ProviderUsage } from '../output.js';
 
 /**
  * Adaptador propio para OpenAI (T-H4-01).
@@ -71,13 +71,15 @@ export const openaiAdapter: ProviderAdapter = {
     }
 
     const estado = leerCampo(cuerpo, 'status');
+    const usage = leerUso(cuerpo);
+    const uso = usage === undefined ? {} : { usage };
     const rechazo = primerRechazo(cuerpo);
     if (rechazo !== null) {
-      return { kind: 'refusal', text: rechazo, rawStopReason: 'refusal' };
+      return { kind: 'refusal', text: rechazo, rawStopReason: 'refusal', ...uso };
     }
 
     if (estado === 'completed') {
-      return { kind: 'output', text: concatenarTexto(cuerpo), rawStopReason: 'completed' };
+      return { kind: 'output', text: concatenarTexto(cuerpo), rawStopReason: 'completed', ...uso };
     }
 
     if (estado === 'incomplete') {
@@ -92,6 +94,7 @@ export const openaiAdapter: ProviderAdapter = {
           kind: 'truncated',
           text: concatenarTexto(cuerpo),
           rawStopReason: `incomplete:${motivo}`,
+          ...uso,
         };
       }
       throw new UnknownProviderContractError(
@@ -137,4 +140,30 @@ function concatenarTexto(cuerpo: unknown): string {
       return type === 'output_text' && typeof text === 'string' ? text : '';
     })
     .join('');
+}
+
+/**
+ * Lee `usage` tal como lo reporta OpenAI. Devuelve `undefined` si falta o viene
+ * mal formado: no se rellena con ceros que nadie midió.
+ */
+function leerUso(cuerpo: unknown): ProviderUsage | undefined {
+  if (typeof cuerpo !== 'object' || cuerpo === null) return undefined;
+  const usage = (cuerpo as { usage?: unknown }).usage;
+  if (typeof usage !== 'object' || usage === null) return undefined;
+
+  const { input_tokens: entrada, output_tokens: salida, input_tokens_details: detalles } = usage as {
+    input_tokens?: unknown;
+    output_tokens?: unknown;
+    input_tokens_details?: unknown;
+  };
+  if (typeof entrada !== 'number' || typeof salida !== 'number') return undefined;
+
+  const cache =
+    typeof detalles === 'object' && detalles !== null
+      ? (detalles as { cached_tokens?: unknown }).cached_tokens
+      : undefined;
+
+  return typeof cache === 'number'
+    ? { inputTokens: entrada, outputTokens: salida, cachedInputTokens: cache }
+    : { inputTokens: entrada, outputTokens: salida };
 }

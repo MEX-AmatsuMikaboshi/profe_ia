@@ -5,7 +5,7 @@ import type {
   ProviderResponse,
 } from '../adapter.js';
 import { UnknownProviderContractError } from '../errors.js';
-import type { ProviderOutcome } from '../output.js';
+import type { ProviderOutcome, ProviderUsage } from '../output.js';
 
 /**
  * Adaptador propio para Anthropic (T-H4-01).
@@ -75,15 +75,17 @@ export const anthropicAdapter: ProviderAdapter = {
 
     const stopReason = leerStopReason(cuerpo);
     const texto = concatenarTexto(cuerpo);
+    const usage = leerUso(cuerpo);
+    const uso = usage === undefined ? {} : { usage };
 
     switch (stopReason) {
       case 'end_turn':
       case 'stop_sequence':
-        return { kind: 'output', text: texto, rawStopReason: stopReason };
+        return { kind: 'output', text: texto, rawStopReason: stopReason, ...uso };
       case 'max_tokens':
-        return { kind: 'truncated', text: texto, rawStopReason: stopReason };
+        return { kind: 'truncated', text: texto, rawStopReason: stopReason, ...uso };
       case 'refusal':
-        return { kind: 'refusal', text: texto, rawStopReason: stopReason };
+        return { kind: 'refusal', text: texto, rawStopReason: stopReason, ...uso };
       default:
         throw new UnknownProviderContractError(
           `Anthropic devolvió el motivo de parada ${JSON.stringify(stopReason)}, que este ` +
@@ -112,4 +114,27 @@ function concatenarTexto(cuerpo: unknown): string {
       return type === 'text' && typeof text === 'string' ? text : '';
     })
     .join('');
+}
+
+/**
+ * Lee `usage` tal como lo reporta Anthropic. Devuelve `undefined` si falta o
+ * viene mal formado: **no se rellena con ceros**, porque un cero fabricado
+ * haría parecer el gasto menor del real y el ledger lo daría por medido.
+ */
+function leerUso(cuerpo: unknown): ProviderUsage | undefined {
+  if (typeof cuerpo !== 'object' || cuerpo === null) return undefined;
+  const usage = (cuerpo as { usage?: unknown }).usage;
+  if (typeof usage !== 'object' || usage === null) return undefined;
+
+  const { input_tokens: entrada, output_tokens: salida, cache_read_input_tokens: cache } =
+    usage as {
+      input_tokens?: unknown;
+      output_tokens?: unknown;
+      cache_read_input_tokens?: unknown;
+    };
+  if (typeof entrada !== 'number' || typeof salida !== 'number') return undefined;
+
+  return typeof cache === 'number'
+    ? { inputTokens: entrada, outputTokens: salida, cachedInputTokens: cache }
+    : { inputTokens: entrada, outputTokens: salida };
 }

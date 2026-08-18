@@ -63,6 +63,14 @@ export class ContradictoryCapabilitiesError extends ModelGatewayError {}
  */
 export class UnknownProviderContractError extends ModelGatewayError {}
 
+/**
+ * No se obtuvo respuesta del proveedor: red caída, timeout o redirección
+ * (T-H4-10). Distinto de un 4xx/5xx, que **sí** es respuesta y la traduce el
+ * adaptador. No se reintenta desde el transporte: la petición pudo haber
+ * llegado y se cobraría dos veces.
+ */
+export class TransportError extends ModelGatewayError {}
+
 /** El fragmento no pertenece al bloque del contexto (T-H4-04 ← P-I §9.4). */
 export class FragmentOutsideBlockError extends ModelGatewayError {}
 

@@ -1,0 +1,193 @@
+{
+  "runId": "piloto-bench01-2026-08-18",
+  "purpose": "pilot",
+  "outcomes": [
+    {
+      "caseId": "expl-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 952,
+        "outputTokens": 833,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.0871143665
+    },
+    {
+      "caseId": "refr-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 938,
+        "outputTokens": 565,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.0640631935
+    },
+    {
+      "caseId": "clas-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 956,
+        "outputTokens": 643,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.07100918949999999
+    },
+    {
+      "caseId": "fuera-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 918,
+        "outputTokens": 232,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.035376911
+    },
+    {
+      "caseId": "adv-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 952,
+        "outputTokens": 312,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.042765544
+    },
+    {
+      "caseId": "inc-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 884,
+        "outputTokens": 311,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.041522755499999994
+    },
+    {
+      "caseId": "caida-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 912,
+        "outputTokens": 484,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.056725634
+    },
+    {
+      "caseId": "expl-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 928,
+        "outputTokens": 742,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.078959631
+    },
+    {
+      "caseId": "refr-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 962,
+        "outputTokens": 499,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.0588536965
+    },
+    {
+      "caseId": "clas-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 930,
+        "outputTokens": 339,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.044689312499999995
+    },
+    {
+      "caseId": "fuera-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 948,
+        "outputTokens": 341,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.0451659985
+    },
+    {
+      "caseId": "adv-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 960,
+        "outputTokens": 454,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.054989134999999995
+    },
+    {
+      "caseId": "inc-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 890,
+        "outputTokens": 378,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.04732810999999999
+    },
+    {
+      "caseId": "caida-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "schema_violation",
+      "attempts": 2,
+      "usage": {
+        "inputTokens": 896,
+        "outputTokens": 247,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.0362792095
+    }
+  ],
+  "totalCostMxn": 0.764842687,
+  "costPerCaseMxn": 0.0546316205,
+  "ageSecondsByCandidate": {
+    "claude-haiku-4-5-20251001": 387
+  }
+}

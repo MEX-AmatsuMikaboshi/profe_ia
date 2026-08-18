@@ -1,0 +1,33 @@
+{
+  "name": "@profesor-ia/bench",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Harness de BENCH-01/BENCH-02 (T-H4-10/11): conjunto por familias, particion por semilla y gates de P-III 6.2.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@profesor-ia/contracts": "workspace:*",
+    "@profesor-ia/model-gateway": "workspace:*",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  },
+  "bin": {
+    "profesor-ia-bench": "./dist/bin.js"
+  }
+}

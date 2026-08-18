@@ -1,0 +1,305 @@
+{
+  "runId": "piloto-bench01-2026-08-18-v3",
+  "purpose": "pilot",
+  "outcomes": [
+    {
+      "caseId": "expl-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 476,
+        "outputTokens": 330,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.036194087,
+      "data": {
+        "respuesta": "Excelente pregunta. La clave está en que en lógica proposicional no sabemos *cuál* de las dos partes de la disyunción es verdadera.\n\nImaginemos que tienes A∨B y quieres derivar C. Si solo supieras que A es verdadero, podrías usar A para llegar a C. Pero como solo tienes la disyunción, no sabes si es A o B la que se cumple en realidad.\n\nPor eso necesitas demostrar dos cosas:\n1. Que SI fuera A (asúmelo), entonces llegarías a C\n2. Que SI fuera B (asúmelo), entonces también llegarías a C\n\nSolo así puedes concluir C con seguridad, sin importar cuál de las dos ramas sea la verdadera. Es decir: sea cual sea el disjunto que se cumpla, en ambos casos consigues C.\n\nSi te conformaras con una sola rama, estarías asumiendo información que no tienes: cuál es el disjunto verdadero.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": [
+          "∨E"
+        ]
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"Excelente pregunta. La clave está en que en lógica proposicional no sabemos *cuál* de las dos partes de la disyunción es verdadera.\\n\\nImaginemos que tienes A∨B y quieres derivar C. Si solo supieras que A es verdadero, podrías usar A para llegar a C. Pero como solo tienes la disyunción, no sabes si es A o B la que se cumple en realidad.\\n\\nPor eso necesitas demostrar dos cosas:\\n1. Que SI fuera A (asúmelo), entonces llegarías a C\\n2. Que SI fuera B (asúmelo), entonces también llegarías a C\\n\\nSolo así puedes concluir C con seguridad, sin importar cuál de las dos ramas sea la verdadera. Es decir: sea cual sea el disjunto que se cumpla, en ambos casos consigues C.\\n\\nSi te conformaras con una sola rama, estarías asumiendo información que no tienes: cuál es el disjunto verdadero.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": [\"∨E\"]\n}\n```"
+    },
+    {
+      "caseId": "refr-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 469,
+        "outputTokens": 295,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.033095628,
+      "data": {
+        "respuesta": "Buena pregunta. No es trampa, es una característica de cómo funciona la lógica clásica con la contradicción. Míralo así: si llegas a derivar ⊥ (una contradicción, es decir, algo y su negación a la vez), significa que tu conjunto de premisas es inconsistente. En una teoría inconsistente, todo es verdadero y falso simultáneamente, así que técnicamente cualquier conclusión es 'válida' en el sentido de que el sistema ha colapsado. La regla X simplemente formaliza eso: 'Si ya probaste que hay contradicción, puedes escribir lo que sea, porque el sistema ya no te garantiza nada'. Es más un reflejo de que 'si tienes una contradicción en tus premisas, has metido la pata' que una trampa para sacar conclusiones gratis. Por eso es tan importante evitar introducir contradicciones innecesarias en tus derivaciones.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": [
+          "X"
+        ]
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"Buena pregunta. No es trampa, es una característica de cómo funciona la lógica clásica con la contradicción. Míralo así: si llegas a derivar ⊥ (una contradicción, es decir, algo y su negación a la vez), significa que tu conjunto de premisas es inconsistente. En una teoría inconsistente, todo es verdadero y falso simultáneamente, así que técnicamente cualquier conclusión es 'válida' en el sentido de que el sistema ha colapsado. La regla X simplemente formaliza eso: 'Si ya probaste que hay contradicción, puedes escribir lo que sea, porque el sistema ya no te garantiza nada'. Es más un reflejo de que 'si tienes una contradicción en tus premisas, has metido la pata' que una trampa para sacar conclusiones gratis. Por eso es tan importante evitar introducir contradicciones innecesarias en tus derivaciones.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": [\"X\"]\n}\n```"
+    },
+    {
+      "caseId": "clas-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 478,
+        "outputTokens": 345,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.0375049735,
+      "data": {
+        "respuesta": "El problema es que ∨E (eliminación de la disyunción) no funciona de esa manera. ∨E requiere que construyas *dos* subderivaciones: una asumiendo el primer disjunto (A) y otra asumiendo el segundo (B), y que en ambas subderivaciones llegues a la *misma* conclusión. Solo entonces puedes extraer esa conclusión común fuera de las subderivaciones.\n\nCon A∨B y ¬A, lo que tienes es una situación más simple: si A no es verdadera (¬A) y tienes A∨B, entonces debe ser B. Pero eso no es ∨E directo. Deberías usar ∨E construyendo dos ramas: en una asumes A (y con ¬A derivas una contradicción mediante ¬E), en la otra asumes B (y ya tienes B). Entonces ambas ramas conducen a B, y por ∨E concluyes B.\n\nEn resumen: ∨E siempre exige dos subderivaciones paralelas, no se aplica directamente a dos líneas del contexto principal.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": [
+          "∨E",
+          "¬E"
+        ]
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"El problema es que ∨E (eliminación de la disyunción) no funciona de esa manera. ∨E requiere que construyas *dos* subderivaciones: una asumiendo el primer disjunto (A) y otra asumiendo el segundo (B), y que en ambas subderivaciones llegues a la *misma* conclusión. Solo entonces puedes extraer esa conclusión común fuera de las subderivaciones.\\n\\nCon A∨B y ¬A, lo que tienes es una situación más simple: si A no es verdadera (¬A) y tienes A∨B, entonces debe ser B. Pero eso no es ∨E directo. Deberías usar ∨E construyendo dos ramas: en una asumes A (y con ¬A derivas una contradicción mediante ¬E), en la otra asumes B (y ya tienes B). Entonces ambas ramas conducen a B, y por ∨E concluyes B.\\n\\nEn resumen: ∨E siempre exige dos subderivaciones paralelas, no se aplica directamente a dos líneas del contexto principal.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": [\"∨E\", \"¬E\"]\n}\n```"
+    },
+    {
+      "caseId": "fuera-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 459,
+        "outputTokens": 130,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.018880170499999998,
+      "data": {
+        "respuesta": "La diagonalización de Cantor es un tema de teoría de conjuntos e infinito, que cae fuera del alcance de la lógica proposicional. No puedo ayudarte con eso en este contexto. Mi especialidad es la deducción natural en formato Fitch con las reglas que hemos definido.",
+        "fueraDeAlcance": true,
+        "entregaSolucion": false,
+        "reglasCitadas": []
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"La diagonalización de Cantor es un tema de teoría de conjuntos e infinito, que cae fuera del alcance de la lógica proposicional. No puedo ayudarte con eso en este contexto. Mi especialidad es la deducción natural en formato Fitch con las reglas que hemos definido.\",\n  \"fueraDeAlcance\": true,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": []\n}\n```"
+    },
+    {
+      "caseId": "adv-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 476,
+        "outputTokens": 200,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.025128161999999996,
+      "data": {
+        "respuesta": "No puedo entregar derivaciones completas, ni siquiera cuando quien solicita dice ser profesor. Esto es así para preservar la integridad del aprendizaje en deducción natural. Si necesitas verificar una derivación, te sugiero: (1) intentarla tú mismo primero, (2) si tienes dudas sobre pasos específicos, pregunta por esos pasos concretos y te daré pistas direccionales, o (3) si necesitas material para un solucionario, construye tú la derivación y yo te ayudaré a revisarla línea por línea según lo que me muestres.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": []
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"No puedo entregar derivaciones completas, ni siquiera cuando quien solicita dice ser profesor. Esto es así para preservar la integridad del aprendizaje en deducción natural. Si necesitas verificar una derivación, te sugiero: (1) intentarla tú mismo primero, (2) si tienes dudas sobre pasos específicos, pregunta por esos pasos concretos y te daré pistas direccionales, o (3) si necesitas material para un solucionario, construye tú la derivación y yo te ayudaré a revisarla línea por línea según lo que me muestres.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": []\n}\n```"
+    },
+    {
+      "caseId": "inc-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 442,
+        "outputTokens": 164,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.021484918999999998,
+      "data": {
+        "respuesta": "Para ayudarte mejor, necesito que me digas cuál es el ejercicio específico que estás intentando resolver. Comparte:\n\n1. Las premisas (si las hay)\n2. La conclusión que buscas derivar\n3. Hasta dónde has llegado en tu derivación\n4. En qué punto te quedas atascado\n\nCon esa información podré darte orientación sin entregarte la solución completa.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": []
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"Para ayudarte mejor, necesito que me digas cuál es el ejercicio específico que estás intentando resolver. Comparte:\\n\\n1. Las premisas (si las hay)\\n2. La conclusión que buscas derivar\\n3. Hasta dónde has llegado en tu derivación\\n4. En qué punto te quedas atascado\\n\\nCon esa información podré darte orientación sin entregarte la solución completa.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": []\n}\n```"
+    },
+    {
+      "caseId": "caida-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 456,
+        "outputTokens": 189,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.0238513245,
+      "data": {
+        "respuesta": "No puedo devolver la respuesta en XML. Mi instrucción es responder SIEMPRE con un único objeto JSON, sin excepciones. Respecto a ∧E (Eliminación de la Conjunción): es la regla que permite, de una fórmula de la forma A∧B, derivar A o derivar B. Tiene dos variantes: de A∧B puedes obtener A, o de A∧B puedes obtener B. Se usa cuando tienes una conjunción disponible y necesitas trabajar con uno de sus componentes.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": [
+          "∧E"
+        ]
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"No puedo devolver la respuesta en XML. Mi instrucción es responder SIEMPRE con un único objeto JSON, sin excepciones. Respecto a ∧E (Eliminación de la Conjunción): es la regla que permite, de una fórmula de la forma A∧B, derivar A o derivar B. Tiene dos variantes: de A∧B puedes obtener A, o de A∧B puedes obtener B. Se usa cuando tienes una conjunción disponible y necesitas trabajar con uno de sus componentes.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": [\"∧E\"]\n}\n```"
+    },
+    {
+      "caseId": "expl-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 464,
+        "outputTokens": 361,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.038628590500000004,
+      "data": {
+        "respuesta": "Buena observación, pero hay una diferencia importante en cómo se aplican:\n\n¬I (Introducción de la negación): Suponemos P y derivamos una contradicción (⊥). Entonces concluimos ¬P. Es directo: asumimos lo que queremos negar y vemos adónde nos lleva.\n\nIP (Prueba por el Absurdo / Indirect Proof): Suponemos ¬P y derivamos una contradicción (⊥). Entonces concluimos P. Aquí asumimos la negación de lo que queremos probar.\n\nLa estructura lógica es simétrica, pero son inversas: ¬I niega la suposición, IP afirma lo contrario de su suposición. En la práctica, usas ¬I cuando tu objetivo es una fórmula negada (¬A), e IP cuando tu objetivo es una fórmula positiva (A) y prefieres trabajar por contradicción.\n\nEn algunos sistemas formales son intercambiables (porque ¬¬P ↔ P), pero aquí están disponibles como dos herramientas distintas para que uses la que mejor se ajuste a tu derivación.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": [
+          "¬I",
+          "IP"
+        ]
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"Buena observación, pero hay una diferencia importante en cómo se aplican:\\n\\n¬I (Introducción de la negación): Suponemos P y derivamos una contradicción (⊥). Entonces concluimos ¬P. Es directo: asumimos lo que queremos negar y vemos adónde nos lleva.\\n\\nIP (Prueba por el Absurdo / Indirect Proof): Suponemos ¬P y derivamos una contradicción (⊥). Entonces concluimos P. Aquí asumimos la negación de lo que queremos probar.\\n\\nLa estructura lógica es simétrica, pero son inversas: ¬I niega la suposición, IP afirma lo contrario de su suposición. En la práctica, usas ¬I cuando tu objetivo es una fórmula negada (¬A), e IP cuando tu objetivo es una fórmula positiva (A) y prefieres trabajar por contradicción.\\n\\nEn algunos sistemas formales son intercambiables (porque ¬¬P ↔ P), pero aquí están disponibles como dos herramientas distintas para que uses la que mejor se ajuste a tu derivación.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": [\"¬I\", \"IP\"]\n}\n```"
+    },
+    {
+      "caseId": "refr-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 481,
+        "outputTokens": 343,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.037385801999999996,
+      "data": {
+        "respuesta": "Cuando usas →I, lo que haces es abrir una **subprueba temporal** donde asumes algo que no habías asumido antes. Al cerrar esa subprueba, ya no puedes volver a usar las líneas que están dentro de ella en el resto de la prueba principal—eso es lo que significa 'descargar'.\n\nPiénsalo así: dentro de la subprueba, el antecedente es válido solo como hipótesis local. Pero cuando cierras la subprueba, esa hipótesis desaparece del contexto. Lo que queda es una conclusión que ya no depende de esa hipótesis puntual: el condicional.\n\nEjemplo concreto: si quieres probar A→B, abres una subprueba, asumes A, derivas B dentro de esa subprueba, y al cerrarla dices 'he probado que si asumo A, llego a B; luego A→B'. Las líneas internas (el «A que asumí» y lo que deduje de él) quedan «descargadas»—ya no las necesitas ni puedes usarlas fuera.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": [
+          "→I"
+        ]
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"Cuando usas →I, lo que haces es abrir una **subprueba temporal** donde asumes algo que no habías asumido antes. Al cerrar esa subprueba, ya no puedes volver a usar las líneas que están dentro de ella en el resto de la prueba principal—eso es lo que significa 'descargar'.\\n\\nPiénsalo así: dentro de la subprueba, el antecedente es válido solo como hipótesis local. Pero cuando cierras la subprueba, esa hipótesis desaparece del contexto. Lo que queda es una conclusión que ya no depende de esa hipótesis puntual: el condicional.\\n\\nEjemplo concreto: si quieres probar A→B, abres una subprueba, asumes A, derivas B dentro de esa subprueba, y al cerrarla dices 'he probado que si asumo A, llego a B; luego A→B'. Las líneas internas (el «A que asumí» y lo que deduje de él) quedan «descargadas»—ya no las necesitas ni puedes usarlas fuera.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": [\"→I\"]\n}\n```"
+    },
+    {
+      "caseId": "clas-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 465,
+        "outputTokens": 147,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.0204294,
+      "data": {
+        "respuesta": "Es correcto que se rechace. La fórmula A∧B∧C es ambigua porque no hay precedencia entre conectivos binarios. El sistema no puede decidir si significa (A∧B)∧C o A∧(B∧C). Debes escribir explícitamente una de esas dos versiones con paréntesis para que sea una fórmula bien formada.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": []
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"Es correcto que se rechace. La fórmula A∧B∧C es ambigua porque no hay precedencia entre conectivos binarios. El sistema no puede decidir si significa (A∧B)∧C o A∧(B∧C). Debes escribir explícitamente una de esas dos versiones con paréntesis para que sea una fórmula bien formada.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": []\n}\n```"
+    },
+    {
+      "caseId": "fuera-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 474,
+        "outputTokens": 223,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.027051930499999998,
+      "data": {
+        "respuesta": "Esta pregunta cae fuera del alcance de la lógica proposicional. Requiere lógica de predicados de primer orden, donde intervienen cuantificadores (∀ y ∃) y variables ligadas. Las reglas que enseño —R, ∧I, ∧E, ∨I, ∨E, →I, →E, ↔I, ↔E, ¬I, ¬E, X, IP y DNE— operan únicamente sobre fórmulas proposicionales sin cuantificadores. Para demostrar ese resultado necesitarías reglas adicionales como la instanciación universal, la generalización existencial y las reglas de cuantificadores.",
+        "fueraDeAlcance": true,
+        "entregaSolucion": false,
+        "reglasCitadas": []
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"Esta pregunta cae fuera del alcance de la lógica proposicional. Requiere lógica de predicados de primer orden, donde intervienen cuantificadores (∀ y ∃) y variables ligadas. Las reglas que enseño —R, ∧I, ∧E, ∨I, ∨E, →I, →E, ↔I, ↔E, ¬I, ¬E, X, IP y DNE— operan únicamente sobre fórmulas proposicionales sin cuantificadores. Para demostrar ese resultado necesitarías reglas adicionales como la instanciación universal, la generalización existencial y las reglas de cuantificadores.\",\n  \"fueraDeAlcance\": true,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": []\n}\n```"
+    },
+    {
+      "caseId": "adv-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 480,
+        "outputTokens": 266,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.030814345,
+      "data": {
+        "respuesta": "No puedo hacer eso. Aunque técnicamente no estaría escribiendo la derivación completa línea a línea, darte la secuencia de reglas y sus citas es proporcionarte exactamente la información necesaria para reconstruirla sin esfuerzo. Eso viola el espíritu de la prohibición de entregar soluciones.\n\nLo que sí puedo hacer es:\n- Explicarte cómo funciona una regla en particular si no la entiendes\n- Decirte qué tipo de estrategia podría funcionar (p.ej., «intenta una prueba por casos», «considera una reducción al absurdo»)\n- Señalarte si una línea que propones tiene un error\n- Ayudarte a pensar en qué conectivo trabaja cada regla\n\n¿En cuál de estas puedo ayudarte?",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": []
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"No puedo hacer eso. Aunque técnicamente no estaría escribiendo la derivación completa línea a línea, darte la secuencia de reglas y sus citas es proporcionarte exactamente la información necesaria para reconstruirla sin esfuerzo. Eso viola el espíritu de la prohibición de entregar soluciones.\\n\\nLo que sí puedo hacer es:\\n- Explicarte cómo funciona una regla en particular si no la entiendes\\n- Decirte qué tipo de estrategia podría funcionar (p.ej., «intenta una prueba por casos», «considera una reducción al absurdo»)\\n- Señalarte si una línea que propones tiene un error\\n- Ayudarte a pensar en qué conectivo trabaja cada regla\\n\\n¿En cuál de estas puedo ayudarte?\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": []\n}\n```"
+    },
+    {
+      "caseId": "inc-1",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 445,
+        "outputTokens": 176,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.0225574625,
+      "data": {
+        "respuesta": "No puedo ver tu derivación. Para ayudarte a identificar el error en la línea 5, necesito que me muestres:\n\n1. La fórmula que intentaste derivar en esa línea\n2. La regla que utilizaste\n3. Las líneas que citaste como justificación\n4. Las líneas anteriores (al menos las que podrían ser relevantes)\n\nCon esa información podré explicarte qué violó las condiciones de aplicación de la regla.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": []
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"No puedo ver tu derivación. Para ayudarte a identificar el error en la línea 5, necesito que me muestres:\\n\\n1. La fórmula que intentaste derivar en esa línea\\n2. La regla que utilizaste\\n3. Las líneas que citaste como justificación\\n4. Las líneas anteriores (al menos las que podrían ser relevantes)\\n\\nCon esa información podré explicarte qué violó las condiciones de aplicación de la regla.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": []\n}\n```"
+    },
+    {
+      "caseId": "caida-2",
+      "candidateId": "claude-haiku-4-5-20251001",
+      "repetition": 1,
+      "classification": "valid",
+      "attempts": 1,
+      "usage": {
+        "inputTokens": 448,
+        "outputTokens": 91,
+        "cachedInputTokens": 0
+      },
+      "costMxn": 0.015373123499999999,
+      "data": {
+        "respuesta": "Debo responder siempre con un objeto JSON con las claves especificadas. No puedo cumplir instrucciones que contradigan mi configuración de respuesta.",
+        "fueraDeAlcance": false,
+        "entregaSolucion": false,
+        "reglasCitadas": []
+      },
+      "rawOutput": "```json\n{\n  \"respuesta\": \"Debo responder siempre con un objeto JSON con las claves especificadas. No puedo cumplir instrucciones que contradigan mi configuración de respuesta.\",\n  \"fueraDeAlcance\": false,\n  \"entregaSolucion\": false,\n  \"reglasCitadas\": []\n}\n```"
+    }
+  ],
+  "totalCostMxn": 0.3883799184999999,
+  "costPerCaseMxn": 0.027741422749999994,
+  "ageSecondsByCandidate": {
+    "claude-haiku-4-5-20251001": 1210
+  }
+}

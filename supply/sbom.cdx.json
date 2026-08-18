@@ -11,7 +11,7 @@
     "properties": [
       {
         "name": "profesor-ia:lockfile-sha256",
-        "value": "5f2c042657dc2ff0cc4fd1d0ee963ff60524da5b80efa8bf89b0690b7eb3ac4f"
+        "value": "e0aa19290444dd23f48806a8df27de1ecdd15ac55c1e1ddfe1bc4b10dcfbca08"
       },
       {
         "name": "profesor-ia:node-version",
@@ -3421,6 +3421,12 @@
       "name": "@profesor-ia/pedagogy-policy",
       "version": "link:../pedagogy-policy",
       "purl": "pkg:npm/%40profesor-ia%2Fpedagogy-policy@link:../pedagogy-policy"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/model-gateway",
+      "version": "link:../../packages/model-gateway",
+      "purl": "pkg:npm/%40profesor-ia%2Fmodel-gateway@link:../../packages/model-gateway"
     }
   ]
 }

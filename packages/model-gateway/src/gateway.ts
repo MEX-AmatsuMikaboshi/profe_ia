@@ -3,7 +3,11 @@ import type { ZodType } from 'zod';
 import type { BuildRequestInput, ProviderAdapter, ProviderRequest, Transport } from './adapter.js';
 import { assertBindingUsable, authorizeParameters, NO_PARAMETERS } from './capabilities.js';
 import { ProfileCredential, type CredentialResolver } from './credentials.js';
-import { validateModelOutput, type ValidatedOutput } from './output.js';
+import {
+  validateModelOutput,
+  type CodeFencePolicy,
+  type ValidatedOutput,
+} from './output.js';
 import {
   AmbiguousBindingError,
   OperationNotAuthorizedForProfileError,
@@ -58,6 +62,13 @@ export interface ExecuteInput<T> extends DispatchInput {
   readonly schema: ZodType<T>;
   /** Intento, para distinguir el reintento único que permite BENCH-01. */
   readonly attempt?: number;
+  /**
+   * Qué hacer con una salida envuelta en un bloque de código. **Obligatorio y
+   * sin valor por omisión**: normalizar sólo vale «cuando el contrato lo
+   * autorice» (P-II §8.4), así que la autorización se escribe aquí, en el sitio
+   * que llama, y no la elige la pasarela por nadie.
+   */
+  readonly codeFence: CodeFencePolicy;
 }
 
 export class ModelGateway {
@@ -182,6 +193,7 @@ export class ModelGateway {
       outcome: adapter.parseResponse(response),
       schema: input.schema,
       attempt: input.attempt ?? 1,
+      codeFence: input.codeFence,
     });
   }
 }

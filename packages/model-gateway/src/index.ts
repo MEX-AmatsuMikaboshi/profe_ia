@@ -17,6 +17,7 @@ export {
   UnpinnedBindingError,
   ContradictoryCapabilitiesError,
   UnknownProviderContractError,
+  TransportError,
   FragmentOutsideBlockError,
   HelpLevelExceededError,
   UndeclaredStateKeyError,
@@ -81,10 +82,13 @@ export {
 
 export {
   canonicalizeEnum,
+  stripCodeFence,
   validateModelOutput,
   type CanonicalEnumValue,
   type CanonicalizeEnumOptions,
+  type CodeFencePolicy,
   type ProviderOutcome,
+  type ProviderUsage,
   type ValidatedOutput,
   type ValidateOutputInput,
 } from './output.js';
@@ -127,6 +131,16 @@ export type {
   ProviderResponse,
   Transport,
 } from './adapter.js';
+export { httpTransport, type HttpTransportOptions } from './transport.js';
+export {
+  ANTHROPIC_SOURCE,
+  FIX_MXN_PER_USD,
+  FIX_SOURCE,
+  OPENAI_SOURCE,
+  PRICING_MANIFEST_2026_08_18,
+  PUBLISHED_USD_PRICES,
+  mxnPerToken,
+} from './pricing-manifest.js';
 export { ANTHROPIC_PROVIDER, anthropicAdapter } from './adapters/anthropic.js';
 export { OPENAI_PROVIDER, openaiAdapter } from './adapters/openai.js';
 export {
