@@ -12,11 +12,21 @@
 > **LO PRIMERO QUE HAY QUE HACER AL VOLVER, en este orden:**
 >
 > 1. **Observar la corrida de CI de `0c0d8e8`** job por job. La de `6b3b5c4` ya está observada:
->    corrida **`32217831066`, los diez jobs en verde**. La de `0c0d8e8` es la **`32218454008`** y
->    quedó **en marcha**: nadie la ha visto terminar. Hasta que se vea, ese commit es `HECHA`, no
+>    corrida **`32217831066`, los diez jobs en verde**.
+>
+>    **Ojo con cuál mirar.** La de `0c0d8e8` (**`32218454008`**) salió **`cancelled`**: nueve jobs
+>    en verde y **`ci:logic:mutation` cancelado**. La causa fue empujar `35c4d42` tres minutos
+>    después — la concurrencia de Actions aborta la corrida anterior sobre la misma rama. Dicho
+>    claro: **subir el handoff canceló la verificación del commit anterior.** Lección práctica: si
+>    vas a empujar dos veces seguidas, la corrida que cuenta es la del último commit, y hay que
+>    esperar a esa.
+>
+>    **La que vale es la de `35c4d42`: `32218704675`**, que lleva exactamente el mismo código y
+>    quedó **en marcha** al cerrar. Nadie la ha visto terminar. Hasta que se vea completa —los diez
+>    jobs, `ci:logic:mutation` incluido, que tarda ~9 min— la capa de gates es `HECHA`, no
 >    `VERIFICADA`.
 >    ```
->    gh api repos/MEX-AmatsuMikaboshi/profe_ia/actions/runs/32218454008/jobs --jq '.jobs[] | "\(.conclusion)  \(.name)"'
+>    gh api repos/MEX-AmatsuMikaboshi/profe_ia/actions/runs/32218704675/jobs --jq '.jobs[] | "\(.conclusion)  \(.name)"'
 >    ```
 > 2. **Leer §3.5.** Es el bloqueo real de BENCH-01 y no estaba identificado antes de esta sesión.
 > 3. **Pedirle al propietario la decisión (A) o (B)** de §3.5. Está planteada y **sin responder**:
