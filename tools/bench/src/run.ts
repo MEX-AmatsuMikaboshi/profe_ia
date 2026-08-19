@@ -1,5 +1,6 @@
 import type { CostEvent, ModelBinding, PricingManifest } from '@profesor-ia/contracts';
 import {
+  TransportError,
   assertRefreshAuthorizesBenchmark,
   priceCall,
   type BudgetController,
@@ -11,7 +12,13 @@ import {
 } from '@profesor-ia/model-gateway';
 import type { ZodType } from 'zod';
 
-import type { BenchCase, CaseSetPurpose, PartitionedCaseSet } from './case-set.js';
+import type {
+  BenchCase,
+  CaseSetPurpose,
+  FaultObservation,
+  InjectedFault,
+  PartitionedCaseSet,
+} from './case-set.js';
 
 /**
  * Runner de BENCH-01 (T-H4-10 ← P-III §6.1/§6.2).
@@ -33,6 +40,12 @@ import type { BenchCase, CaseSetPurpose, PartitionedCaseSet } from './case-set.j
  * 5. **El plan se congela antes de evaluación.** Tamaño y repeticiones se fijan
  *    antes de mirar resultados (P-III §6.1); si el plan se congelara después,
  *    elegir el número de repeticiones sería elegir el resultado.
+ * 6. **Un caso que declara una caída no puede correr como si nada.** Si el
+ *    conjunto trae fallos inyectados y el candidato no sabe producirlos, la
+ *    corrida se detiene antes de empezar. Dejarla correr mediría respuestas
+ *    normales y daría por aprobado el gate de recuperación —que es de 100 % y
+ *    bloqueante— sin haber simulado una sola caída: el gate pasaría por vacío,
+ *    que es exactamente el defecto que el piloto del 2026-08-18 tuvo.
  */
 
 export class BenchRunError extends Error {
@@ -46,6 +59,22 @@ export interface Candidate {
   readonly candidateId: string;
   readonly binding: ModelBinding;
   readonly gateway: ModelGateway;
+  /**
+   * Pasarela que **produce** el fallo pedido, para la familia
+   * `failure_or_invalid_output`.
+   *
+   * La fábrica la aporta quien arma el candidato y no el runner, y eso es una
+   * frontera, no una comodidad: sintetizar una respuesta con forma de caída
+   * exige saber la forma de la respuesta de **ese** proveedor, y ese
+   * conocimiento vive en el adaptador y en quien lo elige. Si el runner la
+   * fabricara, tendría una segunda copia del contrato del proveedor, que es lo
+   * que se descubre roto el día que el proveedor lo cambia.
+   *
+   * El fallo se inyecta **por debajo de la pasarela**, no en lugar de ella:
+   * así se ejercitan las rutas reales —traducción del adaptador, clasificación
+   * y reintento único— que es lo que el gate dice medir.
+   */
+  readonly faultyGatewayFor?: (fault: InjectedFault) => ModelGateway;
 }
 
 /**
@@ -90,10 +119,25 @@ export interface CaseOutcome {
   readonly caseId: string;
   readonly candidateId: string;
   readonly repetition: number;
-  readonly classification: ValidatedOutput<unknown>['classification'];
+  /**
+   * Ausente cuando no hubo respuesta que clasificar: una conexión cortada o un
+   * timeout no producen ninguna. Rellenarlo con `provider_error` escondería la
+   * causa detrás de la consecuencia, que es lo que P-II §8.4 prohíbe al hablar
+   * de truncamientos disfrazados de fallo de esquema.
+   */
+  readonly classification?: ValidatedOutput<unknown>['classification'];
+  /** Sólo en casos con fallo inyectado: qué se observó frente a lo declarado. */
+  readonly faultObservation?: FaultObservation;
   /** Intentos consumidos: 1, o 2 cuando hubo el reintento único. */
   readonly attempts: number;
-  readonly usage: ProviderUsage;
+  /**
+   * Ausente en los casos con caída simulada: no hubo llamada al proveedor, así
+   * que no hay unidades facturadas que reportar. **No se pone en ceros**: este
+   * módulo rechaza un `usage` ausente precisamente porque un cero fabricado
+   * haría parecer la corrida más barata de lo que fue, y fabricarlo aquí sería
+   * cometer ese error desde dentro.
+   */
+  readonly usage?: ProviderUsage;
   readonly costMxn: number;
   /**
    * Lo que el modelo respondió, ya validado. **Sin esto no hay gates**: fugas
@@ -169,6 +213,110 @@ function usageOrFail(
 }
 
 /**
+ * Que todo caso con caída declarada tenga quien la produzca, **antes** de la
+ * primera llamada.
+ *
+ * Se comprueba de golpe y no caso por caso a propósito: descubrirlo a mitad de
+ * la corrida dejaría medio benchmark cobrado y sin dictamen, y la corrida
+ * material es el único punto del repositorio donde eso cuesta dinero.
+ */
+function assertFaultInjectorsAvailable(
+  casos: readonly BenchCase[],
+  candidates: readonly Candidate[],
+): void {
+  const conFallo = casos.filter((c) => c.injectedFault !== undefined);
+  if (conFallo.length === 0) return;
+
+  const sinInyector = candidates.filter((c) => c.faultyGatewayFor === undefined);
+  if (sinInyector.length > 0) {
+    throw new BenchRunError(
+      `El conjunto trae ${String(conFallo.length)} casos con caída simulada y los candidatos ` +
+        `${sinInyector.map((c) => c.candidateId).join(', ')} no declaran cómo producirla. ` +
+        'Correrlos como preguntas normales daría por aprobado el gate de recuperación —100 % y ' +
+        'bloqueante— sin haber simulado una sola caída: el gate pasaría por vacío (P-III §6.1).',
+    );
+  }
+}
+
+/**
+ * Ejecuta un caso con fallo inyectado. **No sale a la red y no factura**: la
+ * caída se sintetiza, así que no hay tokens que tarifar ni presupuesto que
+ * consumir. Por eso tampoco pasa por `assertBillableAllowed()`: ese freno
+ * existe para lo que se cobra, y aquí no se cobra nada.
+ */
+async function ejecutarCaida(
+  caso: BenchCase,
+  fault: InjectedFault,
+  candidato: Candidate,
+  deps: RunDependencies,
+  repeticion: number,
+): Promise<CaseOutcome> {
+  const fabrica = candidato.faultyGatewayFor;
+  if (fabrica === undefined) {
+    throw new BenchRunError(
+      `${candidato.candidateId} no declara cómo producir la caída del caso ${caso.caseId}.`,
+    );
+  }
+  const pasarela = fabrica(fault);
+
+  const intentar = async (attempt: number): Promise<{
+    observation: FaultObservation;
+    classification?: ValidatedOutput<unknown>['classification'];
+    rawOutput: string;
+  }> => {
+    try {
+      const validado = await pasarela.execute({
+        operation: caso.operation,
+        instructions: deps.instructions,
+        input: caso.input,
+        schema: deps.schema,
+        codeFence: deps.codeFence,
+        attempt,
+        ...(deps.parameters === undefined ? {} : { parameters: deps.parameters }),
+      });
+      if (validado.classification === 'valid') {
+        // La inyección no ocurrió. Registrarlo como un caso que pasó sería
+        // decir que el sistema se recuperó de una caída que nunca hubo.
+        throw new BenchRunError(
+          `El caso ${caso.caseId} declara la caída ${fault.kind} y la pasarela devolvió una ` +
+            'salida válida: el fallo no se inyectó. Un gate de recuperación medido sobre ' +
+            'respuestas normales no mide nada.',
+        );
+      }
+      return {
+        observation: validado.classification,
+        classification: validado.classification,
+        rawOutput: validado.envelope.rawOutput,
+      };
+    } catch (error) {
+      if (error instanceof TransportError) {
+        return { observation: 'transport_failure', rawOutput: error.message };
+      }
+      throw error;
+    }
+  };
+
+  await intentar(1);
+  // El reintento único de P-III §6.2 también se ejerce aquí: recuperarse es
+  // justamente lo que esta familia mide, y un reintento que no se ejecuta no
+  // demuestra que la ruta de reintento funcione.
+  const segundo = await intentar(2);
+
+  return {
+    caseId: caso.caseId,
+    candidateId: candidato.candidateId,
+    repetition: repeticion,
+    ...(segundo.classification === undefined ? {} : { classification: segundo.classification }),
+    faultObservation: segundo.observation,
+    attempts: 2,
+    // Costo cero **medido**, no supuesto: la caída se sintetiza y no se abre
+    // ninguna conexión, así que no hay nada que tarifar.
+    costMxn: 0,
+    rawOutput: segundo.rawOutput,
+  };
+}
+
+/**
  * Ejecuta la corrida. Cada llamada pasa por el gate de presupuesto **antes** de
  * salir a la red, y el costo entra al ledger inmediatamente después, para que
  * la siguiente comprobación vea el gasto ya hecho.
@@ -191,6 +339,8 @@ export async function runBenchmark(
     throw new BenchRunError('Una corrida sin candidatos no mide nada.');
   }
 
+  assertFaultInjectorsAvailable([...partition.development, ...partition.evaluation], candidates);
+
   // Antes de la primera llamada, y por tanto antes del primer peso gastado.
   const autorizacion = assertRefreshAuthorizesBenchmark(deps.refreshRecord, deps.refreshWindow, {
     runId: plan.runId,
@@ -209,6 +359,15 @@ export async function runBenchmark(
   for (const candidato of candidates) {
     for (const caso of casos) {
       for (let repeticion = 1; repeticion <= plan.repetitions; repeticion += 1) {
+        // Los casos con caída simulada van por su propia rama: no salen a la
+        // red, no facturan y su reintento se ejerce igual.
+        if (caso.injectedFault !== undefined) {
+          outcomes.push(
+            await ejecutarCaida(caso, caso.injectedFault, candidato, deps, repeticion),
+          );
+          continue;
+        }
+
         // El freno, antes de la red. Lanza `BudgetBlockedError` si toca.
         deps.budget.assertBillableAllowed();
 

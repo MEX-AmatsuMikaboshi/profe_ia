@@ -1,6 +1,10 @@
 # HANDOFF — punto de continuación
 
 **Fecha del checkpoint:** 2026-08-19 (cuarta sesión del 18, cerrada de madrugada).
+**Añadido el 2026-08-18 (tarde), sin cerrar sesión:** el **conjunto material de 200 casos de
+BENCH-01** y la corrección de los dos defectos de diseño del piloto (D-41 a D-43), más la
+averiguación sobre snapshots fechados que reordena los candidatos (§3.4, D-44). `T-H4-10` sigue
+`EN_CURSO`.
 **Qué se cerró aquí:** **F3/H3 con su criterio técnico cubierto** —`T-H3-05` (trazas) y la regresión
 de `apps/web` en contenedor, más los tres checks de infraestructura cableados en CI— y **las dos
 tareas de F8 que no necesitan proveedor**: `T-H7-02` (validador de anclaje) y `T-H7-03` (no
@@ -14,14 +18,17 @@ revelación y suite adversarial). Las cinco `VERIFICADAS` en `main`.
 > `T-H7-05`, `T-H7-06`— viven **todas dentro del bucle W7**, que exige el binding ganador de
 > BENCH-01. **F8 ya no avanza escribiendo código.**
 >
-> **2. El propietario autorizó el gasto de la corrida material de BENCH-01: USD 3.64.**
-> Autorizado el 2026-08-19. **Pero el gasto no era el bloqueo**: siguen faltando los 200 casos
-> escritos a mano y los cuatro puntos de §3.0.b, dos de los cuales son defectos de diseño reales.
-> Está todo explicado en llano en **§3.3**.
+> **2. Los 200 casos ya existen, y los dos defectos de diseño están corregidos.**
+> `tools/bench/src/material-cases.ts` trae el conjunto material completo —los siete pisos exactos—,
+> **lo redactó el modelo asistente por instrucción del propietario (D-41)** y eso trae un sesgo que
+> hay que cerrar con **revisión humana antes de coronar a nadie**. La caída simulada ahora se
+> inyecta en el transporte y el runner falla cerrado sin inyector (D-42); `entregaSolucion` salió de
+> las instrucciones materiales (D-43). **Lo que bloquea hoy está en §3.3, y es otra cosa.**
 >
 > **3. El refresco documental caduca el 2026-08-19 a las 07:39 UTC.** Para una corrida material hay
 > que rehacerlo. **Rehacerlo es gratis**, así que no es un bloqueo: es un paso que no se puede
-> olvidar, porque `assertRefreshAuthorizesBenchmark` lo rechaza caducado.
+> olvidar, porque `assertRefreshAuthorizesBenchmark` lo rechaza caducado. Al rehacerlo, **cambia a
+> quién se mide**: ver §3.4.
 >
 > **4. Dos lecciones de esta sesión que valen más que el código que las trajo:**
 >
@@ -221,6 +228,13 @@ qué debía comprobar, y elegirlo sería inventar.
 ---
 
 ## 3.1 Lo siguiente: ya no es elegir rama
+
+> **Nota del 2026-08-18 (tarde):** este apartado decía que no quedaba código construible sin el
+> propietario, y era **falso**. Quedaba, y bastante: el conjunto material de 200 casos, el rediseño
+> de la caída simulada y el de las instrucciones (§3.3, D-41 a D-43), todo hecho esa tarde. Y sigue
+> quedando la pieza mayor: **la capa que computa los gates**, que no necesita proveedor ni gasto.
+> La lección es la de siempre en este repositorio: «no queda nada construible» es una afirmación que
+> hay que intentar refutar antes de escribirla.
 
 **Las tres ramas que se podían recorrer sin el propietario están recorridas.** Lo que queda o depende
 de una decisión suya, o de trabajo humano que no es programar. Está todo en **§3.3**.
@@ -491,52 +505,70 @@ misma disciplina del conjunto dorado del verificador: si se graba la salida obse
 un modelo sería peor todavía: mediría al modelo con preguntas que el propio modelo considera
 razonables.
 
-**Cuánto trabajo es, siendo honestos.** 200 entradas redactadas, cada una con sus cuatro banderas de
-expectativa. No hace falta que las escriba un programador; hace falta que las escriba alguien que
-entienda la unidad de deducción natural y los errores típicos de un alumno. **Es la parte cara de
-BENCH-01, y es humana.**
+**ESTADO (2026-08-18, tarde): los 200 casos están escritos.** Viven en
+`tools/bench/src/material-cases.ts`, con los siete pisos exactos y las expectativas declaradas en el
+propio archivo. **Los redactó el modelo asistente por instrucción del propietario**, no una persona,
+y eso está registrado como D-41 con el sesgo que introduce: entre los candidatos de BENCH-01 hay
+modelos de la misma familia que el que redactó, y un examen escrito por un pariente del examinado
+puede favorecerlo. Tres cosas lo acotan y **ninguna lo elimina**:
+
+1. Nada se redactó por intuición. La familia de clasificación **barre uno a uno los dieciocho
+   códigos `E-*`** y la de explicación **barre los dieciocho KC**: listas cerradas y congeladas.
+2. Las expectativas están en el archivo, escritas antes de que exista una sola respuesta.
+3. P-III §6.2 ya exige auditoría humana en muestra ciega.
+
+> **Por eso queda una tarea humana, y es más barata que escribir 200 casos: leerlos.** La revisión
+> humana del conjunto es **condición previa a coronar un ganador**. Es lo único que rompe el círculo
+> de que el examen y una parte de los examinados vengan del mismo sitio.
 
 **Lo que ya está construido y no hay que rehacer:** `tools/bench/` tiene las siete familias con sus
 pisos, la partición por semilla reconstruible **dentro de cada familia**, los seis gates de §6.2 con
-denominador declarado, el runner y `verdictFor()`, que **impide que un piloto dictamine**. Falta
-sólo el contenido de los casos: `tools/bench/src/pilot-cases.ts` tiene 14 y sirve de plantilla.
+denominador declarado, el runner y `verdictFor()`, que **impide que un piloto dictamine**.
 
 ### 3. Los cuatro puntos del piloto, en llano
 
-**(a) `gpt-5.6-luna` no publica snapshot fechado.** Un «snapshot fechado» es una versión congelada
-del modelo, tipo `gpt-5-2026-03-11`. Sin eso, el proveedor puede cambiar el modelo por debajo sin
-avisar y la corrida deja de ser reproducible: mediríamos una cosa y desplegaríamos otra. El sistema
-lo rechaza solo (`UnpinnedBindingError`), incluso en piloto, así que ese modelo quedó fuera.
-**Qué hay que averiguar antes de escribir 200 casos:** si **algún** modelo de OpenAI publica snapshot
-fechado. Si ninguno lo hace, BENCH-01 tendría un solo proveedor y **BENCH-02 —que exige familias
-distintas— quedaría bloqueado**.
+**(a) `gpt-5.6-luna` no publica snapshot fechado. RESUELTO como averiguación: ninguno lo publica.**
+Se comprobó el 2026-08-18 y el detalle está en **§3.4**. Ningún modelo vigente de OpenAI publica
+snapshot fechado, y los que lo tuvieron se retiran el 2026-12-11. La salida **no es saltarse la
+regla**: P-II §8.1 admite huella de comportamiento sobre el set canario, y `assertPinnedIdentity()`
+la acepta. Producir esa huella es lo que desbloquea BENCH-02.
 
-**(b) `claude-haiku-4-5` se apaga el 2026-10-15.** Es la fecha de retiro más próxima de los modelos
-vigentes de Anthropic. Si gana ese, el sistema queda atado a un modelo que se apaga en dos meses.
-No es un defecto: es un criterio a tener en cuenta al elegir, y conviene decidirlo **antes** y no
-cuando ya se coronó ganador.
+**(b) `claude-haiku-4-5` se apaga el 2026-10-15. RESUELTO: se elige otro candidato.** También en
+§3.4. Anthropic documenta que sus ids **sin fecha son snapshots fijados**, así que `claude-sonnet-5`
+—retiro no antes del 2027-06-30, USD 0.642 por 200 casos según lo medido en el piloto— tiene
+identidad fijada y diez meses más de vida. El dilema que planteaba (b) no existía.
 
-**(c) Los 20 casos de «caída del proveedor» no simulan nada — defecto de diseño real.**
-La familia `failure_or_invalid_output` debe comprobar que, cuando el proveedor se cae o devuelve
-basura, el sistema cae a modo degradado. Como estaban escritos, **le pedían al modelo que devolviera
-basura a propósito** («responde sólo ERROR», «devuelve XML»). Y el modelo, sensatamente, ignora esa
-instrucción y responde bien. Resultado: se estaba midiendo la obediencia del modelo, no la
-recuperación del sistema.
+**(c) Los 20 casos de «caída del proveedor» no simulaban nada. CORREGIDO (D-42).**
+Ahora el fallo es **dato del caso** (`InjectedFault`) y el runner lo desvía a una pasarela que lo
+produce **por debajo**, de modo que se ejerciten las rutas reales: traducción del adaptador,
+clasificación y reintento único. Tres cosas que conviene no perder:
 
-> **Un fallo se inyecta en el transporte, no se le pide al modelo.** La forma correcta es cortar la
-> conexión, devolver un 500 o entregar una respuesta truncada **desde la capa de transporte**, y
-> comprobar que el sistema recupera. Hay que rediseñar esos 20 casos.
+- **La fábrica de la pasarela con fallo la aporta quien arma el candidato, no el runner.** Sintetizar
+  una respuesta con forma de caída exige saber la forma de la respuesta de *ese* proveedor, y meter
+  eso en el runner crearía una segunda copia del contrato del proveedor — la que se queda vieja.
+- **`transport_failure` no entra en `ModelOutputClassification`.** Ese enum cerrado clasifica lo que
+  el proveedor respondió, y una conexión cortada es justo el caso en que no respondió.
+  `CaseOutcome.classification` queda **ausente** en vez de rellenarse con `provider_error`, que
+  escondería la causa detrás de la consecuencia.
+- **El freno es `assertFaultInjectorsAvailable()`, antes de la primera llamada.** Una corrida con
+  caídas declaradas y sin quien las produzca mediría respuestas normales y daría por aprobado un gate
+  de 100 % y bloqueante sin haber simulado una sola caída. Comprobado con dos siembras.
 
-**(d) `entregaSolucion` lo autoreporta el modelo — defecto de diseño real.**
-El gate de fugas comprueba que el modelo no reveló la solución. Hoy eso se decide preguntándoselo a
-él: el prompt le pide devolver `"entregaSolucion": boolean` («true si tu respuesta contiene una
-derivación completa»), y el gate se cree la respuesta. Está literalmente en
-`tools/bench/src/pilot-cases.ts:183`.
+**(d) `entregaSolucion` lo autoreportaba el modelo. CORREGIDO a medias, y la mitad que falta está
+dicha (D-43).** `MATERIAL_INSTRUCTIONS` ya **no** pide `entregaSolucion`: un modelo que filtrara y
+contestara `false` habría pasado un gate de cero fallos y bloqueante. Hay una prueba de regresión que
+falla si alguien lo devuelve al prompt.
 
-> **Un modelo que filtrara la derivación y contestara `false` pasaría el gate.** El gate no puede
-> depender del autoreporte: la corrida material tiene que **inspeccionar la respuesta**. Y ya hay con
-> qué — `T-H7-02` construyó el validador que mira el texto de verdad, y `T-H7-03` la puerta de no
-> revelación. Conectarlos al gate de BENCH-01 es trabajo de código, y es de los pocos que quedan.
+`fueraDeAlcance` **se queda**, y la diferencia no es un descuido: declarar que una pregunta cae fuera
+del corpus *es* la conducta que §6.2 mide, o sea el dicho del modelo no es un informe sobre su
+conducta sino la conducta misma. En `entregaSolucion` sí era un informe, y sobre el único hecho que
+el modelo tendría motivo para reportar mal.
+
+> **La mitad que falta, sin disimulo: no existe la capa que computa los gates.** `gates.ts` sabe
+> evaluar un `GateObservation`, pero **nadie deriva `GateObservation` desde `RunResult`**: hoy el
+> harness corre casos y guarda resultados, y ningún gate se computa. Ahí es donde se enchufan el
+> validador de anclaje de `T-H7-02` y la puerta de no revelación de `T-H7-03` para decidir la fuga
+> inspeccionando el texto. **Es la pieza de código más importante que queda de BENCH-01.**
 
 ### 4. El refresco documental caduca
 
@@ -544,14 +576,80 @@ Caduca el **2026-08-19 a las 07:39 UTC**. Para una corrida material hay que reha
 `assertRefreshAuthorizesBenchmark` lo rechaza si está caducado. **Rehacerlo es gratis**: no es un
 bloqueo, es un paso que no se puede olvidar.
 
-### Orden sugerido
+## 3.4 Snapshots fechados: lo que se averiguó el 2026-08-18
 
-1. Averiguar (a): ¿hay modelo de OpenAI con snapshot fechado? Es lo único que puede **cambiar el
-   alcance** de todo lo demás.
-2. Rediseñar (c) y (d) — es código, y (d) puede reutilizar lo que `T-H7-02`/`T-H7-03` acaban de
-   construir.
-3. Escribir los 200 casos. Es lo largo, y puede ir en paralelo con 1 y 2.
-4. Rehacer el refresco y correr. El gasto ya está autorizado.
+Esto responde el punto (a) de §3.3 y **cambia una conclusión del checkpoint anterior**. Fuentes
+consultadas ese día; los enlaces están en D-44 de `PLAN_STATUS.md`.
+
+### OpenAI: no, ninguno de los vigentes
+
+Los cuatro modelos de la familia 5.6 —`gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna` y
+`gpt-5.6-cyber`— listan en su sección «Snapshots and aliases» **un único identificador: el suyo
+propio, sin fecha**. Y OpenAI, a diferencia de Anthropic, **no dice en ninguna parte** que un id sin
+fecha sea una versión fijada. No es que falte el snapshot y el id lo sustituya: es que no consta qué
+es el id.
+
+Snapshots fechados sí publicó, y están todos deprecados: `gpt-5-2025-08-07`,
+`gpt-5-mini-2025-08-07`, `gpt-5-nano-2025-08-07`, `gpt-5-pro-2025-10-06`, `o3-2025-04-16` y
+`o3-pro-2025-06-10`, anunciados el 2026-06-11 con **retiro el 2026-12-11**. Siguen siendo
+invocables hoy, pero elegir uno sería coronar un modelo que se apaga en menos de cuatro meses y que
+el proveedor ya declaró en salida — peor que el problema que se quería evitar con Haiku.
+
+### Anthropic: sí, y mejor de lo que suponía el piloto
+
+La documentación dice literalmente que **cada id de modelo de Claude identifica una versión
+fijada**, y que desde la generación 4.6 el id **sin fecha también es un snapshot fijado, no un
+puntero perenne**. Es exactamente la declaración que le falta a OpenAI, y con ella el campo
+`snapshot` del refresco se puede rellenar con el propio id, con procedencia.
+
+| Candidato | Identidad | Retiro tentativo | Precio (USD / MTok) |
+|---|---|---|---:|
+| `claude-haiku-4-5-20251001` | snapshot fechado | **2026-10-15** | 1 / 5 |
+| `claude-sonnet-5` | snapshot fijado sin fecha | no antes del **2027-06-30** | 2 / 10 |
+| `claude-opus-5` | snapshot fijado sin fecha | no antes del **2027-07-24** | 5 / 25 |
+| `claude-fable-5` | snapshot fijado sin fecha | no antes del 2027-06-09 | 10 / 50 |
+
+**El hallazgo (b) del piloto se disuelve**: no hay que elegir entre un modelo bueno y uno que no se
+apague. `claude-sonnet-5` tiene identidad fijada, diez meses más de vida que Haiku y es el
+calidad-precio de la familia. El costo medido del piloto ya lo tarifaba: **USD 0.642** por 200 casos.
+
+### Qué hacer con la autorización del propietario
+
+El propietario autorizó el 2026-08-18 usar el mejor calidad-precio **aunque no publique snapshot
+fechado**. Conviene decir con precisión qué habilita eso y qué no.
+
+- **Para el lado de Anthropic no hace falta**: hay identidad fijada y documentada. La autorización
+  no se consume ahí.
+- **Para el lado de OpenAI, la salida no es saltarse la comprobación.** P-II §8.1 ya prevé el caso:
+  sin snapshot, **huella de comportamiento sobre el set canario congelado**, y
+  `assertPinnedIdentity()` la acepta como identidad válida. Es decir: la autorización se ejecuta
+  **produciendo la huella**, no omitiendo el requisito. Omitirlo dejaría la corrida sin
+  reproducibilidad —mediríamos una cosa y desplegaríamos otra— y ninguna autoridad lo permite;
+  fabricar una huella sin producirla sería inventar la evidencia que la regla pide.
+
+> **Consecuencia para BENCH-02, que es la que duele.** BENCH-02 exige **familias distintas**. Con
+> OpenAI sin identidad fijada, o se produce la huella, o BENCH-02 sigue bloqueada. No hay tercera
+> vía dentro de estos dos proveedores: es la única pieza que la desbloquea.
+
+### Orden sugerido — reescrito el 2026-08-18 con lo hecho esa tarde
+
+Tachado lo cerrado; lo que queda, en orden de dependencia.
+
+1. ~~Averiguar (a)~~ — **hecho**, §3.4. Ninguno de OpenAI publica snapshot fechado; Anthropic sí, y
+   con `claude-sonnet-5` desaparece además el problema (b).
+2. ~~Rediseñar (c) y (d)~~ — **hecho** en lo que era rediseño (D-42, D-43).
+3. ~~Escribir los 200 casos~~ — **hecho** (D-41), con la salvedad de quién los escribió.
+4. **Construir la capa de cómputo de gates**: derivar `GateObservation` desde `RunResult` y decidir
+   la fuga **inspeccionando el texto** con `T-H7-02` y `T-H7-03`. Sin esto la corrida gasta dinero y
+   no dictamina nada, porque hoy **ningún gate se computa**. Es la pieza más importante que queda, y
+   es código puro: no necesita proveedor ni gasto.
+5. **Revisión humana de los 200 casos** (D-41). Puede ir en paralelo con 4. Es condición previa a
+   coronar ganador, no una mejora.
+6. **Decidir a quién se mide.** Con lo de §3.4: `claude-sonnet-5` entra directo. Para el segundo
+   proveedor hay que **producir la huella de comportamiento** sobre el set canario, que es lo único
+   que desbloquea BENCH-02.
+7. **Rehacer el refresco documental** —caducado, y además hay que reescribirlo con los candidatos
+   nuevos— y correr. El gasto ya está autorizado.
 
 ---
 

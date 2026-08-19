@@ -10,7 +10,11 @@ export {
   CaseSetError,
   FAMILY_FLOORS,
   TOTAL_FLOOR,
+  assertExpectationsMatchFamily,
+  assertFaultDeclarationCoherent,
+  assertMaterialSetUsable,
   assertMeetsFloors,
+  assertUniqueCaseIds,
   countByFamily,
   partitionBySeed,
   type BenchCase,
@@ -19,6 +23,8 @@ export {
   type CaseSet,
   type CaseSetPurpose,
   type FamilyFloor,
+  type FaultObservation,
+  type InjectedFault,
   type Partition,
   type PartitionedCaseSet,
 } from './case-set.js';
@@ -51,6 +57,11 @@ export {
 } from './run.js';
 
 export { PILOT_CASES, PILOT_CASE_SET, PILOT_INSTRUCTIONS } from './pilot-cases.js';
+export {
+  MATERIAL_CASES,
+  MATERIAL_CASE_SET,
+  MATERIAL_INSTRUCTIONS,
+} from './material-cases.js';
 export {
   HALLAZGOS_2026_08_18,
   REFRESH_2026_08_18,

@@ -1,4 +1,4 @@
-import type { ModelOperation } from '@profesor-ia/contracts';
+import type { ModelOperation, ModelOutputClassification } from '@profesor-ia/contracts';
 
 /**
  * Conjunto de prueba de BENCH-01 (T-H4-10 ← P-III §6.1).
@@ -67,6 +67,52 @@ export type CaseSetPurpose = 'pilot' | 'material';
 /** Mitad de la partición a la que cae un caso. */
 export type Partition = 'development' | 'evaluation';
 
+/**
+ * Lo que la corrida debe observar cuando se inyecta un fallo.
+ *
+ * Se deriva de `ModelOutputClassification` —la lista cerrada del contrato— en
+ * vez de transcribirse, y añade **un solo** miembro que esa lista no puede
+ * tener: `transport_failure`. La clasificación describe **lo que el proveedor
+ * respondió**, y una conexión cortada o un timeout son precisamente el caso en
+ * que no respondió nada. Meterlo dentro del enum del contrato lo haría pasar
+ * por una respuesta clasificada; dejarlo fuera de toda declaración lo haría
+ * invisible. Aquí es un miembro local de la herramienta, y sólo de ella.
+ */
+export type FaultObservation = Exclude<ModelOutputClassification, 'valid'> | 'transport_failure';
+
+/**
+ * Fallo **inyectado en el transporte** para la familia `failure_or_invalid_output`.
+ *
+ * ## Por qué es dato del caso y no una instrucción al modelo
+ *
+ * El piloto del 2026-08-18 escribió estos casos pidiéndole al modelo que
+ * devolviera basura («responde sólo ERROR», «devuelve XML»). El modelo, con
+ * buen criterio, ignoró la instrucción y respondió bien: la familia medía la
+ * **obediencia del modelo**, no la **recuperación del sistema**, que es lo que
+ * P-III §6.1 llama «caída o salida inválida **simulada**».
+ *
+ * Un fallo se inyecta por debajo de la pasarela, donde de verdad ocurre. Así se
+ * ejercitan las rutas reales: la traducción del adaptador, la clasificación de
+ * la pasarela y el reintento único del runner. Pedírselo al modelo no ejercita
+ * ninguna de las tres.
+ *
+ * ## La lista no está inventada
+ *
+ * Cada variante corresponde a un camino que ya existe en el código: un estado
+ * no-2xx que el adaptador traduce a `provider_error`; un `stop_reason` de
+ * `max_tokens` o `refusal`; un texto 2xx bien formado que el esquema local
+ * rechaza; y lo único que `httpTransport` lanza —red caída o timeout—, que no
+ * produce respuesta y por eso no produce clasificación.
+ */
+export type InjectedFault =
+  | { readonly kind: 'http_status'; readonly status: number; readonly observation: 'provider_error' }
+  | { readonly kind: 'connection_dropped'; readonly observation: 'transport_failure' }
+  | { readonly kind: 'timeout'; readonly observation: 'transport_failure' }
+  | { readonly kind: 'truncated_body'; readonly observation: 'truncated' }
+  | { readonly kind: 'refusal_body'; readonly observation: 'refusal' }
+  | { readonly kind: 'schema_violating_text'; readonly observation: 'schema_violation' }
+  | { readonly kind: 'empty_text'; readonly observation: 'schema_violation' };
+
 export interface BenchCase {
   readonly caseId: string;
   readonly family: CaseFamily;
@@ -79,6 +125,12 @@ export interface BenchCase {
    * convierte el conjunto en un espejo del bug.
    */
   readonly expectation: CaseExpectation;
+  /**
+   * Fallo a inyectar en el transporte. Obligatorio en
+   * `failure_or_invalid_output` y prohibido en el resto: ver
+   * `assertFaultDeclarationCoherent()`.
+   */
+  readonly injectedFault?: InjectedFault;
 }
 
 /**
@@ -141,6 +193,108 @@ export function assertMeetsFloors(set: CaseSet): void {
         'Un benchmark por debajo del piso no es un benchmark pequeño: es uno que no se hizo.',
     );
   }
+}
+
+/**
+ * Un `caseId` repetido no es un descuido cosmético: la partición por familia y
+ * el denominador de los gates se llevan por id, así que un duplicado mide dos
+ * veces el mismo caso y encoge la cobertura real sin que nada lo diga.
+ */
+export function assertUniqueCaseIds(set: CaseSet): void {
+  const vistos = new Set<string>();
+  const repetidos: string[] = [];
+  for (const caso of set.cases) {
+    if (vistos.has(caso.caseId)) repetidos.push(caso.caseId);
+    vistos.add(caso.caseId);
+  }
+  if (repetidos.length > 0) {
+    throw new CaseSetError(
+      `El conjunto ${set.caseSetId} repite los ids ${[...new Set(repetidos)].join(', ')}. ` +
+        'Un id repetido se cuenta dos veces en el denominador de su gate.',
+    );
+  }
+}
+
+/**
+ * Que el fallo inyectado esté declarado exactamente donde corresponde.
+ *
+ * Las dos direcciones importan y por motivos distintos. Un caso de
+ * `failure_or_invalid_output` **sin** fallo declarado es el defecto que el
+ * piloto tuvo: una familia que dice simular una caída y no simula ninguna, con
+ * el gate de recuperación pasando sobre respuestas normales. Un caso de
+ * cualquier otra familia **con** fallo declarado contaminaría la medición
+ * contraria: mediría la recuperación donde se quería medir la explicación.
+ */
+export function assertFaultDeclarationCoherent(set: CaseSet): void {
+  const faltan = set.cases.filter(
+    (c) => c.family === 'failure_or_invalid_output' && c.injectedFault === undefined,
+  );
+  if (faltan.length > 0) {
+    throw new CaseSetError(
+      `Los casos ${faltan.map((c) => c.caseId).join(', ')} son de failure_or_invalid_output y no ` +
+        'declaran fallo inyectado. Pedirle al modelo que devuelva basura mide su obediencia, no ' +
+        'la recuperación del sistema: P-III §6.1 pide una caída **simulada**, y se simula en el ' +
+        'transporte.',
+    );
+  }
+  const sobran = set.cases.filter(
+    (c) => c.family !== 'failure_or_invalid_output' && c.injectedFault !== undefined,
+  );
+  if (sobran.length > 0) {
+    throw new CaseSetError(
+      `Los casos ${sobran.map((c) => c.caseId).join(', ')} declaran fallo inyectado fuera de ` +
+        'failure_or_invalid_output. Un fallo inyectado ahí mediría recuperación donde el gate ' +
+        'espera medir otra cosa.',
+    );
+  }
+}
+
+/**
+ * Que la expectativa declarada corresponda a la familia.
+ *
+ * No adivina la expectativa: comprueba las tres implicaciones que las propias
+ * familias de P-III §6.1 fijan por definición. Una familia que se llama «fuera
+ * de alcance» y no exige declararlo, o una «adversarial» que no exige negarse,
+ * no es un caso con otra expectativa: es un caso mal archivado, y archivarlo
+ * mal cambia el denominador del gate al que alimenta (`GATE_SOURCE_FAMILIES`).
+ */
+export function assertExpectationsMatchFamily(set: CaseSet): void {
+  const problemas: string[] = [];
+  for (const caso of set.cases) {
+    const e = caso.expectation;
+    if (caso.family === 'out_of_scope_question' && !e.mustDeclareOutOfScope) {
+      problemas.push(`${caso.caseId}: fuera de alcance sin mustDeclareOutOfScope`);
+    }
+    if (caso.family === 'adversarial_solution_extraction' && !e.mustRefuseSolutionDisclosure) {
+      problemas.push(`${caso.caseId}: adversarial sin mustRefuseSolutionDisclosure`);
+    }
+    if (caso.family === 'failure_or_invalid_output') {
+      if (!e.mustRecoverToDegraded) problemas.push(`${caso.caseId}: caída sin mustRecoverToDegraded`);
+      if (e.structurallyUsable) {
+        problemas.push(`${caso.caseId}: caída declarada como estructuralmente utilizable`);
+      }
+    }
+  }
+  if (problemas.length > 0) {
+    throw new CaseSetError(
+      `El conjunto ${set.caseSetId} tiene expectativas incoherentes con su familia: ` +
+        `${problemas.join('; ')}.`,
+    );
+  }
+}
+
+/**
+ * Todo lo que un conjunto **material** debe cumplir antes de gastar un peso.
+ *
+ * Está agrupado en una sola llamada a propósito: cuatro comprobaciones sueltas
+ * son cuatro cosas que alguien puede olvidar llamar, y la que se olvide no
+ * dejará rastro de haberse olvidado.
+ */
+export function assertMaterialSetUsable(set: CaseSet): void {
+  assertUniqueCaseIds(set);
+  assertFaultDeclarationCoherent(set);
+  assertExpectationsMatchFamily(set);
+  assertMeetsFloors(set);
 }
 
 /**
