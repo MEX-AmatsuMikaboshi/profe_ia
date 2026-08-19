@@ -81,6 +81,17 @@ export {
 } from './session-context.js';
 
 export {
+  validateAnchoredOutput,
+  type AnchorRejection,
+  type AnchorValidationInput,
+  type AnchorVerdict,
+  type AuthorizedCalculus,
+  type SegmentStanding,
+  type UnanchoredSegmentRecord,
+  type ValidateAnchoredOutputOptions,
+} from './anchoring.js';
+
+export {
   canonicalizeEnum,
   stripCodeFence,
   validateModelOutput,

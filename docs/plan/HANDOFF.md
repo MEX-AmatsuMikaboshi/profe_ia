@@ -251,9 +251,39 @@ Hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» si
    autoreporta el modelo. Lo caro son los **200 casos escritos a mano**, no el dinero.
 
 **La 1 está cerrada** (y con ella §3.1.c y el cableado de los tres checks de infraestructura en CI).
-De las que quedan, mi recomendación es la **2**, los mecanismos de F8: es la única rama grande que se
-construye sin proveedor y sin gasto. Y la **4** en paralelo, porque es la que desatasca F8 por el otro
-lado y su parte lenta es humana, no de código.
+**La 2 está empezada**: `T-H7-02`, el validador de anclaje, está HECHA — ver §3.1.d. Lo siguiente de
+F8 es `T-H7-03`, que también se construye sin proveedor. Y la **4** en paralelo, porque desatasca F8
+por el otro lado y su parte lenta es humana, no de código.
+
+### 3.1.d F8 empezada: `T-H7-02`, el validador de anclaje
+
+Documentación completa en [`../session/anclaje.md`](../session/anclaje.md). Lo imprescindible:
+
+- **No necesita proveedor, y por eso se pudo hacer hoy.** Recibe una salida candidata y unos
+  fragmentos autorizados, y decide. Que la salida venga de un modelo o de una prueba es indiferente
+  — y esa indiferencia es lo que se quiere: un validador que dependiera del proveedor no sería
+  independiente de él.
+- **La regla que ordena el diseño sale de I-7**: un símbolo o una regla ajenos al cálculo se rechazan
+  **salvo que aparezcan en los fragmentos que el segmento ancla**. Si el corpus lo dice, lo cita; si
+  no, lo introduce. Se llegó ahí refutando el diseño anterior: el primero marcaba cualquier mención
+  de una regla prohibida, y con él **el Profesor IA no habría podido decir «la conmutativa no está
+  permitida»**, que es contenido correcto que el corpus enseña. Y de paso resuelve lo indecidible:
+  distinguir «mencionar» de «ordenar» sobre prosa no lo puede hacer ningún validador local; **lo
+  decide el ancla**.
+- **Leer el cálculo congelado antes de escribir desmintió tres suposiciones.** `->`, `&`, `|`, `~`,
+  `!` son alias **autorizados** y el primer diseño los rechazaba; `y`, `o`, `no` figuran en
+  `REJECTED_CONNECTIVE_ALIASES` pero son palabras españolas corrientes; y las listas de reglas
+  prohibidas están congeladas, así que detectarlas es transcripción y no invención.
+- **P-I §8.5 limita, no rechaza.** «No anclada» no está entre las cinco causas de §8.4, y no es
+  descuido. Sin anclas ⇒ acompañamiento no factual auditado; sin anclas **y** con función
+  `definition` ⇒ retenido, porque presentarlo *sería* introducir una definición sin ancla.
+- **El cálculo entra por parámetro** (D-39), con regla depcruise `pasarela-sin-nucleo-logico` y su
+  siembra. Importar `logic-core` en la pasarela pondría `verify()` junto al único paquete que abre
+  conexiones a proveedores.
+- **Se comprobó que las pruebas pueden fallar**, con dos siembras. Y aquí hubo un susto que conviene
+  recordar: la primera siembra **no llegó a aplicarse** —un `replace` falló en silencio— y las
+  pruebas «pasaron». Estuve a punto de darlas por débiles. Comprobar que la siembra está en el
+  archivo es parte de sembrar.
 
 ### 3.1.b `T-H3-05`: desbloqueada, con el check en verde en local, **falta CI**
 

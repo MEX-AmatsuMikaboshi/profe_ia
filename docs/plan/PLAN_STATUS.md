@@ -159,6 +159,21 @@ mano sin transferencia, y se podía **retirar** un reactivo del registro de cons
 en que un reactivo consumido reaparece. Detalle en
 [`../session/dry-session.md`](../session/dry-session.md).
 
+## F8 — H7 · Profesor IA de sesión (con LLM) (1 de 7 tareas)
+
+| Tarea | Prioridad | Estado | Evidencia | Fecha | Notas |
+|---|---|---|---|---|---|
+| T-H7-01 | CRITICAL | BLOQUEADA | — | — | El bucle W7 con el binding ganador. Exige el ganador de BENCH-01 (`T-H4-10` material, sin autorizar) |
+| T-H7-02 | CRITICAL | HECHA | `packages/model-gateway/src/anchoring.ts`, `test/anchoring.test.ts` (21 pruebas), regla depcruise `pasarela-sin-nucleo-logico` con siembra, [`../session/anclaje.md`](../session/anclaje.md) | 2026-08-18 | **El validador local que P-II §8.4 exige, y no necesita proveedor**: recibe una salida candidata y unos fragmentos autorizados, y decide. Las cinco causas son cerradas y no se añadió ninguna; cada rechazo declara en `authority` la autoridad literal, como en `doubt.ts`. **La regla que ordena el diseño sale de I-7** —«sin ancla no introduce reglas»—: un símbolo o una regla ajenos al cálculo se rechazan **salvo que aparezcan en los fragmentos que el segmento ancla**; si el corpus lo dice, lo cita, y si no, lo introduce. Se llegó ahí **refutando el diseño anterior**: el primer detector marcaba cualquier mención de una regla prohibida, y con él el Profesor IA no habría podido decir «la conmutativa no está permitida», que es contenido correcto que el corpus enseña. Y resuelve el problema de fondo: distinguir «mencionar» de «ordenar» sobre prosa es indecidible; **lo decide el ancla**. El respaldo se toma **sólo de las anclas resueltas** y no del bloque entero —con el bloque, un segmento se apoyaría en un fragmento al que no ancló—, comprobado con siembra. **Tres cosas que el cálculo congelado desmintió antes de escribir**: `->`, `&`, `|`, `~`, `!` son alias **autorizados** (`CONNECTIVE_ALIASES`) y el primer diseño los rechazaba; `y`, `o`, `no` están en `REJECTED_CONNECTIVE_ALIASES` pero son palabras españolas y marcarlas habría rechazado casi cualquier frase; `FORBIDDEN_RULES_EXAMPLES` es lista congelada, así que detectarla es transcripción. **P-I §8.5 limita, no rechaza**: sin anclas ⇒ acompañamiento no factual registrado para auditoría; sin anclas **y** función `definition` ⇒ `withheld`, porque presentarlo *sería* introducir una definición sin ancla; y basta un segmento sin anclas para que `canGroundEvaluation` sea `false`, que es el lado que no califica. **Un canario aborta** con `CanaryHitError` como en `buildSessionContext`: es incidente de nivel 3 (§11.3), no una validación fallida. **El cálculo entra por parámetro** (D-39) y la frontera es ejecutable. **Lo que no decide y no finge decidir**: la whitelist cerrada de reglas se hace cumplir donde las reglas se aplican, en `logic-core` sobre una derivación, no sobre prosa. Ninguna salida de modelo real ha cruzado este validador: no hay binding ganador. |
+| T-H7-03 | CRITICAL | PENDIENTE | — | — | No revelación en actividad puntuable (P-I §9.6), filtro de egreso en cada llamada y suite adversarial `ci:adversarial:session`. **Se construye sin proveedor**: es lo siguiente de F8 |
+| T-H7-04 | REQUIRED | PENDIENTE | — | — | Ejecución lingüística de estrategias; vive dentro del bucle de `T-H7-01` |
+| T-H7-05 | REQUIRED | PENDIENTE | — | — | Adaptación dentro de límites congelados; dentro del bucle |
+| T-H7-06 | CRITICAL | PENDIENTE | — | — | Modo degradado en vivo; dentro del bucle |
+| T-H7-07 | REQUIRED | PENDIENTE | — | — | Voz y pizarrón **no** en F8: Clase opera texto+Fitch. Ya lo hace cumplir el modelo de vista de `T-H6-13`, que lanza `CAPACIDAD_NO_IMPLEMENTADA` |
+
+**Gate H7:** `docs/gates/H7.md` — no abierto. Su AC exige **una sesión local completa sin rescate
+docente**, que necesita el binding ganador: no se alcanza escribiendo código.
+
 ## Fases siguientes
 
 | Fase | Hito | Estado | Bloqueo actual |
@@ -169,7 +184,8 @@ en que un reactivo consumido reaparece. Detalle en
 | F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
 | F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 17 de 17 tareas con mecanismo implementado; gate H5 abierto por corpus/freeze/auditoría y CAL-NLI materiales ausentes |
 | F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas VERIFICADAS y AC del gate cubierto y observado** (CI `32164277686`). Sólo faltan las firmas del acta |
-| F8–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
+| F8 | H7 · Profesor IA de sesión | EN_CURSO | **1 de 7 tareas.** `T-H7-02` (anclaje) HECHA. `T-H7-03` es lo siguiente y se construye sin proveedor; el resto vive en el bucle de `T-H7-01`, que exige el ganador de BENCH-01 |
+| F9–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
 
 ## Entorno de ejecución (verificado 2026-08-14)
 
@@ -517,4 +533,16 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   refused» con el servicio respondiendo perfectamente desde el host. Por eso el healthcheck usa
   `127.0.0.1`. El `main.ts` anterior no lo notaba porque `server.listen(PORT)` sin host liga las dos
   familias.
+- **D-39 — El cálculo congelado entra al validador de anclaje por parámetro, no por import.**
+  `T-H7-02` tiene que comparar la salida del modelo contra el cálculo, y lo natural sería importar
+  `logic-core` en `model-gateway`. No se hizo: eso pondría `verify()` dentro del único paquete del
+  repositorio que abre conexiones a un proveedor, y desde ahí la pasarela podría acabar dictaminando
+  sobre una derivación sin pasar por el contenedor sin red (I-3, D-12). El conjunto congelado entra
+  como `AuthorizedCalculus`, con el mismo patrón de inyección que ya usaba el detector de canarios en
+  `buildSessionContext`. La frontera es ejecutable: regla `pasarela-sin-nucleo-logico`, con violación
+  sembrada comprobada. Y para que lo inyectado no se quede viejo, `logic-core` entra como
+  **devDependency** y una prueba de correspondencia comprueba contra el tokenizador que cada símbolo
+  aceptado es tokenizable y cada símbolo rechazado dispara `E-SYN-SYMBOL`. **Ojo con el hueco
+  conocido:** `depcruise` excluye los `*.test.ts`, así que esa dependencia de prueba la regla no la
+  ve. Es deliberado —la prueba necesita importarlo— pero la regla protege `src/`, no el árbol entero.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.
