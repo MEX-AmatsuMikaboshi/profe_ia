@@ -299,10 +299,13 @@ del proceso; y que la derivación del alumno no aparece en ninguna parte de la s
 añadieron aquí porque son de otras tareas —y porque `compose-up` está en rojo por §3.1.c—, pero el
 gate H3 no cierra sin ellos en verde en `main`.
 
-**Lo que no se afirma:** el último `ci:infra:otel` verde se corrió **antes** de dos cambios cosméticos
-del cierre (renombrar una variable que ensombrecía `URL`, y declarar `fetch`/`AbortSignal` en
-`eslint.config.js`). `ci:lint` y `node --check` pasan; el check en sí **no se volvió a correr**.
-Correrlo es lo primero de la próxima sesión y cuesta un minuto.
+**Corrida de referencia:** `ci:infra:otel`, 22 de 22, traza `c852815f1b2bc77f71206f4460a63c15`, sobre
+el árbol tal cual quedó. Batería completa en verde con Docker arriba: **1618 pruebas** (1487
+unitarias + 131 contra PostgreSQL 17 real), depcruise con sus siembras, mode-separation, dry-session,
+golden, pbt, no-net, grants, sbom, drift, hardening (159), build, lint y typecheck.
+
+**Lo que sigue sin afirmarse:** nadie ha visto el job `ci:infra:otel` correr **en un runner**. Un
+runner no se puede probar desde aquí.
 
 ---
 
