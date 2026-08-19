@@ -25,9 +25,11 @@ criterio técnico de F7** y trae el acta [`../gates/H6.md`](../gates/H6.md).
 > **`T-H3-05` avanzó y ya no está bloqueada** (cuarta sesión del 2026-08-18). OTel subido a la 2.x,
 > `ci:supply:drift` en verde y **`ci:infra:otel` escrito y pasando en local: se ha visto un span
 > llegar al colector**, que era justo lo que la tenía abierta desde F3. Sigue fuera de `main` porque
-> falta cablear el check en CI y observar la corrida. Detalle en §3.1.b. **De paso se destapó un
-> defecto ajeno: `apps/web` no arranca en contenedor desde `T-H6-13`, y eso deja
-> `ci:infra:compose-up` en rojo** — §3.1.c, y es una decisión, no un parche.
+> **`T-H3-05` está `VERIFICADA`**: verde en `main`, corrida `32205040014`, observada job por job.
+> **Y el gate H3 tiene su criterio técnico cubierto**: se corrigió la regresión que dejaba a
+> `apps/web` sin arrancar en contenedor desde `T-H6-13` (§3.1.c, D-38) y los **tres** checks de
+> infraestructura están ya en `ci.yml`. Lo que queda del gate no se escribe con código: la
+> inicialización de Infisical y las firmas.
 >
 > *(Lo que sigue es el texto del checkpoint anterior.)* **`T-H3-05` se empezó y está a medias en la
 > rama `t-h3-05-observabilidad`**, que **no está en `main` a propósito**: `ci:supply:drift` está en
@@ -235,8 +237,8 @@ Hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» si
 1. **`T-H3-05` — trazas. Desbloqueada y con `ci:infra:otel` en verde en local.** Ver §3.1.b: lo que
    queda es cablear el check en `ci.yml`, observar la corrida y retirar la excepción nº 3 del acta de
    H3. Es la rama más cerca de cerrar una fase entera.
-   **Y con ella viene §3.1.c**, el defecto de `apps/web` en contenedor, que hoy deja
-   `ci:infra:compose-up` —otro AC del mismo gate— en rojo.
+   **Cerrada**: `VERIFICADA` en `main`. Y con ella §3.1.c, la regresión de `apps/web` en
+   contenedor, que dejaba `ci:infra:compose-up` en rojo.
 2. **Mecanismos de F8 contra transporte inyectado.** Anclaje obligatorio, filtro de egreso y suite
    adversarial **sí** se construyen sin proveedor (§2, muro 1). Lo que no se puede es firmar el gate
    H7, que exige una sesión real con el binding ganador.
@@ -248,10 +250,10 @@ Hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» si
    ellos que los 20 casos de `failure_or_invalid_output` no simulan nada y que `entregaSolucion` lo
    autoreporta el modelo. Lo caro son los **200 casos escritos a mano**, no el dinero.
 
-Mi recomendación, si hay que elegir una: **la 1**, que ya casi está —falta CI y el acta— pero **no se
-cierra el gate H3 sin resolver antes §3.1.c**, porque `ci:infra:compose-up` es un AC suyo y hoy está
-en rojo por un defecto que viene de `T-H6-13`. Y la **4** en paralelo, porque es la que desatasca F8 y
-la parte lenta es humana, no de código.
+**La 1 está cerrada** (y con ella §3.1.c y el cableado de los tres checks de infraestructura en CI).
+De las que quedan, mi recomendación es la **2**, los mecanismos de F8: es la única rama grande que se
+construye sin proveedor y sin gasto. Y la **4** en paralelo, porque es la que desatasca F8 por el otro
+lado y su parte lenta es humana, no de código.
 
 ### 3.1.b `T-H3-05`: desbloqueada, con el check en verde en local, **falta CI**
 
@@ -320,27 +322,36 @@ rojo por §3.1.c, y faltan la inicialización de Infisical y las firmas.
 
 ---
 
-### 3.1.c Defecto ajeno que esta sesión destapó: **`apps/web` no arranca en contenedor**
+### 3.1.c `apps/web` en contenedor — **resuelto** (D-38)
 
-**No es de `T-H3-05` y no se tocó**, pero bloquea `ci:infra:compose-up`, que es un AC del gate H3.
+Estuvo en rojo desde `T-H6-13` y nadie lo vio. `docker compose up --wait` dejaba a `web` en
+`unhealthy` con `Cannot find module '/repo/apps/web/dist/main.js'`: ese commit pasó `apps/web` a
+construir con Next y su `tsconfig` a `noEmit`, así que `dist/main.js` dejó de producirse mientras el
+`CMD` de la imagen seguía apuntando ahí.
 
-`docker compose up --wait` deja a `web` en `unhealthy` con
-`Error: Cannot find module '/repo/apps/web/dist/main.js'`. La causa: desde `T-H6-13` (`2d901bd`)
-`apps/web` construye con Next y su `tsconfig.json` tiene **`noEmit: true`**, así que `dist/main.js`
-ya no se produce — pero el `CMD` del Dockerfile sigue siendo `node apps/${APP_NAME}/dist/main.js`.
+**Por qué no se notó, que es lo que conviene recordar:** en la máquina del propietario
+`apps/web/dist/` seguía existiendo como resto **sin versionar** de la etapa anterior. Un artefacto
+sin versionar en el árbol de trabajo puede tapar una regresión indefinidamente, y aquí tapó un AC de
+gate durante días.
 
-**En la máquina del propietario no se nota** porque `apps/web/dist/` existe como resto sin versionar
-de la etapa anterior. En una imagen limpia no existe. Nadie corrió `ci:infra:compose-up` después de
-`T-H6-13`.
+**Lo que se hizo:** el contenedor sirve la aplicación de Next (`next start`), con `/health` como route
+handler y `src/app/[...ruta]` dando el `NO_IMPLEMENTADO` de D-11 — que es la superficie real, no un
+servidor mínimo al lado. `src/main.ts` se retira en vez de quedarse muerto. El `command` se fija
+**desde el compose**, que es donde este repositorio pone la frontera entre servicios.
 
-**No hay arreglo obvio, hay una decisión:** el `main.ts` de `web` es el servidor mínimo de H3 y la app
-real de Clase ya no pasa por él. Servirla en contenedor pide `next start` (o `output: 'standalone'`),
-una ruta `/health` que la app de Next **no tiene**, y montajes escribibles para `.next/cache` bajo
-`read_only: true`. Es una tarea con su propio alcance, no un parche.
+**Dos trampas que costaron encontrarse y no son obvias:**
 
-**`ci:infra:otel` no lo esquiva ni lo tapa:** levanta sólo el canal de veredicto (`otel-collector`,
-`api`, `verifier` y la base), porque el arranque del stack entero es lo que afirma
-`ci:infra:compose-up` y duplicarlo lo ataría a fallos que no son suyos.
+1. **`next start` también manda telemetría.** El script de build la apaga en la compilación; hace
+   falta apagarla además en el entorno del servicio, porque `web` está en la red `edge` —publica
+   puerto, y Docker no publica desde una red interna— y sí tendría por dónde salir.
+2. **Con `-H 0.0.0.0` Next escucha sólo en IPv4**, y dentro del contenedor `localhost` resuelve
+   primero a `::1`. El healthcheck daba «Connection refused» con el servicio respondiendo
+   perfectamente desde el host. Por eso usa `127.0.0.1`. El `main.ts` anterior no lo notaba porque
+   `server.listen(PORT)` sin host liga las dos familias.
+
+**Y de paso, los dos checks que faltaban en CI:** `ci:infra:hardening` y `ci:infra:compose-up` ya
+están en `ci.yml`, en un job con los dos nombres. Hasta ahora sólo existían en el portátil del
+propietario, y §0.4 pide el check en verde en `main`.
 
 ---
 
