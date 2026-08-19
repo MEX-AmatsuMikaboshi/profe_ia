@@ -56,6 +56,15 @@ export {
   type RunResult,
 } from './run.js';
 
+export {
+  ScoringError,
+  declaredDenominators,
+  scoreCandidate,
+  scoreRun,
+  type GateEvidence,
+  type ScoringInput,
+} from './scoring.js';
+
 export { PILOT_CASES, PILOT_CASE_SET, PILOT_INSTRUCTIONS } from './pilot-cases.js';
 export {
   MATERIAL_CASES,

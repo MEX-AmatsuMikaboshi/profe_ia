@@ -18,6 +18,11 @@ revelación y suite adversarial). Las cinco `VERIFICADAS` en `main`.
 > `T-H7-05`, `T-H7-06`— viven **todas dentro del bucle W7**, que exige el binding ganador de
 > BENCH-01. **F8 ya no avanza escribiendo código.**
 >
+> **0. Lo que bloquea BENCH-01 ya no es lo que decía este documento.** Dos de los seis gates de
+> §6.2 **no se pueden medir sin corpus**, y `content/` sigue en marcadores. Sin ellos no hay
+> dictamen, porque `verdictFor()` rechaza un dictamen incompleto. **Léelo en §3.5 antes que nada
+> más de BENCH-01.**
+>
 > **2. Los 200 casos ya existen, y los dos defectos de diseño están corregidos.**
 > `tools/bench/src/material-cases.ts` trae el conjunto material completo —los siete pisos exactos—,
 > **lo redactó el modelo asistente por instrucción del propietario (D-41)** y eso trae un sesgo que
@@ -564,11 +569,11 @@ del corpus *es* la conducta que §6.2 mide, o sea el dicho del modelo no es un i
 conducta sino la conducta misma. En `entregaSolucion` sí era un informe, y sobre el único hecho que
 el modelo tendría motivo para reportar mal.
 
-> **La mitad que falta, sin disimulo: no existe la capa que computa los gates.** `gates.ts` sabe
-> evaluar un `GateObservation`, pero **nadie deriva `GateObservation` desde `RunResult`**: hoy el
-> harness corre casos y guarda resultados, y ningún gate se computa. Ahí es donde se enchufan el
-> validador de anclaje de `T-H7-02` y la puerta de no revelación de `T-H7-03` para decidir la fuga
-> inspeccionando el texto. **Es la pieza de código más importante que queda de BENCH-01.**
+> **La capa que computa los gates ya existe** (`tools/bench/src/scoring.ts`, D-45). Deriva
+> `GateObservation` desde `RunResult`, con los denominadores sacados del plan congelado y **las
+> sondas de evidencia obligatorias**: una sonda ausente lanza en vez de contarse como «sin fallos».
+> Ahí se enchufan el validador de anclaje de `T-H7-02` y la puerta de no revelación de `T-H7-03`.
+> **Y construirla destapó el bloqueo de verdad: ver §3.5.**
 
 ### 4. El refresco documental caduca
 
@@ -631,6 +636,45 @@ fechado**. Conviene decir con precisión qué habilita eso y qué no.
 > OpenAI sin identidad fijada, o se produce la huella, o BENCH-02 sigue bloqueada. No hay tercera
 > vía dentro de estos dos proveedores: es la única pieza que la desbloquea.
 
+## 3.5 El bloqueo real de BENCH-01: dos gates no se pueden medir sin corpus
+
+Apareció al escribir la capa de cómputo, no antes, y **es mayor que los cuatro puntos del piloto
+juntos**. Conviene leerlo entero antes de planificar la corrida.
+
+De los seis gates de P-III §6.2, **dos exigen artefactos que `content/` no tiene**:
+
+| Gate | Qué necesita | Por qué no lo hay |
+|---|---|---|
+| `factual_segments_with_resolvable_anchors` (≥ 95 %) | **Fragmentos autorizados** contra los que resolver las anclas | `AnchoredOutput` exige `segments[].anchors` que resuelvan; sin corpus no hay fragmentos, y sin fragmentos **toda ancla es irresoluble**: el gate no daría 95 %, daría cero |
+| `deterministic_degraded_recovery` (100 %, **bloqueante**) | **Activos congelados** del modo degradado | P-II §8.6 lo define sobre explicaciones, ejemplos, pistas y feedback congelados; `DegradedProfile` **lanza** ante un activo ausente en vez de rellenar, que es exactamente su diseño |
+
+Y `verdictFor()` ya rechaza un dictamen al que le falte un gate: «un gate ausente no es un gate
+aprobado». Es decir:
+
+> **Sin corpus, BENCH-01 no puede coronar a nadie.** No es que salga peor: es que no sale.
+
+**Lo que se hizo con eso, y lo que no.** La capa de cómputo **lanza nombrando lo que falta** en vez
+de aproximar el gate con un sustituto. Un gate medido contra un sucedáneo pasa, y su verde diría algo
+que nadie comprobó — que es justo el fallo que ya cometió el piloto en otra forma. Los otros cuatro
+gates sí se computan hoy.
+
+**Lo que esto reordena en el plan.** El handoff venía diciendo que F8 espera al ganador de BENCH-01 y
+que BENCH-01 espera casos y dinero. La cadena real es más larga y empieza antes:
+
+```
+W0 sobre fuentes reales  →  W1–W5 (corpus y freeze)  →  BENCH-01 dictamina  →  F8
+```
+
+Y **W0 no es sólo una acción del propietario**: no hay comando de W0 en el CLI, `authoring-worker` no
+ejecuta ninguna etapa, y `suitabilityScore()`/`shouldStopDiscovery()` fallan cerrado esperando
+calibración *con el corpus real* (§9, pregunta abierta 5). O sea: **hay trabajo de código antes de la
+corrida material, y no está en F4.**
+
+**Lo que sí se puede hacer sin resolver esto:** correr BENCH-01 en modo **parcial y declarado** —los
+cuatro gates computables, sin dictamen— para medir costo real y comparar candidatos de forma
+orientativa. `verdictFor()` impedirá que eso corone a nadie, que es lo correcto. **Pero hay que
+decidirlo y decirlo**, no dejar que parezca un benchmark hecho.
+
 ### Orden sugerido — reescrito el 2026-08-18 con lo hecho esa tarde
 
 Tachado lo cerrado; lo que queda, en orden de dependencia.
@@ -639,16 +683,21 @@ Tachado lo cerrado; lo que queda, en orden de dependencia.
    con `claude-sonnet-5` desaparece además el problema (b).
 2. ~~Rediseñar (c) y (d)~~ — **hecho** en lo que era rediseño (D-42, D-43).
 3. ~~Escribir los 200 casos~~ — **hecho** (D-41), con la salvedad de quién los escribió.
-4. **Construir la capa de cómputo de gates**: derivar `GateObservation` desde `RunResult` y decidir
-   la fuga **inspeccionando el texto** con `T-H7-02` y `T-H7-03`. Sin esto la corrida gasta dinero y
-   no dictamina nada, porque hoy **ningún gate se computa**. Es la pieza más importante que queda, y
-   es código puro: no necesita proveedor ni gasto.
-5. **Revisión humana de los 200 casos** (D-41). Puede ir en paralelo con 4. Es condición previa a
-   coronar ganador, no una mejora.
-6. **Decidir a quién se mide.** Con lo de §3.4: `claude-sonnet-5` entra directo. Para el segundo
+4. ~~Construir la capa de cómputo de gates~~ — **hecha** (D-45), `tools/bench/src/scoring.ts`.
+5. **Decidir qué hacer con §3.5**, que es lo que ahora manda. Dos caminos, y es decisión del
+   propietario porque cambia el alcance:
+   - **(A) Corpus primero.** W0 sobre fuentes reales → W1–W5 → BENCH-01 dictamina de verdad. Es el
+     orden que el Maestro implica («antes del freeze se construye el benchmark»), y el que da un
+     ganador defendible. Es también el más largo, y **exige código que no está** (§9, pregunta 5).
+   - **(B) Corrida parcial declarada.** Correr ya los cuatro gates computables, sin dictamen, para
+     medir costo real y comparar orientativamente. `verdictFor()` impide que corone a nadie. Barato,
+     informativo, y **no produce ganador**: F8 seguiría bloqueada.
+6. **Revisión humana de los 200 casos** (D-41). Va en paralelo con lo que se elija, y es condición
+   previa a coronar ganador en cualquiera de los dos caminos.
+7. **Decidir a quién se mide.** Con lo de §3.4: `claude-sonnet-5` entra directo. Para el segundo
    proveedor hay que **producir la huella de comportamiento** sobre el set canario, que es lo único
    que desbloquea BENCH-02.
-7. **Rehacer el refresco documental** —caducado, y además hay que reescribirlo con los candidatos
+8. **Rehacer el refresco documental** —caducado, y además hay que reescribirlo con los candidatos
    nuevos— y correr. El gasto ya está autorizado.
 
 ---

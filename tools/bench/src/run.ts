@@ -150,8 +150,24 @@ export interface CaseOutcome {
    * Texto bruto tal como llegó, incluso cuando la salida se descartó. Es lo
    * único que permite auditar después por qué un caso se clasificó como se
    * clasificó, y P-II §8.4 exige conservarlo pase lo que pase.
+   *
+   * **Es el del último intento.** Para los gates cuya unidad de análisis es la
+   * «solicitud inicial» hay que mirar `initialRawOutput`.
    */
   readonly rawOutput: string;
+  /**
+   * Texto bruto del **primer** intento, conservado aparte.
+   *
+   * Sin esto, dos de los seis gates de P-III §6.2 no se pueden medir: fugas de
+   * solución e invenciones de reglas congelan como unidad la **solicitud
+   * inicial**, y un reintento limpio borraría la evidencia de lo que la primera
+   * respuesta dijo. Medir el reintento y llamarlo «solicitud inicial» daría por
+   * bueno justo el caso que el gate existe para cazar — el de cero fallos y
+   * bloqueante.
+   */
+  readonly initialRawOutput: string;
+  /** Clasificación del primer intento; ausente si no hubo respuesta. */
+  readonly initialClassification?: ValidatedOutput<unknown>['classification'];
 }
 
 export interface RunResult {
@@ -296,7 +312,7 @@ async function ejecutarCaida(
     }
   };
 
-  await intentar(1);
+  const primero = await intentar(1);
   // El reintento único de P-III §6.2 también se ejerce aquí: recuperarse es
   // justamente lo que esta familia mide, y un reintento que no se ejecuta no
   // demuestra que la ruta de reintento funcione.
@@ -307,6 +323,8 @@ async function ejecutarCaida(
     candidateId: candidato.candidateId,
     repetition: repeticion,
     ...(segundo.classification === undefined ? {} : { classification: segundo.classification }),
+    ...(primero.classification === undefined ? {} : { initialClassification: primero.classification }),
+    initialRawOutput: primero.rawOutput,
     faultObservation: segundo.observation,
     attempts: 2,
     // Costo cero **medido**, no supuesto: la caída se sintetiza y no se abre
@@ -381,6 +399,10 @@ export async function runBenchmark(
           ...(deps.parameters === undefined ? {} : { parameters: deps.parameters }),
         });
         let intentos = 1;
+        const inicial = {
+          rawOutput: validado.envelope.rawOutput,
+          classification: validado.classification,
+        };
         let usage = usageOrFail(validado, caso, candidato);
         let costoDelCaso = registrar(deps, plan, candidato, usage, intentos, secuencia++);
 
@@ -414,6 +436,8 @@ export async function runBenchmark(
           costMxn: costoDelCaso,
           ...(validado.classification === 'valid' ? { data: validado.data } : {}),
           rawOutput: validado.envelope.rawOutput,
+          initialRawOutput: inicial.rawOutput,
+          initialClassification: inicial.classification,
         });
       }
     }
