@@ -309,9 +309,14 @@ golden, pbt, no-net, grants, sbom, drift, hardening (159), build, lint y typeche
 en verde**; `ci:infra:otel` en 2 m 46 s con las 22 comprobaciones, 3 spans y el canario, traza
 `066b25bd936b859d0d5035307c6573c4`.
 
-**Lo que sigue sin afirmarse:** esa corrida es de `pull_request`, **no de `main`**. §0.4 exige el
-check en verde en `main`, así que `T-H3-05` queda **`HECHA`, no `VERIFICADA`**, hasta que el PR se
-mezcle y la corrida de `main` se observe.
+**Y está verde en `main`, observado job por job:** el PR se mezcló en `0fb0e54` y la corrida
+`32205040014` da **los ocho jobs en verde** —incluido `ci:logic:mutation`, que sólo corre en `main`—.
+`ci:infra:otel` con sus 22 comprobaciones, cero fallos, traza `1c919163baf0d9947d3d71b626bd99c2`.
+**`T-H3-05` pasa a `VERIFICADA`.**
+
+**Lo que sigue sin afirmarse:** el gate H3 **no está cerrado**. Que su última tarea esté verificada no
+cierra el gate: siguen fuera de CI `ci:infra:hardening` y `ci:infra:compose-up`, este último además en
+rojo por §3.1.c, y faltan la inicialización de Infisical y las firmas.
 
 ---
 
