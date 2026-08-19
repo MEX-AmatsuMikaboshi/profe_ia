@@ -42,8 +42,20 @@ exporters:
   # un volumen escribible por el uid del proceso, y esta imagen es distroless: no
   # puede tomar posesión del volumen. El destino de archivo se define cuando haya
   # trazas reales que conservar (F7/F8).
+  #
+  # `detailed` y no `normal` (D-37). La justificación que traía esta tarea era
+  # que `normal` no imprime atributos: **es falsa** en el colector 0.115.1, los
+  # imprime. Lo que `normal` no imprime es todo lo demás que el colector
+  # recibió —atributos de recurso, eventos de span, enlaces—, y el control que
+  # más importa de `ci:infra:otel` no es sobre los atributos: es sobre **todo
+  # lo que llegó**. Se comprobó sembrando una fuga en un atributo de recurso:
+  # con `detailed` el check la caza, con `normal` no aparece en la salida.
+  #
+  # El costo es local y nulo: la salida es la bitácora de un contenedor en la
+  # PC del propietario. Lo que no se hizo es tener dos configuraciones, una de
+  # desarrollo y otra para el check: eso comprobaría una que nadie corre.
   debug:
-    verbosity: normal
+    verbosity: detailed
 
 service:
   telemetry:

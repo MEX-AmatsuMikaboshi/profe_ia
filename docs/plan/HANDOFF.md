@@ -22,8 +22,16 @@ criterio técnico de F7** y trae el acta [`../gates/H6.md`](../gates/H6.md).
 > `ci:mode-separation · ci:e2e:dry-session`. F7 queda con el AC cubierto y el acta **sólo espera
 > firmas**.
 >
-> **`T-H3-05` se empezó y está a medias en la rama `t-h3-05-observabilidad`**, que **no está en
-> `main` a propósito**: `ci:supply:drift` está en rojo. La línea 1.x del SDK de OpenTelemetry
+> **`T-H3-05` avanzó y ya no está bloqueada** (cuarta sesión del 2026-08-18). OTel subido a la 2.x,
+> `ci:supply:drift` en verde y **`ci:infra:otel` escrito y pasando en local: se ha visto un span
+> llegar al colector**, que era justo lo que la tenía abierta desde F3. Sigue fuera de `main` porque
+> falta cablear el check en CI y observar la corrida. Detalle en §3.1.b. **De paso se destapó un
+> defecto ajeno: `apps/web` no arranca en contenedor desde `T-H6-13`, y eso deja
+> `ci:infra:compose-up` en rojo** — §3.1.c, y es una decisión, no un parche.
+>
+> *(Lo que sigue es el texto del checkpoint anterior.)* **`T-H3-05` se empezó y está a medias en la
+> rama `t-h3-05-observabilidad`**, que **no está en `main` a propósito**: `ci:supply:drift` está en
+> rojo. La línea 1.x del SDK de OpenTelemetry
 > arrastra dos advisories con parche aguas arriba, así que la mitigación es **subir a la 2.x**, no
 > registrar una excepción — D-28 existe justo para que ese atajo no se tome por inercia. Estado
 > completo en [`../session/observabilidad.md`](../session/observabilidad.md); resumen en §3.1.b.
@@ -48,9 +56,9 @@ F0–F3 cerradas salvo `T-H3-05`; **F4 con 10 de 12 más `T-H4-10` en curso**, *
 con 17 de 17 mecanismos** y **F7 con 14 de 14 y el AC del gate cubierto**. Lo siguiente es una
 elección de rama, no una tarea obvia: ver §3.1.
 
-**`T-H3-05` (trazas) acaba de dejar de estar bloqueada.** Estaba esperando «la primera operación
-instrumentable en F7/F8», y la sesión seca completa **es** esa operación. Sigue `EN_CURSO` porque
-nadie la ha instrumentado, no porque falte de qué.
+**`T-H3-05` (trazas) está instrumentada y con su check en verde en local** desde la cuarta sesión del
+2026-08-18. Sigue `EN_CURSO` por dos cosas concretas y acotadas: `ci:infra:otel` no está en `ci.yml`
+y el acta de H3 conserva su excepción nº 3. Ver §3.1.b.
 
 **`CONTENT_TOKEN` ya existe.** Todas las corridas pendientes quedaron observadas job por job:
 `32108984268` (`7848b42`), `32114293161` (`306517a`) y `32115140133` (`06c2eab`), seis de seis cada
@@ -224,8 +232,11 @@ gate H6 (`32164277686`, siete de siete). [`../gates/H6.md`](../gates/H6.md) tien
 
 Hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» sin más:
 
-1. **`T-H3-05` — trazas. EMPEZADA, a medias, en la rama `t-h3-05-observabilidad`.** Ver §3.1.b: lo
-   siguiente concreto es subir OTel a la 2.x y escribir `ci:infra:otel`.
+1. **`T-H3-05` — trazas. Desbloqueada y con `ci:infra:otel` en verde en local.** Ver §3.1.b: lo que
+   queda es cablear el check en `ci.yml`, observar la corrida y retirar la excepción nº 3 del acta de
+   H3. Es la rama más cerca de cerrar una fase entera.
+   **Y con ella viene §3.1.c**, el defecto de `apps/web` en contenedor, que hoy deja
+   `ci:infra:compose-up` —otro AC del mismo gate— en rojo.
 2. **Mecanismos de F8 contra transporte inyectado.** Anclaje obligatorio, filtro de egreso y suite
    adversarial **sí** se construyen sin proveedor (§2, muro 1). Lo que no se puede es firmar el gate
    H7, que exige una sesión real con el binding ganador.
@@ -237,38 +248,94 @@ Hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» si
    ellos que los 20 casos de `failure_or_invalid_output` no simulan nada y que `entregaSolucion` lo
    autoreporta el modelo. Lo caro son los **200 casos escritos a mano**, no el dinero.
 
-Mi recomendación, si hay que elegir una: **la 1**, porque es la única que cierra una fase entera y
-acaba de dejar de estar bloqueada; y la **4** en paralelo, porque es la que desatasca F8 y la parte
-lenta es humana, no de código.
+Mi recomendación, si hay que elegir una: **la 1**, que ya casi está —falta CI y el acta— pero **no se
+cierra el gate H3 sin resolver antes §3.1.c**, porque `ci:infra:compose-up` es un AC suyo y hoy está
+en rojo por un defecto que viene de `T-H6-13`. Y la **4** en paralelo, porque es la que desatasca F8 y
+la parte lenta es humana, no de código.
 
-### 3.1.b `T-H3-05` a medias: dónde está y qué falta
+### 3.1.b `T-H3-05`: desbloqueada, con el check en verde en local, **falta CI**
 
-**Rama `t-h3-05-observabilidad`**, commit `3010fc5`, empujada al remoto. **No mezclar con `main`
-hasta que `ci:supply:drift` esté en verde.**
+**Rama `t-h3-05-observabilidad`**, commit `1898801`, empujada al remoto. Estado completo en
+[`../session/observabilidad.md`](../session/observabilidad.md).
 
-**El bloqueo, primero.** `pnpm audit` reporta dos advisories aplicables sobre la línea 1.x del SDK
-que se fijó: `@opentelemetry/propagator-jaeger` (high, parcheado en `>=2.9.0`) y
-`@opentelemetry/core` (moderate, `>=2.8.0`). Los dos se arreglan **subiendo a la línea 2.x**, que
-cambia la superficie —`Resource` deja de ser clase y se usa `resourceFromAttributes()`— pero el
-cambio vive entero en `tools/observability/src/index.ts`. **No se registró una excepción para
-seguir**: hay parche aguas arriba, así que la mitigación es actualizar (D-28).
+**El bloqueo se fue.** Los dos advisories tenían parche aguas arriba, así que por D-28 la mitigación
+era actualizar: OTel a la línea 2.x (`sdk-trace-node`/`sdk-metrics`/`resources` 2.10.0, exportadores
+0.221.0). El único cambio de superficie fue el previsto —`Resource` deja de ser clase y se construye
+con `resourceFromAttributes()`—. **`ci:supply:drift` en verde**, SBOM y digest regenerados.
 
-**Lo que ya está y no hay que rehacer:** `tools/observability` (D-36, con la justificación de por qué
-no puede ir en `contracts`), el canal de veredicto de `apps/api` instrumentado con los dos tramos del
-spool medidos por separado, el verificador escribiendo al archivo que lee `filelog` —brecha real: el
-colector *decía* leerlo y el verificador escribía sólo a stdout sin montar el volumen—, la regla
-`verificacion-sin-telemetria-de-red` con dos siembras y un control positivo, y el endpoint OTLP en los
-cinco servicios con red. `ci:infra:hardening` sigue en 159.
+**`ci:infra:otel` existe y pasa.** 22 comprobaciones, ~11 s tras el arranque.
+**Se ha visto un span llegar al colector**, que es lo que mantuvo esta tarea abierta desde F3.
+Afirma: los tres spans del canal con sus atributos, del mismo `traceId`, con los dos tramos colgando
+del padre; la línea del verificador por `filelog` con el mismo nombre de archivo del spool; métricas
+del proceso; y que la derivación del alumno no aparece en ninguna parte de la salida.
 
-**Lo que falta, en orden:** (1) OTel 2.x; (2) **`ci:infra:otel`**, el check con stack real, que es la
-prueba que el propietario eligió y la única que afirma que las trazas llegan; (3) decidir la
-verbosidad del exportador `debug`, hoy `normal`, que no imprime atributos y por tanto no permite
-comprobar ni los atributos ni la ausencia de fuga; (4) instrumentar web y workers cuando tengan
-operación, en F8; (5) retirar la excepción nº 3 del acta de H3.
+**Tres cosas de método que conviene no perder:**
 
-**Lo que no se afirma:** nadie ha visto todavía un span llegar al colector. El código exporta y el
-compose lo cablea, pero sin (2) eso no tiene evidencia — y es exactamente la distinción que mantuvo
-esta tarea abierta desde F3, así que no se cierra por analogía.
+1. **El control de fuga no puede pasar por vacío.** Cada corrida siembra un **canario** en el
+   `submissionId`, que viaja por el mismo camino que recorrería una fuga; la misma búsqueda que debe
+   *no* encontrar la derivación tiene que encontrarlo a él.
+2. **Se comprobó que el check puede fallar**, sembrando dos fugas reales por el camino real —una en
+   atributo de span, otra en atributo de recurso— y observando que las caza. Las dos revertidas.
+3. **La premisa que traía esta tarea era falsa.** «`normal` no imprime atributos» no es cierto en el
+   colector 0.115.1. La decisión de `detailed` (D-37) se rehízo sobre lo que `normal` sí oculta
+   —atributos de recurso, eventos, enlaces— y se resolvió con un experimento, no con el argumento.
+
+**Lo que falta, en orden:**
+
+1. ~~Cablear `ci:infra:otel` en `ci.yml`~~ — **hecho**, job propio `ci:infra:otel` (30 min de tope,
+   `dev:env` para los secretos efímeros del runner, y volcado de la salida del colector `if:
+   failure()`). Sin submódulo de contenido a propósito: ninguno de los tres servicios que levanta
+   monta `content/`. **Nadie lo ha visto correr todavía**: no se puede probar un runner desde aquí.
+   Lo que sí se comprobó es el punto donde fallaría —que `dev:env` rellena las siete variables que el
+   compose exige con `${VAR:?}`— cruzando el compose contra el generador y contra `.env.example`.
+2. **Observar la corrida.** Hasta que un job en verde lo enseñe, la tarea es `HECHA`, no
+   `VERIFICADA`.
+3. **Retirar la excepción nº 3 del acta `docs/gates/H3.md`** («las trazas no están instrumentadas»).
+4. **Instrumentar `apps/web` y los tres workers** cuando tengan operación propia, en F8. Hoy emiten
+   métricas y ningún span, y eso es correcto hoy.
+
+**Hueco del gate H3 que no se tapó, y conviene no perder de vista:** `ci:infra:hardening` (AC de
+`T-H3-04`) y `ci:infra:compose-up` (AC de `T-H3-01`/`T-H3-04`) **tampoco están en `ci.yml`**. No se
+añadieron aquí porque son de otras tareas —y porque `compose-up` está en rojo por §3.1.c—, pero el
+gate H3 no cierra sin ellos en verde en `main`.
+
+**Corrida de referencia:** `ci:infra:otel`, 22 de 22, traza `c852815f1b2bc77f71206f4460a63c15`, sobre
+el árbol tal cual quedó. Batería completa en verde con Docker arriba: **1618 pruebas** (1487
+unitarias + 131 contra PostgreSQL 17 real), depcruise con sus siembras, mode-separation, dry-session,
+golden, pbt, no-net, grants, sbom, drift, hardening (159), build, lint y typecheck.
+
+**El job corrió en un runner y está observado por dentro**, no sólo por la marca verde: PR
+[#1](https://github.com/MEX-AmatsuMikaboshi/profe_ia/pull/1), corrida `32204422202`, **los siete jobs
+en verde**; `ci:infra:otel` en 2 m 46 s con las 22 comprobaciones, 3 spans y el canario, traza
+`066b25bd936b859d0d5035307c6573c4`.
+
+**Lo que sigue sin afirmarse:** esa corrida es de `pull_request`, **no de `main`**. §0.4 exige el
+check en verde en `main`, así que `T-H3-05` queda **`HECHA`, no `VERIFICADA`**, hasta que el PR se
+mezcle y la corrida de `main` se observe.
+
+---
+
+### 3.1.c Defecto ajeno que esta sesión destapó: **`apps/web` no arranca en contenedor**
+
+**No es de `T-H3-05` y no se tocó**, pero bloquea `ci:infra:compose-up`, que es un AC del gate H3.
+
+`docker compose up --wait` deja a `web` en `unhealthy` con
+`Error: Cannot find module '/repo/apps/web/dist/main.js'`. La causa: desde `T-H6-13` (`2d901bd`)
+`apps/web` construye con Next y su `tsconfig.json` tiene **`noEmit: true`**, así que `dist/main.js`
+ya no se produce — pero el `CMD` del Dockerfile sigue siendo `node apps/${APP_NAME}/dist/main.js`.
+
+**En la máquina del propietario no se nota** porque `apps/web/dist/` existe como resto sin versionar
+de la etapa anterior. En una imagen limpia no existe. Nadie corrió `ci:infra:compose-up` después de
+`T-H6-13`.
+
+**No hay arreglo obvio, hay una decisión:** el `main.ts` de `web` es el servidor mínimo de H3 y la app
+real de Clase ya no pasa por él. Servirla en contenedor pide `next start` (o `output: 'standalone'`),
+una ruta `/health` que la app de Next **no tiene**, y montajes escribibles para `.next/cache` bajo
+`read_only: true`. Es una tarea con su propio alcance, no un parche.
+
+**`ci:infra:otel` no lo esquiva ni lo tapa:** levanta sólo el canal de veredicto (`otel-collector`,
+`api`, `verifier` y la base), porque el arranque del stack entero es lo que afirma
+`ci:infra:compose-up` y duplicarlo lo ataría a fallos que no son suyos.
 
 ---
 

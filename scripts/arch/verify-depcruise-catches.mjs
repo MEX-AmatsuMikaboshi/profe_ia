@@ -75,6 +75,18 @@ const PROBES = [
     rule: 'sin-verificador-fuera-del-verificador',
     code: `import { verify } from '@profesor-ia/logic-core';\nexport const probe = verify;\n`,
   },
+  {
+    // T-H3-05: el exportador OTLP es un cliente HTTP. En la ruta de verificación
+    // rompería I-3, y el verificador ni siquiera tiene red por la que exportar.
+    file: 'apps/verifier/src/__arch_probe_otel__.ts',
+    rule: 'verificacion-sin-telemetria-de-red',
+    code: `import { startTelemetry } from '@profesor-ia/observability';\nexport const probe = startTelemetry;\n`,
+  },
+  {
+    file: 'packages/logic-core/src/__arch_probe_otel__.ts',
+    rule: 'verificacion-sin-telemetria-de-red',
+    code: `import { startTelemetry } from '@profesor-ia/observability';\nexport const probe = startTelemetry;\n`,
+  },
 ];
 
 /**
@@ -95,6 +107,15 @@ const ALLOWED_PROBES = [
     file: 'apps/api/src/__arch_probe_syntax__.ts',
     rule: 'sin-verificador-fuera-del-verificador',
     code: `import type { ProofInput } from '@profesor-ia/logic-core/syntax';\nexport type Probe = ProofInput;\n`,
+  },
+  {
+    // T-H3-05: la regla prohíbe la telemetría **en la ruta de verificación**, no
+    // en todo el repositorio. Sin este control, escribirla de más —prohibirla en
+    // `apps/*` entero— dejaría a `apps/api` sin poder instrumentar el canal de
+    // veredicto y el árbol seguiría verde, diciendo lo que no dice.
+    file: 'apps/api/src/__arch_probe_otel_permitido__.ts',
+    rule: 'verificacion-sin-telemetria-de-red',
+    code: `import { currentTraceId } from '@profesor-ia/observability';\nexport const probe = currentTraceId;\n`,
   },
 ];
 

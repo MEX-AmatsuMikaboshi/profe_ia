@@ -1,10 +1,12 @@
 import { z } from 'zod';
 import type { VerificationResult } from '@profesor-ia/contracts';
 import type { ProofInput } from '@profesor-ia/logic-core/syntax';
+import { withSpan, type Tracer } from '@profesor-ia/observability';
 
 import {
   VerdictError,
-  requestVerdict,
+  awaitVerdict,
+  submitToSpool,
   type SpoolPaths,
   type SpoolTiming,
 } from './verdict-spool.js';
@@ -68,6 +70,32 @@ export type VerdictResponse =
 export interface VerdictRouteDeps {
   readonly paths: SpoolPaths;
   readonly timing: SpoolTiming;
+  /**
+   * Trazador local (T-H3-05). Opcional **a propósito**: la ruta se prueba sin
+   * levantar telemetría, y en producción `main.ts` siempre lo pasa porque
+   * `startTelemetry()` falla si no hay colector configurado. Sin trazador la
+   * ruta hace exactamente lo mismo; la telemetría observa, no decide.
+   */
+  readonly tracer?: Tracer;
+}
+
+/**
+ * Los dos tramos del canal se miden por separado porque fallan por motivos
+ * distintos: escribir en el spool es disco local, y esperar el veredicto es el
+ * verificador aislado. Con un solo span, «tardó 9 s» no distingue un disco
+ * lento de un verificador atascado, que es justo lo que uno necesita saber.
+ *
+ * Sin trazador, `traced()` ejecuta el tramo tal cual: ninguna rama de negocio
+ * depende de que haya telemetría.
+ */
+async function traced<T>(
+  tracer: Tracer | undefined,
+  name: string,
+  attributes: Record<string, string | number | boolean>,
+  fn: () => Promise<T>,
+): Promise<T> {
+  if (tracer === undefined) return fn();
+  return withSpan(tracer, name, attributes, async () => fn());
 }
 
 /**
@@ -84,16 +112,24 @@ export async function handleVerdictRequest(
   }
 
   const proof = parsed.data.proof as ProofInput;
+  const submissionId = parsed.data.submissionId;
+  // `spool.file` es el **único** puente con el verificador, que no tiene red
+  // (I-3) y por tanto no puede propagar contexto de traza: su línea de log lleva
+  // el mismo nombre de archivo y el colector las junta por ahí.
+  const spoolAttributes = { 'spool.file': `${submissionId}.json` };
   try {
-    const verification = await requestVerdict(
-      deps.paths,
-      deps.timing,
-      parsed.data.submissionId,
-      proof,
+    await traced(deps.tracer, 'clase.verificacion.spool_submit', spoolAttributes, async () => {
+      submitToSpool(deps.paths, submissionId, proof);
+    });
+    const verification = await traced(
+      deps.tracer,
+      'clase.verificacion.spool_await',
+      spoolAttributes,
+      () => awaitVerdict(deps.paths, deps.timing, submissionId),
     );
     return {
       status: 200,
-      body: { submissionId: parsed.data.submissionId, verification, decidedBy: 'verifier' },
+      body: { submissionId, verification, decidedBy: 'verifier' },
     };
   } catch (err) {
     if (err instanceof VerdictError) {

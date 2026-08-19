@@ -1,5 +1,12 @@
-import { readdirSync, readFileSync, renameSync, writeFileSync, mkdirSync } from 'node:fs';
-import { join } from 'node:path';
+import {
+  appendFileSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  renameSync,
+  writeFileSync,
+} from 'node:fs';
+import { dirname, join } from 'node:path';
 import { verify, type ProofInput } from '@profesor-ia/logic-core';
 
 /**
@@ -22,11 +29,45 @@ const SPOOL_FAILED = process.env.SPOOL_FAILED ?? '/spool/failed';
 const SPOOL_DONE = process.env.SPOOL_DONE ?? '/spool/done';
 const HEALTH_FILE = process.env.HEALTH_FILE ?? '/tmp/health';
 const POLL_MS = Number(process.env.POLL_MS ?? 1000);
+const LOG_FILE = process.env.LOG_FILE ?? `/var/log/profesor-ia/${SERVICE}.log`;
 
+/**
+ * Telemetría del verificador (T-H3-05): **por archivo, nunca por OTLP**.
+ *
+ * Este proceso corre con `network_mode: none` y no puede exportar a ningún
+ * colector: importar el SDK aquí metería un cliente HTTP en la ruta de
+ * verificación y rompería I-3, que es exactamente lo que la regla
+ * `i3-verifier-sin-red` impide. Su única vía es el volumen de logs, que el
+ * receptor `filelog` del colector lee — un volumen no es una interfaz de red.
+ *
+ * Hasta esta tarea el colector **decía** leer al verificador y no leía nada:
+ * este proceso escribía sólo a `stdout` y ni siquiera montaba el volumen. El
+ * comentario de `otel-collector.yaml` describía una intención, no un cableado.
+ *
+ * La correlación con la traza de `apps/api` es por **nombre de archivo del
+ * spool**, que las dos partes registran. Meter el `traceId` dentro del `.json`
+ * de la derivación sería el camino cómodo y está descartado: ese archivo es la
+ * entrada de `verify()`, que es función pura de su argumento, y añadirle un
+ * campo de telemetría le cambiaría la entrada al verificador.
+ */
 function log(event: string, fields: Record<string, unknown> = {}): void {
-  process.stdout.write(
-    `${JSON.stringify({ ts: new Date().toISOString(), service: SERVICE, event, ...fields })}\n`,
-  );
+  const record = JSON.stringify({
+    ts: new Date().toISOString(),
+    service: SERVICE,
+    event,
+    ...fields,
+  });
+  process.stdout.write(`${record}\n`);
+  try {
+    mkdirSync(dirname(LOG_FILE), { recursive: true });
+    appendFileSync(LOG_FILE, `${record}\n`);
+  } catch (err) {
+    // Sin el volumen montado el verificador sigue verificando —su trabajo no
+    // depende de la telemetría— pero lo dice por stdout en vez de callarlo.
+    process.stdout.write(
+      `${JSON.stringify({ ts: new Date().toISOString(), service: SERVICE, event: 'log_file_unavailable', detail: String(err) })}\n`,
+    );
+  }
 }
 
 for (const dir of [SPOOL_IN, SPOOL_OUT, SPOOL_FAILED, SPOOL_DONE]) {

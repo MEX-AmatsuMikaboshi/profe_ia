@@ -116,13 +116,3 @@ export async function awaitVerdict(
     await timing.sleep(timing.pollMs);
   }
 }
-
-export async function requestVerdict(
-  paths: SpoolPaths,
-  timing: SpoolTiming,
-  submissionId: string,
-  proof: ProofInput,
-): Promise<VerificationResult> {
-  submitToSpool(paths, submissionId, proof);
-  return awaitVerdict(paths, timing, submissionId);
-}
