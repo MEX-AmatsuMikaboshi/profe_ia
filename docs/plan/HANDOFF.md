@@ -304,8 +304,14 @@ el árbol tal cual quedó. Batería completa en verde con Docker arriba: **1618 
 unitarias + 131 contra PostgreSQL 17 real), depcruise con sus siembras, mode-separation, dry-session,
 golden, pbt, no-net, grants, sbom, drift, hardening (159), build, lint y typecheck.
 
-**Lo que sigue sin afirmarse:** nadie ha visto el job `ci:infra:otel` correr **en un runner**. Un
-runner no se puede probar desde aquí.
+**El job corrió en un runner y está observado por dentro**, no sólo por la marca verde: PR
+[#1](https://github.com/MEX-AmatsuMikaboshi/profe_ia/pull/1), corrida `32204422202`, **los siete jobs
+en verde**; `ci:infra:otel` en 2 m 46 s con las 22 comprobaciones, 3 spans y el canario, traza
+`066b25bd936b859d0d5035307c6573c4`.
+
+**Lo que sigue sin afirmarse:** esa corrida es de `pull_request`, **no de `main`**. §0.4 exige el
+check en verde en `main`, así que `T-H3-05` queda **`HECHA`, no `VERIFICADA`**, hasta que el PR se
+mezcle y la corrida de `main` se observe.
 
 ---
 
