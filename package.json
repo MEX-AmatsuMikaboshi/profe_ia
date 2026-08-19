@@ -25,6 +25,7 @@
     "ci:logic:mutation": "stryker run",
     "ci:mode-separation": "vitest run --project unit packages/session-engine/test/mode-separation.test.ts",
     "ci:e2e:dry-session": "vitest run --project unit packages/session-engine/test/dry-session-e2e.test.ts apps/measurement-worker/test/dry-session-consumption.test.ts",
+    "ci:adversarial:session": "vitest run --project unit packages/model-gateway/test/adversarial-session.test.ts packages/pedagogy-policy/test/non-revelation.test.ts",
     "ci:gateway:fail-closed": "vitest run --project unit packages/model-gateway/test/gateway.test.ts packages/model-gateway/test/session-context.test.ts packages/model-gateway/test/modality.test.ts",
     "ci:gateway:contracts": "vitest run --project unit packages/model-gateway/test/output.test.ts",
     "ci:canary": "vitest run --project unit packages/security-policy/test/canary.test.ts packages/model-gateway/test/session-context.test.ts",

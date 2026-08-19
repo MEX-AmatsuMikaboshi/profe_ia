@@ -3,6 +3,7 @@ import {
   CanaryHitError,
   FragmentOutsideBlockError,
   HelpLevelExceededError,
+  MissingEgressFilterError,
   UndeclaredStateKeyError,
 } from './errors.js';
 
@@ -60,6 +61,13 @@ export interface SessionContextInput {
   readonly allowedHelpLevel: number;
   readonly structuredError: StructuredError | null;
   readonly selectedHint: SelectedHint | null;
+  /**
+   * ¿Hay una actividad puntuable abierta? (T-H7-03 ← P-I §9.6). Es obligatorio
+   * y no tiene valor por omisión: un `false` implícito dejaría el modo de no
+   * revelación apagado por olvido, que es exactamente como se pierden estas
+   * garantías.
+   */
+  readonly scorableActivityOpen: boolean;
 }
 
 /**
@@ -147,7 +155,31 @@ export function buildSessionContext(
         : { helpLevel: input.selectedHint.helpLevel, text: input.selectedHint.text },
   };
 
+  // El campo es obligatorio en el tipo, pero los archivos de prueba de este
+  // repositorio **no se typechequean** (`tsc` incluye sólo `src/**`), así que un
+  // llamador podía omitirlo y recibir el comportamiento antiguo: `undefined` es
+  // falsy y la garantía se apagaba sola. Se comprueba en ejecución para que la
+  // garantía no dependa de que alguien haya compilado el llamador.
+  if (typeof input.scorableActivityOpen !== 'boolean') {
+    throw new MissingEgressFilterError(
+      `scorableActivityOpen es obligatorio y llegó ${String(input.scorableActivityOpen)}. ` +
+        `Un valor ausente se leería como «no hay actividad puntuable» y apagaría el modo de no ` +
+        `revelación por olvido (P-I §9.6).`,
+    );
+  }
+
   const detectar = options.canaryDetector;
+  // P-I §9.6: en una actividad puntuable el filtro de egreso no puede faltar.
+  // Antes el detector era opcional siempre, así que no pasarlo apagaba la
+  // comprobación sin decirlo — y «sin solución en contexto» quedaba sin
+  // comprobar justo donde §9.6 lo exige.
+  if (input.scorableActivityOpen && detectar === undefined) {
+    throw new MissingEgressFilterError(
+      `La actividad puntuable del bloque ${input.blockId} exige detector de canarios: P-I §9.6 ` +
+        `pide «sin solución en contexto» y P-I §9.4 aplica el filtro antes de enviar nada al ` +
+        `modelo. Sin detector la comprobación no corre, y no correr no es pasar.`,
+    );
+  }
   if (detectar !== undefined) {
     const hits = detectar(JSON.stringify(contexto));
     if (hits.length > 0) {

@@ -22,6 +22,7 @@ export {
   HelpLevelExceededError,
   UndeclaredStateKeyError,
   CanaryHitError,
+  MissingEgressFilterError,
   ManifestRewriteError,
   UnknownPricingManifestError,
   ManifestNotEffectiveError,
