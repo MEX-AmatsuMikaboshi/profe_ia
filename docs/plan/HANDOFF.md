@@ -1,37 +1,36 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la quinta sesión (2026-08-18, tarde)
+> ## EMPIEZA AQUÍ — cierre de la sexta sesión (2026-08-19, mediodía)
 >
-> **Sesión cerrada por límite de créditos del propietario, no por haber terminado.** Todo lo hecho
-> está commiteado y subido. Nada quedó a medias en el árbol de trabajo.
+> **Sesión cerrada a petición del propietario («has un alto y actualiza en handoff»).** Todo lo
+> hecho está commiteado y subido en ambos repos (contenido primero, §8). Nada quedó a medias en
+> el árbol de trabajo.
 >
-> **Lo que se hizo, en tres líneas:** el conjunto material de 200 casos de BENCH-01, la corrección
-> de los dos defectos de diseño del piloto, la capa de cómputo de gates, y la averiguación sobre
-> snapshots fechados. Dos commits: `6b3b5c4` y `0c0d8e8`.
+> **Lo que se hizo, en tres líneas:** el orquestador de W0 (**D-47**, commit `6710287`, CI
+> `32231311022` en verde) y la **primera corrida W0 en vivo sobre fuentes reales** (**D-48**,
+> commit `20d03f3`, CI **`32286518350` observada en verde el 2026-08-19**, diez jobs). La corrida
+> produjo una **propuesta de corpus en estado `propuesta_corpus`**: inventario con **1 autorizado**
+> (`forallx-yyc/tfl-deduccion-natural`, CC-BY-4.0, snapshot `02351aa3…9510`), **1 excluido**
+> (`mit-ocw/24.241-logic-i-fall-2009`, NC/SA sin compatibilidad declarada — default conservador) y
+> **1 `LICENSE_UNRESOLVED`** (`forallx-yyc/logica-modal`, «used with permission» de Trueman).
+> `solutions/` quedó fuera de la base expresiva (va a `solutions-private` en W1). OpenStax no
+> tiene libro de lógica (verificado contra su API CMS, 129 libros). Los artefactos viven en
+> `content/unidad-deduccion-natural/research/` (repo de contenido, commit `e4073ab`).
 >
-> **LO PRIMERO QUE HAY QUE HACER AL VOLVER, en este orden:**
+> **LO PRIMERO QUE HAY QUE HACER AL VOLVER — la decisión del CORPUS_APPROVER (el propietario):**
 >
-> 1. ~~**Observar la corrida de CI de `0c0d8e8`**~~ — **HECHO el 2026-08-19.** La corrida del
->    último commit de `main` (`31e1d32`, id **`32218823685`**) salió con **los diez jobs en verde**,
->    `ci:logic:mutation` incluido. El código es idéntico al de `0c0d8e8` (los commits intermedios
->    sólo tocaron documentos), así que con esta corrida basta: la capa de cómputo de gates, el
->    conjunto material de 200 casos y las correcciones del piloto quedan **verificados como código
->    en `main`**. `T-H4-10` sigue `EN_CURSO`: lo que falta no es código, es la corrida material,
->    bloqueada por §3.5.
-> 2. **Leer §3.5.** Es el bloqueo real de BENCH-01 y no estaba identificado antes de esta sesión.
-> 3. ~~**Pedirle al propietario la decisión (A) o (B)** de §3.5~~ — **DECIDIDA el 2026-08-19: (A),
->    corpus primero.** W0 sobre fuentes reales → W1–W5 → BENCH-01 dictamina → F8. El primer paso de
->    código ya está dado: el orquestador de W0 (`w0-runner.ts` + `profesor-ia w0 replay`, D-47).
+> 1. **Revisar antes de firmar:** `content/unidad-deduccion-natural/research/evaluations-2026-08-19.json`
+>    (lo redactó el asistente, misma salvedad que D-41) y los 200 casos de BENCH-01
+>    (`analysis/reports/revision-casos-bench01-2026-08-19.xlsx`, artefacto **no versionado** a
+>    propósito). La compatibilidad NC/SA de OCW **la declara el propietario, no el asistente**.
+> 2. **Firmar la propuesta** con `applyCorpusDecision` (D-47): **autorizar** → estado
+>    `corpus_autorizado` → se entra a **W1**; o **rechazar** con `rejection_reason_code` +
+>    evidencia → reinvestigación. **Sin esa firma no hay W1 ni BENCH-01.**
 >
-> **Estado de las tareas al cerrar:** `T-H4-10` sigue `EN_CURSO`. Ninguna tarea cambió de estado en
-> esta sesión, y eso es correcto: se construyó dentro de una tarea que ya estaba en curso.
+> **Estado de las tareas al cerrar:** `T-H4-10` sigue `EN_CURSO` (bloqueada por la firma del
+> corpus, camino (A) de §3.5). Ninguna tarea cambió de estado en esta sesión.
 >
-> **Lo que quedó disponible y no se tocó**, si hace falta trabajo que no dependa de la decisión del
-> propietario: serializar `kc/map.yaml` desde `KC_CATALOG` —único artefacto de `content/` que no
-> depende del corpus, y recordando que `content/` se sube **primero** (§8)— y activar el typecheck
-> de los archivos de prueba (§3.2).
->
-> **Pruebas al cerrar: 1723** (1592 unitarias + 131 contra PostgreSQL 17 real). Eran 1666.
+> **Pruebas al cerrar: 1743** (1612 unitarias + 131 contra PostgreSQL 17 real). Eran 1723.
 
 **Fecha del checkpoint:** 2026-08-19 (cuarta sesión del 18, cerrada de madrugada).
 **Añadido el 2026-08-18 (tarde), sin cerrar sesión:** el **conjunto material de 200 casos de
