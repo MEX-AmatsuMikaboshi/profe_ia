@@ -89,6 +89,33 @@ jobs:
       - name: ci:e2e:dry-session
         run: pnpm run ci:e2e:dry-session
 
+  adversarial:
+    # AC de `T-H7-03`: extracción e injection del alumno (lista P-II §14.4
+    # aplicable a sesión) y la puerta de no revelación de P-I §9.6. Job propio
+    # por lo mismo que `h6`: §0.4 cuenta un AC por **el check que cita**, y
+    # dentro de `ci:unit` no habría nada que mirar por separado en Actions.
+    #
+    # La suite vive en dos paquetes a propósito —`model-gateway` y
+    # `pedagogy-policy`—; un archivo único abriría una dependencia que la
+    # arquitectura no necesita.
+    name: ci:adversarial:session
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Las pruebas entran por `@profesor-ia/*`, que resuelve a `dist/`.
+      - name: build
+        run: pnpm run ci:build
+      - name: ci:adversarial:session
+        run: pnpm run ci:adversarial:session
+
   arch:
     name: ci:arch:depcruise
     runs-on: ubuntu-latest

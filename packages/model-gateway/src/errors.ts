@@ -91,6 +91,19 @@ export class UndeclaredStateKeyError extends ModelGatewayError {}
 export class CanaryHitError extends ModelGatewayError {}
 
 /**
+ * Se pidió construir contexto para una actividad **puntuable** sin detector de
+ * canarios (T-H7-03 ← P-I §9.4 y §9.6).
+ *
+ * Hasta esta tarea el detector era opcional y su ausencia hacía que la
+ * comprobación **no corriera**, sin decirlo. Un filtro que puede faltar en
+ * silencio no es un filtro, y «sin solución en contexto» era entonces una
+ * afirmación que nadie comprobaba justo cuando más importa. Se exige donde
+ * §9.6 gobierna; fuera de una actividad puntuable sigue siendo opcional, que es
+ * lo que era antes.
+ */
+export class MissingEgressFilterError extends ModelGatewayError {}
+
+/**
  * Se intentó registrar contenido distinto bajo un `pricing_manifest_id` ya
  * usado (T-H4-06 ← P-II §9.5). Un cambio de tarifa crea un id nuevo; nunca
  * reescribe el costo histórico.

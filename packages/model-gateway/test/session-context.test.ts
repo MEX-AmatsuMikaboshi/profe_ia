@@ -23,6 +23,10 @@ function entrada(overrides: Partial<SessionContextInput> = {}): SessionContextIn
     allowedHelpLevel: 2,
     structuredError: null,
     selectedHint: null,
+    // T-H7-03: estas pruebas son de la whitelist y del filtro de egreso fuera de
+    // una actividad puntuable, que es donde nacieron. El caso puntuable —donde
+    // §9.6 exige el detector— tiene sus propias pruebas en `non-revelation`.
+    scorableActivityOpen: false,
     ...overrides,
   };
 }
