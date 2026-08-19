@@ -66,7 +66,7 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 | T-H3-02 | REQUIRED | HECHA | `scripts/dev/compose.mjs`, `scripts/dev/generate-env.mjs`, `scripts/db/apply-migrations.mjs` | 2026-08-15 | `dev:env`/`dev:up`/`dev:seed`/`dev:backup`/`dev:restore` (+ `down`, `status`, `logs`). `dev:seed` ejecutado contra el entorno real: **6 migraciones aplicadas y 7 roles acreditados**. Corre **dentro** de la red interna: la base nunca se publica al host. `dev:env` no sobreescribe un `.env` existente. |
 | T-H3-03 | REQUIRED | HECHA | `docs/env/windows.md` | 2026-08-15 | Windows 11 Pro 10.0.26200, Docker 29.7.2 motor Linux, WSL2, Node 24.16.0, PostgreSQL 17.11. Con tiempos base medidos y las cinco trampas del entorno, incluida la nueva: el Bash de Git rompe `$APPDATA` y pnpm no resuelve. |
 | T-H3-04 | CRITICAL | HECHA | `scripts/infra/check-compose-hardening.mjs` — **159 comprobaciones en verde** | 2026-08-15 | Lee la configuración **resuelta** por Docker, no el YAML. Socket de Docker sin montar en ningún servicio, `no-new-privileges`, `cap_drop ALL`, raíz de solo lectura, sin root, seccomp activo, puertos solo en `127.0.0.1`. Y las tres fronteras: `verifier` con `network_mode: none` (I-3), `solutions-private` solo en autoría (I-2), sondas solo en medición (I-4). Cuatro imposibilidades técnicas registradas y **impresas en cada corrida**. |
-| T-H3-05 | REQUIRED | EN_CURSO (rama `t-h3-05-observabilidad`, sin mezclar: `ci:supply:drift` en rojo) | `infra/compose/otel-collector.yaml` | 2026-08-15 | Colector local con OTLP y `filelog` (única vía del verificador, que no tiene red). **Los servicios no emiten spans**: no hay operación que trazar hasta F7/F8, y un span de «arranqué» para poder decir que hay trazas sería éxito simulado. Se cierra con la primera operación real. |
+| T-H3-05 | REQUIRED | EN_CURSO (rama `t-h3-05-observabilidad`; el bloqueo de `ci:supply:drift` está resuelto y `ci:infra:otel` pasa en local) | `tools/observability/`, `scripts/infra/otel-check.mjs`, `infra/compose/otel-collector.yaml` | 2026-08-18 | **Se ha visto un span llegar al colector**: `ci:infra:otel`, 22 comprobaciones, con canario sembrado que prueba que el control de fuga no pasa por vacío y dos siembras que prueban que el check puede fallar. OTel subido a 2.x (D-28: hay parche, se actualiza). Falta cablearlo en CI y retirar la excepción nº 3 del acta de H3. |
 
 **Gate H3:** `docs/gates/H3.md` — abierto. Falta `T-H3-05` —**empezada** el 2026-08-18 en la rama `t-h3-05-observabilidad`, bloqueada por dos advisories de la línea 1.x de OpenTelemetry; ver [`../session/observabilidad.md`](../session/observabilidad.md)—, la inicialización de Infisical (acción del propietario) y la ejecución en `main`.
 
@@ -163,7 +163,7 @@ en que un reactivo consumido reaparece. Detalle en
 
 | Fase | Hito | Estado | Bloqueo actual |
 |---|---|---|---|
-| F3 | H3 · Entorno local | EN_CURSO | 4 de 5 tareas; `T-H3-05` **empezada** en la rama `t-h3-05-observabilidad` y bloqueada por advisories de OTel 1.x (subir a 2.x) |
+| F3 | H3 · Entorno local | EN_CURSO | 4 de 5 tareas; `T-H3-05` **desbloqueada y con `ci:infra:otel` en verde en local**, en la rama `t-h3-05-observabilidad`. Falta CI y el acta |
 | F2 | H2 · cierre del gate | EN_CURSO | Las 16 tareas están HECHAS; falta la ejecución en `main` |
 | F4 | H4 · Pasarela de modelo | EN_CURSO | **10 de 12 tareas + `T-H4-10` en curso.** Harness y piloto verificados (CI `32114293161`); falta el conjunto material de 200 casos y la autorización de gasto de la corrida material. `T-H4-11` sigue bloqueada: exige dos proveedores |
 | F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
@@ -479,4 +479,18 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   positivos**: con las dos guardas retiradas caen las cuatro, y hubo que endurecer dos de ellas
   porque pasaban por `STATE_HASH_MISMATCH` —es decir, por vacío— antes de llegar al invariante.
   Código nuevo de error: `INVALID_PROJECTION`.
+- **D-36 — `tools/observability` en vez de un paquete nuevo.** La lista de `packages/` es obligatoria
+  (P-II §3.1) y no contempla observabilidad, así que el arranque compartido de OTel va a `tools/`,
+  con el mismo criterio de D-1 (CLI) y D-32 (harness de benchmark). **No podía ir en `contracts`**,
+  que era el otro sitio compartido: de `contracts` depende `logic-core`, así que un exportador OTLP
+  —un cliente HTTP— habría llegado solo a la ruta de verificación y roto I-3.
+- **D-37 — El exportador `debug` del colector va en `detailed`, no en `normal`.** La justificación
+  que traía la tarea era que `normal` no imprime atributos: **es falsa** en el colector 0.115.1, los
+  imprime. Lo que `normal` no imprime es todo lo demás que el colector recibió —atributos de
+  recurso, eventos de span, enlaces—, y el control de fuga de `ci:infra:otel` no es una afirmación
+  sobre los atributos sino sobre **todo lo que llegó**. Se decidió con un experimento, no con el
+  argumento: sembrada una fuga en `service.version`, con `detailed` el check la caza y con `normal`
+  no aparece en la salida —`Resource attributes` no se imprime en absoluto—, así que el control
+  habría pasado sin haber mirado ahí. El costo es local y nulo. Lo descartado fue tener dos
+  configuraciones, una de desarrollo y otra para el check: comprobaría una que nadie corre.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

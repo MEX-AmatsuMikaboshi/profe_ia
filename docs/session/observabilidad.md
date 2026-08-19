@@ -1,8 +1,9 @@
 # Observabilidad local — T-H3-05 (EN CURSO, rama `t-h3-05-observabilidad`)
 
-**Estado: incompleta y bloqueada por un advisory.** Lo que hay funciona y está comprobado hasta donde
-llega; lo que falta está enumerado abajo. **No está en `main` a propósito**: `ci:supply:drift` está en
-rojo y ese gate es bloqueante.
+**Estado (2026-08-18, cuarta sesión): desbloqueada y con el check en verde.** El advisory se resolvió
+subiendo a OTel 2.x y **`ci:infra:otel` existe y pasa**: por primera vez se ha visto un span llegar al
+colector. Lo que falta para cerrar la tarea está enumerado abajo, y ya no incluye ningún bloqueo
+externo.
 
 ## Qué pide la tarea
 
@@ -14,22 +15,65 @@ Estaba abierta desde F3 esperando «la primera operación instrumentable». La h
 veredicto de Clase, que cruza `apps/api` y `apps/verifier`. Un span de «arranqué» habría cerrado la
 tarea en su día y habría sido éxito simulado.
 
-## El bloqueo
+## El bloqueo, resuelto
 
-`pnpm audit` reporta **dos advisories aplicables** sobre la línea 1.x del SDK que se fijó:
+`pnpm audit` reportaba dos advisories aplicables sobre la línea 1.x del SDK:
 
 | Severidad | Paquete | Vulnerable | Parcheado |
 |---|---|---|---|
 | high | `@opentelemetry/propagator-jaeger` (vía `sdk-trace-node`) | `<2.9.0` | `>=2.9.0` |
 | moderate | `@opentelemetry/core` (vía `exporter-metrics-otlp-http`) | `<2.8.0` | `>=2.8.0` |
 
-Los dos se arreglan **subiendo a la línea 2.x**, que cambia la superficie: `Resource` deja de ser una
-clase y se construye con `resourceFromAttributes()`, y los exportadores cambian de rango. Es un cambio
-acotado —vive entero en `tools/observability/src/index.ts`— pero es un cambio.
+**Los dos tienen parche aguas arriba, así que por D-28 la mitigación es actualizar, no registrar una
+excepción.** Se subió a la línea 2.x (`sdk-trace-node`, `sdk-metrics`, `resources` en 2.10.0;
+exportadores en 0.221.0). El único cambio de superficie fue el previsto: `Resource` deja de ser clase
+y se construye con `resourceFromAttributes()`. Vive entero en `tools/observability/src/index.ts`.
 
-**No se registró una excepción para seguir adelante.** Habría sido el atajo, y es exactamente lo que
-D-28 existe para que no se haga por inercia: hay parche disponible aguas arriba, así que la mitigación
-es actualizar, no documentar por qué se convive con ello.
+`ci:supply:drift`: «sin advisories moderate+ aplicables». SBOM regenerado.
+
+## `ci:infra:otel` — el check con stack real
+
+`scripts/infra/otel-check.mjs`. Levanta el canal de veredicto, hace un `POST` real a
+`/clase/verificacion` y **lee la salida del colector**, analizándola por estructura y no por
+subcadena suelta. 22 comprobaciones, ~11 s tras el arranque.
+
+Afirma cuatro cosas: (a) llegaron los **tres spans** del canal, con sus atributos, del mismo
+`traceId`, con los dos tramos colgando del padre y atribuidos a `api`; (b) llegó la línea del
+verificador por `filelog`, con **el mismo nombre de archivo del spool** que llevan los spans —el único
+puente posible, porque el verificador no tiene red—; (c) llegaron métricas; y (d) **la derivación del
+alumno no aparece en ninguna parte de la salida**.
+
+Además: el verificador **no** aparece como recurso OTLP. Si apareciera, alguien le habría abierto una
+salida de red y roto I-3 sin que ninguna regla estática lo viera.
+
+### Por qué (d) no es verde por vacío
+
+Cada corrida siembra un **canario**: el `submissionId` lleva una cadena única que viaja por el
+**mismo camino** que recorrería una fuga —atributo de span → OTLP → colector → salida—. La misma
+búsqueda que debe *no* encontrar la derivación tiene que encontrarlo a él; si no lo encuentra, la
+corrida falla antes de opinar sobre la fuga.
+
+Y se comprobó que el check **puede fallar**, sembrando dos fugas reales y observando que las caza:
+
+1. **En un atributo de span** (`spool.first_line` con la fórmula de la primera línea). Tres
+   comprobaciones en rojo.
+2. **En un atributo de recurso** (`service.version` con un conectivo). Una comprobación en rojo.
+
+### La decisión de verbosidad (D-37), con el experimento que la sostiene
+
+La justificación que traía esta tarea era que `normal` no imprime atributos. **Es falsa**: en el
+colector 0.115.1 los imprime, en una línea por span. Se comprobó en las dos verbosidades antes de
+escribir nada.
+
+Lo que `normal` **no** imprime es todo lo demás que el colector recibió: atributos de recurso,
+eventos de span y enlaces. Y (d) no es una afirmación sobre los atributos, es una afirmación sobre
+**todo lo que llegó**. La siembra nº 2 lo demuestra de forma directa: la misma fuga en
+`service.version`, con el mismo `POST`,
+
+- con `verbosity: detailed` → aparece en la salida y el check falla;
+- con `verbosity: normal` → **no aparece**, y `Resource attributes` no se imprime en absoluto.
+
+Con `normal`, (d) habría pasado sin haber mirado ahí. El costo de `detailed` es local y nulo.
 
 ## Lo que ya está hecho y no hay que rehacer
 
@@ -115,28 +159,25 @@ OTLP. Un volumen no es una interfaz de red.
 
 ## Lo que falta
 
-1. **Subir OTel a la línea 2.x** y volver a poner `ci:supply:drift` en verde. Es lo primero: hasta
-   eso, esta rama no entra en `main`.
-2. **`ci:infra:otel`** — el check con stack real, que es la prueba que el propietario eligió y **la
-   única que afirma que las trazas llegan**. Diseño previsto: levantar el stack, `POST` de una
-   derivación a `/clase/verificacion`, y comprobar sobre `docker compose logs otel-collector` que
-   (a) llegaron los tres spans con sus atributos, (b) llegó la línea del verificador por `filelog` con
-   el mismo nombre de archivo, (c) llegaron métricas, y (d) —el control que más importa— que **la
-   derivación del alumno no aparece en ninguna parte de la salida del colector**.
-3. **Decidir la verbosidad del exportador `debug`.** Hoy es `normal`, que no imprime atributos, así
-   que (a) y (d) no se pueden comprobar sobre esa salida. `detailed` sí, a cambio de volcar cada
-   registro. Local-first y sin costo, pero es una decisión, no un detalle.
+1. ~~Subir OTel a la línea 2.x~~ — hecho.
+2. ~~`ci:infra:otel`~~ — hecho, en verde, con siembras que prueban que puede fallar.
+3. ~~Decidir la verbosidad~~ — `detailed`, D-37, con el experimento arriba.
 4. **Instrumentar `apps/web` y los tres workers** más allá del arranque del SDK: hoy emitirían
    métricas y ningún span, porque todavía no tienen operación propia que trazar. Es correcto hoy y
    deja de serlo en F8.
-5. **Acta `docs/gates/H3.md`**: retirar la excepción nº 3 —«las trazas no están instrumentadas»—
-   cuando lo anterior esté.
+5. **Acta `docs/gates/H3.md`**: retirar la excepción nº 3 —«las trazas no están instrumentadas»—.
+6. **`ci.yml`**: `ci:infra:otel` necesita Docker y todavía no está cableado en el flujo de CI.
 
 ## Lo que este trabajo **no** afirma
 
-- **Nadie ha visto un span llegar al colector.** El código exporta, el compose lo cablea y las
-  fronteras están comprobadas, pero sin el punto 2 eso es una afirmación sin evidencia. Es exactamente
-  la distinción que mantuvo esta tarea abierta desde F3, así que no se cierra ahora por analogía.
+- ~~Nadie ha visto un span llegar al colector.~~ **Ya se ha visto**, y con evidencia reproducible:
+  `ci:infra:otel` en verde, traza `f0508d2ab69bf0637f0686733618adff` en la corrida local del
+  2026-08-18. Era la distinción que mantuvo esta tarea abierta desde F3.
+- **Nadie ha corrido `ci:infra:otel` en CI.** El check existe y pasa **en local**; el flujo de CI no
+  lo invoca todavía. Hasta que una corrida observada lo enseñe en verde, esta tarea es `HECHA`, no
+  `VERIFICADA`.
+- **Sólo está instrumentado el canal de veredicto.** Web y los tres workers arrancan el SDK y emiten
+  métricas; ningún span, porque no tienen operación propia.
 - Las 131 pruebas contra PostgreSQL **no se corrieron** en este cierre: Docker estaba apagado. El
   error es `Could not find a working container runtime strategy`, o sea del entorno y no del código,
   pero tampoco es un verde.

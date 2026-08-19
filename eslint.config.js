@@ -26,6 +26,10 @@ export default tseslint.config(
         process: 'readonly',
         console: 'readonly',
         URL: 'readonly',
+        // Globales del runtime desde Node 18; los usa `ci:infra:otel`, que
+        // habla con la api publicada desde el host.
+        fetch: 'readonly',
+        AbortSignal: 'readonly',
         Buffer: 'readonly',
         __dirname: 'readonly',
         module: 'writable',

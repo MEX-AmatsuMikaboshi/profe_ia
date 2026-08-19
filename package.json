@@ -46,6 +46,7 @@
     "dev:backup": "node scripts/dev/compose.mjs backup",
     "dev:restore": "node scripts/dev/compose.mjs restore",
     "ci:infra:hardening": "node scripts/infra/check-compose-hardening.mjs",
+    "ci:infra:otel": "node scripts/infra/otel-check.mjs",
     "ci:infra:compose-up": "node scripts/infra/compose-up-check.mjs",
     "web:tokens": "node scripts/web/generate-tokens-css.mjs",
     "ci:web:tokens": "node scripts/web/generate-tokens-css.mjs --check",
