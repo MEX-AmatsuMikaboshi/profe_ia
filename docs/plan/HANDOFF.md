@@ -21,13 +21,17 @@
 >    vas a empujar dos veces seguidas, la corrida que cuenta es la del último commit, y hay que
 >    esperar a esa.
 >
->    **La que vale es la de `35c4d42`: `32218704675`**, que lleva exactamente el mismo código y
->    quedó **en marcha** al cerrar. Nadie la ha visto terminar. Hasta que se vea completa —los diez
->    jobs, `ci:logic:mutation` incluido, que tarda ~9 min— la capa de gates es `HECHA`, no
->    `VERIFICADA`.
+>    **No busques un id concreto: busca la corrida del último commit de `main`.** Cada push de esta
+>    tanda canceló la corrida del anterior, incluidos los de documentación, así que varios ids
+>    intermedios están en `cancelled` y ninguno de ellos es el bueno. Todos los commits posteriores
+>    a `6b3b5c4` llevan el mismo código; sólo cambian documentos. Lista y mira:
 >    ```
->    gh api repos/MEX-AmatsuMikaboshi/profe_ia/actions/runs/32218704675/jobs --jq '.jobs[] | "\(.conclusion)  \(.name)"'
+>    gh run list --limit 3 --json databaseId,headSha,status,conclusion
+>    gh api repos/MEX-AmatsuMikaboshi/profe_ia/actions/runs/<id>/jobs --jq '.jobs[] | "\(.conclusion)  \(.name)"'
 >    ```
+>    Hasta ver **los diez jobs en verde en una sola corrida** —`ci:logic:mutation` incluido, que
+>    tarda ~9 min— la capa de gates es `HECHA`, no `VERIFICADA`. Si la última corrida está limpia,
+>    con eso basta: el código es idéntico.
 > 2. **Leer §3.5.** Es el bloqueo real de BENCH-01 y no estaba identificado antes de esta sesión.
 > 3. **Pedirle al propietario la decisión (A) o (B)** de §3.5. Está planteada y **sin responder**:
 >    la sesión se cortó ahí.
@@ -1583,7 +1587,13 @@ o un control de suministro producen la misma aspa en la pestaña Actions. Una ta
    usa escalar de bloque (`run: |`) para cualquier mensaje con dos puntos.
 8. **Bash aquí no entiende los here-strings de PowerShell.** `git commit -m @'…'@` mete un `@` como
    primera línea del mensaje. Para mensajes largos, heredoc (`cat > /tmp/msg <<'EOF'`) y `-F`.
-9. **Cuidado al escribir caracteres de control en un fuente.** Al crear `ingestion.ts` una clase de
+9. **Dos pushes seguidos cancelan la verificación del primero.** La concurrencia de Actions aborta
+   la corrida en marcha sobre la misma rama cuando llega un push nuevo, **y un push de sólo
+   documentación cuenta**. Pasó el 2026-08-18: subir el handoff dejó la corrida del commit de código
+   en `cancelled` con `ci:logic:mutation` sin terminar, y ese job sólo corre en `main`. Si vas a
+   empujar dos veces, **espera a la corrida antes del segundo push**, o asume que la única que
+   cuenta es la del último commit.
+10. **Cuidado al escribir caracteres de control en un fuente.** Al crear `ingestion.ts` una clase de
    regex quedó con controles C0 literales en vez de escapes, ilegible y candidata a
    `no-control-regex`. Se resolvió comprobando por punto de código en un bucle, que además se lee.
 
