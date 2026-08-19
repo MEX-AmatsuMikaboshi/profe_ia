@@ -181,7 +181,7 @@ docente**, que necesita el binding ganador: no se alcanza escribiendo código.
 | F3 | H3 · Entorno local | EN_CURSO | **5 de 5 tareas; `T-H3-01`, `T-H3-04` y `T-H3-05` VERIFICADAS.** Criterio técnico cubierto y observado en `main`. Falta la inicialización de Infisical y las firmas |
 | F2 | H2 · cierre del gate | EN_CURSO | Las 16 tareas están HECHAS; falta la ejecución en `main` |
 | F4 | H4 · Pasarela de modelo | EN_CURSO | **10 de 12 tareas + `T-H4-10` en curso.** Harness, piloto, conjunto material de 200 casos y capa de cómputo de gates construidos; gasto autorizado (D-40). **La corrida está bloqueada por corpus: dos de los seis gates no se pueden medir con `content/` en marcadores (D-45).** Falta además la revisión humana del conjunto (D-41). `T-H4-11` sigue bloqueada: exige dos proveedores, y ninguno vigente de OpenAI publica snapshot fechado (D-44) |
-| F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS.** Orquestador construido y **verificado en `main`** (D-47, corrida `32231311022`, diez jobs en verde): `packages/authoring-core/src/w0-runner.ts` + `profesor-ia w0 replay`, con el replay determinista sobre fixtures que las «Pruebas» de F5 fijan. Falta la corrida W0 real sobre fuentes (conectores a la whitelist y ejecución en `authoring-worker`) y la firma del `CORPUS_APPROVER` |
+| F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS.** Orquestador verificado en `main` (D-47, corrida `32231311022`) y **corrida W0 en vivo ejecutada el 2026-08-19** (D-48): propuesta de corpus en `propuesta_corpus` — 1 autorizado (forallx-yyc TFL), 1 excluido (OCW, NC/SA), 1 `LICENSE_UNRESOLVED` (modal, «used with permission»); OpenStax sin títulos de lógica. Artefactos en `research/` del repo de contenido (`e4073ab`). **El gate espera la decisión del `CORPUS_APPROVER`** y la revisión humana de las evaluaciones (escritas por el asistente, D-48). La ejecución en `authoring-worker` (jobs + BD) sigue pendiente y no bloquea el gate |
 | F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 17 de 17 tareas con mecanismo implementado; gate H5 abierto por corpus/freeze/auditoría y CAL-NLI materiales ausentes |
 | F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas VERIFICADAS y AC del gate cubierto y observado** (CI `32164277686`). Sólo faltan las firmas del acta |
 | F8 | H7 · Profesor IA de sesión | EN_CURSO | **2 de 7 tareas.** `T-H7-02` (anclaje) y `T-H7-03` (no revelación y suite adversarial) **VERIFICADAS**, las dos sin proveedor. Lo que queda vive en el bucle de `T-H7-01`, que exige el ganador de BENCH-01 |
@@ -650,4 +650,21 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   replay <corrida.json>` lo hace ejecutable sobre fixtures. **Lo que no está:** la ejecución en
   `authoring-worker` (exige jobs y BD) ni los conectores reales a Open Logic Project, MIT OCW y
   OpenStax. El propietario decidió el 2026-08-19 el camino (A) de HANDOFF §3.5: corpus primero.
+- **D-48 — La corrida W0 en vivo ya se ejecutó (2026-08-19), con las evaluaciones escritas por el
+  asistente y pendientes de revisión en el gate.** Conectores reales en
+  `packages/authoring-core/src/connectors.ts` —borde impuro con `fetch` inyectable, la red no entra
+  en la suite— y `scripts/content/w0-live-run.mjs` que descubre en vivo, alimenta el orquestador y
+  escribe `research/`. Resultado: **propuesta de corpus en `propuesta_corpus`** con inventario
+  1 `autorizado` (forallx-yyc TFL, CC BY 4.0 por tres vías), 1 `excluido` (MIT OCW 24.241, NC/SA
+  sin compatibilidad declarada — es el default conservador, declararla es del aprobador) y 1
+  `LICENSE_UNRESOLVED` (componente modal de Trueman, «used with permission»); OpenStax: 129
+  títulos revisados, ninguno de lógica — el vacío queda registrado, no se fabricó candidato. Tres
+  salvedades dichas sin adornos: (1) las observaciones y claims los redactó el asistente —misma
+  salvedad que D-41— con justificación por dimensión y fuente citada en
+  `research/evaluations-2026-08-19.json`; los claims salen del `quickreference.tex` real del repo
+  @ec34df8; (2) los dos componentes del mismo repo comparten snapshot con URLs de componente
+  distintas (ancla sobre el árbol), y el subárbol `solutions/` se excluyó de la base expresiva —su
+  lugar es `solutions-private` en W1 (I-2/I-4)—; (3) los `.yaml` de `research/` se escriben como
+  JSON, que es YAML 1.2 válido. La ejecución fue **en el host**, no en `authoring-worker`: el
+  worker con jobs y BD sigue pendiente, y no bloquea el gate — el manifiesto es el mismo.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

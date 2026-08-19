@@ -1764,9 +1764,11 @@ En este orden.
 3. ~~**Docker Desktop**~~ — resuelto el 2026-08-18 con `pnpm run dev:docker`; ver §3.0.c.
 4. **Cuenta administrativa de Infisical** — bloqueada por lo anterior: necesita el stack levantado.
    Hasta entonces los servicios leen de `.env`, que es el modo de arranque, no el de destino.
-5. **W0 sobre fuentes reales** — **parcialmente resuelta el 2026-08-19 (D-47)**: ya hay orquestador
-   (`packages/authoring-core/src/w0-runner.ts`, con replay determinista sobre fixtures) y comando
-   `profesor-ia w0 replay`. **Siguen faltando** los conectores reales a la whitelist (Open Logic
-   Project, MIT OCW, OpenStax) y la ejecución en `authoring-worker`, que hoy no corre ninguna etapa.
-   Además `suitabilityScore()` y `shouldStopDiscovery()` fallan cerrado esperando calibración *con
-   el corpus real*, o sea durante la propia corrida.
+5. **W0 sobre fuentes reales** — **corrida en vivo ejecutada el 2026-08-19 (D-47, D-48)**: hay
+   orquestador (`w0-runner.ts`), conectores reales (`connectors.ts`) y una propuesta de corpus en
+   `propuesta_corpus` en `research/` del repo de contenido (`e4073ab`). **Lo que falta es la
+   decisión del `CORPUS_APPROVER`** (autorizar o rechazar con código y evidencia) y, antes, su
+   revisión de las evaluaciones — escritas por el asistente, misma salvedad que D-41. La ejecución
+   en `authoring-worker` (jobs + BD) sigue pendiente y no bloquea el gate. Además
+   `suitabilityScore()` y `shouldStopDiscovery()` fallan cerrado esperando calibración *con el
+   corpus real*, o sea durante la propia corrida.
