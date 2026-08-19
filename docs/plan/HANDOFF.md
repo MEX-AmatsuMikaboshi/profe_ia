@@ -11,27 +11,13 @@
 >
 > **LO PRIMERO QUE HAY QUE HACER AL VOLVER, en este orden:**
 >
-> 1. **Observar la corrida de CI de `0c0d8e8`** job por job. La de `6b3b5c4` ya está observada:
->    corrida **`32217831066`, los diez jobs en verde**.
->
->    **Ojo con cuál mirar.** La de `0c0d8e8` (**`32218454008`**) salió **`cancelled`**: nueve jobs
->    en verde y **`ci:logic:mutation` cancelado**. La causa fue empujar `35c4d42` tres minutos
->    después — la concurrencia de Actions aborta la corrida anterior sobre la misma rama. Dicho
->    claro: **subir el handoff canceló la verificación del commit anterior.** Lección práctica: si
->    vas a empujar dos veces seguidas, la corrida que cuenta es la del último commit, y hay que
->    esperar a esa.
->
->    **No busques un id concreto: busca la corrida del último commit de `main`.** Cada push de esta
->    tanda canceló la corrida del anterior, incluidos los de documentación, así que varios ids
->    intermedios están en `cancelled` y ninguno de ellos es el bueno. Todos los commits posteriores
->    a `6b3b5c4` llevan el mismo código; sólo cambian documentos. Lista y mira:
->    ```
->    gh run list --limit 3 --json databaseId,headSha,status,conclusion
->    gh api repos/MEX-AmatsuMikaboshi/profe_ia/actions/runs/<id>/jobs --jq '.jobs[] | "\(.conclusion)  \(.name)"'
->    ```
->    Hasta ver **los diez jobs en verde en una sola corrida** —`ci:logic:mutation` incluido, que
->    tarda ~9 min— la capa de gates es `HECHA`, no `VERIFICADA`. Si la última corrida está limpia,
->    con eso basta: el código es idéntico.
+> 1. ~~**Observar la corrida de CI de `0c0d8e8`**~~ — **HECHO el 2026-08-19.** La corrida del
+>    último commit de `main` (`31e1d32`, id **`32218823685`**) salió con **los diez jobs en verde**,
+>    `ci:logic:mutation` incluido. El código es idéntico al de `0c0d8e8` (los commits intermedios
+>    sólo tocaron documentos), así que con esta corrida basta: la capa de cómputo de gates, el
+>    conjunto material de 200 casos y las correcciones del piloto quedan **verificados como código
+>    en `main`**. `T-H4-10` sigue `EN_CURSO`: lo que falta no es código, es la corrida material,
+>    bloqueada por §3.5.
 > 2. **Leer §3.5.** Es el bloqueo real de BENCH-01 y no estaba identificado antes de esta sesión.
 > 3. **Pedirle al propietario la decisión (A) o (B)** de §3.5. Está planteada y **sin responder**:
 >    la sesión se cortó ahí.
