@@ -166,19 +166,45 @@ services:
       args:
         APP: web
     networks: [core, edge]
+    # El contenedor sirve la **aplicación de Next**, no el servidor mínimo que
+    # `src/main.ts` fue hasta `T-H6-13`. El `CMD` de la imagen
+    # (`node apps/$APP/dist/main.js`) vale para los otros cinco servicios; aquí
+    # se sustituye desde el compose, que es donde este repositorio pone la
+    # frontera entre servicios —red, montajes, secretos— y no en el sistema de
+    # archivos de la imagen.
+    #
+    # `-H 0.0.0.0` explícito: el puerto se publica al host, así que escuchar
+    # sólo en loopback dejaría el contenedor sano y el servicio inalcanzable.
+    working_dir: /repo/apps/web
+    command: ["node", "node_modules/next/dist/bin/next", "start", "-H", "0.0.0.0", "-p", "3000"]
     environment:
       NODE_ENV: production
       PORT: "3000"
       LOG_FILE: /var/log/profesor-ia/web.log
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      # Local-first (P-II §0.3). `scripts/web/build.mjs` la apaga en la
+      # **compilación**; esto la apaga en la **ejecución**, que es distinto y
+      # aquí importa más: `web` está en `edge` —publica puerto, y Docker no
+      # publica desde una red interna—, así que un servidor que llamara a casa
+      # sí tendría por dónde salir.
+      NEXT_TELEMETRY_DISABLED: "1"
     ports:
       - "127.0.0.1:${WEB_PORT:-3000}:3000"
     volumes:
       - logs:/var/log/profesor-ia
     tmpfs:
       - /tmp
+      # Raíz de solo lectura (T-H3-04) y Next escribe su caché en marcha. Se le
+      # da un tmpfs propio en vez de relajar `read_only`: la caché es
+      # descartable y muere con el contenedor, que es justo lo que se quiere.
+      - /repo/apps/web/.next/cache:mode=1777
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
+      # `127.0.0.1` y no `localhost`. Con `-H 0.0.0.0` Next escucha **sólo en
+      # IPv4**, y dentro del contenedor `localhost` resuelve primero a `::1`: el
+      # servicio respondía perfectamente desde el host y el healthcheck daba
+      # «Connection refused». El `main.ts` anterior no lo notaba porque
+      # `server.listen(PORT)` sin host liga las dos familias.
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5

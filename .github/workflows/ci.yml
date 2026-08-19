@@ -274,6 +274,58 @@ jobs:
         # escalar de bloque es justo donde se cuela un espacio invisible.
         run: docker compose -f infra/compose/docker-compose.yml --env-file infra/compose/.env logs --no-log-prefix otel-collector | tail -400
 
+  infra:
+    # ACs del gate H3: hardening (`T-H3-04`) y «el sistema se levanta desde
+    # cero» (`T-H3-01`). Hasta ahora **no estaban en CI**: se corrían en la
+    # máquina del propietario y el acta lo anotaba, pero §0.4 pide el check en
+    # verde en `main`, y un check que sólo existe en un portátil no lo cumple.
+    #
+    # Los dos en el mismo job y con los dos nombres en el título, como `h6`:
+    # comparten stack, y levantarlo dos veces no comprobaría nada más.
+    name: ci:infra:hardening · ci:infra:compose-up
+    runs-on: ubuntu-latest
+    # Diez servicios, con Infisical y sus 60 s de `start_period`, más la build.
+    timeout-minutes: 40
+    steps:
+      # Aquí **sí** hace falta el submódulo: `compose-up` levanta el stack
+      # entero, y `authoring-worker` y `measurement-worker` montan rutas de
+      # `content/`. Sin él, Docker crearía directorios vacíos en su lugar y el
+      # check diría «levanta» sobre un sistema que no es el que se despliega.
+      - name: CONTENT_TOKEN presente
+        run: |
+          test -n "$T" || {
+            echo "::error::Falta el secreto CONTENT_TOKEN. Sin él no se puede clonar el submódulo privado content/ (D-2)."
+            exit 1
+          }
+        env:
+          T: ${{ secrets.CONTENT_TOKEN }}
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          token: ${{ secrets.CONTENT_TOKEN }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Mismo motivo que en `ci:infra:otel`: `.env` no se versiona y el compose
+      # lo exige. Secretos de un solo uso que mueren con el runner.
+      - name: dev:env (secretos efímeros del runner)
+        run: pnpm run dev:env
+      # Lee la configuración **resuelta** por Docker, no el YAML fuente, así que
+      # va antes de levantar nada: si una frontera está mal declarada, no hace
+      # falta arrancar diez contenedores para saberlo.
+      - name: ci:infra:hardening
+        run: pnpm run ci:infra:hardening
+      - name: ci:infra:compose-up
+        run: pnpm run ci:infra:compose-up
+      - name: estado y logs de los servicios
+        if: failure()
+        run: docker compose -f infra/compose/docker-compose.yml --env-file infra/compose/.env ps -a; docker compose -f infra/compose/docker-compose.yml --env-file infra/compose/.env logs --tail 120
+
   db:
     # PostgreSQL 17 real vía Testcontainers: un mock no prueba permisos (§10).
     name: ci:db:testcontainers · ci:db:negative

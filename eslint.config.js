@@ -30,6 +30,8 @@ export default tseslint.config(
         // habla con la api publicada desde el host.
         fetch: 'readonly',
         AbortSignal: 'readonly',
+        // `Response` lo usa el route handler de `/health` de `apps/web`.
+        Response: 'readonly',
         Buffer: 'readonly',
         __dirname: 'readonly',
         module: 'writable',
