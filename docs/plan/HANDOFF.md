@@ -282,11 +282,22 @@ del proceso; y que la derivación del alumno no aparece en ninguna parte de la s
 
 **Lo que falta, en orden:**
 
-1. **Cablear `ci:infra:otel` en `ci.yml`.** Necesita Docker; hoy sólo corre en local. **Hasta que una
-   corrida observada lo enseñe en verde, la tarea es `HECHA`, no `VERIFICADA`.**
-2. **Retirar la excepción nº 3 del acta `docs/gates/H3.md`** («las trazas no están instrumentadas»).
-3. **Instrumentar `apps/web` y los tres workers** cuando tengan operación propia, en F8. Hoy emiten
+1. ~~Cablear `ci:infra:otel` en `ci.yml`~~ — **hecho**, job propio `ci:infra:otel` (30 min de tope,
+   `dev:env` para los secretos efímeros del runner, y volcado de la salida del colector `if:
+   failure()`). Sin submódulo de contenido a propósito: ninguno de los tres servicios que levanta
+   monta `content/`. **Nadie lo ha visto correr todavía**: no se puede probar un runner desde aquí.
+   Lo que sí se comprobó es el punto donde fallaría —que `dev:env` rellena las siete variables que el
+   compose exige con `${VAR:?}`— cruzando el compose contra el generador y contra `.env.example`.
+2. **Observar la corrida.** Hasta que un job en verde lo enseñe, la tarea es `HECHA`, no
+   `VERIFICADA`.
+3. **Retirar la excepción nº 3 del acta `docs/gates/H3.md`** («las trazas no están instrumentadas»).
+4. **Instrumentar `apps/web` y los tres workers** cuando tengan operación propia, en F8. Hoy emiten
    métricas y ningún span, y eso es correcto hoy.
+
+**Hueco del gate H3 que no se tapó, y conviene no perder de vista:** `ci:infra:hardening` (AC de
+`T-H3-04`) y `ci:infra:compose-up` (AC de `T-H3-01`/`T-H3-04`) **tampoco están en `ci.yml`**. No se
+añadieron aquí porque son de otras tareas —y porque `compose-up` está en rojo por §3.1.c—, pero el
+gate H3 no cierra sin ellos en verde en `main`.
 
 **Lo que no se afirma:** el último `ci:infra:otel` verde se corrió **antes** de dos cambios cosméticos
 del cierre (renombrar una variable que ensombrecía `URL`, y declarar `fetch`/`AbortSignal` en

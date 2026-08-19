@@ -227,6 +227,53 @@ jobs:
           name: sbom
           path: supply/sbom.cdx.json
 
+  infra-otel:
+    # AC de `T-H3-05`: la telemetría local llega al colector, y sólo la
+    # telemetría. Job propio y no un paso de otro por lo mismo que `h6`: §0.4
+    # cuenta un AC como cumplido sólo con **el check que cita** en verde, y
+    # dentro de un job compartido no habría nada que mirar por separado en
+    # Actions.
+    #
+    # Es el único check que necesita **contenedores en marcha**, no sólo la
+    # configuración resuelta: hasta que un span cruza de `api` al colector, todo
+    # lo demás afirma que el código debería exportar, no que exporta.
+    name: ci:infra:otel
+    runs-on: ubuntu-latest
+    # Levanta imágenes y espera healthchecks; sin tope, un colector que no
+    # arranca se lleva las seis horas por omisión del runner.
+    timeout-minutes: 30
+    steps:
+      # Sin submódulo de contenido a propósito: el check levanta sólo el canal
+      # de veredicto (`otel-collector`, `api`, `verifier` y la base), y ninguno
+      # de esos monta `content/`. Pedir el PAT aquí sería exigir un secreto que
+      # este job no usa.
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # `.env` no se versiona (T-H3-02) y el compose lo exige: sin él, los
+      # `${VAR:?}` de la base tumban la resolución antes de arrancar nada. Los
+      # secretos son de un solo uso y mueren con el runner. Las cuatro
+      # `MODEL_CREDENTIAL_*` quedan vacías y da igual: ningún servicio de este
+      # canal las usa, y un proveedor de modelo no pinta en una prueba de
+      # telemetría.
+      - name: dev:env (secretos efímeros del runner)
+        run: pnpm run dev:env
+      - name: ci:infra:otel
+        run: pnpm run ci:infra:otel
+      # Si el check falla, lo que hace falta para diagnosticar es lo que el
+      # colector imprimió, no el resumen del check.
+      - name: salida del colector
+        if: failure()
+        # Una sola línea a propósito: la continuación con `\` dentro de un
+        # escalar de bloque es justo donde se cuela un espacio invisible.
+        run: docker compose -f infra/compose/docker-compose.yml --env-file infra/compose/.env logs --no-log-prefix otel-collector | tail -400
+
   db:
     # PostgreSQL 17 real vía Testcontainers: un mock no prueba permisos (§10).
     name: ci:db:testcontainers · ci:db:negative
