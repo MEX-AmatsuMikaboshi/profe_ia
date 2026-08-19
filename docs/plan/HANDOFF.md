@@ -1,5 +1,37 @@
 # HANDOFF — punto de continuación
 
+> ## EMPIEZA AQUÍ — cierre de la quinta sesión (2026-08-18, tarde)
+>
+> **Sesión cerrada por límite de créditos del propietario, no por haber terminado.** Todo lo hecho
+> está commiteado y subido. Nada quedó a medias en el árbol de trabajo.
+>
+> **Lo que se hizo, en tres líneas:** el conjunto material de 200 casos de BENCH-01, la corrección
+> de los dos defectos de diseño del piloto, la capa de cómputo de gates, y la averiguación sobre
+> snapshots fechados. Dos commits: `6b3b5c4` y `0c0d8e8`.
+>
+> **LO PRIMERO QUE HAY QUE HACER AL VOLVER, en este orden:**
+>
+> 1. **Observar la corrida de CI de `0c0d8e8`** job por job. La de `6b3b5c4` ya está observada:
+>    corrida **`32217831066`, los diez jobs en verde**. La de `0c0d8e8` es la **`32218454008`** y
+>    quedó **en marcha**: nadie la ha visto terminar. Hasta que se vea, ese commit es `HECHA`, no
+>    `VERIFICADA`.
+>    ```
+>    gh api repos/MEX-AmatsuMikaboshi/profe_ia/actions/runs/32218454008/jobs --jq '.jobs[] | "\(.conclusion)  \(.name)"'
+>    ```
+> 2. **Leer §3.5.** Es el bloqueo real de BENCH-01 y no estaba identificado antes de esta sesión.
+> 3. **Pedirle al propietario la decisión (A) o (B)** de §3.5. Está planteada y **sin responder**:
+>    la sesión se cortó ahí.
+>
+> **Estado de las tareas al cerrar:** `T-H4-10` sigue `EN_CURSO`. Ninguna tarea cambió de estado en
+> esta sesión, y eso es correcto: se construyó dentro de una tarea que ya estaba en curso.
+>
+> **Lo que quedó disponible y no se tocó**, si hace falta trabajo que no dependa de la decisión del
+> propietario: serializar `kc/map.yaml` desde `KC_CATALOG` —único artefacto de `content/` que no
+> depende del corpus, y recordando que `content/` se sube **primero** (§8)— y activar el typecheck
+> de los archivos de prueba (§3.2).
+>
+> **Pruebas al cerrar: 1723** (1592 unitarias + 131 contra PostgreSQL 17 real). Eran 1666.
+
 **Fecha del checkpoint:** 2026-08-19 (cuarta sesión del 18, cerrada de madrugada).
 **Añadido el 2026-08-18 (tarde), sin cerrar sesión:** el **conjunto material de 200 casos de
 BENCH-01** y la corrección de los dos defectos de diseño del piloto (D-41 a D-43), más la
