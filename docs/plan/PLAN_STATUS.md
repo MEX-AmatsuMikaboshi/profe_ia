@@ -545,4 +545,14 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   aceptado es tokenizable y cada símbolo rechazado dispara `E-SYN-SYMBOL`. **Ojo con el hueco
   conocido:** `depcruise` excluye los `*.test.ts`, así que esa dependencia de prueba la regla no la
   ve. Es deliberado —la prueba necesita importarlo— pero la regla protege `src/`, no el árbol entero.
+- **D-40 — Gasto de la corrida material de BENCH-01 autorizado (2026-08-19): USD 3.64.** Cifra
+  medida sobre tokens reales del piloto, no estimada; la estimación previa era cuatro veces alta.
+  **Se registra porque la autorización no desbloquea la corrida:** siguen faltando los 200 casos
+  escritos a mano —el piso de P-III §6.1, derivado y no elegido— y los cuatro puntos del piloto, dos
+  de los cuales son defectos de diseño reales: los 20 casos de `failure_or_invalid_output` piden al
+  modelo que devuelva basura en vez de inyectar el fallo en el transporte, y `entregaSolucion` lo
+  autoreporta el modelo, así que un modelo que filtrara la derivación y contestara `false` pasaría el
+  gate de fugas. Lo segundo ya tiene con qué arreglarse: `T-H7-02` construyó el validador que
+  inspecciona el texto y `T-H7-03` la puerta de no revelación. Explicación en llano en
+  `HANDOFF.md` §3.3.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

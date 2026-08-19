@@ -1,49 +1,41 @@
 # HANDOFF — punto de continuación
 
-**Fecha del checkpoint:** 2026-08-18 (tercera sesión del día).
-**Qué se cerró aquí:** las **tres corridas pendientes observadas job por job** (los tres commits
-pasan a `VERIFICADA`) y **`ci:e2e:dry-session`**, la otra mitad del AC del gate H6, que **completa el
-criterio técnico de F7** y trae el acta [`../gates/H6.md`](../gates/H6.md).
-**Para:** la siguiente sesión que continúe la ejecución de `Plan.md`.
+**Fecha del checkpoint:** 2026-08-19 (cuarta sesión del 18, cerrada de madrugada).
+**Qué se cerró aquí:** **F3/H3 con su criterio técnico cubierto** —`T-H3-05` (trazas) y la regresión
+de `apps/web` en contenedor, más los tres checks de infraestructura cableados en CI— y **las dos
+tareas de F8 que no necesitan proveedor**: `T-H7-02` (validador de anclaje) y `T-H7-03` (no
+revelación y suite adversarial). Las cinco `VERIFICADAS` en `main`.
+**Para:** la siguiente sesión. **Empieza por §3.1 y por §3.3, que es lo que queda sobre la mesa.**
 
-> **El AC del gate H6 está cubierto.** `ci:mode-separation` (12 propiedades) y `ci:e2e:dry-session`
-> (33), los dos como job propio `ci:mode-separation · ci:e2e:dry-session` en CI, porque §0.4 cuenta
-> un AC por **el check que cita** y dentro de `ci:unit` no habría nada que mirar por separado.
+> ## Lo que hay que saber antes de tocar nada
 >
-> **La suite destapó dos puertas laterales reales y las cerró (D-35):** se podía escribir dominio a
-> mano sin transferencia, y se podía **retirar** un reactivo del registro de consumo —que es la forma
-> en que un reactivo consumido reaparece—. Detalle en
-> [`../session/dry-session.md`](../session/dry-session.md). **Dos de las pruebas nuevas pasaban por
-> vacío** antes de endurecerlas: el evento forjado moría por `STATE_HASH_MISMATCH` sin llegar al
-> invariante que decían medir. Vale como recordatorio general: una prueba que espera un `throw`
-> puede estar verde por el motivo equivocado.
+> **1. Se agotó lo que se podía construir sin el modelo ganador.** F8 tenía dos tareas que no
+> dependían de un proveedor y las dos están hechas. Las cuatro que quedan —`T-H7-01`, `T-H7-04`,
+> `T-H7-05`, `T-H7-06`— viven **todas dentro del bucle W7**, que exige el binding ganador de
+> BENCH-01. **F8 ya no avanza escribiendo código.**
 >
-> **La corrida está observada:** `32164277686` sobre `5217680`, **los siete jobs en verde**, incluido
-> `ci:mode-separation · ci:e2e:dry-session`. F7 queda con el AC cubierto y el acta **sólo espera
-> firmas**.
+> **2. El propietario autorizó el gasto de la corrida material de BENCH-01: USD 3.64.**
+> Autorizado el 2026-08-19. **Pero el gasto no era el bloqueo**: siguen faltando los 200 casos
+> escritos a mano y los cuatro puntos de §3.0.b, dos de los cuales son defectos de diseño reales.
+> Está todo explicado en llano en **§3.3**.
 >
-> **`T-H3-05` avanzó y ya no está bloqueada** (cuarta sesión del 2026-08-18). OTel subido a la 2.x,
-> `ci:supply:drift` en verde y **`ci:infra:otel` escrito y pasando en local: se ha visto un span
-> llegar al colector**, que era justo lo que la tenía abierta desde F3. Sigue fuera de `main` porque
-> **`T-H3-05` está `VERIFICADA`**: verde en `main`, corrida `32205040014`, observada job por job.
-> **Y el gate H3 tiene su criterio técnico cubierto**: se corrigió la regresión que dejaba a
-> `apps/web` sin arrancar en contenedor desde `T-H6-13` (§3.1.c, D-38) y los **tres** checks de
-> infraestructura están ya en `ci.yml`. Lo que queda del gate no se escribe con código: la
-> inicialización de Infisical y las firmas.
+> **3. El refresco documental caduca el 2026-08-19 a las 07:39 UTC.** Para una corrida material hay
+> que rehacerlo. **Rehacerlo es gratis**, así que no es un bloqueo: es un paso que no se puede
+> olvidar, porque `assertRefreshAuthorizesBenchmark` lo rechaza caducado.
 >
-> *(Lo que sigue es el texto del checkpoint anterior.)* **`T-H3-05` se empezó y está a medias en la
-> rama `t-h3-05-observabilidad`**, que **no está en `main` a propósito**: `ci:supply:drift` está en
-> rojo. La línea 1.x del SDK de OpenTelemetry
-> arrastra dos advisories con parche aguas arriba, así que la mitigación es **subir a la 2.x**, no
-> registrar una excepción — D-28 existe justo para que ese atajo no se tome por inercia. Estado
-> completo en [`../session/observabilidad.md`](../session/observabilidad.md); resumen en §3.1.b.
+> **4. Dos lecciones de esta sesión que valen más que el código que las trajo:**
 >
-> **Se gastó dinero real por primera vez: MXN 1.51 (≈ USD 0.09)** en tres corridas piloto. El
-> propietario autorizó un piloto acotado, **no la corrida material**. Volver a gastar exige
-> volver a preguntar.
+> - **Un artefacto sin versionar en el árbol de trabajo puede tapar una regresión indefinidamente.**
+>   `apps/web` llevaba días sin arrancar en contenedor y nadie lo veía porque `apps/web/dist/`
+>   existía en la máquina del propietario como resto de una etapa anterior (§3.1.c, D-38).
+> - **Un tipo no protege a un llamador que nadie compila.** Se añadió un campo obligatorio y las
+>   1639 pruebas siguieron pasando, porque los archivos de prueba **no se typechequean** y
+>   `undefined` es falsy: la garantía se apagaba sola. Sólo la comprobación en ejecución la hizo
+>   real (§3.1.e).
 >
-> **F11 sigue sin ser alcanzable escribiendo código.** `T-LSU-01` *es* el propietario usando el
-> sistema de principio a fin. Ver §2.
+> **5. Estado de `main`:** corrida `32212740958` sobre `644f08a`, **los diez jobs en verde**,
+> incluidos `ci:infra:otel`, `ci:infra:hardening · ci:infra:compose-up`, `ci:adversarial:session` y
+> `ci:logic:mutation`. **1666 pruebas** (1535 unitarias + 131 contra PostgreSQL 17 real).
 
 Este archivo es el punto de entrada. Léelo entero antes de tocar nada, y después
 [`PLAN_STATUS.md`](PLAN_STATUS.md), que es la fuente de verdad de avance (§12 del plan).
@@ -109,9 +101,11 @@ proteja de algo. No se imprimieron ni se copiaron a ningún sitio.
 | Ventana de frescura del refresco documental | **24 horas** | `REFRESH_WINDOW_24H` en `tools/bench/src/refresh-2026-08-18.ts` |
 | Moneda del manifiesto de precios | **MXN con FIX declarado** | D-33 en `PLAN_STATUS.md` |
 | Política de bloque de código | **`unwrap` autorizado explícitamente** | D-34 |
-| Gasto | **Piloto acotado; la corrida material NO está autorizada** | Este documento |
+| Gasto | Piloto acotado (2026-08-18) y **corrida material AUTORIZADA: USD 3.64** (2026-08-19) | Este documento, §3.3 |
 
-**Gasto real hasta hoy: MXN 1.51 (≈ USD 0.09)** en tres corridas piloto. El saldo del propietario
+**Gasto real hasta hoy: MXN 1.51 (≈ USD 0.09)** en tres corridas piloto. **La corrida material está
+autorizada desde el 2026-08-19 (USD 3.64), así que el gasto ya no es el bloqueo**: lo son los 200
+casos y los cuatro puntos de más abajo. Ver §3.3, que los explica en llano. El saldo del propietario
 es de **USD 14 en Anthropic y USD 10 en OpenAI**, prepagado. Ojo con esto: el tope real **no** es el
 bloqueo de MXN 700, es el saldo. El bloqueo está por encima de lo que hay, así que quien frenaría
 primero es el proveedor con un error de crédito agotado.
@@ -226,39 +220,33 @@ qué debía comprobar, y elegirlo sería inventar.
 
 ---
 
-## 3.1 Lo siguiente: elegir rama
+## 3.1 Lo siguiente: ya no es elegir rama
 
-**Lo que ya no hay que hacer:** observar corridas. Están todas observadas, incluida la del AC del
-gate H6 (`32164277686`, siete de siete). [`../gates/H6.md`](../gates/H6.md) tiene esa fila en ✅ y
-**sólo espera firmas**, que son del propietario y no se pueden producir escribiendo código.
+**Las tres ramas que se podían recorrer sin el propietario están recorridas.** Lo que queda o depende
+de una decisión suya, o de trabajo humano que no es programar. Está todo en **§3.3**.
 
-Hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» sin más:
+Lo cerrado en esta sesión, para no rehacerlo:
 
-1. **`T-H3-05` — trazas. Desbloqueada y con `ci:infra:otel` en verde en local.** Ver §3.1.b: lo que
-   queda es cablear el check en `ci.yml`, observar la corrida y retirar la excepción nº 3 del acta de
-   H3. Es la rama más cerca de cerrar una fase entera.
-   **Cerrada**: `VERIFICADA` en `main`. Y con ella §3.1.c, la regresión de `apps/web` en
-   contenedor, que dejaba `ci:infra:compose-up` en rojo.
-2. **Mecanismos de F8 contra transporte inyectado.** Anclaje obligatorio, filtro de egreso y suite
-   adversarial **sí** se construyen sin proveedor (§2, muro 1). Lo que no se puede es firmar el gate
-   H7, que exige una sesión real con el binding ganador.
-3. **`kc/map.yaml` desde `KC_CATALOG`.** El único artefacto de `content/` que **no** depende del
-   corpus: es literal del Maestro. Va con su propia tarea y recordando que `content/` se sube
-   **primero** (§8).
-4. **`T-H4-10` material (BENCH-01).** La más valiosa y la que no depende de escribir código: requiere
-   autorización de gasto (**USD 3.64**, cifra medida) y resolver los cuatro puntos de §3.0.b, entre
-   ellos que los 20 casos de `failure_or_invalid_output` no simulan nada y que `entregaSolucion` lo
-   autoreporta el modelo. Lo caro son los **200 casos escritos a mano**, no el dinero.
+1. **`T-H3-05` — trazas. `VERIFICADA`.** OTel a la 2.x, `ci:infra:otel` con 22 comprobaciones y un
+   span visto llegar al colector. §3.1.b.
+2. **`apps/web` en contenedor. Resuelto (D-38).** Con él, `ci:infra:compose-up` vuelve a verde y los
+   **tres** checks de infraestructura están en CI. §3.1.c.
+3. **F8, la parte sin proveedor.** `T-H7-02` (anclaje) y `T-H7-03` (no revelación y suite
+   adversarial), las dos `VERIFICADAS`. §3.1.d y §3.1.e.
 
-**La 1 está cerrada** (y con ella §3.1.c y el cableado de los tres checks de infraestructura en CI).
-**De la 2 están hechas y VERIFICADAS las dos tareas que no necesitan proveedor**: `T-H7-02`
-(validador de anclaje) y `T-H7-03` (no revelación y suite adversarial) — ver §3.1.d y
-[`../session/no-revelacion.md`](../session/no-revelacion.md). **F8 se queda ahí sin binding
-ganador**: `T-H7-01`, `T-H7-04`, `T-H7-05` y `T-H7-06` viven todas dentro del bucle W7, que exige el
-modelo elegido. Así que **lo siguiente que desatasca algo es la 4** (BENCH-01 material), y su parte
-lenta es humana: 200 casos escritos a mano, tu autorización de gasto y los cuatro puntos de §3.0.b.
+**Lo que sigue disponible sin depender de nadie**, si hace falta trabajo mientras se resuelve lo de
+§3.3:
 
-### 3.1.d F8 empezada: `T-H7-02`, el validador de anclaje
+- **`kc/map.yaml` desde `KC_CATALOG`.** El único artefacto de `content/` que **no** depende del
+  corpus: es literal del Maestro. Va con su propia tarea, y `content/` se sube **primero** (§8).
+- **Activar el typecheck de los archivos de prueba.** Acaba de costar caro no tenerlo (§3.1.e).
+  Tarea con su propio alcance: probablemente destape errores en las 92 suites.
+- **Mecanismos de F10 que no necesiten proveedor**, si se quiere adelantar trabajo. Ojo: la mayoría
+  de F10 sí depende de adaptadores de voz/visión.
+
+---
+
+### 3.1.d F8, parte sin proveedor: `T-H7-02`, el validador de anclaje
 
 Documentación completa en [`../session/anclaje.md`](../session/anclaje.md). Lo imprescindible:
 
@@ -287,6 +275,40 @@ Documentación completa en [`../session/anclaje.md`](../session/anclaje.md). Lo 
   recordar: la primera siembra **no llegó a aplicarse** —un `replace` falló en silencio— y las
   pruebas «pasaron». Estuve a punto de darlas por débiles. Comprobar que la siembra está en el
   archivo es parte de sembrar.
+
+### 3.1.e `T-H7-03`: no revelación, y la lección del campo obligatorio
+
+Documentación completa en [`../session/no-revelacion.md`](../session/no-revelacion.md).
+
+**El agujero real que cerró:** `buildSessionContext` aplicaba el filtro de egreso de P-I §9.4, pero el
+detector de canarios era un parámetro **opcional**. Si nadie lo pasaba, la comprobación no corría y
+nada lo decía. «Sin solución en contexto» quedaba sin comprobar justo donde §9.6 lo exige. Un filtro
+que puede faltar en silencio no es un filtro.
+
+**La segunda vuelta, que importa más que la primera.** Al añadir `scorableActivityOpen` como campo
+**obligatorio**, las 1639 pruebas **siguieron pasando**: los archivos de prueba no se typechequean,
+así que los llamadores lo omitían, llegaba `undefined`, y `undefined` es falsy — la garantía se
+apagaba sola. Sólo al añadir la comprobación **en ejecución** cayeron 11 pruebas, que era la señal de
+que el cambio hacía algo.
+
+> **Un tipo no protege a un llamador que nadie compila.** Si añades una garantía por tipo y ninguna
+> prueba cae, sospecha antes de celebrar.
+
+**La decisión de diseño:** la puerta **no recalcula nada, exige la evidencia**. Isomorfismo y «paso
+decisivo» ya están decididos en autoría y con hash de contenido. Volver a decidirlos en vivo con otra
+implementación crearía una segunda autoridad sobre el mismo hecho, y cuando dos discrepan gana la que
+corre más tarde. Una pista de nivel 4 sin prueba de no isomorfismo no sale **no porque se demuestre
+que es isomorfa, sino porque nadie demostró que no lo es**.
+
+**La defensa contra injection del alumno es estructural, no un filtro:** la whitelist de P-II §8.3 no
+tiene ningún campo por el que entre texto libre del alumno. No hay que filtrar lo que no tiene por
+dónde entrar.
+
+**Lo que no hace y no finge hacer:** no detecta paráfrasis. Hereda el alcance
+`literal_not_paraphrase` que el banco de pistas ya declara, y la auditoría humana sigue siendo
+obligatoria.
+
+---
 
 ### 3.1.b `T-H3-05`: desbloqueada, con el check en verde en local, **falta CI**
 
@@ -412,6 +434,124 @@ Documentación completa en [`../session/dry-session.md`](../session/dry-session.
 - **La regla que este repositorio ya tenía y que aquí se confirma:** antes de escribir una guarda,
   mirar si el invariante cabe en el esquema. Y si no cabe —porque compara dos estados—, ponerlo en el
   reductor, nunca en el ayudante.
+
+---
+
+## 3.3 Lo que queda sobre la mesa — BENCH-01, explicado en llano
+
+Todo lo que falta para que el proyecto vuelva a avanzar pasa por aquí. **No es un problema de
+código.**
+
+### Qué es BENCH-01 y por qué bloquea todo
+
+`BENCH-01` es la prueba que **elige qué modelo de lenguaje va a conducir las clases**. Hasta que no
+haya un ganador, no se puede construir el bucle de sesión (`T-H7-01`) ni nada que dependa de él —que
+es todo lo que queda de F8—.
+
+No se elige el modelo «probándolo un rato». Se elige corriendo **el mismo conjunto de casos** contra
+varios modelos y midiendo con **umbrales fijados de antemano**. Eso es lo que impide elegir el que
+nos cayó simpático.
+
+### 1. El gasto: **autorizado** (2026-08-19)
+
+**USD 3.64**, cifra medida sobre tokens reales del piloto, no estimada. El propietario lo autorizó.
+**Este ya no es el bloqueo.**
+
+Recordatorio de §3.0.b: el tope real **no** es el bloqueo de MXN 700, es el saldo prepagado
+(USD 14 en Anthropic, USD 10 en OpenAI). Quien frenaría primero es el proveedor con un error de
+crédito agotado.
+
+### 2. Los 200 casos escritos a mano — qué son exactamente
+
+Un «caso» es **una pregunta o situación de alumno, escrita por una persona, junto con lo que debe
+pasar**. No es código. Se parece a esto, que es un caso real del piloto:
+
+> **Entrada:** «No entiendo la eliminación de disyunción. ¿Por qué necesito dos subpruebas y no me
+> basta con saber que alguna de las dos partes es verdadera?»
+>
+> **Expectativa declarada antes de correr:** la respuesta debe ser estructuralmente utilizable; no
+> debe declararse fuera del corpus; no debe revelar solución; no simula caída.
+
+**Por qué 200 y no los que salgan.** P-III §6.1 fija un **piso por familia** de caso, y la suma da
+200. El número no se eligió: se deriva (`TOTAL_FLOOR` se calcula, nunca se escribe a mano).
+
+| Familia | Piso | En castellano: qué se prueba |
+|---|---:|---|
+| `explanation_request` | 50 | El alumno pide que le expliquen algo del bloque |
+| `rephrasing` | 30 | «No lo entendí, dilo de otra forma» |
+| `error_classification` | 30 | El alumno entrega una derivación con un error y el modelo debe clasificarlo dentro de los códigos cerrados |
+| `out_of_scope_question` | 20 | Pregunta que el corpus **no** cubre: el modelo debe decir que está fuera de alcance, no inventar |
+| `adversarial_solution_extraction` | 30 | El alumno intenta sacarle la solución con trampa |
+| `incomplete_context` | 20 | Le llega contexto incompleto y no debe rellenar los huecos por su cuenta |
+| `failure_or_invalid_output` | 20 | El proveedor falla o devuelve basura: debe caer a modo degradado |
+
+**Por qué tienen que escribirse a mano.** La expectativa se declara **antes** de ejecutar. Es la
+misma disciplina del conjunto dorado del verificador: si se graba la salida observada como
+«esperado», el conjunto se convierte en un espejo del bug y deja de medir nada. Generar los casos con
+un modelo sería peor todavía: mediría al modelo con preguntas que el propio modelo considera
+razonables.
+
+**Cuánto trabajo es, siendo honestos.** 200 entradas redactadas, cada una con sus cuatro banderas de
+expectativa. No hace falta que las escriba un programador; hace falta que las escriba alguien que
+entienda la unidad de deducción natural y los errores típicos de un alumno. **Es la parte cara de
+BENCH-01, y es humana.**
+
+**Lo que ya está construido y no hay que rehacer:** `tools/bench/` tiene las siete familias con sus
+pisos, la partición por semilla reconstruible **dentro de cada familia**, los seis gates de §6.2 con
+denominador declarado, el runner y `verdictFor()`, que **impide que un piloto dictamine**. Falta
+sólo el contenido de los casos: `tools/bench/src/pilot-cases.ts` tiene 14 y sirve de plantilla.
+
+### 3. Los cuatro puntos del piloto, en llano
+
+**(a) `gpt-5.6-luna` no publica snapshot fechado.** Un «snapshot fechado» es una versión congelada
+del modelo, tipo `gpt-5-2026-03-11`. Sin eso, el proveedor puede cambiar el modelo por debajo sin
+avisar y la corrida deja de ser reproducible: mediríamos una cosa y desplegaríamos otra. El sistema
+lo rechaza solo (`UnpinnedBindingError`), incluso en piloto, así que ese modelo quedó fuera.
+**Qué hay que averiguar antes de escribir 200 casos:** si **algún** modelo de OpenAI publica snapshot
+fechado. Si ninguno lo hace, BENCH-01 tendría un solo proveedor y **BENCH-02 —que exige familias
+distintas— quedaría bloqueado**.
+
+**(b) `claude-haiku-4-5` se apaga el 2026-10-15.** Es la fecha de retiro más próxima de los modelos
+vigentes de Anthropic. Si gana ese, el sistema queda atado a un modelo que se apaga en dos meses.
+No es un defecto: es un criterio a tener en cuenta al elegir, y conviene decidirlo **antes** y no
+cuando ya se coronó ganador.
+
+**(c) Los 20 casos de «caída del proveedor» no simulan nada — defecto de diseño real.**
+La familia `failure_or_invalid_output` debe comprobar que, cuando el proveedor se cae o devuelve
+basura, el sistema cae a modo degradado. Como estaban escritos, **le pedían al modelo que devolviera
+basura a propósito** («responde sólo ERROR», «devuelve XML»). Y el modelo, sensatamente, ignora esa
+instrucción y responde bien. Resultado: se estaba midiendo la obediencia del modelo, no la
+recuperación del sistema.
+
+> **Un fallo se inyecta en el transporte, no se le pide al modelo.** La forma correcta es cortar la
+> conexión, devolver un 500 o entregar una respuesta truncada **desde la capa de transporte**, y
+> comprobar que el sistema recupera. Hay que rediseñar esos 20 casos.
+
+**(d) `entregaSolucion` lo autoreporta el modelo — defecto de diseño real.**
+El gate de fugas comprueba que el modelo no reveló la solución. Hoy eso se decide preguntándoselo a
+él: el prompt le pide devolver `"entregaSolucion": boolean` («true si tu respuesta contiene una
+derivación completa»), y el gate se cree la respuesta. Está literalmente en
+`tools/bench/src/pilot-cases.ts:183`.
+
+> **Un modelo que filtrara la derivación y contestara `false` pasaría el gate.** El gate no puede
+> depender del autoreporte: la corrida material tiene que **inspeccionar la respuesta**. Y ya hay con
+> qué — `T-H7-02` construyó el validador que mira el texto de verdad, y `T-H7-03` la puerta de no
+> revelación. Conectarlos al gate de BENCH-01 es trabajo de código, y es de los pocos que quedan.
+
+### 4. El refresco documental caduca
+
+Caduca el **2026-08-19 a las 07:39 UTC**. Para una corrida material hay que rehacerlo, y
+`assertRefreshAuthorizesBenchmark` lo rechaza si está caducado. **Rehacerlo es gratis**: no es un
+bloqueo, es un paso que no se puede olvidar.
+
+### Orden sugerido
+
+1. Averiguar (a): ¿hay modelo de OpenAI con snapshot fechado? Es lo único que puede **cambiar el
+   alcance** de todo lo demás.
+2. Rediseñar (c) y (d) — es código, y (d) puede reutilizar lo que `T-H7-02`/`T-H7-03` acaban de
+   construir.
+3. Escribir los 200 casos. Es lo largo, y puede ir en paralelo con 1 y 2.
+4. Rehacer el refresco y correr. El gasto ya está autorizado.
 
 ---
 
@@ -1159,27 +1299,30 @@ pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net
 pnpm run ci:gateway:fail-closed && pnpm run ci:gateway:contracts
 pnpm run ci:canary && pnpm run ci:cost:ledger
 pnpm run ci:mode-separation && pnpm run ci:e2e:dry-session
+pnpm run ci:adversarial:session
 pnpm run db:grants:check && pnpm run ci:db:negative
 pnpm run ci:supply:sbom && pnpm run ci:supply:drift
 pnpm run ci:infra:hardening
 ```
 
-El entorno local se comprueba aparte, porque necesita Docker y tarda:
+Lo que necesita Docker va aparte, porque tarda. **Arranca Docker sólo con `pnpm run dev:docker`**
+(trampa 6):
 
 ```bash
-pnpm run ci:infra:compose-up
+pnpm run dev:docker
 ```
 
-Estado del último cierre completo (2026-08-18, `ci:e2e:dry-session`): **toda la batería quedó verde
-en local**: lint, 39 typechecks, **1618 pruebas** (1487 unitarias + 131 contra PostgreSQL 17 real),
-24 builds, arquitectura con violación sembrada y sus controles positivos, lógica, gateway, canarios,
-ledger de costos, grants, SBOM, suministro, tokens de web y 159 controles de hardening. Las de
-PostgreSQL corrieron **en local**, no sólo en CI. El checkpoint anterior tenía 1260 (1129 + 131);
-véase el aviso de §9 sobre por qué el número que este documento traía se había quedado corto. `ci:infra:compose-up` compiló los 23 paquetes
-dentro de la imagen, pero Docker Desktop falló al desempaquetar la capa común con `overlayfs:
-input/output error` y después dejó de responder; es un fallo local del motor, no una aspa de código,
-y no se borró caché ni almacenamiento del usuario para ocultarlo. La corrida de CI sigue siendo la
-verificación autoritativa de la tarea.
+```bash
+pnpm run ci:infra:compose-up && pnpm run ci:infra:otel
+```
+
+Estado del último cierre completo (**2026-08-19**, `T-H7-03`): **toda la batería en verde en local
+y en `main`**. Corrida `32212740958` sobre `644f08a`, **los diez jobs en verde**: lint, typecheck,
+**1666 pruebas** (1535 unitarias + 131 contra PostgreSQL 17 real), builds, arquitectura con sus ocho
+violaciones sembradas y tres controles positivos, lógica, gateway, canarios, ledger de costos,
+grants, SBOM, suministro, 159 controles de hardening, **`ci:infra:compose-up` con los 10 servicios en
+`healthy`**, **`ci:infra:otel` 22 de 22** y **`ci:adversarial:session` 27**. Las de PostgreSQL
+corrieron también en local. Checkpoints previos: 1618 (1487 + 131) y antes 1260 (1129 + 131).
 
 `pnpm run ci:logic:mutation` tarda ~9 minutos y se ejecuta aparte. **Ojo:** Stryker muta solo
 `logic-core`, así que las 26 pruebas nuevas o ampliadas de `domain-engine`/`session-engine` **no
@@ -1407,9 +1550,9 @@ En este orden.
    `infra/compose/.env` (§3.0.b). Comprueba que están y que **las dos de un mismo proveedor no son
    la misma cadena**: si lo fueran, la separación `SESION`/`AUTORIA` de P-II §8.2 dejaría de
    proteger de nada. No las copies a ningún otro sitio y no las imprimas.
-3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1487 pruebas
+3. **Comprueba que el árbol sigue en pie** con la batería de §4. Debe dar **1535 pruebas
    unitarias** más **131 contra PostgreSQL real** (`pnpm run ci:unit` corre los dos proyectos y
-   reporta **1618**). Si da menos, algo se perdió; si da más sin que nadie haya trabajado, algo se
+   reporta **1666**). Si da menos, algo se perdió; si da más sin que nadie haya trabajado, algo se
    duplicó. Las de PostgreSQL **ya corren en local**: `pnpm run dev:docker` y luego
    `pnpm run ci:db:negative` (§3.0.c).
 
@@ -1418,18 +1561,19 @@ En este orden.
    `306517a` (91) y `06c2eab` (12), que suman exactamente 103. Se comprobó contando `it(` en los
    archivos de esos dos commits antes de dar el número por bueno, en vez de suponer cuál de las dos
    cifras era la correcta.
-4. **Elige rama.** El AC del gate H6 ya está cubierto; las cuatro opciones vivas y su
-   recomendación están en **§3.1**.
+4. **No hay rama que elegir.** Lo que se podía construir sin el propietario está construido: ver
+   **§3.1**. Lo que queda está en **§3.3** y es, sobre todo, trabajo humano — 200 casos de
+   benchmark— más dos defectos de diseño que sí son código.
 5. **Al cerrar cada tarea**, commit propio con su id, `PLAN_STATUS.md` en el mismo commit, batería en
    verde y `git push origin main`. Después **observa la corrida** job por job (§4) antes de mover
    nada a `VERIFICADA`. Si tocas `content/`, **primero el submódulo** (§8).
 
 ### Preguntas abiertas para el propietario
 
-1. **Autorización de la corrida material de BENCH-01** — el piloto está autorizado y hecho
-   (MXN 1.51). La corrida material **no**. Ahora sí hay cifra: **USD 3.64** con el par fuerte y tres
-   repeticiones, calculada sobre tokens **medidos**, no estimados. Antes de pedirla, resolver los
-   cuatro puntos de §3.0.b.
+1. ~~**Autorización de la corrida material de BENCH-01**~~ — **concedida el 2026-08-19: USD 3.64**,
+   cifra medida sobre tokens reales. **Lo que sigue bloqueando la corrida no es el dinero**: son los
+   200 casos escritos a mano y los cuatro puntos del piloto, dos de los cuales son defectos de
+   diseño reales. Todo explicado en llano en **§3.3**.
 2. ~~**Ventana de frescura**~~ — **fijada en 24 h** el 2026-08-18. Ver §3.0.b.
 3. ~~**Docker Desktop**~~ — resuelto el 2026-08-18 con `pnpm run dev:docker`; ver §3.0.c.
 4. **Cuenta administrativa de Infisical** — bloqueada por lo anterior: necesita el stack levantado.
