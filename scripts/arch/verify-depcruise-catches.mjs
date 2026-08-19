@@ -83,6 +83,16 @@ const PROBES = [
     code: `import { startTelemetry } from '@profesor-ia/observability';\nexport const probe = startTelemetry;\n`,
   },
   {
+    // T-H7-02: el validador de anclaje recibe el cálculo por parámetro. Si la
+    // pasarela pudiera importarlo, tendría `verify()` al lado del único punto
+    // del repo que abre una conexión a un proveedor.
+    file: 'packages/model-gateway/src/__arch_probe_calculo__.ts',
+    rule: 'pasarela-sin-nucleo-logico',
+    code: `import { verify } from '@profesor-ia/logic-core';
+export const probe = verify;
+`,
+  },
+  {
     file: 'packages/logic-core/src/__arch_probe_otel__.ts',
     rule: 'verificacion-sin-telemetria-de-red',
     code: `import { startTelemetry } from '@profesor-ia/observability';\nexport const probe = startTelemetry;\n`,

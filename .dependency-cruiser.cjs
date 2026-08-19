@@ -127,6 +127,19 @@ module.exports = {
       to: { path: '(^tools/observability|@profesor-ia/observability)' },
     },
     {
+      name: 'pasarela-sin-nucleo-logico',
+      severity: 'error',
+      comment:
+        'T-H7-02: el validador de anclaje comprueba la salida del modelo contra el cálculo ' +
+        'congelado, y el cálculo entra por parámetro (`AuthorizedCalculus`), no por import. ' +
+        'Importarlo aquí acercaría `verify()` al único paquete que habla con proveedores: la ' +
+        'pasarela podría acabar dictaminando sobre una derivación sin pasar por el contenedor ' +
+        'aislado, que es lo que I-3 y D-12 impiden. La correspondencia entre lo inyectado y el ' +
+        'cálculo congelado la comprueba una prueba, que sí puede importarlo.',
+      from: { path: '(^packages/model-gateway|@profesor-ia/model-gateway)' },
+      to: { path: VERIFICATION_PATH },
+    },
+    {
       name: 'sin-dependencias-no-resueltas',
       severity: 'error',
       comment: 'Una importación que no resuelve invalida el análisis arquitectónico.',
