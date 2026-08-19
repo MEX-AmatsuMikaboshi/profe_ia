@@ -251,9 +251,12 @@ Hay **cuatro ramas legítimas**, y ninguna es «la siguiente tarea del plan» si
    autoreporta el modelo. Lo caro son los **200 casos escritos a mano**, no el dinero.
 
 **La 1 está cerrada** (y con ella §3.1.c y el cableado de los tres checks de infraestructura en CI).
-**La 2 está empezada**: `T-H7-02`, el validador de anclaje, está HECHA — ver §3.1.d. Lo siguiente de
-F8 es `T-H7-03`, que también se construye sin proveedor. Y la **4** en paralelo, porque desatasca F8
-por el otro lado y su parte lenta es humana, no de código.
+**De la 2 están hechas y VERIFICADAS las dos tareas que no necesitan proveedor**: `T-H7-02`
+(validador de anclaje) y `T-H7-03` (no revelación y suite adversarial) — ver §3.1.d y
+[`../session/no-revelacion.md`](../session/no-revelacion.md). **F8 se queda ahí sin binding
+ganador**: `T-H7-01`, `T-H7-04`, `T-H7-05` y `T-H7-06` viven todas dentro del bucle W7, que exige el
+modelo elegido. Así que **lo siguiente que desatasca algo es la 4** (BENCH-01 material), y su parte
+lenta es humana: 200 casos escritos a mano, tu autorización de gasto y los cuatro puntos de §3.0.b.
 
 ### 3.1.d F8 empezada: `T-H7-02`, el validador de anclaje
 
