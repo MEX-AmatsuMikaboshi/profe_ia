@@ -1,11 +1,14 @@
 // CLI `profesor-ia` (Plan.md T-H0-07). Los comandos no implementados fallan
-// explícitamente; `content validate` dejó de ser stub en T-H5-13.
+// explícitamente; `content validate` dejó de ser stub en T-H5-13 y `w0 replay`
+// nace implementado (F5/H4.5, D-46).
 
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   lintContentPackage,
+  runW0,
   type PackageLintFacts,
+  type W0RunInput,
 } from '@profesor-ia/authoring-core';
 import { freezeContentPackage, type FreezeInput } from '@profesor-ia/experiment';
 
@@ -31,6 +34,11 @@ export const COMMANDS: readonly CommandSpec[] = [
     path: ['experiment', 'freeze'],
     summary: 'Produce y firma el manifiesto de freeze del paquete (I-8).',
     implementedBy: 'T-H5-15 (F6/H5)',
+  },
+  {
+    path: ['w0', 'replay'],
+    summary: 'Ejecuta una corrida W0 sobre fixtures (replay determinista).',
+    implementedBy: 'D-46 (F5/H4.5)',
   },
   {
     path: ['ledger', 'verify'],
@@ -171,6 +179,50 @@ export function run(
         exitCode: VALIDATION_FAILED_EXIT_CODE,
         stdout: '',
         stderr: `FREEZE_BLOQUEADO: ${error instanceof Error ? error.message : String(error)}\n`,
+      };
+    }
+  }
+  if (command.path[0] === 'w0' && command.path[1] === 'replay') {
+    const fixturePath = argv[2];
+    if (fixturePath === undefined || fixturePath.trim() === '') {
+      return {
+        exitCode: USAGE_EXIT_CODE,
+        stdout: '',
+        stderr: 'uso: profesor-ia w0 replay <corrida.json>\n',
+      };
+    }
+    const ruta = resolve(fixturePath);
+    if (!existsSync(ruta)) {
+      return {
+        exitCode: VALIDATION_FAILED_EXIT_CODE,
+        stdout: '',
+        stderr: `W0_REPLAY_FALLIDO: no existe ${ruta}.\n`,
+      };
+    }
+    try {
+      const input = JSON.parse(readFileSync(ruta, 'utf8')) as W0RunInput;
+      const result = runW0(input);
+      return {
+        exitCode: 0,
+        stdout:
+          JSON.stringify(
+            {
+              finalState: result.finalState,
+              readiness: result.readiness,
+              manifest: result.manifest,
+              history: result.history,
+            },
+            null,
+            2,
+          ) + '\n',
+        stderr: '',
+      };
+    } catch (error) {
+      // Los validadores de W0 lanzan nombrando lo que falta: eso es la salida.
+      return {
+        exitCode: VALIDATION_FAILED_EXIT_CODE,
+        stdout: '',
+        stderr: `W0_REPLAY_FALLIDO: ${error instanceof Error ? error.message : String(error)}\n`,
       };
     }
   }

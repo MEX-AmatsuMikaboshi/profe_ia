@@ -19,8 +19,9 @@
 >    en `main`**. `T-H4-10` sigue `EN_CURSO`: lo que falta no es código, es la corrida material,
 >    bloqueada por §3.5.
 > 2. **Leer §3.5.** Es el bloqueo real de BENCH-01 y no estaba identificado antes de esta sesión.
-> 3. **Pedirle al propietario la decisión (A) o (B)** de §3.5. Está planteada y **sin responder**:
->    la sesión se cortó ahí.
+> 3. ~~**Pedirle al propietario la decisión (A) o (B)** de §3.5~~ — **DECIDIDA el 2026-08-19: (A),
+>    corpus primero.** W0 sobre fuentes reales → W1–W5 → BENCH-01 dictamina → F8. El primer paso de
+>    código ya está dado: el orquestador de W0 (`w0-runner.ts` + `profesor-ia w0 replay`, D-47).
 >
 > **Estado de las tareas al cerrar:** `T-H4-10` sigue `EN_CURSO`. Ninguna tarea cambió de estado en
 > esta sesión, y eso es correcto: se construyó dentro de una tarea que ya estaba en curso.
@@ -1763,7 +1764,9 @@ En este orden.
 3. ~~**Docker Desktop**~~ — resuelto el 2026-08-18 con `pnpm run dev:docker`; ver §3.0.c.
 4. **Cuenta administrativa de Infisical** — bloqueada por lo anterior: necesita el stack levantado.
    Hasta entonces los servicios leen de `.env`, que es el modo de arranque, no el de destino.
-5. **W0 sobre fuentes reales** — ojo, **no es sólo una acción del propietario**: no hay comando de
-   W0 en el CLI y `authoring-worker` no ejecuta ninguna etapa. F5 construyó validadores, no un
-   orquestador. Además `suitabilityScore()` y `shouldStopDiscovery()` fallan cerrado esperando
-   calibración *con el corpus real*, o sea durante la propia corrida.
+5. **W0 sobre fuentes reales** — **parcialmente resuelta el 2026-08-19 (D-47)**: ya hay orquestador
+   (`packages/authoring-core/src/w0-runner.ts`, con replay determinista sobre fixtures) y comando
+   `profesor-ia w0 replay`. **Siguen faltando** los conectores reales a la whitelist (Open Logic
+   Project, MIT OCW, OpenStax) y la ejecución en `authoring-worker`, que hoy no corre ninguna etapa.
+   Además `suitabilityScore()` y `shouldStopDiscovery()` fallan cerrado esperando calibración *con
+   el corpus real*, o sea durante la propia corrida.

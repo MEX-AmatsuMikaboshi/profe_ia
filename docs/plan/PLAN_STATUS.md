@@ -181,7 +181,7 @@ docente**, que necesita el binding ganador: no se alcanza escribiendo código.
 | F3 | H3 · Entorno local | EN_CURSO | **5 de 5 tareas; `T-H3-01`, `T-H3-04` y `T-H3-05` VERIFICADAS.** Criterio técnico cubierto y observado en `main`. Falta la inicialización de Infisical y las firmas |
 | F2 | H2 · cierre del gate | EN_CURSO | Las 16 tareas están HECHAS; falta la ejecución en `main` |
 | F4 | H4 · Pasarela de modelo | EN_CURSO | **10 de 12 tareas + `T-H4-10` en curso.** Harness, piloto, conjunto material de 200 casos y capa de cómputo de gates construidos; gasto autorizado (D-40). **La corrida está bloqueada por corpus: dos de los seis gates no se pueden medir con `content/` en marcadores (D-45).** Falta además la revisión humana del conjunto (D-41). `T-H4-11` sigue bloqueada: exige dos proveedores, y ninguno vigente de OpenAI publica snapshot fechado (D-44) |
-| F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS.** Falta la corrida W0 real sobre fuentes y la firma del `CORPUS_APPROVER` |
+| F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS.** Orquestador construido (D-47): `packages/authoring-core/src/w0-runner.ts` + `profesor-ia w0 replay`, con el replay determinista sobre fixtures que las «Pruebas» de F5 fijan. Falta la corrida W0 real sobre fuentes (conectores a la whitelist y ejecución en `authoring-worker`) y la firma del `CORPUS_APPROVER` |
 | F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 17 de 17 tareas con mecanismo implementado; gate H5 abierto por corpus/freeze/auditoría y CAL-NLI materiales ausentes |
 | F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas VERIFICADAS y AC del gate cubierto y observado** (CI `32164277686`). Sólo faltan las firmas del acta |
 | F8 | H7 · Profesor IA de sesión | EN_CURSO | **2 de 7 tareas.** `T-H7-02` (anclaje) y `T-H7-03` (no revelación y suite adversarial) **VERIFICADAS**, las dos sin proveedor. Lo que queda vive en el bucle de `T-H7-01`, que exige el ganador de BENCH-01 |
@@ -636,4 +636,18 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   Lo destapó escribir el cómputo, no las pruebas del runner: **la unidad de análisis de un gate es
   un requisito sobre qué hay que conservar, y eso no se ve mirando el runner solo.** Hay una prueba
   que siembra exactamente ese caso.
+- **D-47 — El orquestador de W0 se construye sin id de tarea propio, como el cumplimiento de la
+  línea de «Pruebas» de F5.** Plan.md fija para F5 «replay determinista de una corrida W0 sobre
+  fixtures», y ninguna `T-H45` lo produjo: F5 construyó validadores, no el ejecutor (HANDOFF §9,
+  pregunta abierta 5). `packages/authoring-core/src/w0-runner.ts` compone los validadores en el
+  orden literal de la máquina de estados, de `solicitud_curso` a `propuesta_corpus`. Tres
+  decisiones, todas de la casa: la entrada es **dato** y no funciones —los conectores reales a las
+  APIs de la whitelist llegan con el worker, y eso es lo que hace replayable la corrida—; **no
+  produce escalares** —la idoneidad viaja como observaciones y la saturación declara
+  `stopDecisionAvailable: false`, porque esos puntos de fallo son donde se enchufan los valores
+  congelados en H4.5—; y la corrida **se detiene en `propuesta_corpus`**, porque la autorización es
+  frontera externa de gobernanza y la aplica `applyCorpusDecision`, no la corrida. `profesor-ia w0
+  replay <corrida.json>` lo hace ejecutable sobre fixtures. **Lo que no está:** la ejecución en
+  `authoring-worker` (exige jobs y BD) ni los conectores reales a Open Logic Project, MIT OCW y
+  OpenStax. El propietario decidió el 2026-08-19 el camino (A) de HANDOFF §3.5: corpus primero.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

@@ -8,6 +8,25 @@ export class AuthoringCoreError extends Error {
 }
 
 /**
+ * El alcance de una corrida W0 declara un `formal_system_id` que no es el del
+ * cálculo autorizado (F5/H4.5 ← T-H45-03). W0 investiga para el sistema
+ * objetivo; declarar otro pondría la mayoría a trabajar para otro cálculo.
+ */
+export class W0ScopeError extends AuthoringCoreError {}
+
+/**
+ * La entrada de una corrida W0 no es coherente consigo misma (F5/H4.5): un
+ * candidato sin evaluación, una evaluación sin candidato, dos evaluaciones del
+ * mismo candidato, o una decisión sobre una corrida que no está en
+ * `propuesta_corpus`.
+ *
+ * No es un defecto del corpus sino del pipeline, y por eso lanza en vez de ser
+ * un código de rechazo: una evaluación huérfana ignorada en silencio contaría
+ * como etapa ejecutada sobre material que nadie descubrió.
+ */
+export class IncompleteW0RunError extends AuthoringCoreError {}
+
+/**
  * Se intentó contar por mayoría un claim de otro sistema formal
  * (T-H45-03 ← P-I §7.0). «La mayoría simple no decide una cuestión cuando las
  * fuentes describen sistemas distintos.»

@@ -160,17 +160,18 @@ function validFreezeInput(): unknown {
 }
 
 describe('CLI profesor-ia (T-H0-07)', () => {
-  it('expone los cuatro comandos del plan', () => {
+  it('expone los cinco comandos del plan', () => {
     expect(COMMANDS.map((c) => c.path.join(' ')).sort()).toEqual([
       'content validate',
       'experiment freeze',
       'ledger verify',
       'restore drill',
+      'w0 replay',
     ]);
   });
 
   it.each(
-    COMMANDS.filter((c) => !['content validate', 'experiment freeze'].includes(c.path.join(' '))).map(
+    COMMANDS.filter((c) => !['content validate', 'experiment freeze', 'w0 replay'].includes(c.path.join(' '))).map(
       (c) => c.path.join(' '),
     ),
   )(
@@ -231,5 +232,101 @@ describe('CLI profesor-ia (T-H0-07)', () => {
 
   it('un comando desconocido no se interpreta como éxito', () => {
     expect(run(['freeze', 'todo']).exitCode).toBe(USAGE_EXIT_CODE);
+  });
+
+  it('w0 replay ejecuta la corrida sobre fixtures y devuelve manifiesto y readiness', () => {
+    const directory = mkdtempSync(join(tmpdir(), 'profesor-ia-w0-'));
+    const sha = 'b'.repeat(64);
+    writeFileSync(
+      join(directory, 'corrida.json'),
+      JSON.stringify({
+        courseId: 'deduccion-natural-u1',
+        scope: { formalSystemId: 'forallx-calgary-tfl', topic: 'Deducción natural' },
+        whitelist: [
+          {
+            sourceId: 'open-logic-project',
+            name: 'Open Logic Project',
+            accessMode: 'api',
+            baseUrl: 'https://example.test/olp',
+          },
+        ],
+        candidates: [
+          {
+            sourceId: 'open-logic-project',
+            accessMode: 'api',
+            record: {
+              url: 'https://example.test/olp/forallx',
+              origin: 'Open Logic Project',
+              version: 'v2026-01',
+              retrievedAt: '2026-08-19T00:00:00.000Z',
+              licenseEvidence: 'CC BY 4.0 archivada',
+              snapshotSha256: sha,
+            },
+          },
+        ],
+        discoveryRounds: [{ round: 1, newItems: 1, reviewedItems: 1, lineages: ['forallx'] }],
+        evaluations: [
+          {
+            candidateUrl: 'https://example.test/olp/forallx',
+            sourceComponent: 'olp/forallx',
+            observations: {
+              autoridad: 0.9, revision: 0.8, estabilidad: 0.7,
+              explicitud: 0.9, verificabilidad: 0.8, cobertura: 0.6,
+            },
+            claims: [
+              {
+                sourceId: 'olp/forallx',
+                formalSystemId: 'forallx-calgary-tfl',
+                notationFamily: 'fitch',
+                version: 'v2026-01',
+                scope: 'introduccion-conjuncion',
+                statement: 'De A∧B se deriva A.',
+                declaredClass: 'informacion_complementaria',
+              },
+            ],
+            licenseRecord: {
+              sourceComponent: 'olp/forallx',
+              sourceVersion: 'v2026-01',
+              provenanceBasis: 'Descargado del repositorio',
+              licenseEvidence: 'CC BY 4.0 archivada',
+              terms: {
+                licenseId: 'CC-BY-4.0',
+                nonCommercial: false,
+                shareAlike: false,
+                noDerivatives: false,
+                thirdPartyPermissionOnly: false,
+              },
+            },
+            attributionChain: ['Autor', 'Repositorio'],
+          },
+        ],
+        licenseQuery: { intendedUse: 'base_expresiva' },
+        selectionRationale: 'Una fuente de la whitelist cubre el bloque con licencia preferida.',
+      }),
+    );
+    const result = run(['w0', 'replay', join(directory, 'corrida.json')]);
+    expect(result.exitCode).toBe(0);
+    const salida = JSON.parse(result.stdout) as {
+      finalState: string;
+      readiness: { hasAuthorized: boolean };
+    };
+    expect(salida.finalState).toBe('propuesta_corpus');
+    expect(salida.readiness.hasAuthorized).toBe(true);
+  });
+
+  it('w0 replay falla nombrando lo que falta, no con un genérico', () => {
+    const directory = mkdtempSync(join(tmpdir(), 'profesor-ia-w0-mal-'));
+    writeFileSync(
+      join(directory, 'corrida.json'),
+      JSON.stringify({
+        courseId: 'x',
+        scope: { formalSystemId: 'otro-calculo', topic: 'lo que sea' },
+      }),
+    );
+    const result = run(['w0', 'replay', join(directory, 'corrida.json')]);
+    expect(result.exitCode).toBe(2);
+    expect(result.stderr).toContain('W0_REPLAY_FALLIDO');
+    expect(result.stderr).toContain('forallx-calgary-tfl');
+    expect(result.stderr).not.toContain('NO_IMPLEMENTADO');
   });
 });
