@@ -1,6 +1,40 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la séptima sesión (2026-08-19, tarde)
+> ## EMPIEZA AQUÍ — cierre de la octava sesión (2026-08-20)
+>
+> **W1 se ejecutó sobre el corpus real (D-51).** La ingesta corrió en el host
+> (`scripts/content/w1-ingest-run.mjs`) con la identidad verificada **en dos niveles**: los bytes
+> del tarball (SHA-256 `02351aa3…9510`, lo que W0 evaluó) y el contenido textual de cada archivo
+> (SHA-256 `7a988a58…`, lo que citan las anclas); el manifiesto se **proyecta** con el hash de
+> contenido antes de llamar a `ingestCorpus`, porque las anclas citan el texto, no el tarball.
+> Resultado materializado en `content/unidad-deduccion-natural/`: **77 fragmentos** en `source/`
+> (`manifest.yaml` + `fragments/forallx-yyc--tfl-deduccion-natural.json`, derivados con un parser
+> LaTeX puro `latex-fragments.ts`, fail-closed), `solutions/` (13 archivos) reubicadas en
+> `solutions-private/` con `procedencia.json`, `kcsWithoutExpressiveBase: []` (los 18 KC tienen
+> base expresiva) y **re-ingesta idempotente verificada**. El mapa KC quedó materializado como
+> artefacto (`kc/map.yaml`, 18 nodos / 42 aristas, `scripts/content/kc-map-write.mjs`) con guarda
+> de deriva: reescribirlo sobre un catálogo distinto falla cerrado. Código nuevo en
+> `packages/authoring-core`: `latex-fragments.ts`, `w1-runner.ts`, `kc-map-yaml.ts` con 15 pruebas
+> nuevas (446/446 del paquete en verde). La ejecución en `authoring-worker` (jobs + BD) sigue
+> pendiente y **no bloquea W2**.
+>
+> **LO PRIMERO QUE HAY QUE HACER AL VOLVER — W2 (extracción sobre los 77 fragmentos reales):**
+>
+> 1. El mecanismo de W2 (`T-H5-02`, extracción y claims anclados) ya está implementado y probado;
+>    falta **ejecutarlo sobre `source/`** y materializar los claims de la unidad.
+> 2. Sigue pendiente la calibración de `suitabilityScore()`/`shouldStopDiscovery()` **con el corpus
+>    real** (§9, pregunta abierta 5) — ahora ya hay fragmentos reales para hacerla.
+> 3. Hecho W1–W5 (corpus y freeze), BENCH-01 puede dictaminar de verdad; antes, rehacer el refresco
+>    documental con los candidatos nuevos (§3.4, entra `claude-sonnet-5`) y decidir al segundo
+>    proveedor (§3.5, punto 7). El refresco del 2026-08-18 caduca el 2026-08-23 07:39 UTC (D-49).
+> 4. Pendiente del propietario, aplazado («lo demás después lo vemos»): compatibilidad NC/SA de OCW,
+>    proveedor alterno de BENCH-02, firmas de actas H3/H6.
+>
+> **Pruebas al cerrar: 1627 pasadas; la suite de BD (`infra/database/test/negative.test.ts`) no
+> corrió en local porque Docker quedó colgado en el host (no responde ni `docker ps`) — fallo de
+> entorno, no del código; la corre CI. Lint, typecheck y build en verde.**
+
+> ## Cierre de la séptima sesión (2026-08-19, tarde) — **superado por el de arriba**
 >
 > **El propietario firmó el corpus (D-50).** Tras revisión asistida (snapshot re-verificado en vivo:
 > hash `02351aa3…9510` intacto; licencia CC-BY-4.0 reconfirmada por la API de GitHub; los 13 claims
