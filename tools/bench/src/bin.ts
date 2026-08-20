@@ -17,7 +17,7 @@ import { z } from 'zod';
 
 import { partitionBySeed } from './case-set.js';
 import { PILOT_CASE_SET, PILOT_INSTRUCTIONS } from './pilot-cases.js';
-import { REFRESH_2026_08_18, REFRESH_WINDOW_24H } from './refresh-2026-08-18.js';
+import { REFRESH_2026_08_18, REFRESH_WINDOW_5D } from './refresh-2026-08-18.js';
 import { runBenchmark, type Candidate, type RunPlan } from './run.js';
 
 /**
@@ -154,7 +154,7 @@ async function main(): Promise<number> {
     budget,
     manifest: PRICING_MANIFEST_2026_08_18,
     refreshRecord: REFRESH_2026_08_18,
-    refreshWindow: REFRESH_WINDOW_24H,
+    refreshWindow: REFRESH_WINDOW_5D,
     schema: RESPUESTA,
     // Medido el 2026-08-18: el modelo devuelve JSON válido dentro de una valla
     // ```json y reforzar la instrucción no lo corrige. Se autoriza desenvolver.

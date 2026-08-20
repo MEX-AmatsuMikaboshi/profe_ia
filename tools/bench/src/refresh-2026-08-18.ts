@@ -29,18 +29,19 @@ import type {
 const REFRESHED_AT = '2026-08-18T07:39:00.000Z';
 
 /**
- * Ventana de frescura fijada por el propietario. **24 horas**, decidida el
- * 2026-08-18 tras plantearle que ninguna autoridad da una cifra y que la
- * elección es de protocolo. Es lo más cercano a «inmediatamente antes» que
- * resulta practicable: obliga a refrescar el mismo día de la corrida.
+ * Ventana de frescura fijada por el propietario. **Cinco días**, decidida el
+ * 2026-08-18 en 24 horas y **ampliada a 5 días el 2026-08-19** por decisión
+ * expresa del propietario. Ninguna autoridad da una cifra: la elección es de
+ * protocolo. Con 24 h obligaba a refrescar el mismo día de la corrida; con 5
+ * días el refresco de una semana de preparación sigue autorizando la corrida.
  */
-export const REFRESH_WINDOW_24H: RefreshWindowParameter = {
-  parameterId: 'refresh-window-h4-24h',
-  maxAgeSeconds: 86_400,
+export const REFRESH_WINDOW_5D: RefreshWindowParameter = {
+  parameterId: 'refresh-window-h4-5d',
+  maxAgeSeconds: 432_000,
   purpose: 'material',
   provenance:
-    'Decisión del propietario, 2026-08-18: ventana de 24 h para el refresco documental previo ' +
-    'a BENCH-01. Ver docs/model/documentary-refresh.md y docs/plan/HANDOFF.md §3.0.b.',
+    'Decisión del propietario: 24 h el 2026-08-18, ampliada a 5 días el 2026-08-19 (D-49 en ' +
+    'docs/plan/PLAN_STATUS.md). Ver docs/model/documentary-refresh.md y docs/plan/HANDOFF.md §3.0.b.',
 };
 
 const ANTHROPIC_HAIKU: CandidateRefresh = {

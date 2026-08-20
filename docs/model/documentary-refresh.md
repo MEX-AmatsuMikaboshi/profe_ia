@@ -119,6 +119,6 @@ ausente y produce `MissingCredentialError`; nunca cae a la de otro perfil.
 
 - **La corrida del refresco no se ha hecho.** No hay ningún registro material: los del conjunto de
   pruebas son fixtures y lo declaran.
-- **La ventana no está fijada.** Es una decisión de protocolo del propietario, no un valor por
-  omisión.
+- **La ventana está fijada en 5 días.** Decisión de protocolo del propietario: 24 h el
+  2026-08-18, ampliada a 5 días el 2026-08-19 (`REFRESH_WINDOW_5D`, D-49).
 - **Cargar el `.env` en el proceso del arnés** es de `T-H4-10`: hoy no hay benchmark que ejecutar.

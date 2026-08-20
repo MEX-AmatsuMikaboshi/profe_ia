@@ -1,6 +1,39 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la sexta sesión (2026-08-19, mediodía)
+> ## EMPIEZA AQUÍ — cierre de la séptima sesión (2026-08-19, tarde)
+>
+> **El propietario firmó el corpus (D-50).** Tras revisión asistida (snapshot re-verificado en vivo:
+> hash `02351aa3…9510` intacto; licencia CC-BY-4.0 reconfirmada por la API de GitHub; los 13 claims
+> cotejados contra `quickreference.tex` del propio snapshot), el propietario **autorizó la propuesta
+> tal cual** con `applyCorpusDecision` (`scripts/content/w0-apply-decision.mjs`): W0 cierra en
+> **`corpus_autorizado`** y **se entra a W1**. El corpus autorizado es el conjunto
+> `authorizableReferences`: solo `forallx-yyc/tfl-deduccion-natural`. El componente modal queda
+> **fuera de esta unidad** (cobertura 0.0); su autorización queda condicionada a permiso documentado
+> de Trueman. MIT OCW permanece excluido (NC/SA sin compatibilidad declarada — decisión aplazada).
+> El propietario **también autorizó los 200 casos de BENCH-01** (D-41 cerrada como salvedad).
+> Decisión persistida en `research/corpus-decision.yaml` (repo de contenido, **pendiente de commit
+> en ambos repos** — esta sesión no se cerró con push).
+>
+> **Además:** la ventana de frescura del refresco documental pasó de 24 h a **5 días (D-49)**,
+> `REFRESH_WINDOW_5D`; el refresco del 2026-08-18 caduca ahora el 2026-08-23 07:39 UTC, pero hay que
+> reescribirlo igualmente con los candidatos nuevos (§3.4). 108/108 pruebas de `tools/bench` en
+> verde tras el cambio.
+>
+> **LO PRIMERO QUE HAY QUE HACER AL VOLVER — W1 (ingesta del corpus autorizado):**
+>
+> 1. El snapshot ya existe y su identidad se comprueba contra `snapshotSha256`
+>    (`research/candidates/*.json`). El subárbol `solutions/` va a `solutions-private` (I-2/I-4).
+> 2. Falta código de W1–W5 y la calibración de `suitabilityScore()`/`shouldStopDiscovery()` **con el
+>    corpus real** (§9, pregunta abierta 5). La ejecución en `authoring-worker` (jobs + BD) sigue
+>    pendiente.
+> 3. Hecho W1–W5 (corpus y freeze), BENCH-01 puede dictaminar de verdad; antes, rehacer el refresco
+>    con los candidatos nuevos y decidir al segundo proveedor (§3.5, punto 7).
+> 4. Pendiente del propietario, aplazado («lo demás después lo vemos»): compatibilidad NC/SA de OCW,
+>    proveedor alterno de BENCH-02, firmas de actas H3/H6.
+>
+> **Pruebas al cerrar: 1743 + las 108 de `tools/bench` re-corridas tras D-49.**
+
+> ## Cierre de la sexta sesión (2026-08-19, mediodía) — **superado por el de arriba**
 >
 > **Sesión cerrada a petición del propietario («has un alto y actualiza en handoff»).** Todo lo
 > hecho está commiteado y subido en ambos repos (contenido primero, §8). Nada quedó a medias en
@@ -17,20 +50,8 @@
 > tiene libro de lógica (verificado contra su API CMS, 129 libros). Los artefactos viven en
 > `content/unidad-deduccion-natural/research/` (repo de contenido, commit `e4073ab`).
 >
-> **LO PRIMERO QUE HAY QUE HACER AL VOLVER — la decisión del CORPUS_APPROVER (el propietario):**
->
-> 1. **Revisar antes de firmar:** `content/unidad-deduccion-natural/research/evaluations-2026-08-19.json`
->    (lo redactó el asistente, misma salvedad que D-41) y los 200 casos de BENCH-01
->    (`analysis/reports/revision-casos-bench01-2026-08-19.xlsx`, artefacto **no versionado** a
->    propósito). La compatibilidad NC/SA de OCW **la declara el propietario, no el asistente**.
-> 2. **Firmar la propuesta** con `applyCorpusDecision` (D-47): **autorizar** → estado
->    `corpus_autorizado` → se entra a **W1**; o **rechazar** con `rejection_reason_code` +
->    evidencia → reinvestigación. **Sin esa firma no hay W1 ni BENCH-01.**
->
-> **Estado de las tareas al cerrar:** `T-H4-10` sigue `EN_CURSO` (bloqueada por la firma del
-> corpus, camino (A) de §3.5). Ninguna tarea cambió de estado en esta sesión.
->
-> **Pruebas al cerrar: 1743** (1612 unitarias + 131 contra PostgreSQL 17 real). Eran 1723.
+> **RESUELTO el 2026-08-19 (tarde):** la decisión del CORPUS_APPROVER ya se tomó (D-50): corpus
+> **autorizado** y 200 casos autorizados. Lo que sigue es W1 — ver el bloque de arriba.
 
 **Fecha del checkpoint:** 2026-08-19 (cuarta sesión del 18, cerrada de madrugada).
 **Añadido el 2026-08-18 (tarde), sin cerrar sesión:** el **conjunto material de 200 casos de
@@ -62,10 +83,10 @@ revelación y suite adversarial). Las cinco `VERIFICADAS` en `main`.
 > inyecta en el transporte y el runner falla cerrado sin inyector (D-42); `entregaSolucion` salió de
 > las instrucciones materiales (D-43). **Lo que bloquea hoy está en §3.3, y es otra cosa.**
 >
-> **3. El refresco documental caduca el 2026-08-19 a las 07:39 UTC.** Para una corrida material hay
-> que rehacerlo. **Rehacerlo es gratis**, así que no es un bloqueo: es un paso que no se puede
-> olvidar, porque `assertRefreshAuthorizesBenchmark` lo rechaza caducado. Al rehacerlo, **cambia a
-> quién se mide**: ver §3.4.
+> **3. El refresco documental: la ventana ahora son 5 días (D-49), y el del 2026-08-18 caduca el
+> 2026-08-23 a las 07:39 UTC.** Para una corrida material hay que rehacerlo de todos modos, porque
+> **cambia a quién se mide** (§3.4). **Rehacerlo es gratis**, así que no es un bloqueo: es un paso
+> que no se puede olvidar, porque `assertRefreshAuthorizesBenchmark` lo rechaza caducado.
 >
 > **4. Dos lecciones de esta sesión que valen más que el código que las trajo:**
 >
@@ -142,7 +163,7 @@ proteja de algo. No se imprimieron ni se copiaron a ningún sitio.
 
 | Decisión | Valor | Dónde consta |
 |---|---|---|
-| Ventana de frescura del refresco documental | **24 horas** | `REFRESH_WINDOW_24H` en `tools/bench/src/refresh-2026-08-18.ts` |
+| Ventana de frescura del refresco documental | **24 h → 5 días el 2026-08-19 (D-49)** | `REFRESH_WINDOW_5D` en `tools/bench/src/refresh-2026-08-18.ts` |
 | Moneda del manifiesto de precios | **MXN con FIX declarado** | D-33 en `PLAN_STATUS.md` |
 | Política de bloque de código | **`unwrap` autorizado explícitamente** | D-34 |
 | Gasto | Piloto acotado (2026-08-18) y **corrida material AUTORIZADA: USD 3.64** (2026-08-19) | Este documento, §3.3 |
@@ -203,8 +224,9 @@ existe. Una sesión real llevará fragmentos anclados y estado de sesión encima
   reconstruible **dentro de cada familia**, los seis gates de §6.2 con denominador declarado y cota
   `3/n`, y el runner. `verdictFor()` **impide que un piloto dictamine**.
 - **El refresco documental material del 2026-08-18** con seis fuentes, hash **de los bytes** y la
-  ventana de 24 h. Caduca el 2026-08-19 a las 07:39 UTC: **para una corrida material hay que
-  rehacerlo**, y rehacerlo es gratis.
+  ventana de 5 días (D-49; eran 24 h). Caduca el 2026-08-23 a las 07:39 UTC: **para una corrida
+  material hay que rehacerlo de todos modos** —los candidatos cambiaron, §3.4—, y rehacerlo es
+  gratis.
 
 ## 3.0.c Docker Desktop — resuelto (2026-08-18)
 
@@ -609,9 +631,10 @@ el modelo tendría motivo para reportar mal.
 
 ### 4. El refresco documental caduca
 
-Caduca el **2026-08-19 a las 07:39 UTC**. Para una corrida material hay que rehacerlo, y
-`assertRefreshAuthorizesBenchmark` lo rechaza si está caducado. **Rehacerlo es gratis**: no es un
-bloqueo, es un paso que no se puede olvidar.
+La ventana es ahora de **5 días** (D-49), así que el refresco del 2026-08-18 caduca el
+**2026-08-23 a las 07:39 UTC**. Para una corrida material hay que rehacerlo de todos modos —los
+candidatos cambiaron, §3.4—, y `assertRefreshAuthorizesBenchmark` lo rechaza si está caducado.
+**Rehacerlo es gratis**: no es un bloqueo, es un paso que no se puede olvidar.
 
 ## 3.4 Snapshots fechados: lo que se averiguó el 2026-08-18
 
@@ -729,8 +752,8 @@ Tachado lo cerrado; lo que queda, en orden de dependencia.
 7. **Decidir a quién se mide.** Con lo de §3.4: `claude-sonnet-5` entra directo. Para el segundo
    proveedor hay que **producir la huella de comportamiento** sobre el set canario, que es lo único
    que desbloquea BENCH-02.
-8. **Rehacer el refresco documental** —caducado, y además hay que reescribirlo con los candidatos
-   nuevos— y correr. El gasto ya está autorizado.
+8. **Rehacer el refresco documental** —la ventana ya son 5 días (D-49), pero hay que reescribirlo
+   con los candidatos nuevos— y correr. El gasto ya está autorizado.
 
 ---
 
@@ -1759,7 +1782,8 @@ En este orden.
    cifra medida sobre tokens reales. **Lo que sigue bloqueando la corrida no es el dinero**: son los
    200 casos escritos a mano y los cuatro puntos del piloto, dos de los cuales son defectos de
    diseño reales. Todo explicado en llano en **§3.3**.
-2. ~~**Ventana de frescura**~~ — **fijada en 24 h** el 2026-08-18. Ver §3.0.b.
+2. ~~**Ventana de frescura**~~ — **fijada en 24 h** el 2026-08-18 y **ampliada a 5 días** el
+   2026-08-19 (D-49). Ver §3.0.b.
 3. ~~**Docker Desktop**~~ — resuelto el 2026-08-18 con `pnpm run dev:docker`; ver §3.0.c.
 4. **Cuenta administrativa de Infisical** — bloqueada por lo anterior: necesita el stack levantado.
    Hasta entonces los servicios leen de `.env`, que es el modo de arranque, no el de destino.

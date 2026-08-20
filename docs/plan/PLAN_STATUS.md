@@ -181,7 +181,7 @@ docente**, que necesita el binding ganador: no se alcanza escribiendo código.
 | F3 | H3 · Entorno local | EN_CURSO | **5 de 5 tareas; `T-H3-01`, `T-H3-04` y `T-H3-05` VERIFICADAS.** Criterio técnico cubierto y observado en `main`. Falta la inicialización de Infisical y las firmas |
 | F2 | H2 · cierre del gate | EN_CURSO | Las 16 tareas están HECHAS; falta la ejecución en `main` |
 | F4 | H4 · Pasarela de modelo | EN_CURSO | **10 de 12 tareas + `T-H4-10` en curso.** Harness, piloto, conjunto material de 200 casos y capa de cómputo de gates construidos; gasto autorizado (D-40). **La corrida está bloqueada por corpus: dos de los seis gates no se pueden medir con `content/` en marcadores (D-45).** Falta además la revisión humana del conjunto (D-41). `T-H4-11` sigue bloqueada: exige dos proveedores, y ninguno vigente de OpenAI publica snapshot fechado (D-44) |
-| F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS.** Orquestador verificado en `main` (D-47, corrida `32231311022`) y **corrida W0 en vivo ejecutada el 2026-08-19** (D-48): propuesta de corpus en `propuesta_corpus` — 1 autorizado (forallx-yyc TFL), 1 excluido (OCW, NC/SA), 1 `LICENSE_UNRESOLVED` (modal, «used with permission»); OpenStax sin títulos de lógica. Artefactos en `research/` del repo de contenido (`e4073ab`). **El gate espera la decisión del `CORPUS_APPROVER`** y la revisión humana de las evaluaciones (escritas por el asistente, D-48). La ejecución en `authoring-worker` (jobs + BD) sigue pendiente y no bloquea el gate |
+| F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS y gate H4.5 decidido (D-50): `corpus_autorizado` el 2026-08-19.** El propietario firmó la propuesta tal cual tras revisión asistida (snapshot re-verificado, licencia reconfirmada, 13 claims cotejados); corpus autorizado = forallx-yyc TFL únicamente; modal fuera (condicionado a permiso documentado de Trueman); OCW excluido (NC/SA aplazada). Decisión en `research/corpus-decision.yaml`. La ejecución en `authoring-worker` (jobs + BD) sigue pendiente |
 | F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 17 de 17 tareas con mecanismo implementado; gate H5 abierto por corpus/freeze/auditoría y CAL-NLI materiales ausentes |
 | F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas VERIFICADAS y AC del gate cubierto y observado** (CI `32164277686`). Sólo faltan las firmas del acta |
 | F8 | H7 · Profesor IA de sesión | EN_CURSO | **2 de 7 tareas.** `T-H7-02` (anclaje) y `T-H7-03` (no revelación y suite adversarial) **VERIFICADAS**, las dos sin proveedor. Lo que queda vive en el bucle de `T-H7-01`, que exige el ganador de BENCH-01 |
@@ -667,4 +667,25 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   lugar es `solutions-private` en W1 (I-2/I-4)—; (3) los `.yaml` de `research/` se escriben como
   JSON, que es YAML 1.2 válido. La ejecución fue **en el host**, no en `authoring-worker`: el
   worker con jobs y BD sigue pendiente, y no bloquea el gate — el manifiesto es el mismo.
+- **D-49 — Ventana de frescura del refresco documental ampliada de 24 h a 5 días (2026-08-19).**
+  Sustituye a la decisión del 2026-08-18 (`REFRESH_WINDOW_24H`, ahora `REFRESH_WINDOW_5D`,
+  `maxAgeSeconds: 432_000`, en `tools/bench/src/refresh-2026-08-18.ts`). Motivo: 24 h obligaba a
+  refrescar el mismo día de la corrida; con 5 días el refresco de una semana de preparación sigue
+  autorizando. Consecuencia: el refresco del 2026-08-18 ya **no está caducado** — caduca el
+  2026-08-23 a las 07:39 UTC —, pero **hay que reescribirlo igualmente** para la corrida material
+  porque los candidatos cambiaron (§3.4 del HANDOFF: entra `claude-sonnet-5`).
+- **D-50 — El propietario firmó el corpus: W0 cierra en `corpus_autorizado` (2026-08-19, tarde).**
+  Revisión asistida antes de firmar: snapshot re-verificado en vivo (tarball del commit `ec34df8`
+  recomputado, SHA-256 idéntico al registrado: `02351aa3…9510`); licencia CC-BY-4.0 reconfirmada por
+  la API de GitHub; los 13 claims cotejados regla por regla contra `forallx-yyc-quickreference.tex`
+  del propio snapshot — cubren exactamente las 13 primitivas de `authorized-calculus-v1`. La firma
+  se aplicó con `applyCorpusDecision` (`scripts/content/w0-apply-decision.mjs`, decisión
+  `autorizado`) y se persistió en `research/corpus-decision.yaml`. El corpus autorizado es el
+  conjunto `authorizableReferences` del manifiesto: **solo `forallx-yyc/tfl-deduccion-natural`**.
+  El propietario autorizó el componente modal, pero el gate es todo-o-nada y no está en el conjunto
+  autorizable: queda **fuera de esta unidad** (cobertura 0.0) y su incorporación futura queda
+  condicionada a permiso documentado de Trueman. MIT OCW permanece excluido — la compatibilidad
+  NC/SA quedó aplazada por el propietario. En la misma sesión el propietario **autorizó los 200
+  casos de BENCH-01**: la salvedad de D-41 (casos redactados por el asistente) queda cerrada por
+  revisión del propietario. **La cadena de §3.5 queda desbloqueada hasta W1–W5.**
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

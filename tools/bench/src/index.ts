@@ -74,5 +74,5 @@ export {
 export {
   HALLAZGOS_2026_08_18,
   REFRESH_2026_08_18,
-  REFRESH_WINDOW_24H,
+  REFRESH_WINDOW_5D,
 } from './refresh-2026-08-18.js';

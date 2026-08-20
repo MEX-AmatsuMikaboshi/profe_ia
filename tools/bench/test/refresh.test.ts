@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 
 import { assertMeetsFloors, countByFamily, CaseSetError } from '../src/case-set.js';
 import { PILOT_CASE_SET, PILOT_INSTRUCTIONS } from '../src/pilot-cases.js';
-import { REFRESH_2026_08_18, REFRESH_WINDOW_24H } from '../src/refresh-2026-08-18.js';
+import { REFRESH_2026_08_18, REFRESH_WINDOW_5D } from '../src/refresh-2026-08-18.js';
 
 /**
  * Refresco documental material del 2026-08-18 y conjunto piloto (T-H4-10).
@@ -24,13 +24,13 @@ const ARRANQUE = '2026-08-18T08:00:00.000Z';
 describe('refresco documental material', () => {
   it('cumple el contrato', () => {
     expect(() => DocumentaryRefreshRecord.parse(REFRESH_2026_08_18)).not.toThrow();
-    expect(() => RefreshWindowParameter.parse(REFRESH_WINDOW_24H)).not.toThrow();
+    expect(() => RefreshWindowParameter.parse(REFRESH_WINDOW_5D)).not.toThrow();
   });
 
-  it('la ventana son 24 h y declara quién la fijó', () => {
-    expect(REFRESH_WINDOW_24H.maxAgeSeconds).toBe(86_400);
-    expect(REFRESH_WINDOW_24H.purpose).toBe('material');
-    expect(REFRESH_WINDOW_24H.provenance).toContain('propietario');
+  it('la ventana son 5 días y declara quién la fijó', () => {
+    expect(REFRESH_WINDOW_5D.maxAgeSeconds).toBe(432_000);
+    expect(REFRESH_WINDOW_5D.purpose).toBe('material');
+    expect(REFRESH_WINDOW_5D.provenance).toContain('propietario');
   });
 
   it('ningún campo de política queda en no_consultado', () => {
@@ -54,7 +54,7 @@ describe('refresco documental material', () => {
   });
 
   it('autoriza al candidato con snapshot fechado y reporta su antigüedad', () => {
-    const auth = assertRefreshAuthorizesBenchmark(REFRESH_2026_08_18, REFRESH_WINDOW_24H, {
+    const auth = assertRefreshAuthorizesBenchmark(REFRESH_2026_08_18, REFRESH_WINDOW_5D, {
       runId: 'piloto',
       startedAt: ARRANQUE,
       candidateIds: ['claude-haiku-4-5-20251001'],
@@ -63,7 +63,7 @@ describe('refresco documental material', () => {
     expect(Object.keys(auth.ageSecondsByCandidate)).toEqual(['claude-haiku-4-5-20251001']);
     const edad = auth.ageSecondsByCandidate['claude-haiku-4-5-20251001'];
     expect(edad).toBeGreaterThanOrEqual(0);
-    expect(edad).toBeLessThan(86_400);
+    expect(edad).toBeLessThan(432_000);
   });
 
   /**
@@ -78,7 +78,7 @@ describe('refresco documental material', () => {
    */
   it('rechaza al candidato sin snapshot ni huella, aunque la corrida sea piloto', () => {
     expect(() =>
-      assertRefreshAuthorizesBenchmark(REFRESH_2026_08_18, REFRESH_WINDOW_24H, {
+      assertRefreshAuthorizesBenchmark(REFRESH_2026_08_18, REFRESH_WINDOW_5D, {
         runId: 'piloto',
         startedAt: ARRANQUE,
         candidateIds: ['gpt-5.6-luna'],
@@ -87,11 +87,11 @@ describe('refresco documental material', () => {
     ).toThrow(UnpinnedBindingError);
   });
 
-  it('un arranque más de 24 h después ya no está autorizado', () => {
+  it('un arranque más de 5 días después ya no está autorizado', () => {
     expect(() =>
-      assertRefreshAuthorizesBenchmark(REFRESH_2026_08_18, REFRESH_WINDOW_24H, {
+      assertRefreshAuthorizesBenchmark(REFRESH_2026_08_18, REFRESH_WINDOW_5D, {
         runId: 'piloto',
-        startedAt: '2026-08-20T00:00:00.000Z',
+        startedAt: '2026-08-24T00:00:00.000Z',
         candidateIds: ['claude-haiku-4-5-20251001'],
         purpose: 'test_fixture',
       }),
