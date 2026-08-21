@@ -33,6 +33,10 @@
 > **Pruebas al cerrar: 1627 pasadas; la suite de BD (`infra/database/test/negative.test.ts`) no
 > corrió en local porque Docker quedó colgado en el host (no responde ni `docker ps`) — fallo de
 > entorno, no del código; la corre CI. Lint, typecheck y build en verde.**
+>
+> **OBSERVADO el 2026-08-21: la corrida `32424646954` sobre `3782a16` salió verde, los diez jobs**,
+> incluida `ci:db:testcontainers · ci:db:negative` — que es justo la que faltaba en local. `T-H5-01`
+> y `T-H5-03` pasan a `VERIFICADA` en `PLAN_STATUS.md`. No queda ninguna corrida sin observar.
 
 > ## Cierre de la séptima sesión (2026-08-19, tarde) — **superado por el de arriba**
 >
