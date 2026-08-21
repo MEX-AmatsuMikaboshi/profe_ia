@@ -36,6 +36,9 @@
 >    de actas H3/H6, y **la auditoría de lo que redactó el asistente** — la extracción de W2 (D-52) y
 >    ahora los objetivos y señales observables de Rol B (D-53) — antes del freeze de W5.
 >
+> **CI observado: la corrida `32525447742` sobre `bf9aa01` salió verde el 2026-08-21, los diez
+> jobs. `T-H5-04` queda `VERIFICADA`. No hay ninguna corrida sin observar.**
+>
 > **Pruebas al cerrar: 1774 en verde (1643 unitarias + 131 contra PostgreSQL 17 real).** Batería
 > completa verde, incluidas las 159 de hardening y la suite negativa de privilegios.
 >
