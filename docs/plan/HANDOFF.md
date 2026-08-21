@@ -1,6 +1,51 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la novena sesión (2026-08-21)
+> ## EMPIEZA AQUÍ — cierre de la décima sesión (2026-08-21, tarde)
+>
+> **Rol B se ejecutó sobre el mapa de KC (D-53).** `scripts/content/rolb-pedagogy-run.mjs` llenó
+> `objectives/objectives.yaml` (secuencia derivada de 18 KC + 18 objetivos con evidencia
+> observable), los cinco `.yaml` de `pedagogy/` (catálogo de doce, 12 reglas de activación,
+> política de ayudas y fading, plan de retrieval por bloques, BKT sombra congelado OFF) y
+> `session-templates/base-patterns.yaml`. Todo pasa por los validadores de `pedagogy.ts` antes de
+> escribirse, y hay guarda de deriva permanente (`test/rolb-pedagogy-artifact.test.ts`, 9 pruebas).
+>
+> **Lo que más vale de esa corrida no es el artefacto, es un fallo propio.** La comprobación de que
+> la secuencia respeta las aristas del mapa **no comprobaba nada**: leía `arista.on` cuando el
+> artefacto trae `from`/`to`, y `undefined >= undefined` es falso, así que reportaba «42 aristas
+> respetadas» sin mirar una sola. Lo destapó el control positivo, no la lectura del código. **Una
+> comparación con `undefined` no falla: pasa.** Es la misma familia que la lección del campo
+> obligatorio de `T-H7-03`.
+>
+> **LO PRIMERO QUE HAY QUE HACER AL VOLVER — W3, autoría automática:**
+>
+> 1. **El paso 5 de W2 (`T-H5-12`, conjuntos experimentales) no se puede adelantar.** El pipeline
+>    exige «69 sondas disponibles por set» y perfiles verificados CAL-09, y esas sondas **las produce
+>    W3**. `kc/experimental-sets.yaml` sigue en marcador a propósito: congelarlo antes sería
+>    fabricar evidencia. CAL-09 sí está congelado (`cal-09-v1`, T-H5-10 VERIFICADA), así que **no es
+>    un bloqueo de calibración**, es de orden.
+> 2. **W3 es lo siguiente**: `runW3Generation()` (`generation.ts`, `hints.ts`, `critique.ts`,
+>    `reserves.ts`) ya está construido y probado. **Pásale el mismo `FamilyRegistry` entre corridas**
+>    o el umbral del 30 % de `T-H5-09` se calcula sobre otra cosa. Ojo con `BENCH-04`:
+>    `freezeWinningOrder()` sigue fallando cerrado y el orden del pipeline de validez se congela con
+>    una corrida sobre el corpus real —que **ya existe**, así que esta vez sí se puede intentar—.
+> 3. Después W4 (auditoría previa) y W5 (freeze). Solo con el freeze quedan medibles los dos gates
+>    que hoy impiden el dictamen de BENCH-01 (§3.5).
+> 4. Sigue pendiente: rehacer el refresco documental con los candidatos nuevos (§3.4) — **caduca el
+>    2026-08-23 07:39 UTC** — y decidir el segundo proveedor (§3.5, punto 7).
+> 5. Pendiente del propietario: compatibilidad NC/SA de OCW, proveedor alterno de BENCH-02, firmas
+>    de actas H3/H6, y **la auditoría de lo que redactó el asistente** — la extracción de W2 (D-52) y
+>    ahora los objetivos y señales observables de Rol B (D-53) — antes del freeze de W5.
+>
+> **Pruebas al cerrar: 1774 en verde (1643 unitarias + 131 contra PostgreSQL 17 real).** Batería
+> completa verde, incluidas las 159 de hardening y la suite negativa de privilegios.
+>
+> **Trampa de entorno nueva, ya en `docs/env/windows.md` como la nº 7:** con Docker Desktop
+> arrancado, `turbo` en paralelo tumba procesos de `tsc` (`exit 134`, `0xC0000409`, `0xC000001D`),
+> **en un paquete distinto cada vez** y sin un solo error de compilación. Es memoria, no código:
+> `pnpm run dev:docker:stop` y relanzar, o `-- --concurrency=1`. Diagnosticar el paquete del mensaje
+> es perder el rato.
+
+> ## Cierre de la novena sesión (2026-08-21) — **superado por el de arriba**
 >
 > **W2 se ejecutó sobre los 77 fragmentos reales (D-52).** La extracción curricular (Rol A) corrió
 > en el host (`scripts/content/w2-extract-run.mjs`) y materializó lo que hasta hoy eran marcadores
