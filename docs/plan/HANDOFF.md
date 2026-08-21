@@ -1,6 +1,57 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la octava sesión (2026-08-20)
+> ## EMPIEZA AQUÍ — cierre de la novena sesión (2026-08-21)
+>
+> **W2 se ejecutó sobre los 77 fragmentos reales (D-52).** La extracción curricular (Rol A) corrió
+> en el host (`scripts/content/w2-extract-run.mjs`) y materializó lo que hasta hoy eran marcadores
+> de F0: `extracted/definitions.yaml` (14), `notation.yaml` (8), `rules.yaml` (14),
+> `restrictions.yaml` (7), `claims.yaml` (**30 claims**, 27 en el denominador de atribución y 3
+> `system_inference` fuera por §7.11), `provenance/anchors.yaml` (15 fragmentos citados de 77, con
+> el hash de cada uno y quién lo cita) y `provenance/curricular-decisions.yaml` (4 decisiones con
+> soporte y justificación). **Cobertura KC: 18/18.**
+>
+> Cuatro cosas de esa corrida que conviene no perder:
+>
+> - **La identidad se recomprueba antes de extraer**: se descarga el snapshot, se re-derivan las 77
+>   secciones y se exige que cada fragmento persistido hashee igual. Cero deriva.
+> - **Los `rule_id` se derivan de `logic-core`**: la corrida falla si las reglas declaradas no son
+>   exactamente `AUTHORIZED_RULE_IDS`.
+> - **No hay ningún `cross_source_consensus`**, y está dicho: el corpus autorizado tiene un solo
+>   componente, y ese tipo exige dos. Queda como decisión (`dc-sin-consenso-cruzado`).
+> - **La guarda de cobertura KC destapó un hueco real**: la primera corrida dejaba **KC17 y KC18
+>   sin un solo elemento** —toda la parte estratégica del libro—. Se extrajeron cinco definiciones y
+>   cinco claims más, y hay control positivo de que la guarda dispara.
+>
+> **LO PRIMERO QUE HAY QUE HACER AL VOLVER — cerrar W2 y entrar en Rol B:**
+>
+> 1. **W2 no está completo.** §12 «W2» tiene seis pasos: 1–4 están hechos (extracción, linter de
+>    anclaje, grafo en `kc/map.yaml`, ciclos). Faltan **5 y 6**: elegir los conjuntos experimentales
+>    (`T-H5-12`) y registrar su justificación. `kc/experimental-sets.yaml` sigue en marcador.
+>    **Ojo:** ahí es donde vive `freezeWinningOrder()`, que falla cerrado por `[CALIBRATION]`
+>    (CAL-09); comprobar antes si la selección se puede cerrar sin el valor congelado.
+> 2. **Rol B (`T-H5-04`) no se ha ejecutado**: `objectives/`, `pedagogy/` (los cinco `.yaml`) y
+>    `session-templates/` siguen en marcadores. El mecanismo está construido y probado desde el
+>    15-08; falta correrlo sobre el corpus.
+> 3. Después, W3 (autoría), W4 (auditoría previa) y W5 (freeze). Solo con el freeze quedan los dos
+>    gates que hoy bloquean el dictamen de BENCH-01 (§3.5).
+> 4. Sigue pendiente, de la sesión anterior: rehacer el refresco documental con los candidatos
+>    nuevos (§3.4, entra `claude-sonnet-5`) — **caduca el 2026-08-23 07:39 UTC**— y decidir el
+>    segundo proveedor (§3.5, punto 7).
+> 5. Pendiente del propietario, aplazado: compatibilidad NC/SA de OCW, proveedor alterno de
+>    BENCH-02, firmas de actas H3/H6. **Y la auditoría de la extracción de W2**, que la redactó el
+>    modelo asistente (salvedad D-41/D-48) y el CORPUS_APPROVER debe revisar antes del freeze.
+>
+> **Pruebas al cerrar: 1765 en verde (1634 unitarias + 131 contra PostgreSQL 17 real), con Docker
+> arrancado en el host esta vez.** Lint, typecheck, build, `ci:arch:depcruise` con su control
+> positivo, separación de modos, sesión seca, las tres de `logic`, `db:grants:check`, SBOM, drift,
+> 159 de hardening y la adversarial de sesión, todas en verde.
+>
+> **Aviso de entorno:** `pnpm run ci:build` en paralelo se cayó dos veces seguidas con crash del
+> proceso (`exit 134` y `0xC0000409`), en paquetes distintos cada vez y sin un solo error de `tsc`.
+> Con `--concurrency=1` pasa entero. Es inestabilidad de la máquina bajo Docker recién arrancado,
+> no del código; si vuelve a pasar, serializar antes de investigar.
+
+> ## Cierre de la octava sesión (2026-08-20) — **superado por el de arriba**
 >
 > **W1 se ejecutó sobre el corpus real (D-51).** La ingesta corrió en el host
 > (`scripts/content/w1-ingest-run.mjs`) con la identidad verificada **en dos niveles**: los bytes
