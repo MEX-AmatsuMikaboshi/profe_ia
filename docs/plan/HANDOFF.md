@@ -41,6 +41,9 @@
 >    BENCH-02, firmas de actas H3/H6. **Y la auditoría de la extracción de W2**, que la redactó el
 >    modelo asistente (salvedad D-41/D-48) y el CORPUS_APPROVER debe revisar antes del freeze.
 >
+> **CI observado: la corrida `32521434877` sobre `3312c3a` salió verde el 2026-08-21, los diez
+> jobs. `T-H5-02` queda `VERIFICADA`. No hay ninguna corrida sin observar.**
+>
 > **Pruebas al cerrar: 1765 en verde (1634 unitarias + 131 contra PostgreSQL 17 real), con Docker
 > arrancado en el host esta vez.** Lint, typecheck, build, `ci:arch:depcruise` con su control
 > positivo, separación de modos, sesión seca, las tres de `logic`, `db:grants:check`, SBOM, drift,
