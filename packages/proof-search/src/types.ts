@@ -50,7 +50,21 @@ export interface FoundProof {
   }[];
   /** Métrica de coste declarada por el cálculo: `proof_line_count`. */
   readonly cost: number;
-  /** Reglas necesarias en la solución encontrada (P-II §4.4). */
+  /**
+   * Reglas necesarias en la solución encontrada (P-II §4.4).
+   *
+   * **No es la lista de reglas del certificado, y la diferencia importa.** Sale
+   * del término de derivación, y la **reiteración se inserta al linealizar**:
+   * cuando la conclusión de una subprueba ya estaba disponible fuera, `linearize`
+   * añade una línea `R` que aquí no consta. Quien pregunte «¿esta prueba usa
+   * `R`?» por este campo concluirá que **ningún** reactivo de KC03 ejercita su
+   * regla, que es falso. Para eso hay que recorrer `lines`.
+   *
+   * No se corrige por lo que cuesta, no porque esté bien: `distinctRuleCount` se
+   * deriva de aquí y pesa 35 en el índice de complejidad, así que arreglarlo
+   * movería el manifiesto congelado `cal-09-v1` —`cal09-mid-one-subproof`
+   * reitera—. Re-congelar una calibración es decisión del propietario (D-61).
+   */
   readonly rulesUsed: readonly string[];
 }
 
