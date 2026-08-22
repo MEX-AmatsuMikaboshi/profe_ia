@@ -6,6 +6,12 @@
 > decisiones del propietario**, ninguna de código. Las dos de la sesión anterior siguen en pie con
 > los números actualizados, y hay una tercera nueva.
 >
+> **Las tres van a auditoría independiente con Kimi (Moonshot), que es de familia distinta del
+> generador — y eso es justo lo que pide §I.145.** El encargo, el paquete ciego y la secuencia de dos
+> mensajes están en **§2.9**. Ojo con una cosa: eso cubre al **crítico**, no la **lectura humana por
+> muestra** que el paso 19 del Maestro exige antes del freeze. Esa sigue siendo tuya, es por muestra
+> —§I.132 descarta expresamente el reactivo por reactivo— y el mismo paquete de 36 sirve.
+>
 > ### Estado del paquete de contenido
 >
 > | Etapa | Estado |
@@ -33,8 +39,8 @@
 >    defectos**, y el único que había (`kc03-transf`) está arreglado. **Ojo con leer ese cero como
 >    «todo bien»**: el informe declara ahora, en `checksApplied`, que **lo único mecánico es la
 >    etiqueta de KC** —424 certificados recorridos— y que el resto del libro de códigos sigue
->    dependiendo de una lectura que no es independiente (§7.3). La decisión cabe en una línea: se
->    acepta esta auditoría para la unidad piloto, o no.
+>    dependiendo de una lectura que no es independiente (§7.3). **Esta es la que va a Kimi como
+>    Parte A del encargo de §2.9**, y su juicio sí cuenta como evidencia.
 > 3. **NUEVA — el segundo hueco del buscador tiene arreglo escrito y medido, y mueve `cal-09-v1`
 >    (D-61).** `→E` no encadena hacia atrás, así que `(A∧B)→C, A, B ⊢ C` no se prueba. El arreglo
 >    está escrito y probado; **compra** tres formas hoy indemostrables, entre ellas
@@ -530,6 +536,251 @@ una, y **`32164277686` (`5217680`, el AC del gate H6), siete de siete**. Las cat
 **Docker Desktop ya arranca** (2026-08-18), con `pnpm run dev:docker` y sólo con él: arrancarlo a
 mano vuelve a fallar. Las pruebas contra PostgreSQL **ya corren en local**; 131 en verde por primera
 vez fuera de CI. El diagnóstico anterior era incorrecto y el correcto está en §3.0.c.
+
+## 2.9 Encargo para el auditor independiente (Kimi) — las tres decisiones de W5
+
+El propietario decidió mandar las tres decisiones de W5 a **Kimi (Moonshot)**, un modelo de familia
+distinta del que generó el material. Esta sección es el encargo, listo para copiar y pegar.
+
+### Por qué es el instrumento correcto, y qué no cierra
+
+**Lo que sí resuelve.** El Maestro pide dos cosas que hasta ahora no se cumplían:
+
+- **§I.145**, literal: «el crítico generativo que contribuya al gate de autoría debe ser de **familia
+  distinta** del generador». Kimi es de otra familia. Su juicio **sí** puede usarse como evidencia de
+  calidad; el del generador no, y por eso la auditoría previa no cerraba nada.
+- **§11.7**, que admite preinscribir «un segundo auditor independiente en una **submuestra** de
+  calibración/adjudicación». Eso es exactamente lo que se le entrega.
+
+**Lo que NO resuelve, y hay que saberlo antes de empezar.** El paso 19 del pipeline de contenido del
+Maestro dice, literal: «Ejecuta **auditoría humana** por muestra sobre el paquete candidato», y el
+paso 20 condiciona el freeze a que esa muestra supere los umbrales. Un modelo, por independiente que
+sea, no es una persona. **Kimi no sustituye esa lectura.**
+
+La parte buena es cuánto queda después: §I.132 descarta expresamente «una revisión humana reactivo
+por reactivo». Lo que la norma pide es leer **una muestra**, y la muestra ya está armada: son **36
+reactivos** con su enunciado, sus pistas, su derivación y, al lado de cada código del libro, la
+pregunta que hay que hacerse en castellano llano. Con el juicio de Kimi delante, esa lectura es una
+comprobación, no un descubrimiento.
+
+### El paquete
+
+`content/unidad-deduccion-natural/audits/w4-second-auditor-packet.yaml`, que produce
+`node scripts/content/w4-second-auditor-packet.mjs`. Son 36 reactivos: uno de enseñanza y uno de
+medición por cada uno de los dieciocho KC, elegidos por el menor SHA-256 de `semilla:artifactId`
+dentro de su estrato, con la semilla `w4-segundo-auditor-v1` **declarada antes de mirar**. Cero
+estratos sin cobertura.
+
+**Va ciego a propósito, y eso es norma (§13.4):** «el auditor bloquea su primera decisión antes de
+ver el veredicto del sistema; también se ocultan en primera pasada metadatos de generador/historial
+no necesarios». El paquete no dice quién generó el material, ni qué encontró la auditoría previa, ni
+qué marcó el crítico interno. **No se lo digas tú tampoco.**
+
+**Contiene soluciones.** No debe entregarse a ningún modelo que vaya a conducir sesiones sobre este
+banco. Kimi no es candidato de BENCH-01, así que no hay conflicto.
+
+### Cómo entregarlo: en dos mensajes, no en uno
+
+El cegamiento se rompe si Kimi ve el análisis del sistema antes de emitir su juicio. Por eso:
+
+1. **Primer mensaje:** la Parte A de abajo + el archivo del paquete. Se espera su respuesta.
+2. **Segundo mensaje, solo después de recibirla:** la Parte B.
+
+---
+
+### PARTE A — auditoría ciega (primer mensaje)
+
+> Eres el segundo auditor independiente de un paquete de contenido educativo para un curso de
+> deducción natural proposicional en formato Fitch. Te adjunto una submuestra preinscrita de 36
+> reactivos.
+>
+> Cada reactivo trae: el concepto que dice enseñar (`kcId`, `kcName`) y la regla que dice ejercitar
+> (`declaredRuleId`, `null` cuando ese concepto no tiene una regla propia); si es de enseñanza o de
+> medición; la dificultad declarada y la medida; el enunciado; el texto que ve el alumno; sus tres
+> pistas; y la derivación completa que lo resuelve.
+>
+> El archivo incluye el **libro de códigos cerrado** (`codebook`): quince códigos de defecto en tres
+> severidades, con la pregunta que hay que hacerse delante de cada reactivo (`whatToLookFor`) y la
+> regla de severidad (`severityRule`). Incluye también el cálculo autorizado (`calculus`): qué reglas
+> existen y qué está prohibido.
+>
+> **Tu tarea, y solo esta, en este mensaje:**
+>
+> 1. Revisa los 36 reactivos contra el libro de códigos.
+> 2. Por cada defecto que encuentres, devuelve: `artifactId`, `code` (**solo** de la lista cerrada),
+>    `severity`, y una justificación con **evidencia comprobable** —qué línea de la derivación, qué
+>    parte del enunciado, qué pista—. Una impresión sin evidencia no es un defecto.
+> 3. Si algo te parece mal y **ningún código del libro lo cubre**, no fuerces un código: ponlo aparte
+>    en `observacionesSinCodigo`, con su alcance y su consecuencia. El libro es cerrado a propósito;
+>    ampliarlo por la puerta de atrás cambiaría lo que se evalúa.
+> 4. Si no encuentras defectos en un reactivo, no hace falta decir nada de él.
+>
+> **Tres cosas que conviene mirar con atención, porque son las que más caro salen:**
+>
+> - **`incorrect_kc_label`** — que la derivación ejercite de verdad la regla declarada. Un reactivo
+>   que dice enseñar la reiteración y se resuelve sin reiterar cuenta una oportunidad de aprendizaje
+>   que no existió.
+> - **`hint_practically_solves`** — las pistas van en tres niveles: recordar el objetivo, señalar la
+>   región o la regla relevante, e indicar el siguiente tipo de operación **sin resolverla**. Que la
+>   tercera no cruce esa línea.
+> - **`reused_or_contaminated_probe`** — los reactivos de medición no pueden ser, con otros nombres,
+>   uno que el alumno ya practicó. En la muestra tienes el par de cada concepto, uno de cada lado:
+>   compáralos.
+>
+> **No supongas nada sobre quién generó este material ni sobre qué opina de él ningún otro sistema.**
+> Emite tu juicio primero. Después te daré el resto del contexto.
+>
+> Devuelve JSON con esta forma:
+>
+> ```json
+> {
+>   "auditor": "kimi-<version>",
+>   "judgments": [
+>     { "artifactId": "...", "code": "...", "severity": "critical|major|minor", "rationale": "..." }
+>   ],
+>   "observacionesSinCodigo": [
+>     { "alcance": "...", "observacion": "...", "porQueNoLlevaCodigo": "...", "consecuencia": "..." }
+>   ],
+>   "confianza": "alta|media|baja",
+>   "queNoPudisteJuzgar": "..."
+> }
+> ```
+
+---
+
+### PARTE B — las decisiones (segundo mensaje)
+
+> Gracias. Ahora el contexto que faltaba, y tres decisiones sobre las que necesito tu recomendación
+> razonada.
+>
+> **Contexto.** El material que acabas de auditar lo generó un modelo de la familia Claude. La
+> auditoría previa la hizo **ese mismo modelo**, y por eso no cuenta como evidencia de calidad: la
+> norma del proyecto exige que el crítico sea de familia distinta del generador, que es por lo que
+> estás tú. Esa auditoría previa recorrió los 571 reactivos del banco, comprobó **por código** que
+> cada uno usara la regla de su concepto —424 comprobables, cero defectos— y dejó constancia de que
+> **todo lo demás del libro de códigos dependía de una lectura no independiente**. Tu Parte A es la
+> primera evidencia utilizable.
+>
+> El paquete está listo para congelarse. El freeze bloquea la escritura y publica el manifiesto
+> firmado; a partir de ahí, cambiar algo cuesta descongelar. Faltan estas decisiones.
+>
+> ---
+>
+> **DECISIÓN 1 — Los tres conjuntos experimentales no son estructuralmente comparables.**
+>
+> El piloto es un diseño de caso único: los quince conceptos enseñables se reparten en tres conjuntos
+> A, B y C, la intervención empieza en momentos distintos en cada uno y se comparan entre sí.
+>
+> Hay una calibración congelada (`cal-09-v1`) que asigna a cada reactivo un índice de complejidad de
+> 0 a 100 y declara que dos reactivos son estructuralmente comparables si difieren en **12,065296** o
+> menos.
+>
+> Medido sobre la propuesta que encabeza el orden: la diferencia máxima entre reactivos de conjuntos
+> distintos es **90,857143**. Restringiendo a las sondas primarias, que son las que producen la
+> medida: **71,28**. Los rangos por conjunto son A 19,6–81,5; B 28,5–89,3; C 28,1–90,9.
+>
+> La causa está a la vista en esos rangos: cada conjunto abarca casi todo el índice, así que el
+> máximo lo fija el reactivo más fácil de un conjunto contra el más difícil de otro. Y la dispersión
+> viene de los conceptos mismos: introducir un bicondicional exige dos subpruebas **siempre**,
+> eliminar una conjunción es un paso.
+>
+> La política congelada **no bloquea**: dice que si se excede la banda, se registra la diferencia y
+> su efecto de interpretabilidad, sin gate subjetivo ni equivalencia psicométrica. Lo que está en
+> juego es qué podrá afirmar el piloto.
+>
+> Las dos opciones:
+>
+> - **Reequilibrar** — acotar el rango de complejidad de las sondas para estrechar la banda. Cuesta
+>   regenerar el banco y rehacer la auditoría. Objeción conocida: estrechar el rango obliga a hacer
+>   artificialmente sencillas las sondas de los conceptos difíciles, que es distorsionar lo que se
+>   quiere medir.
+> - **Asumirlo y declararlo** — congelar así y escribir la limitación en la interpretación.
+>
+> **Qué necesito de ti:** cuál eliges, por qué, y —si eliges declarar— cómo debería redactarse la
+> limitación para que el informe del piloto no afirme de más.
+>
+> ---
+>
+> **DECISIÓN 2 — Un arreglo del buscador de pruebas que mueve una calibración congelada.**
+>
+> El sistema tiene un buscador de demostraciones que se usa para autorar: comprueba que un reactivo
+> propuesto sea resoluble y produce su derivación.
+>
+> Tiene un hueco: aplica *modus ponens* (`→E`) solo hacia adelante, cuando el antecedente ya está
+> disponible. Si el antecedente hay que **construirlo**, no lo intenta. Consecuencia: `(A∧B)→C, A, B
+> ⊢ C` es indemostrable para el sistema.
+>
+> El arreglo está escrito y probado —un paso dirigido por la meta, entre las eliminaciones hacia
+> adelante y el análisis de casos—. **Compra** tres formas hoy indemostrables, entre ellas
+> `(p∧q)→r, p ⊢ q→r`, que es exactamente el reactivo de transferencia de un concepto que hubo que
+> rediseñar por este hueco.
+>
+> **Cuesta** la reproducibilidad de la calibración congelada `cal-09-v1`, que se calculó sobre trece
+> demostraciones de referencia. Medido:
+>
+> - Las trece salen **idénticas**: mismas líneas, mismas reglas, mismo coste explorado.
+> - Lo único que cambia es el **trabajo gastado** buscándolas, en cinco de los trece casos: 4→5,
+>   9→11, 10→16, 15→16 y 82→98 unidades.
+> - Eso basta, porque una de las doce medidas del índice es `workUnitsLog2` y **pesa 47**. Su máximo
+>   pasa de 6,3750394 a 6,6293566; la frontera baja/media de 14,004071 a 14,054920; la de media/alta
+>   de 38,571280 a 38,548779; la banda de comparabilidad de 12,065296 a 12,110589. El hash de la
+>   muestra deja de coincidir.
+>
+> Aplicarlo obliga a **re-congelar la calibración**, y lo medido con la escala vieja deja de
+> compararse directamente con lo medido con la nueva. Ahora mismo eso solo afecta al paquete de
+> contenido, que se regenera de todos modos; después del freeze, obligaría a descongelar.
+>
+> Un precedente relevante: la misma disyuntiva se planteó al arreglar otro hueco del buscador y se
+> decidió **no** mover la versión, con el argumento de que la calibración se reproducía idéntica. Esta
+> vez no se reproduce, así que el argumento de entonces no aplica.
+>
+> **Qué necesito de ti:** aplicarlo antes del freeze y re-congelar, o no aplicarlo. Con el motivo, y
+> con lo que se acepta a cambio en cada caso.
+>
+> ---
+>
+> **DECISIÓN 3 — ¿Alcanza la evidencia para congelar?**
+>
+> Con tu Parte A delante: ¿la evidencia de calidad del paquete alcanza para congelarlo, o hay algo que
+> debería corregirse antes? Los umbrales de bloqueo congelados son: **un** defecto crítico, mayores
+> por encima del **5 %**, menores por encima del **15 %**, una familia con dos o más mayores, o un
+> estrato sin cobertura.
+>
+> Responde en prosa, y termina con un bloque JSON:
+>
+> ```json
+> {
+>   "decision1": { "eleccion": "reequilibrar|declarar", "motivo": "...", "redaccionSugerida": "..." },
+>   "decision2": { "eleccion": "aplicar|no_aplicar", "motivo": "...", "seAceptaACambio": "..." },
+>   "decision3": { "alcanza": true, "motivo": "...", "condiciones": ["..."] }
+> }
+> ```
+
+---
+
+### Qué hacer con la respuesta
+
+1. **Guardarla tal cual**, sin editarla, en `content/unidad-deduccion-natural/audits/`. §11.7 exige
+   conservar append-only el juicio ciego original, la segunda evaluación, la adjudicación y el
+   desacuerdo: **una adjudicación no borra el desacuerdo inicial**, así que la Parte A se archiva
+   aunque después se contradiga.
+2. **Si Kimi encuentra defectos**, los juicios entran al gate por el mismo camino que los internos
+   (`w4-audit-apply.mjs`) y se recomputa. Si alguno bloquea, la norma dice **regenerar la familia
+   completa y sacar muestra nueva** — nunca corregir a mano solo lo que se vio.
+3. **Si recomienda aplicar el arreglo del buscador**, ese es el primer paso y va antes que todo lo
+   demás: cambia qué reactivos son autorables, y con ello el banco, los conjuntos y la auditoría.
+4. **Después, la lectura humana por muestra** (paso 19). El mismo paquete de 36 sirve: cada código
+   lleva su pregunta en castellano llano.
+5. Con eso, `profesor-ia experiment freeze` es ejecutable.
+
+**El orden importa**, y decidirlo al revés obliga a repetir el ciclo tres veces en vez de una:
+
+| Orden | Qué | Si cambia, obliga a rehacer |
+|---|---|---|
+| 1.º | Arreglo del buscador (Decisión 2 de Kimi) | el banco entero, los conjuntos y la auditoría |
+| 2.º | Reequilibrar o no las sondas (Decisión 1) | los conjuntos y la auditoría |
+| 3.º | Aceptar la evidencia y firmar (Decisión 3 + lectura humana) | nada |
+
 
 ## 3.0 Lo que dejó `T-H6-13`, y que conviene no rehacer
 

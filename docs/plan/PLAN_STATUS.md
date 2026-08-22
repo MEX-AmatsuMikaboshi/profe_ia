@@ -1160,4 +1160,35 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   anterior (`32556710586`, `278fae2`) salió **roja** y por el motivo correcto: el typecheck de
   pruebas encontró en CI el import no declarado que en local resolvía. Es el primer fallo que este
   check atrapa en producción.
+- **D-63 — Las tres decisiones de W5 van a un auditor independiente de otra familia (2026-08-22).**
+  Decisión del propietario: el juicio lo emite **Kimi (Moonshot)**, no él. No es delegar por comodidad,
+  es lo que la norma pide: §I.145 exige que «el crítico generativo que contribuya al gate de autoría
+  sea de **familia distinta** del generador», y §11.7 admite preinscribir «un segundo auditor
+  independiente en una submuestra de calibración/adjudicación». El material lo generó un modelo
+  Claude y la auditoría previa la hizo ese mismo modelo, así que **su conformidad no era evidencia**;
+  la de Kimi sí lo es.
+  **Instrumento: submuestra preinscrita y ciega.** `scripts/content/w4-second-auditor-packet.mjs`
+  arma `audits/w4-second-auditor-packet.yaml` con **36 reactivos** —uno de enseñanza y uno de
+  medición por cada uno de los dieciocho KC, cero estratos sin cobertura—, elegidos por el menor
+  SHA-256 de `w4-segundo-auditor-v1:artifactId` dentro de su estrato. La regla de selección se
+  **declara antes de mirar**: elegir a mano qué se audita permite auditar justo lo que ya se sabe
+  bueno. Cada reactivo lleva enunciado, pistas, complejidad declarada **y** medida, y su certificado;
+  y el paquete lleva el libro de códigos con la pregunta que hay que hacerse en llano por cada código.
+  **El cegamiento es norma, no cortesía** (§13.4: «el auditor bloquea su primera decisión antes de ver
+  el veredicto del sistema; también se ocultan en primera pasada metadatos de generador/historial no
+  necesarios»). El paquete **no** lleva quién generó el material, ni el resultado de la auditoría
+  previa, ni las banderas del crítico interno; y el encargo se entrega en **dos mensajes**, con la
+  auditoría emitida antes de dar el contexto. Un encargo en un solo mensaje habría anclado el juicio.
+  **Lo que este instrumento NO cierra, y queda dicho para que nadie lo dé por cerrado.** El paso 19
+  del pipeline de contenido del Maestro dice «Ejecuta **auditoría humana** por muestra sobre el
+  paquete candidato», y el 20 condiciona el freeze a que esa muestra pase los umbrales. Kimi cubre al
+  crítico independiente; **no es una persona**. Lo que sí acota el alcance de esa lectura es §I.132,
+  que descarta expresamente «una revisión humana reactivo por reactivo»: es por muestra, y el mismo
+  paquete de 36 sirve.
+  **El paquete contiene soluciones.** No puede entregarse a un modelo que vaya a conducir sesiones
+  sobre este banco; Kimi no es candidato de BENCH-01, así que no hay conflicto. Queda anotado porque
+  el día que se amplíe la lista de candidatos, esta entrega ya habrá ocurrido.
+  **El encargo completo, listo para copiar, está en `docs/plan/HANDOFF.md` §2.9**, con el orden en que
+  conviene tomar las decisiones: primero el arreglo del buscador —cambia qué es autorable, y con ello
+  el banco, los conjuntos y la auditoría—, después el reequilibrio de sondas, y la firma al final.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.
