@@ -106,8 +106,9 @@
 >   en CI no, porque `turbo` solo construye lo declarado. **Es el primer fallo que el typecheck de
 >   pruebas encuentra en producción**, y está arreglado en el commit siguiente, con guarda propia.
 > - **`32557212031` sobre `a335c43` (el arreglo): verde, los diez jobs**, incluidos `ci:logic:mutation`
->   y el conjunto dorado. Con eso **D-61 y D-62 quedan `VERIFICADAS`**. Queda por observar la corrida
->   de los commits de documentación posteriores.
+>   y el conjunto dorado. Con eso **D-61 y D-62 quedan `VERIFICADAS`**.
+> - **`32557616817` sobre `331c589` (documentación): verde, los diez jobs.** **No queda ninguna
+>   corrida sin observar.**
 
 > ## Cierre de la decimotercera sesión (2026-08-22, noche) — **superado por el de arriba**
 >
