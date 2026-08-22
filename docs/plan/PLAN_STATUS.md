@@ -1067,6 +1067,7 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   `distinctRuleCount` se deriva de ese campo y entra con peso 35 en el índice de complejidad: cambiarlo
   movería `cal09-mid-one-subproof` —que reitera— y con él el manifiesto congelado `cal-09-v1`. Es la
   misma familia que la decisión de versión de D-56 y le toca al propietario.
+  **CI: corrida `32555340076` sobre `e0789e0` observada en verde el 2026-08-22, los diez jobs.**
   **Regresión: 7 pruebas nuevas** (2 en `hints.test.ts`, 5 en `w3-run-artifact.test.ts`), 1657 → 1664
   unitarias. **Control positivo de las cuatro guardas nuevas, comprobado contra los artefactos
   anteriores**: «publica todos los aceptados» habría fallado por 17, «las pistas se derivan del
@@ -1099,6 +1100,7 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   encuentra» no sea presupuesto, y con control positivo de que **sí** lo encuentra cuando el
   antecedente está disponible). Cuando se decida, esa prueba se sustituye por la contraria, como pasó
   con la de KC13 en D-56.
+  **CI: corrida `32557212031` sobre `a335c43` observada en verde el 2026-08-22, los diez jobs.**
   **Corrección a D-56, que conviene no arrastrar.** Aquella decisión se apoyó, entre otras cosas, en
   que «las seis medidas con peso del índice son estructurales… y la única de telemetría tiene peso
   cero». El manifiesto dice otra cosa: `workUnitsLog2` pesa 47 y `costExplored` pesa 49, y las dos son
@@ -1154,4 +1156,8 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   Sin él, recortar un `include` dejaría el check pasando sin mirar una sola prueba, que es
   exactamente el hueco que se acaba de cerrar. Va en el job `arch` de CI, al lado del control de
   depcruise.
+  **CI: corrida `32557212031` sobre `a335c43` observada en verde el 2026-08-22, los diez jobs.** La
+  anterior (`32556710586`, `278fae2`) salió **roja** y por el motivo correcto: el typecheck de
+  pruebas encontró en CI el import no declarado que en local resolvía. Es el primer fallo que este
+  check atrapa en producción.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.
