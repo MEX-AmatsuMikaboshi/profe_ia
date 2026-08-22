@@ -1,6 +1,39 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la décima sesión (2026-08-21, tarde)
+> ## EMPIEZA AQUÍ — cierre de la undécima sesión (2026-08-22)
+>
+> **BENCH-04 congelado (D-54) y W3 ejecutado por primera vez sobre material real (D-55).** El orden
+> del pipeline de validez se midió sobre **37 argumentos extraídos del propio libro** —no sobre la
+> muestra L0, que está prohibido— y ganó `prefilter_then_search`. W3 generó 108 candidatos desde
+> plantillas declaradas por KC: **91 aceptados**, con pistas ancladas y crítica estructurada.
+>
+> **LO PRIMERO QUE HAY QUE SABER: el buscador tiene dos huecos, y uno bloquea un KC obligatorio.**
+>
+> 1. **`packages/proof-search` no construye `∨E`.** Construye 15 de las 16 justificaciones del
+>    cálculo y le falta la eliminación de disyunción, así que **ninguna premisa disyuntiva es
+>    utilizable**: `A∨B ⊢ B∨A` es indemostrable para el sistema y **KC13 se queda con cero
+>    reactivos**. Comprobado con controles positivos en modo exhaustivo con techo 20 y dos millones
+>    de unidades: no es presupuesto.
+> 2. **`→E` no encadena hacia atrás sintetizando un antecedente compuesto**: `(A∧B)→C, A, B ⊢ C`
+>    tampoco se prueba.
+> 3. **Nada miente**: el buscador dice «no encontré», nunca «no existe» (CALC-03). Por eso el hueco
+>    llevaba ahí sin verse. Pero para autoría hay clases enteras de reactivo inautorables, y también
+>    explica por qué solo 11 de los 37 argumentos del libro se prueban.
+> 4. **Arreglar `∨E` necesita su propia tarea y su propio PR**: `proof-search` está en la ruta
+>    crítica, con conjunto dorado y mutación propios. **Es lo siguiente que hay que hacer**, antes de
+>    seguir llenando el banco: sin `∨E` el paquete de contenido no puede cubrir sus pisos.
+>
+> **Lo demás que dejó la corrida, por si se retoma antes:** cuatro plantillas reproducían ejercicios
+> del propio libro y el control de duplicación las pilló (rediseñadas); la regla de declaración de
+> complejidad estaba mal y **la asimetría lo demostró** —60 desajustes, los 60 medidos por encima,
+> ninguno por debajo—, se corrigió **como regla** y quedan 11 residuales **en las dos direcciones**,
+> que se rechazan y se cuentan sin reetiquetar. Cobertura P-III §4.2: **cuatro KC por debajo del
+> piso** (KC09 5/6, KC14 1/6, KC18 1/6, KC13 0/6) y **las 57–69 sondas sin autorar**. KC13 **no se
+> saca del piloto** para que la cobertura salga limpia.
+>
+> **Pruebas al cerrar: 1650 unitarias en verde** (+7 de la guarda de artefactos de W3). Lint limpio.
+
+> ## Cierre de la décima sesión (2026-08-21, tarde) — **superado por el de arriba**
 >
 > **Rol B se ejecutó sobre el mapa de KC (D-53).** `scripts/content/rolb-pedagogy-run.mjs` llenó
 > `objectives/objectives.yaml` (secuencia derivada de 18 KC + 18 objetivos con evidencia
@@ -983,9 +1016,22 @@ inventa:
 | Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **68 %** |
 | `LOCAL_SELF_USE` (F11) | El propietario lo usa de principio a fin, con voz y pizarrón | **52 %** |
 
-**Dos cosas que no se arreglan programando**, y por eso el porcentaje no cuenta toda la verdad:
-falta elegir el modelo (`T-H4-10/11` necesita credenciales y autorización de gasto) y falta corpus
-real (nadie ha corrido W0 sobre fuentes reales, así que no hay contenido con el que enseñar).
+**Actualizado el 2026-08-22.** Las dos cosas que este apartado daba por pendientes ya no lo están:
+el gasto está autorizado (D-40) y **W0–W3 corrieron sobre fuentes reales** (D-48, D-51, D-52, D-55).
+Lo que bloquea hoy es otra cosa, y conviene decirlo con los números delante:
+
+| Bloqueo | Estado |
+|---|---|
+| `∨E` ausente en `proof-search` | **Nuevo, 2026-08-22 (D-55).** Sin él, KC13 no puede tener reactivos y el paquete no cubre sus pisos |
+| Banco de reactivos incompleto | 91 aceptados; 4 KC bajo el piso y **las 57–69 sondas sin autorar** |
+| W4 (auditoría) y W5 (freeze) | Sin ejecutar. Sin freeze, dos de los seis gates de BENCH-01 no se pueden medir |
+| BENCH-01 sin dictamen | Depende del freeze. Sin ganador, F8 no avanza |
+| F8 · bucle de clase en vivo | 2 de 7 tareas |
+| F9–F16 | **39 tareas del plan sin empezar** — ahí viven voz, pizarrón, medición y `LOCAL_SELF_USE` |
+
+Contando el plan entero: **133 tareas `T-*`, de las que quedan unas 45** (7 abiertas en las fases en
+curso y 38–39 sin empezar). La cadena crítica para una clase real es
+`∨E → banco completo → W4 → W5 → BENCH-01 → F8`, y **ninguno de esos pasos se puede saltar**.
 
 ---
 

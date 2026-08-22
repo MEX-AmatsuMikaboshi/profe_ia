@@ -31,6 +31,29 @@ parameters:
     evidence:
       implementation: packages/proof-search/src/cal09.ts
       test: packages/proof-search/test/cal09.test.ts
+  - parameter_id: BENCH-04
+    version: bench04-harness-v1
+    status: frozen
+    frozen_at: 2026-08-22
+    gate: H5
+    method: work_units_with_verdict_equivalence_and_safety_gate_v1
+    data_policy: no_participant_data
+    measured_on: real_content_package
+    content_package_version: forallx-yyc/tfl-deduccion-natural@7a988a58d38187cf
+    report_run_id: bench04-ef5340ade353cb38
+    sample_size: 37
+    winning_variant: prefilter_then_search
+    work_units_saved: 35
+    comparable: true
+    safety_findings: 0
+    limitation: >-
+      Solo 1 de los 37 argumentos del corpus es semanticamente invalido, y toda la ventaja del
+      prefiltro sale de ese caso. La muestra subrepresenta la situacion en la que el orden importa:
+      el margen medido es un piso, no una estimacion.
+    evidence:
+      runner: scripts/content/bench04-run.mjs
+      report: content/unidad-deduccion-natural/audits/bench04-report.yaml
+      frozen_order: content/unidad-deduccion-natural/audits/bench04-frozen-order.yaml
   - parameter_id: CAL-SCED-OPPORTUNITY
     version: sced-opportunity-h5-v1
     status: frozen
