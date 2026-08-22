@@ -80,10 +80,17 @@
 >
 > ### Números al cerrar
 >
-> **1665 pruebas unitarias en verde** (1657 al abrir; +7 de D-60, +1 de D-61) más las 131 contra
-> PostgreSQL 17 real. Lint, typecheck —ahora **incluidas las pruebas**—, depcruise y sus dos controles
-> positivos, separación de modos, sesión seca, conjunto dorado, PBT, pureza del verificador,
+> **1665 pruebas unitarias en verde** (1657 al abrir; +7 de D-60, +1 de D-61; D-62 mudó una de sitio
+> y no mueve el conteo) más las 131 contra PostgreSQL 17 real. Lint, typecheck —ahora **incluidas las
+> pruebas**—, depcruise con sus **dos** controles positivos —violación sembrada y error sembrado en
+> una prueba—, separación de modos, sesión seca, conjunto dorado, PBT, pureza del verificador,
 > adversarial y SBOM, todo en verde en local.
+>
+> **Trampa nº 7 corregida en `docs/env/windows.md`:** el `exit 134` de `turbo` **no necesita Docker
+> arrancado**; volvió a pasar con Docker parado y la segunda corrida del mismo comando pasó entera.
+> Y ojo con `pnpm run ci:typecheck -- --concurrency=1`: desde D-62 ese script encadena un segundo
+> comando y la bandera acaba en el `tsc` final. Para serializar, `pnpm exec turbo run typecheck
+> --concurrency=1`.
 >
 > ### CI
 >

@@ -50,13 +50,20 @@ Son reales y cuestan una hora cada una si no se conocen.
    `docs/quality/mutation-baseline.md`: con archivos de prueba en paralelo, la cobertura `perTest`
    se atribuye mal y aparecen **falsos supervivientes**.
 6. **Sockets AF_UNIX fantasma: Docker Desktop no arranca dos veces seguidas.** Ver abajo.
-7. **Con Docker Desktop arrancado, `turbo` en paralelo tumba procesos de `tsc` (2026-08-21).**
+7. **`turbo` en paralelo tumba procesos de `tsc` (2026-08-21; corregido el 2026-08-22).**
+   Se anotó como «con Docker Desktop arrancado» y **no es condición necesaria**: volvió a pasar con
+   Docker parado, en `ci:typecheck` y en `ci:build`, y la segunda corrida del mismo comando pasó
+   entera. Es presión de memoria de la máquina, no Docker.
    `ci:build` y `ci:typecheck` fallan con `exit 134` (SIGABRT), `0xC0000409` o `0xC000001D`, en
    **un paquete distinto cada vez** y sin un solo error de compilación: el mismo paquete
-   typechequea limpio si se lanza suelto. No es el código, es memoria. Dos salidas, en este
-   orden: `pnpm run dev:docker:stop` y relanzar —con Docker parado, `ci:build` pasa entero a la
-   primera—, o `-- --concurrency=1` si hace falta Docker arriba. Diagnosticar el paquete que
+   typechequea limpio si se lanza suelto. No es el código, es memoria. Salidas, por orden de
+   coste: **relanzar el mismo comando** —a veces pasa a la segunda—, `--concurrency=1`, y si
+   Docker está arriba y no hace falta, `pnpm run dev:docker:stop`. Diagnosticar el paquete que
    aparece en el mensaje es perder el rato: no es siempre el mismo.
+   **Ojo con `--`**: desde que `ci:typecheck` encadena un segundo comando (`&& tsc -p
+   infra/database/tsconfig.test.json`, D-62), `pnpm run ci:typecheck -- --concurrency=1` le pasa la
+   bandera **al `tsc` final** y falla con `TS5023`. Para serializar, `pnpm exec turbo run typecheck
+   --concurrency=1`.
 
 ## Trampa nº 6 — sockets AF_UNIX fantasma (2026-08-18)
 
