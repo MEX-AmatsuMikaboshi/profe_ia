@@ -969,4 +969,35 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   el registro: nada posterior a `a458933` puede marcarse `VERIFICADA`**, D-58 incluida, por más que
   en local estén las 1788 pruebas en verde y el lint limpio. Se resuelve con la cuenta, no con el
   árbol.
+- **D-59 — Conjuntos experimentales propuestos y ordenados; y los tres conjuntos NO son
+  estructuralmente comparables (2026-08-22).** Paso 5 de §12 «W2», que faltaba.
+  `scripts/content/w2-experimental-sets-run.mjs` arma **tres particiones con criterio declarado** de
+  los quince KC que no son fundamento —los otros tres son pre-SCED y solo pueden ser soporte
+  (§5.2.1)— y las deja ordenar por la regla congelada. No se busca la mejor por fuerza bruta: 15 KC
+  en tres grupos de cinco son 126 126 particiones, y elegir por búsqueda exhaustiva optimizaría el
+  número en vez de la interpretabilidad.
+  **Encabeza `sel-por-conectivo`, con cero aristas FORMAL y cero de política de contenido cruzadas.**
+  Agrupar por familia de conectivo deja cada dependencia dentro de su conjunto, cosa que la partición
+  por bloques consecutivos no consigue (2 FORMAL cruzadas). **El control funcionó**: la partición
+  alterna, incluida a propósito para comprobar que el criterio mide algo, sale última (3 FORMAL + 1
+  PC). Si hubiera salido bien ordenada, el criterio no estaría midiendo la estructura del mapa.
+  Inventario de sondas por conjunto: **98 / 112 / 98** contra 57 nominales y 69 con reserva.
+  **El hallazgo que importa: `allCrossSetItemPairsComparable` sale `false`, y no por poco.** La
+  diferencia estructural máxima entre conjuntos es **90,86** contra la banda congelada de
+  `cal-09-v1`, que es **12,065296**. Se comprobó si cambiaba tomando **solo las sondas primarias**
+  —que son las que producen la medida y serían el denominador más defendible—: sale **71,28**, que
+  sigue estando siete veces por encima de la banda. **No hay lectura cómoda que elegir**, y por eso
+  se registran las dos. La causa está a la vista en los rangos: cada conjunto abarca casi todo el
+  índice (A: 19,6–81,5; B: 28,5–89,3; C: 28,1–90,9), así que comparar **todos** los pares cruzados
+  hace que el máximo lo fije el reactivo más fácil de un conjunto contra el más difícil de otro.
+  **No bloquea**: la política congelada dice que si excede la banda **se registra la diferencia y su
+  efecto de interpretabilidad, sin gate subjetivo ni equivalencia psicométrica**. Pero limita lo que
+  el piloto puede afirmar, y **conviene decidir antes del freeze** si el banco se reequilibra —por
+  ejemplo acotando el rango de complejidad de las sondas— o si se asume la diferencia y se declara
+  en la interpretación. Eso es decisión de diseño experimental, no de código.
+  **No se congela nada.** `freezeExperimentalSelection()` exige la decisión del `EXPERIMENT_AUDITOR`,
+  que solo puede aprobar o rechazar la plausibilidad de la primera propuesta, no sustituirla; y con
+  un hallazgo de no comparabilidad sobre la mesa, esa decisión debería tomarla una persona.
+  El artefacto queda en `kc/experimental-sets.yaml` con estado
+  `propuesta_ordenada_sin_congelar`.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

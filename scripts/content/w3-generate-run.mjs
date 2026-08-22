@@ -204,8 +204,8 @@ const ENVOLTURAS = {
  * 18 KC salen 216 primarias, por encima de las 207 de los tres conjuntos.
  */
 const SONDAS = [
-  { reserva: 'probes_baseline', envoltura: 'conj_premisa', variantes: 8 },
-  { reserva: 'probes_intervention', envoltura: 'cond_meta', variantes: 8 },
+  { reserva: 'probes_baseline', envoltura: 'conj_premisa', variantes: 14 },
+  { reserva: 'probes_intervention', envoltura: 'cond_meta', variantes: 14 },
   { reserva: 'retention', envoltura: 'disy_meta', variantes: 2 },
   { reserva: 'TRANSFER_MEASUREMENT', envoltura: 'conj_meta', variantes: 2 },
 ];
@@ -221,6 +221,11 @@ const ATOMOS_SONDA = [
   [['P', 'Q', 'R'], 'W'],
   [['B', 'C', 'D'], 'Y'],
   [['E', 'F', 'G'], 'Z'],
+  [['H', 'J', 'K'], 'W'],
+  [['L', 'M', 'N'], 'Y'],
+  [['O', 'P', 'Q'], 'Z'],
+  [['R', 'S', 'T'], 'W'],
+  [['U', 'V', 'A'], 'Y'],
 ];
 
 /**
