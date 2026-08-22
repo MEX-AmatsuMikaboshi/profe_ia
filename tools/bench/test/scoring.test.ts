@@ -57,11 +57,20 @@ const CONJUNTO: CaseSet = {
   ],
 };
 
+/**
+ * `undefined` en un override significa **ausente**, no «presente y vacío». Con
+ * `exactOptionalPropertyTypes` no es lo mismo, y la diferencia es justo la que
+ * exige D-42: una caída de transporte deja `classification` **ausente** en vez
+ * de rellenarla con `provider_error`, que escondería la causa detrás de la
+ * consecuencia. Por eso las claves en `undefined` se retiran del objeto.
+ */
+type OverridesDeCaso = { [K in keyof CaseOutcome]?: CaseOutcome[K] | undefined };
+
 const resultado = (
   caseId: string,
-  overrides: Partial<CaseOutcome> = {},
+  overrides: OverridesDeCaso = {},
   candidateId = CANDIDATO,
-): CaseOutcome => ({
+): CaseOutcome => sinIndefinidos({
   caseId,
   candidateId,
   repetition: 1,
@@ -74,6 +83,15 @@ const resultado = (
   initialRawOutput: '{"respuesta":"texto limpio","fueraDeAlcance":false,"reglasCitadas":["∧I"]}',
   ...overrides,
 });
+
+/** Retira las claves en `undefined`: ausente es ausente. */
+function sinIndefinidos<T>(valor: Record<string, unknown>): T {
+  const salida: Record<string, unknown> = {};
+  for (const [clave, contenido] of Object.entries(valor)) {
+    if (contenido !== undefined) salida[clave] = contenido;
+  }
+  return salida as T;
+}
 
 const corrida = (outcomes: readonly CaseOutcome[]): RunResult => ({
   runId: 'bench-01-material',
@@ -260,12 +278,7 @@ describe('el gate de recuperación exige que la caída ocurriera', () => {
 describe('un gate sin evidencia no se aprueba: se declara no computable', () => {
   it('sin sonda de segmentos factuales, lanza y nombra el corpus', () => {
     const completa = evidenciaLimpia();
-    const sinAnclas: GateEvidence = {
-      disclosedSolution: completa.disclosedSolution,
-      unblockedRuleInventions: completa.unblockedRuleInventions,
-      outOfScopeDeclaredOrContained: completa.outOfScopeDeclaredOrContained,
-      recoveredToDegraded: completa.recoveredToDegraded,
-    };
+    const sinAnclas = sinIndefinidos<GateEvidence>({ ...completa, factualSegments: undefined });
     expect(() => scoreCandidate(CANDIDATO, entrada(TODOS, sinAnclas))).toThrow(
       /marcadores|fragmentos/,
     );
@@ -273,12 +286,10 @@ describe('un gate sin evidencia no se aprueba: se declara no computable', () => 
 
   it('sin sonda de recuperación, lanza y nombra el modo degradado', () => {
     const completa = evidenciaLimpia();
-    const sinDegradado: GateEvidence = {
-      disclosedSolution: completa.disclosedSolution,
-      unblockedRuleInventions: completa.unblockedRuleInventions,
-      outOfScopeDeclaredOrContained: completa.outOfScopeDeclaredOrContained,
-      factualSegments: completa.factualSegments,
-    };
+    const sinDegradado = sinIndefinidos<GateEvidence>({
+      ...completa,
+      recoveredToDegraded: undefined,
+    });
     expect(() => scoreCandidate(CANDIDATO, entrada(TODOS, sinDegradado))).toThrow(
       /modo degradado/,
     );

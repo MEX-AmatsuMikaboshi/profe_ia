@@ -70,8 +70,12 @@ describe('propiedades del verificador', () => {
 
   it('una derivación aceptada es semánticamente válida (sanidad)', () => {
     fc.assert(
-      fc.property(seedArb, fc.integer({ min: 1, max: 6 }), (seed) => {
-        const built = constructProof(seed, 5);
+      // El segundo generador se declaraba y **no se usaba**: el predicado tomaba
+      // solo `seed` y el número de pasos estaba escrito a mano, así que las 200
+      // corridas medían siempre derivaciones de cinco pasos. Lo destapó activar
+      // el typecheck de las pruebas, no leerlo.
+      fc.property(seedArb, fc.integer({ min: 1, max: 6 }), (seed, steps) => {
+        const built = constructProof(seed, steps);
         const result = verify({ lines: built.lines, goal: built.goal });
         if (!result.valid) return true;
 

@@ -16,6 +16,18 @@ import {
   type RecoveryRunState as RecoveryRunStateValue,
 } from '../src/index.js';
 
+
+/**
+ * El valor, o un fallo con nombre. Los campos de evidencia son opcionales en el
+ * contrato y el fixture los rellena siempre; mutar sobre `undefined` habría
+ * reventado en ejecución, pero el compilador no miraba estos archivos y una
+ * evidencia que dejara de construirse convertiría el caso en otro sin avisar.
+ */
+function presente<T>(valor: T | undefined, nombre: string): T {
+  if (valor === undefined) throw new Error(`el fixture no construyó la evidencia «${nombre}»`);
+  return valor;
+}
+
 const AT = '2026-08-17T00:00:00.000Z';
 const at = (seconds: number): string => `2026-08-17T00:00:${String(seconds).padStart(2, '0')}.000Z`;
 const HASH = 'a'.repeat(64);
@@ -421,14 +433,14 @@ describe('tres ciclos dentro del bloque', () => {
     let state = value.applyEvent(initialized(value), startEvent(1)).state;
     const programId = state.kcs[0]?.currentProgram?.programId ?? '';
     const wrongFeedback = cycleEvent(2, programId, 1);
-    wrongFeedback.payload.evidence.feedback.errorCode = 'ANOTHER_ERROR';
+    presente(wrongFeedback.payload.evidence.feedback, 'feedback').errorCode = 'ANOTHER_ERROR';
     expectCode(
       () => value.applyEvent(state, wrongFeedback),
       'RECOVERY_ORDER_VIOLATION',
     );
     state = value.applyEvent(state, cycleEvent(2, programId, 1)).state;
     const wrongPrerequisite = cycleEvent(3, programId, 2);
-    wrongPrerequisite.payload.evidence.prerequisite.kcIds = ['KC03'];
+    presente(wrongPrerequisite.payload.evidence.prerequisite, 'prerequisite').kcIds = ['KC03'];
     expectCode(
       () => value.applyEvent(state, wrongPrerequisite),
       'RECOVERY_ORDER_VIOLATION',
@@ -472,11 +484,11 @@ describe('tres ciclos dentro del bloque', () => {
     let state = value.applyEvent(initialized(value), startEvent(1)).state;
     const programId = state.kcs[0]?.currentProgram?.programId ?? '';
     const repeated = cycleEvent(2, programId, 1);
-    repeated.payload.evidence.guidedPractice.itemId = 'failed-item-1';
+    presente(repeated.payload.evidence.guidedPractice, 'guidedPractice').itemId = 'failed-item-1';
     expectCode(() => value.applyEvent(state, repeated), 'RECOVERY_RESERVE_VIOLATION');
     state = value.applyEvent(state, cycleEvent(2, programId, 1)).state;
     const invalid = cycleEvent(3, programId, 2);
-    invalid.payload.evidence.complexity.toIndex = 80;
+    presente(invalid.payload.evidence.complexity, 'complexity').toIndex = 80;
     expectCode(() => value.applyEvent(state, invalid), 'INVALID_RECOVERY_EVENT');
   });
 

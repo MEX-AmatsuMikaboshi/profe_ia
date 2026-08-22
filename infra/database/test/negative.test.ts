@@ -424,10 +424,14 @@ describe('RLS como segunda capa (P-II §11.2)', () => {
        VALUES ('c1', 'VALIDATED_LOGIC_COURSE', 'Deducción natural')
        ON CONFLICT DO NOTHING`,
     );
+    // La terna se declara `as const` para que el desestructurado no salga
+    // `string | undefined`: un `undefined` colado como pseudónimo insertaría una
+    // fila que la prueba de RLS después no encontraría, y el fallo se leería como
+    // un problema de permisos.
     for (const [id, pseudo] of [
       ['s-alpha', 'pseudo-alpha'],
       ['s-beta', 'pseudo-beta'],
-    ]) {
+    ] as const) {
       await insertStructuredSession(structuredSessionRow(id, pseudo));
     }
   });

@@ -111,7 +111,7 @@ describe('runW1 (T-H5-01)', () => {
     expect(resultado.identityNotes[0]).toContain('primera ingesta');
     // La proyección: el componente ingerido registra el hash del contenido,
     // no el del tarball — cada nivel en su sustrato (D-51).
-    expect(resultado.corpus.components[0].snapshotSha256).toBe(hashContenido);
+    expect(resultado.corpus.components[0]?.snapshotSha256).toBe(hashContenido);
   });
 
   it('rechaza deriva a nivel tarball: el hash de bytes no es el que W0 registró', () => {

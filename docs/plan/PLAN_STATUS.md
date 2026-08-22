@@ -1102,4 +1102,43 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   manifiesto byte por byte, y lo reproducía porque `∨E` no dispara en ninguno de los trece casos: no
   hay premisa disyuntiva—. Lo que no se sostiene es el motivo escrito, y con `→E` el mismo argumento
   habría dado permiso para algo que sí mueve la calibración.
+- **D-62 — Los archivos de prueba ya se typechequean, y eso destapó dos pruebas que no probaban lo
+  que decían (2026-08-22).** Deuda registrada en §3.2 del handoff: `tsc -p tsconfig.json` incluía solo
+  `src/**/*.ts` en todos los paquetes y vitest no typechequea, así que **ninguna de las 102 suites se
+  compilaba en ningún sitio**. Ya había costado dos veces: un error de nombres de campo (`tokensIn`
+  por `inputTokens`) que salió en ejecución, y un campo obligatorio nuevo que dejó de proteger porque
+  `undefined` es falsy.
+  **Cómo se activa.** Un `tsconfig.test.json` por paquete que extiende el suyo, añade `test/**/*.ts` y
+  **no emite**: meter las pruebas en `tsconfig.json` las publicaría, porque ese proyecto emite a
+  `dist/` con `rootDir: src`. Son 17 paquetes; `apps/web` ya incluía sus pruebas —Next no emite y su
+  proyecto es `noEmit`— y solo le faltaba `test/**/*.tsx`, así que **la única prueba que monta un
+  componente era la única que no se compilaba**. `infra/database/test/` no es workspace y `turbo` no
+  llegaba: se engancha desde el script `ci:typecheck` de la raíz.
+  **Lo que apareció: 65 errores en 20 archivos, y dos son defectos de verdad.**
+  1. **Una propiedad de fast-check declaraba un generador y no lo usaba.** En
+     `logic-core/test/pbt.test.ts`, «una derivación aceptada es semánticamente válida» declaraba
+     `fc.integer({ min: 1, max: 6 })` y su predicado tomaba **solo** `seed`, con el número de pasos
+     escrito a mano: las 200 corridas medían siempre derivaciones de cinco pasos. Corregido, y la
+     propiedad **sigue en verde** para 1–6.
+  2. **Tres llamadas a `gateway.execute()` y cinco a `validateModelOutput()` omitían `codeFence`**,
+     que es obligatorio y **sin valor por omisión a propósito** (P-II §8.4: normalizar solo vale
+     «cuando el contrato lo autorice»). Llegaba `undefined` y se comportaba como `reject` sin que
+     nadie lo hubiera elegido. Ahora lo declaran; las vallas siguen teniendo su suite propia.
+  **El resto eran declaraciones locales que se quedaban cortas**, y el patrón se repite: un ayudante
+  de prueba tipado contra lo que **devuelve** otro ayudante en vez de contra el contrato
+  (`binding()` inferia `provider: 'anthropic'` de su fixture, así que ningún caso podía declarar otro
+  proveedor); un `RoundRun.requests` escrito a mano con dos campos mientras las pruebas leían cinco;
+  un `estadoDeDominio(): unknown` que tiraba el tipo justo antes de pasárselo a una función que sí lo
+  tiene. **Ninguna se debilitó para que compilara**: donde el índice podía faltar se resolvió con un
+  ayudante que **falla con nombre** (`fijo()`, `presente()`, `codigo()`), no con `!` ni con `as`, y
+  donde `undefined` significaba «ausente» se retira la clave en vez de escribirla, que con
+  `exactOptionalPropertyTypes` no es lo mismo — y es justo la distinción que D-42 exige de
+  `classification` en una caída de transporte.
+  **Control positivo, porque el check es fácil de vaciar sin que se note.**
+  `scripts/arch/verify-test-typecheck-catches.mjs` siembra un error de tipos **dentro de un archivo
+  de prueba** y exige que el proyecto de pruebas lo vea y el de `src/` **no**; además comprueba que
+  todo paquete con `test/` tiene quien lo compile y que su script `typecheck` lo corre de verdad.
+  Sin él, recortar un `include` dejaría el check pasando sin mirar una sola prueba, que es
+  exactamente el hueco que se acaba de cerrar. Va en el job `arch` de CI, al lado del control de
+  depcruise.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

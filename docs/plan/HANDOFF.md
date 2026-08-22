@@ -1061,12 +1061,14 @@ Tachado lo cerrado; lo que queda, en orden de dependencia.
   que se copiaba, así que el replay lo rechazaba por `STATE_HASH_MISMATCH` **antes** de llegar al
   invariante — pasaban con la guarda y sin ella. El control positivo (retirar la guarda y comprobar
   que la prueba cae) es lo que lo destapó; sin él se habrían quedado así.
-- **Los archivos de prueba no se typechequean.** `tsc -p tsconfig.json` incluye sólo `src/**/*.ts` en
-  todos los paquetes, y vitest no typechequea. Consecuencia real y observada: un error de nombres de
-  campo en una prueba (`tokensIn` en vez de `inputTokens`) salió en ejecución y no en compilación.
-  No se arregló porque activar el typecheck de pruebas probablemente destape errores en las 85
-  suites, y eso es una tarea con su propio alcance. **Pero conviene saberlo: una prueba que compila
-  en tu cabeza no compila en ningún sitio.**
+- ~~**Los archivos de prueba no se typechequean.**~~ **Cerrado el 2026-08-22 (D-62).** Cada paquete
+  con `test/` compila ahora un segundo proyecto `tsconfig.test.json` que **no emite**, `apps/web`
+  añadió `test/**/*.tsx` y `infra/database/test/` se engancha desde el script de la raíz. Hay control
+  positivo (`scripts/arch/verify-test-typecheck-catches.mjs`): siembra un error en `test/` y exige
+  que el proyecto de pruebas lo vea y el de `src/` no. Destapó 65 errores en 20 archivos, **dos de
+  ellos defectos reales**: una propiedad de fast-check que declaraba un generador y nunca lo usaba, y
+  ocho llamadas que omitían `codeFence`, que es obligatorio y sin valor por omisión. La frase sigue
+  valiendo: **una prueba que compila en tu cabeza no compila en ningún sitio.**
 
 ---
 

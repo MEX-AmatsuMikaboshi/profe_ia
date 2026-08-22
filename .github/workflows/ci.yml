@@ -139,6 +139,12 @@ jobs:
       # AC de F0: la regla debe fallar ante una violación sembrada y pasar al retirarla.
       - name: ci:arch:depcruise (violación sembrada)
         run: node scripts/arch/verify-depcruise-catches.mjs
+      # Control positivo del typecheck de las pruebas: comprueba que los archivos
+      # de `test/` los compila alguien y que un error sembrado ahí se ve. Sin él,
+      # recortar el `include` de un `tsconfig.test.json` dejaría el check pasando
+      # sin mirar ninguna prueba — que es exactamente el hueco que cerró.
+      - name: ci:arch:test-typecheck (error sembrado en una prueba)
+        run: node scripts/arch/verify-test-typecheck-catches.mjs
       # Fallo cerrado de la pasarela (F4): no envía parámetros no declarados por
       # el binding ni acepta un binding sin snapshot ni huella. Vive en el job
       # `arch` porque no necesita el submódulo de contenido.

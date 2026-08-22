@@ -99,7 +99,11 @@ function invalidResult(
 interface RoundRun {
   readonly state: ScedCalendarStateValue;
   readonly events: readonly ScedCalendarEvent[];
-  readonly requests: readonly { opportunityId: string; probeRoundId: string | null }[];
+  // Se deriva del tipo real de `applyEvent` en vez de escribirse a mano: la
+  // versión escrita a mano solo declaraba dos campos y las pruebas leían otros
+  // tres. Al no compilarse los archivos de prueba nadie lo veía, y una
+  // declaración local que se queda corta acaba tapando un cambio de contrato.
+  readonly requests: ReturnType<DeterministicScedCalendar['applyEvent']>['probeRequests'];
 }
 
 function runRound(

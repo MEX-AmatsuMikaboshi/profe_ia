@@ -220,6 +220,18 @@ function open(value: DeterministicMeasurementAuthority): MeasurementRunStateValu
   return value.applyEvent(initialized(value), openEvent(1)).state;
 }
 
+/**
+ * Elemento n-ésimo del fixture, o un fallo con nombre. Esparcir `lista[i]` sin
+ * comprobarlo produce un objeto **incompleto** cuando el índice no existe, y el
+ * caso acabaría comprobando el rechazo de un plan vacío en vez del del plan
+ * alterado — que es la mitad de la prueba.
+ */
+function fijo<T>(lista: readonly T[], indice: number): T {
+  const valor = lista[indice];
+  if (valor === undefined) throw new Error(`fixture incompleto: falta la entrada ${indice}`);
+  return valor;
+}
+
 describe('artefactos y frontera de autoridad (T-H6-06)', () => {
   it('fija autoridad exclusiva, modo, entrega individual y separación de ayuda', () => {
     expect(POLICY).toMatchObject({
@@ -252,17 +264,17 @@ describe('artefactos y frontera de autoridad (T-H6-06)', () => {
 
   it('rechaza plan con reserva equivocada y parámetros primarios distintos de H5', () => {
     const wrongReserve = inventory();
-    wrongReserve.plans[0] = { ...wrongReserve.plans[0], reserve: 'retention' };
+    wrongReserve.plans[0] = { ...fijo(wrongReserve.plans, 0), reserve: 'retention' };
     expectCode(() => compileMeasurementInventory(wrongReserve), 'INVALID_ARTIFACT');
 
     const wrongBatch = inventory();
-    wrongBatch.plans[0] = { ...wrongBatch.plans[0], batchSize: 4 };
+    wrongBatch.plans[0] = { ...fijo(wrongBatch.plans, 0), batchSize: 4 };
     expectCode(() => compileMeasurementInventory(wrongBatch), 'INVALID_ARTIFACT');
   });
 
   it('rechaza reactivos duplicados, prompt de otro ítem y campos de solución o pistas', () => {
     const duplicate = inventory();
-    duplicate.items.push({ ...duplicate.items[0] });
+    duplicate.items.push({ ...fijo(duplicate.items, 0) });
     expectCode(() => compileMeasurementInventory(duplicate), 'INVALID_ARTIFACT');
 
     const wrongPrompt = inventory();
@@ -647,7 +659,15 @@ describe('replay, restauración y persistencia atómica', () => {
         eventType: 'measurement.initialized',
         sequenceNumber: 0,
         occurredAt: AT,
-        payload: { runId: 'run-measurement-1', participantPseudoId: 'pseudo-measurement-1' },
+        // `priorConsumptions` va explícito y vacío. El esquema lo rellena con
+        // `.default([])`, así que el valor es el mismo; lo que cambia es que el
+        // tipo inferido —que es el que declara este array— lo exige, y omitirlo
+        // no compilaba.
+        payload: {
+          runId: 'run-measurement-1',
+          participantPseudoId: 'pseudo-measurement-1',
+          priorConsumptions: [],
+        },
       },
       openEvent(1),
       deliveryEvent(2),

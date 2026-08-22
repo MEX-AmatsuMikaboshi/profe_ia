@@ -56,6 +56,7 @@ pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && 
 | `pnpm run ci:db:negative` | Suite negativa de privilegios contra PostgreSQL 17 real vía Testcontainers (~12 s, necesita Docker) |
 | `pnpm run ci:arch:depcruise` | Reglas `forbidden` que codifican los invariantes I-1…I-9 |
 | `node scripts/arch/verify-depcruise-catches.mjs` | Que esas reglas **detectan** una violación sembrada |
+| `node scripts/arch/verify-test-typecheck-catches.mjs` | Que el typecheck de las pruebas **ve** un error sembrado en `test/` (D-62) |
 | `pnpm run ci:logic:golden` / `:pbt` / `:no-net` | Conjunto dorado (413 casos) / propiedades fast-check / pureza del verificador |
 | `pnpm run ci:logic:mutation` | Stryker sobre `logic-core` (~8–9 min; se corre aparte) |
 | `pnpm run ci:mode-separation` / `ci:e2e:dry-session` | El AC del gate H6: separación de modos (12 propiedades) y sesión seca E2E reconstruible desde eventos (33) |

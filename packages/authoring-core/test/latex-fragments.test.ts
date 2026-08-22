@@ -31,18 +31,18 @@ describe('sectionsFromLatex (T-H5-01)', () => {
       'libro.tex#connectives',
       'libro.tex#negation',
     ]);
-    expect(fragmentos[0].kind).toBe('capitulo');
-    expect(fragmentos[1].kind).toBe('seccion');
+    expect(fragmentos[0]?.kind).toBe('capitulo');
+    expect(fragmentos[1]?.kind).toBe('seccion');
     // El fragmento abarca hasta el encabezado siguiente, sin solapes ni huecos.
-    expect(fragmentos[1].text).toContain('Texto de la sección.');
-    expect(fragmentos[1].text.endsWith('\\section{Atomic sentences}')).toBe(false);
-    expect(fragmentos[2].text.startsWith('\\section{Atomic sentences}')).toBe(true);
+    expect(fragmentos[1]?.text).toContain('Texto de la sección.');
+    expect(fragmentos[1]?.text.endsWith('\\section{Atomic sentences}')).toBe(false);
+    expect(fragmentos[2]?.text.startsWith('\\section{Atomic sentences}')).toBe(true);
   });
 
   it('ignora encabezados comentados', () => {
     const fragmentos = sectionsFromLatex(LIBRO, 'libro.tex');
     expect(fragmentos.some((f) => f.location.includes('ghost'))).toBe(false);
-    expect(fragmentos[4].text).toContain('% \\section{Ghost section}');
+    expect(fragmentos[4]?.text).toContain('% \\section{Ghost section}');
   });
 
   it('rechaza texto antes del primer capítulo: no hay dónde anclarlo', () => {

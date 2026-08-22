@@ -12,7 +12,7 @@
   "scripts": {
     "build": "turbo run build",
     "ci:lint": "eslint .",
-    "ci:typecheck": "turbo run typecheck",
+    "ci:typecheck": "turbo run typecheck && tsc -p infra/database/tsconfig.test.json",
     "ci:unit": "vitest run",
     "ci:build": "turbo run build",
     "ci:arch:depcruise": "depcruise --config .dependency-cruiser.cjs apps packages tools",

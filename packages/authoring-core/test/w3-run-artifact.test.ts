@@ -109,7 +109,7 @@ describe('corrida W3 materializada (T-H5-05)', () => {
     // que los huecos que haya estén **dichos**, no que no los haya.
     const kcsConHueco = new Set(corrida.coverageGaps.map((g) => g.kcId));
     for (const kcId of kcsConHueco) {
-      expect(corrida.items.some((i) => i.targetKcs.includes(kcId))).toBe(true);
+      expect(corrida.items.some((i) => i.targetKcs.some((k) => k === kcId))).toBe(true);
     }
   });
 

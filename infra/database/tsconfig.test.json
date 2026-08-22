@@ -1,0 +1,13 @@
+{
+  // `infra/database` no es un workspace, así que `turbo run typecheck` no llega
+  // hasta aquí y sus pruebas —las 131 contra PostgreSQL real— no se compilaban
+  // en ningún sitio. Se engancha desde el script `ci:typecheck` de la raíz.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "types": ["node"]
+  },
+  "include": ["test/**/*.ts"]
+}

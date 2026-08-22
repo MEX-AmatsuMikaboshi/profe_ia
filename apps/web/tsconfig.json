@@ -17,6 +17,16 @@
     "incremental": true,
     "plugins": [{ "name": "next" }]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "next-env.d.ts", ".next/types/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "test/**/*.ts",
+    // `.tsx` entra desde T-H6-13 y su prueba de render **no se typechequeaba**:
+    // el patrón anterior solo cubría `.ts`, así que la única prueba que monta un
+    // componente era la única que no se compilaba en ningún sitio.
+    "test/**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
+  ],
   "exclude": ["node_modules", ".next"]
 }

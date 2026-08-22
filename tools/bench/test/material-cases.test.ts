@@ -213,9 +213,16 @@ describe('controles negativos: cada comprobación caza el defecto que dice cazar
   });
 
   it('una caída sin fallo inyectado se detecta', () => {
-    const sinFallo = MATERIAL_CASES.map((c) =>
-      c.family === 'failure_or_invalid_output' ? { ...c, injectedFault: undefined } : c,
-    );
+    // Se **retira** la clave en vez de ponerla en `undefined`: con
+    // `exactOptionalPropertyTypes` un `injectedFault: undefined` presente no es
+    // lo mismo que ausente, y lo que este caso simula es un caso de la familia
+    // de caídas que no declara fallo ninguno.
+    const sinFallo = MATERIAL_CASES.map((c) => {
+      if (c.family !== 'failure_or_invalid_output') return c;
+      const copia: Record<string, unknown> = { ...c };
+      delete copia['injectedFault'];
+      return copia as unknown as BenchCase;
+    });
     expect(() => {
       assertFaultDeclarationCoherent(conCasos(sinFallo));
     }).toThrow(/no declaran fallo inyectado/);

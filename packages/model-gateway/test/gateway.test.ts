@@ -46,11 +46,26 @@ function recordingTransport(respuesta?: { status: number; body: string }): {
   return { transport, sent };
 }
 
-function binding(overrides: Partial<ReturnType<typeof baseBinding>> = {}) {
+/**
+ * Entrada del contrato, no del ayudante. Tipar los `overrides` contra lo que
+ * **devuelve** `baseBinding()` inferia `provider: 'anthropic'` y
+ * `supportedParameters: never[]` de los literales del fixture, así que ningún
+ * caso podía declarar otro proveedor ni un parámetro. Se toma la entrada del
+ * esquema, que es contra lo que se valida de verdad.
+ *
+ * `| undefined` es deliberado: con `exactOptionalPropertyTypes`, `Partial<T>`
+ * admite omitir la clave pero **no** pasarla en `undefined`, y hay casos que
+ * quitan `snapshot` justamente así.
+ */
+type EntradaDeBinding = {
+  [K in keyof z.input<typeof ModelBinding>]?: z.input<typeof ModelBinding>[K] | undefined;
+};
+
+function binding(overrides: EntradaDeBinding = {}) {
   return ModelBinding.parse({ ...baseBinding(), ...overrides });
 }
 
-function baseBinding() {
+function baseBinding(): z.input<typeof ModelBinding> {
   return {
     bindingId: 'binding-sesion-anthropic',
     profile: 'SESION',
@@ -317,6 +332,7 @@ describe('capacidades por binding (T-H4-02 ← DEC-MODEL-BINDING-001)', () => {
         input: 'e',
         parameters: { top_p: 0.9 },
         schema: z.unknown(),
+        codeFence: 'reject',
       }),
     ).rejects.toThrow(UnsupportedParameterError);
     expect(sent).toEqual([]);
@@ -418,6 +434,7 @@ describe('envío por transporte inyectado', () => {
       instructions: 'i',
       input: 'e',
       schema: z.object({ ok: z.boolean() }),
+      codeFence: 'reject',
     });
 
     expect(sent).toHaveLength(1);
@@ -438,6 +455,7 @@ describe('envío por transporte inyectado', () => {
         instructions: 'i',
         input: 'e',
         schema: z.unknown(),
+        codeFence: 'reject',
       }),
     ).rejects.toThrow(OperationNotAuthorizedForProfileError);
     expect(sent).toEqual([]);

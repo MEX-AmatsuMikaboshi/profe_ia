@@ -22,6 +22,19 @@ import {
   type HintSessionState as HintSessionStateValue,
 } from '../src/index.js';
 
+
+/**
+ * Elemento n-ésimo del fixture, o un fallo con nombre. `lista[i]` puede ser
+ * `undefined`, y esparcir `undefined` produce un objeto **incompleto** que el
+ * compilador de la prueba no miraba: el caso acabaría comprobando el rechazo de
+ * una entrada vacía en vez del de la entrada alterada.
+ */
+function fijo<T>(lista: readonly T[], indice: number): T {
+  const valor = lista[indice];
+  if (valor === undefined) throw new Error(`fixture incompleto: falta la entrada ${indice}`);
+  return valor;
+}
+
 const AT = '2026-08-17T01:00:00.000Z';
 const HASH_A = 'a'.repeat(64);
 const HASH_B = 'b'.repeat(64);
@@ -237,7 +250,7 @@ describe('política y banco congelado de pistas (T-H6-05)', () => {
 
   it('rechaza ids duplicados, dos pistas del mismo item+nivel y KC incoherente', () => {
     const complete = entriesFor('item-hint-1', 'KC03');
-    expectCode(() => compileHintBank(bank([...complete, { ...complete[0] }])), 'INVALID_HINT_BANK');
+    expectCode(() => compileHintBank(bank([...complete, { ...fijo(complete, 0) }])), 'INVALID_HINT_BANK');
 
     const wrongKc = complete.map((candidate) =>
       candidate.level === 5 ? { ...candidate, kcId: 'KC04' } : candidate,
@@ -247,7 +260,7 @@ describe('política y banco congelado de pistas (T-H6-05)', () => {
 
   it('vincula la evidencia a identidad, clasificación y contenido congelados', () => {
     const changed = entriesFor('item-hint-1', 'KC03');
-    changed[0] = { ...changed[0], text: 'Texto alterado después de validar' };
+    changed[0] = { ...fijo(changed, 0), text: 'Texto alterado después de validar' };
 
     expectCode(() => compileHintBank(bank(changed)), 'INVALID_HINT_BANK');
 
@@ -264,18 +277,18 @@ describe('política y banco congelado de pistas (T-H6-05)', () => {
 
   it('la propuesta generativa discrepante nunca se vuelve autoridad', () => {
     const changed = entriesFor('item-hint-1', 'KC03');
-    changed[1] = { ...changed[1], proposedMasteryDisqualifying: false };
+    changed[1] = { ...fijo(changed, 1), proposedMasteryDisqualifying: false };
 
     expectCode(() => compileHintBank(bank(changed)), 'INVALID_HINT_BANK');
   });
 
   it('el nivel 4 exige evidencia no isomorfa y ningún otro nivel puede suplantarla', () => {
     const missing = entriesFor('item-hint-1', 'KC03');
-    missing[3] = { ...missing[3], analogousExampleEvidence: null };
+    missing[3] = { ...fijo(missing, 3), analogousExampleEvidence: null };
     expectCode(() => compileHintBank(bank(missing)), 'INVALID_HINT_BANK');
 
     const extra = entriesFor('item-hint-1', 'KC03');
-    extra[2] = { ...extra[2], analogousExampleEvidence: extra[3]?.analogousExampleEvidence ?? null };
+    extra[2] = { ...fijo(extra, 2), analogousExampleEvidence: extra[3]?.analogousExampleEvidence ?? null };
     expectCode(() => compileHintBank(bank(extra)), 'INVALID_HINT_BANK');
   });
 });

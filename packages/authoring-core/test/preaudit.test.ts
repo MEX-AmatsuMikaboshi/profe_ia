@@ -11,6 +11,20 @@ import {
   type AuditDefectJudgment,
 } from '../src/index.js';
 
+
+/**
+ * Código n-ésimo del libro cerrado. Indexar y confiar deja `undefined` dentro
+ * del tipo, y un `undefined` que llega como código de defecto no se distingue
+ * de «sin código» en la evaluación del gate.
+ */
+function codigo<T>(lista: readonly T[], indice = 0): T {
+  const valor = lista[indice];
+  if (valor === undefined) {
+    throw new Error(`el libro de códigos no tiene entrada ${indice} para esa severidad`);
+  }
+  return valor;
+}
+
 function artifact(index: number, overrides: Partial<AuditableArtifact> = {}): AuditableArtifact {
   return {
     artifactId: `item-${index}`,
@@ -115,7 +129,7 @@ describe('codebook y gates de aceptación', () => {
     const id = reviewed[0] as string;
     const family = items.find((item) => item.artifactId === id)?.itemFamilyId as string;
     const report = evaluatePreAudit(sample, items, reviewed, [
-      defect(id, family, 'critical', AUDIT_CODEBOOK.critical[0]),
+      defect(id, family, 'critical', codigo(AUDIT_CODEBOOK.critical)),
     ]);
     expect(report.blocked).toBe(true);
     expect(report.critical).toEqual({ count: 1, denominator: 20 });
@@ -127,8 +141,8 @@ describe('codebook y gates de aceptación', () => {
     const judgments = reviewed.slice(0, 5).map((id, index) => {
       const family = items.find((item) => item.artifactId === id)?.itemFamilyId as string;
       return index === 0
-        ? defect(id, family, 'major', AUDIT_CODEBOOK.major[0])
-        : defect(id, family, 'minor', AUDIT_CODEBOOK.minor[0]);
+        ? defect(id, family, 'major', codigo(AUDIT_CODEBOOK.major))
+        : defect(id, family, 'minor', codigo(AUDIT_CODEBOOK.minor));
     });
     const exact = evaluatePreAudit(sample, items, reviewed, judgments.slice(0, 4));
     expect(exact.major.percent).toBe(5);
@@ -145,7 +159,7 @@ describe('codebook y gates de aceptación', () => {
       sample,
       items,
       reviewed,
-      sameFamily.map((item) => defect(item.artifactId, item.itemFamilyId, 'major', AUDIT_CODEBOOK.major[1])),
+      sameFamily.map((item) => defect(item.artifactId, item.itemFamilyId, 'major', codigo(AUDIT_CODEBOOK.major, 1))),
     );
     expect(report.familiesWithAtLeastTwoMajor).toEqual(['family-1']);
     expect(report.reasons).toContain('family_with_two_major_defects');
@@ -154,16 +168,16 @@ describe('codebook y gates de aceptación', () => {
   it('código/severidad o familia reasignada no se aceptan', () => {
     const id = reviewed[0] as string;
     expect(() =>
-      evaluatePreAudit(sample, items, reviewed, [defect(id, 'otra-familia', 'major', AUDIT_CODEBOOK.major[0])]),
+      evaluatePreAudit(sample, items, reviewed, [defect(id, 'otra-familia', 'major', codigo(AUDIT_CODEBOOK.major))]),
     ).toThrow(/reasignado/u);
     const family = items.find((item) => item.artifactId === id)?.itemFamilyId as string;
     expect(() =>
-      evaluatePreAudit(sample, items, reviewed, [defect(id, family, 'minor', AUDIT_CODEBOOK.major[0])]),
+      evaluatePreAudit(sample, items, reviewed, [defect(id, family, 'minor', codigo(AUDIT_CODEBOOK.major))]),
     ).toThrow(/severidad/u);
     expect(() =>
       evaluatePreAudit(sample, items, reviewed, [
         {
-          ...defect(id, family, 'major', AUDIT_CODEBOOK.major[0]),
+          ...defect(id, family, 'major', codigo(AUDIT_CODEBOOK.major)),
           canChangeAnswerOrVerdict: false,
           canContaminateMeasureLeakOrTeachFalseRule: false,
         },
@@ -175,7 +189,7 @@ describe('codebook y gates de aceptación', () => {
     const id = reviewed[0] as string;
     const family = items.find((item) => item.artifactId === id)?.itemFamilyId as string;
     const report = evaluatePreAudit(sample, items, reviewed, [
-      defect(id, family, 'critical', AUDIT_CODEBOOK.critical[0]),
+      defect(id, family, 'critical', codigo(AUDIT_CODEBOOK.critical)),
     ]);
     expect(() => assertBlockedAuditRemediation(report, [])).toThrow(/regeneración completa/u);
     expect(() =>

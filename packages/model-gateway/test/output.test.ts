@@ -19,6 +19,12 @@ function validar(outcome: ProviderOutcome) {
     outcome,
     schema: SCHEMA,
     attempt: 1,
+    // `codeFence` es obligatorio y **sin valor por omisión** a propósito: la
+    // autorización de desenvolver se escribe en quien llama. Estas pruebas no
+    // van de vallas, así que declaran la conservadora; omitirlo llegaba como
+    // `undefined` y se comportaba como `reject` sin que nadie lo hubiera
+    // elegido. Las vallas tienen su propia suite (`code-fence.test.ts`).
+    codeFence: 'reject',
   });
 }
 

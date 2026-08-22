@@ -1,0 +1,16 @@
+{
+  // Los archivos de prueba **no entran** en `tsconfig.json`: ese proyecto emite a
+  // `dist/` con `rootDir: src`, y meterlos ahí los publicaría. Sin este segundo
+  // proyecto no se compilan en ningún sitio, y eso ya costó caro: un error de
+  // nombres de campo (`tokensIn` por `inputTokens`) salió en ejecución y no en
+  // compilación, y un campo obligatorio nuevo dejó de proteger sin que nadie se
+  // enterara. Aquí no se emite nada: solo se comprueba.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}

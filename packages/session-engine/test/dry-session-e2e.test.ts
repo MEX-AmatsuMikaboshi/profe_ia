@@ -143,7 +143,10 @@ const RESULTADO_DE_SONDA = {
 } as const;
 
 /** Estado autoritativo de dominio: dos prácticas elegibles y una transferencia. */
-function estadoDeDominio(conTransferencia: boolean): unknown {
+// El tipo se **infiere** del controlador de dominio. Declararlo `unknown` era
+// tirar la información justo antes de pasársela a `updateSessionFromDomainState`,
+// que sí tiene tipo: la llamada no compilaba y nadie lo veía.
+function estadoDeDominio(conTransferencia: boolean) {
   const policyHash = compileDomainPolicy(DOMAIN_POLICY_V1).policyHash;
   const controller = new DeterministicDomainController(DOMAIN_POLICY_V1, {
     expectedHash: policyHash,
@@ -745,7 +748,7 @@ describe('propiedad: la sonda nunca entra en el contexto del agente', () => {
 
 describe('propiedad: el dominio no se alcanza sin transferencia', () => {
   it('tres correctas consecutivas sin transferencia no declaran dominio', () => {
-    const sinTransferencia = estadoDeDominio(false) as { readonly masteryStatus: string };
+    const sinTransferencia = estadoDeDominio(false);
     expect(sinTransferencia.masteryStatus).toBe('not_mastered');
 
     const sesion = sesionSeca();

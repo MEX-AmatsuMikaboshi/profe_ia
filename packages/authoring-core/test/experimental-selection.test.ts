@@ -20,9 +20,20 @@ const calendar = {
 } as const;
 
 const sampleProfiles = cal09Samples();
-const low = sampleProfiles.find((sample) => sample.tier === 'baja')?.profile;
-const high = sampleProfiles.find((sample) => sample.tier === 'alta')?.profile;
-if (low === undefined || high === undefined) throw new Error('CAL-09 no contiene estratos de prueba.');
+/**
+ * El estrato pedido, o un fallo con nombre. Antes se declaraban los dos con
+ * `?.profile` y se comprobaban después con un `throw`: el estrechamiento no
+ * llega al cuerpo de las funciones que los usan, así que el tipo seguía siendo
+ * `| undefined` allí donde se usaba.
+ */
+function perfilDe(tier: 'baja' | 'media' | 'alta') {
+  const encontrado = sampleProfiles.find((sample) => sample.tier === tier)?.profile;
+  if (encontrado === undefined) throw new Error(`CAL-09 no contiene el estrato ${tier}.`);
+  return encontrado;
+}
+
+const low = perfilDe('baja');
+const high = perfilDe('alta');
 
 function sets(a: readonly KcId[], b: readonly KcId[], c: readonly KcId[]): readonly ExperimentalSet[] {
   return [

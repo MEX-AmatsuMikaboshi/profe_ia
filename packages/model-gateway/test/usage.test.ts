@@ -124,6 +124,7 @@ describe('el uso sobrevive a la validación', () => {
       outcome,
       schema,
       attempt: 1,
+      codeFence: 'reject',
     });
     expect(validado.classification).toBe('valid');
     expect(validado.usage).toEqual({ inputTokens: 11, outputTokens: 22 });
@@ -141,6 +142,7 @@ describe('el uso sobrevive a la validación', () => {
       },
       schema,
       attempt: 1,
+      codeFence: 'reject',
     });
     expect(validado.classification).toBe('refusal');
     expect(validado.usage).toEqual({ inputTokens: 7, outputTokens: 1 });
@@ -153,6 +155,7 @@ describe('el uso sobrevive a la validación', () => {
       outcome: { kind: 'output', text: '{"ok":true}', rawStopReason: 'end_turn' },
       schema,
       attempt: 1,
+      codeFence: 'reject',
     });
     expect(validado.usage).toBeUndefined();
   });

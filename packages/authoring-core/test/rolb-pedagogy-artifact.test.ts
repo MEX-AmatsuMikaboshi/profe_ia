@@ -16,6 +16,7 @@ import {
   STRATEGY_CATALOG,
   type ActivationMatrix,
   type FadingRule,
+  type KcId,
   type ObservableObjective,
   type SelfExplanationPolicy,
 } from '../src/index.js';
@@ -43,14 +44,20 @@ function leerJsonConCabecera<T>(ruta: string): T {
   return JSON.parse(readFileSync(join(CONTENIDO, ruta), 'utf8').replace(/^(#[^\n]*\n)+/, '')) as T;
 }
 
+/**
+ * Vistas tipadas de los artefactos. Los identificadores de KC se declaran como
+ * `KcId` y no como `string`: el artefacto se genera desde `KC_CATALOG`, y con
+ * `string` las comprobaciones que los pasan a la API del paquete no compilaban
+ * —cosa que no se veía porque las pruebas no se typechequeaban—.
+ */
 interface MapaKc {
-  readonly foundationKcs: readonly string[];
-  readonly nodes: readonly { readonly kcId: string }[];
-  readonly edges: readonly { readonly from: string; readonly to: string; readonly type: string }[];
+  readonly foundationKcs: readonly KcId[];
+  readonly nodes: readonly { readonly kcId: KcId }[];
+  readonly edges: readonly { readonly from: KcId; readonly to: KcId; readonly type: string }[];
 }
 
 interface ObjetivosDoc {
-  readonly teachingSequence: readonly string[];
+  readonly teachingSequence: readonly KcId[];
   readonly objectives: readonly ObservableObjective[];
 }
 
@@ -72,8 +79,8 @@ interface AyudasDoc {
 interface RetrievalDoc {
   readonly blocks: readonly {
     readonly blockPosition: number;
-    readonly teaches: string;
-    readonly eligibleForRetrieval: readonly string[];
+    readonly teaches: KcId;
+    readonly eligibleForRetrieval: readonly KcId[];
   }[];
   readonly eligiblePairs: number;
 }
@@ -126,7 +133,7 @@ describe('política pedagógica de Rol B materializada (T-H5-04)', () => {
   });
 
   it('las doce entradas del catálogo tienen regla, y el catálogo es la proyección del módulo', () => {
-    const conRegla = new Set(seleccion.rules.map((r) => r.catalogEntryId));
+    const conRegla = new Set<string>(seleccion.rules.map((r) => r.catalogEntryId));
     for (const entrada of STRATEGY_CATALOG) {
       expect(conRegla.has(entrada.catalogEntryId), entrada.catalogEntryId).toBe(true);
     }
