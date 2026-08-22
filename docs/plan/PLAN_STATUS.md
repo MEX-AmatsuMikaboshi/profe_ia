@@ -1191,4 +1191,33 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   **El encargo completo, listo para copiar, está en `docs/plan/HANDOFF.md` §2.9**, con el orden en que
   conviene tomar las decisiones: primero el arreglo del buscador —cambia qué es autorable, y con ello
   el banco, los conjuntos y la auditoría—, después el reequilibrio de sondas, y la firma al final.
+- **D-64 — El intento de sustituir a Kimi por OpenAI Codex se conserva como diagnóstico, no como
+  evidencia conforme (2026-08-22).** Kimi no completó el encargo por falta de créditos y el
+  propietario pidió que Codex leyera el `HANDOFF`, el paquete y ejecutara las Partes A/B. Las
+  respuestas crudas se preservan append-only en
+  `audits/w4-second-auditor-part-a-openai-codex-gpt-5.json` y
+  `audits/w4-second-auditor-part-b-openai-codex-gpt-5.md` (repositorio de contenido `c3dc0dd`).
+  **Resultado diagnóstico.** Los 36 certificados re-verifican con `logic-core`. La Parte A registró
+  15 juicios críticos en 14 reactivos: trece `reused_or_contaminated_probe` —sondas cuya derivación
+  contiene completa la actividad de enseñanza y añade solo una envoltura— y dos
+  `corpus_contradiction` en KC16 —la pista dirige a `¬E` desde `¬¬A`, mientras el certificado y el
+  corpus exigen `DNE`. Además dejó sin código que `kc03-recup` usa `R` pero ninguna pista orienta
+  hacia reiteración.
+  **No entra al gate.** La primera decisión no fue ciega: el `HANDOFF` leído antes revelaba el
+  resultado de la auditoría previa y la familia generadora, en contra de §13.4. Además Codex es de
+  familia OpenAI y BENCH-01 contempla un candidato OpenAI; el paquete contenía soluciones y D-63
+  prohibía exponerlas a un posible conductor de sesiones. Mientras el binding concreto no se excluya
+  o se resuelva el conflicto, el intento tampoco cumple esa frontera. Por eso no se tocó
+  `w4-audit-report.yaml`, no se recomputó el gate y no se regeneró contenido.
+  **Desacuerdo que exige adjudicación.** D-58 considera las envolturas superficies distintas porque
+  cambian la firma estructural total. La Parte A sostiene que siguen contaminadas cuando encapsulan
+  íntegra la prueba practicada. No se elige una de las dos lecturas por edición silenciosa: se
+  conservan ambas y se adjudica antes de cambiar plantillas. Si el defecto se confirma, se regeneran
+  familias completas con semilla y muestra nuevas; nunca los trece observados a mano.
+  **Recomendaciones de Parte B, todavía no decisiones del propietario:** declarar la no
+  comparabilidad A/B/C y limitar inferencias a comparaciones dentro de conjunto; aplicar el arreglo
+  de `→E` antes del freeze, preservar `cal-09-v1` y producir una versión nueva; no congelar hasta
+  corregir/adjudicar, repetir W3→selección→W4, obtener auditoría realmente ciega de un no candidato y
+  completar la lectura humana por muestra. El orden operativo completo está al inicio de
+  `HANDOFF.md`.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

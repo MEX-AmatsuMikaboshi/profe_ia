@@ -1,5 +1,82 @@
 # HANDOFF — punto de continuación
 
+> ## EMPIEZA AQUÍ — relevo después de las Partes A/B con OpenAI Codex (2026-08-22, tarde)
+>
+> El propietario vuelve a trabajar con Claude. **No continúes desde el bloque de Kimi de §2.9 como
+> si no hubiera pasado nada:** Kimi no pudo completar el encargo por falta de créditos y se intentó
+> sustituirlo con OpenAI Codex. Las dos respuestas quedaron archivadas, pero el intento produjo
+> **diagnóstico accionable, no evidencia conforme para cerrar W4**.
+>
+> ### Qué quedó archivado
+>
+> - Parte A cruda:
+>   `content/unidad-deduccion-natural/audits/w4-second-auditor-part-a-openai-codex-gpt-5.json`.
+> - Parte B cruda:
+>   `content/unidad-deduccion-natural/audits/w4-second-auditor-part-b-openai-codex-gpt-5.md`.
+> - Los **36 certificados re-verifican** con `logic-core`: 36/36 válidos y con meta alcanzada.
+> - La Parte A registró **15 juicios críticos en 14 reactivos**: 13
+>   `reused_or_contaminated_probe` y 2 `corpus_contradiction` en las pistas de KC16. Registró además
+>   una observación sin código: las pistas de `kc03-recup` nunca orientan hacia `R`.
+>
+> ### Por qué NO se aplicó al gate
+>
+> 1. El propietario pidió leer primero este `HANDOFF`. El bloque anterior revela el resultado de la
+>    auditoría previa y la familia generadora, de modo que **la primera decisión no fue ciega** y no
+>    satisface §13.4.
+> 2. El auditor fue OpenAI/Codex, y BENCH-01 contempla un modelo de la familia OpenAI. El paquete
+>    contiene soluciones y §2.9 decía expresamente no entregarlo a un modelo que pueda conducir
+>    sesiones sobre este banco. Hace falta decidir si el binding concreto queda excluido; mientras
+>    no se decida, **no se usa este intento como evidencia de calidad**.
+> 3. Sigue faltando la lectura humana por muestra del paso 19. Ningún modelo la sustituye.
+>
+> Por eso **no se modificó `w4-audit-report.yaml`, no se regeneró el banco y no se congeló nada**.
+> Los archivos se conservan append-only porque el diagnóstico y el desacuerdo no se borran.
+>
+> ### Los dos hallazgos que Claude debe adjudicar antes de cambiar contenido
+>
+> **A. Envolturas y contaminación.** El diseño registrado en D-58 sostiene que añadir una envoltura
+> —meta condicional, disyuntiva o conjuntiva, o premisa dentro de conjunción— crea una superficie no
+> isomorfa. La Parte A objeta algo más fuerte: en 13 pares la sonda contiene **completa** la
+> derivación practicada y añade solo un paso exterior, por lo que la considera contaminada aunque la
+> firma estructural total sea distinta. No arregles los 13 a mano. Primero adjudica el criterio; si
+> se acepta el defecto, la causa común son las plantillas de envoltura y se regeneran las familias
+> completas con nueva muestra y semilla.
+>
+> **B. Pistas de DNE.** En `kc16-diag` y `kc16-transfer_measurement-1`, la pista 2 dirige a `¬E`
+> desde `¬¬A`; el certificado usa `DNE`. El corpus declara `¬E: ¬A, A ⊢ ⊥` y `DNE: ¬¬A ⊢ A`.
+> Esto sí apunta a una causa común concreta en el generador genérico de pistas para negación. Si se
+> corrige, no se parchan solo esos dos textos: se regenera y se vuelve a muestrear conforme a W4.
+>
+> ### Recomendaciones de la Parte B — no decisiones del propietario
+>
+> 1. **No comparabilidad A/B/C:** `declarar`, no forzar sondas artificialmente equivalentes. Limitar
+>    inferencias a cambios dentro de cada conjunto; no comparar magnitudes A/B/C ni publicar un
+>    efecto agregado que suponga equivalencia estructural o psicométrica. La redacción exacta está
+>    en la Parte B.
+> 2. **Hueco de `→E`:** `aplicar` el arreglo antes del freeze, conservar `cal-09-v1` como historia,
+>    producir una calibración versionada nueva y aceptar rehacer W3 → selección A/B/C → W4.
+> 3. **Freeze:** `alcanza: false`. Un crítico ya bloquea y el diagnóstico trae 15; además el intento
+>    no fue ciego ni resolvió el conflicto de candidato.
+>
+> ### Orden exacto para retomar
+>
+> 1. **Adjudicar** si una sonda que encapsula completa la derivación practicada cuenta como
+>    contaminada pese a tener firma total distinta. Documentar el acuerdo o desacuerdo; no borrar la
+>    Parte A.
+> 2. Tomar la decisión del propietario sobre el arreglo de `→E`. Si se acepta, aplicarlo primero,
+>    versionar y re-congelar CAL-09; eso invalida el paquete actual y obliga a rehacer lo posterior.
+> 3. Corregir la causa común de las pistas DNE y, si la adjudicación confirma contaminación,
+>    rediseñar las superficies de medición. Regenerar familias completas, nunca los observados a
+>    mano.
+> 4. Reejecutar W3, `T-H5-12` y W4 en ese orden, con semilla nueva.
+> 5. Obtener una **Parte A realmente ciega** de una familia distinta que no sea candidata de
+>    BENCH-01; solo después entregar la Parte B actualizada.
+> 6. Hacer la lectura humana de los 36 y solo entonces decidir/firma W5.
+>
+> **Estado al relevo:** los dos artefactos Codex están commiteados y subidos en el repositorio de
+> contenido (`c3dc0dd`); este bloque y D-64 registran la interpretación en el monorepo. El contenido
+> se subió primero y el monorepo va después, como exige §8.
+
 > ## EMPIEZA AQUÍ — cierre de la decimocuarta sesión (2026-08-22, madrugada)
 >
 > **Sesión de «haz todo lo que no requiera mi intervención».** Se hizo, y lo que queda son **tres
