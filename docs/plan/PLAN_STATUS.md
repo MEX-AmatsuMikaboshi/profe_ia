@@ -1068,4 +1068,38 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   reactivo» habría visto un solo texto por nivel, «los hechos de dominio están» habría contado 1620
   ausentes, y la comprobación de la regla del KC ve el certificado de `kc03-transf` de entonces —el
   control usa **la misma función** que la comprobación, no una reimplementación—.
+- **D-61 — El segundo hueco del buscador: el arreglo está escrito y medido, y no se aplica porque
+  mueve `cal-09-v1` (2026-08-22).** `→E` solo dispara hacia adelante, cuando el antecedente ya está
+  disponible; uno que hay que **construir** no se alcanza nunca, así que `(A∧B)→C, A, B ⊢ C` no se
+  prueba. Es el mismo patrón que faltaba con `∨E` antes de D-56: un paso que no es introducción
+  dirigida por la meta ni eliminación hacia adelante.
+  **El arreglo, para quien lo aplique:** un paso dirigido por la meta en `prove()`, entre las
+  eliminaciones hacia adelante y el análisis de casos —abre **una** submeta, así que va después de lo
+  que no abre ninguna y antes de lo que abre dos subpruebas—. Por cada fórmula disponible de la forma
+  `X→meta` (y `X↔meta` / `meta↔X`), probar `X` como submeta y cerrar con `→E` / `↔E`. Poda: si `X` ya
+  está disponible, lo cubre el paso de eliminaciones y entrar aquí repetiría trabajo.
+  **Lo que compra, comprobado:** `(A∧B)→C, A, B ⊢ C` (2 líneas, `→E` + `∧I`), `A↔(B∧C), B, C ⊢ A`
+  (2 líneas) y **`(p∧q)→r, p ⊢ q→r`**, que es la plantilla de transferencia de KC18 que hubo que
+  rehacer por indemostrable (4 líneas).
+  **Lo que cuesta, comprobado:** `runCal09Calibration()` deja de reproducir el manifiesto congelado.
+  **Ninguna de las trece pruebas de CAL-09 cambia** —mismas líneas, mismas reglas, mismo
+  `costExplored`—; lo único que se mueve es el **trabajo gastado**: 4→5, 9→11, 10→16, 15→16 y 82→98
+  unidades en cinco casos. Basta: `workUnitsLog2` pesa **47** en el índice, así que su máximo pasa de
+  6,3750394 a 6,6293566, las bandas se desplazan (`baja` hasta 14,004071 → 14,054920; `media` hasta
+  38,571280 → 38,548779) y `comparabilityMaxDifference` va de 12,065296 a 12,110589. El `sampleHash`
+  deja de coincidir.
+  **Por eso no se aplica: re-congelar una calibración es decisión del propietario**, y es la misma
+  familia que la decisión de versión de D-56. Queda **una prueba que fija el estado de hoy**
+  (`search.test.ts`, modo exhaustivo con techo 20 y dos millones de unidades, para que «no lo
+  encuentra» no sea presupuesto, y con control positivo de que **sí** lo encuentra cuando el
+  antecedente está disponible). Cuando se decida, esa prueba se sustituye por la contraria, como pasó
+  con la de KC13 en D-56.
+  **Corrección a D-56, que conviene no arrastrar.** Aquella decisión se apoyó, entre otras cosas, en
+  que «las seis medidas con peso del índice son estructurales… y la única de telemetría tiene peso
+  cero». El manifiesto dice otra cosa: `workUnitsLog2` pesa 47 y `costExplored` pesa 49, y las dos son
+  relativas a la búsqueda. La única con peso cero es `distinctStrategiesFoundWithinBudget`. **La
+  decisión de D-56 no se cae** —su evidencia de verdad era que `runCal09Calibration()` reproducía el
+  manifiesto byte por byte, y lo reproducía porque `∨E` no dispara en ninguno de los trece casos: no
+  hay premisa disyuntiva—. Lo que no se sostiene es el motivo escrito, y con `→E` el mismo argumento
+  habría dado permiso para algo que sí mueve la calibración.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

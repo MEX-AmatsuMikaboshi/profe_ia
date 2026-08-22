@@ -132,9 +132,11 @@ describe('propuesta de masteryDisqualifying (no autoritativa)', () => {
     // registro que llega a `authoritative_mastery_flags` no tiene con qué
     // computarse y la comprobación pasa sin mirar nada. El tipo ya lo exige y
     // eso no basta: los archivos de prueba no se typechequean.
-    const sinHechos = { ...pista() } as Partial<Hint>;
-    delete sinHechos.masteryFacts;
-    expect(() => assertHintSet(conjunto([sinHechos as Hint]), contexto())).toThrow(
+    const completa: Record<string, unknown> = { ...pista() };
+    const sinHechos = Object.fromEntries(
+      Object.entries(completa).filter(([clave]) => clave !== 'masteryFacts'),
+    ) as unknown as Hint;
+    expect(() => assertHintSet(conjunto([sinHechos]), contexto())).toThrow(
       /no trae hechos de dominio/u,
     );
   });
