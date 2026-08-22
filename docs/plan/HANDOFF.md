@@ -66,7 +66,12 @@
 >   un ciclo—, que resolvía en local y rompía en CI. 65 errores en 20 archivos, todos resueltos sin
 >   debilitar una sola prueba.
 > - **La auditoría de W4 ya no lleva la lista de defectos escrita a mano**: la deriva recorriendo los
->   certificados.
+>   certificados, y comprueba antes que la muestra es **de esta corrida de W3** —un informe sobre una
+>   población vieja cuadraría igual, porque el gate divide por el denominador que le den—.
+> - **`FoundProof.rulesUsed` no es la lista de reglas del certificado**, y ahora lo dice el propio
+>   campo: la reiteración se inserta al linealizar, así que preguntar ahí concluye que ningún reactivo
+>   de KC03 usa `R`. **No se corrige** porque `distinctRuleCount` sale de ahí y movería `cal-09-v1`;
+>   va con la decisión 3.
 >
 > ### Lo que se decidió NO hacer, y por qué
 >
