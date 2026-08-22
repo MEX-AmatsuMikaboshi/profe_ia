@@ -924,4 +924,40 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   registra en vez de seguir ajustando la regla, que es lo que convertiría el objetivo en un espejo de
   la medida por la puerta de atrás.
   **CI: corrida `32543149315` sobre `a458933` observada en verde el 2026-08-22, los diez jobs.**
+- **D-58 — Banco de sondas autorado: 389 reactivos y el inventario primario por encima del
+  calendario (2026-08-22).** Corregido lo que decía D-57: **las sondas no dependen de `T-H5-12`**.
+  `ExperimentalSelectionProposal` **asigna** sondas desde un banco existente
+  (`probeInventoryItemIdsBySet`), así que el banco va antes y la selección después. Autorarlo era
+  trabajo desbloqueado.
+  **Diseño: el núcleo del KC en cuatro superficies distintas, una por reserva de medición.** Hay
+  exactamente cuatro porque `collisionProhibited()` **prohíbe la colisión entre dos reservas de
+  medición distintas**: dos sondas de reservas distintas no pueden ser isomorfas. Las envolturas
+  añaden un paso de prueba cada una —premisa dentro de una conjunción, meta condicional, meta
+  disyuntiva, meta conjuntiva— y no son el reactivo de enseñanza renombrado, que es justo lo que
+  §7.8 dice que **no** crea forma nueva.
+  **Dentro de una misma reserva sí se admiten formas paralelas**, y se usan: ocho por reserva
+  primaria. No es inflar el conteo — §7.7 solo prohíbe la colisión **entre** reservas, y una serie
+  SCED mide el mismo KC muchas veces sin poder reutilizar material. Lo que no se repite son las
+  ternas de átomos: hay guarda que aborta si se piden más variantes que ternas, porque dos sondas con
+  los mismos átomos y la misma estructura serían el mismo reactivo con otro id y el conteo por id no
+  lo distinguiría.
+  **Resultado: 389 aceptados de 468.** Sondas primarias **224, por encima de las 207** que exigen los
+  tres conjuntos con la reserva del 20 %; 34 de retención y 34 de transferencia de medición. Los 79
+  rechazos son 63 desajustes de complejidad —**ahora en las dos direcciones**, 30 arriba y 21 abajo,
+  lo que confirma D-57: la regla no está sesgada, es imprecisa, y no se siguió tocando— y 24
+  duplicados triviales.
+  **Los duplicados destaparon algo que no se veía: envolver el núcleo de un KC puede producir la
+  estructura de otro.** `kc05-probes_intervention-1` salió duplicado trivial de `kc03-transf`, porque
+  envolver el núcleo de KC05 en un condicional da exactamente la forma de transferencia de KC03. El
+  control lo rechazó; conviene saberlo al diseñar más envolturas.
+  **Dos guardas propias dispararon y se agradecen:** el envoltorio de premisa generaba fórmulas sin
+  paréntesis y el cálculo las rechazó con `E-SYN-PRECEDENCE` —60 reactivos, arreglado— y la guarda de
+  riesgo declarado abortó W4 al no tener riesgo para las reservas nuevas, en vez de suponerlo.
+  **Las cuatro reservas de medición se declaran de riesgo alto**, con su motivo: una sonda consumida
+  no vuelve al banco (§7.7) y el libro de códigos ya trata `reused_or_contaminated_probe` como
+  crítico. La política incluye todo el alto riesgo, así que la muestra vuelve a ser censo: **389 de
+  389 en 159 estratos**, 309 de ellos de riesgo alto.
+  **Auditoría re-corrida sobre los 389: sigue habiendo un solo defecto** (`kc03-transf`,
+  `incorrect_kc_label`), ahora 0,26 % de mayores. Las 292 sondas nuevas **sí** ejercitan la regla de
+  su KC —la envoltura conserva el núcleo—, comprobado recorriendo los 389 certificados.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

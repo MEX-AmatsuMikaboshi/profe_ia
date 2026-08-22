@@ -29,11 +29,10 @@
 > 1. **El segundo hueco del buscador sigue abierto**: `→E` no encadena hacia atrás sintetizando un
 >    antecedente compuesto, así que `(A∧B)→C, A, B ⊢ C` no se prueba. Mismo patrón que `∨E`, y ahora
 >    hay un sitio evidente donde va. **Menos urgente**: no bloquea ningún KC.
-> 2. **Completar el banco, y son más sondas de las que decía este documento (D-57).** No son «57–69»:
->    esas son **por conjunto**, así que el total real es **171 por calendario y 207 con reserva**.
->    Cada una debe ser no isomorfa a los 97 reactivos de enseñanza, y **su asignación a conjunto
->    depende de `T-H5-12`, que no se ha corrido**: autorarlas antes sería construir sobre una decisión
->    que no está tomada. Quedan además **11 desajustes de complejidad** que se rechazan y se cuentan
+> 2. **El banco de sondas ya está (D-58): 389 reactivos, 224 sondas primarias contra las 207 que
+>    exigen los tres conjuntos con reserva.** Corregido lo que decía D-57: las sondas **no** dependían
+>    de `T-H5-12` —la propuesta de conjuntos las **asigna** desde un banco existente—, así que se
+>    autoraron. Quedan además **11 desajustes de complejidad** que se rechazan y se cuentan
 >    —3 KC bajo el piso de actividades, 2 bajo recuperación, 1 bajo transferencia—; **no se siguieron
 >    retocando a propósito**, porque toda ↔I lleva dos subpruebas y ninguna regla estructural simple
 >    la va a predecir. Ver D-57.

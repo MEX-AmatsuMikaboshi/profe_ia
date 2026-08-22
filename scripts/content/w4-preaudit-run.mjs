@@ -66,6 +66,28 @@ const RIESGO = {
     'medium',
     'Es la salida del alumno que ya falló: un defecto aquí lo deja sin vía de recuperación real.',
   ],
+  // Las cuatro reservas de medición van en alto, y no por prudencia genérica: un
+  // defecto en una sonda no se corrige repitiendo la medida, porque §7.7 hace
+  // disjuntas las reservas de medición y una sonda consumida no vuelve al banco.
+  // El libro de códigos lo dice a su manera: `reused_or_contaminated_probe` es
+  // **crítico**. La política incluye todo el alto riesgo, así que esto agranda la
+  // muestra a propósito.
+  probes_baseline: [
+    'high',
+    'Es la línea base contra la que se compara todo lo demás: un defecto aquí desplaza la comparación entera de la serie SCED, y no se puede rehacer sin gastar material que ya no vuelve al banco.',
+  ],
+  probes_intervention: [
+    'high',
+    'Mide el efecto durante la intervención. Un defecto se confunde con el efecto que se quiere medir, que es el modo de fallo más difícil de detectar después.',
+  ],
+  retention: [
+    'high',
+    'Hay un único intervalo primario de retención por conjunto (§5.5): si su sonda falla, no hay segunda oportunidad de medir retención.',
+  ],
+  TRANSFER_MEASUREMENT: [
+    'high',
+    '§5.11 la separa expresamente de TRANSFER_MASTERY: un defecto aquí hace afirmar transferencia sobre material contaminado por la práctica.',
+  ],
   guided_practice: [
     'low',
     'Va con ayuda disponible y el error es recuperable en el mismo paso.',

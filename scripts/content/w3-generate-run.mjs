@@ -167,7 +167,72 @@ const CARPETA = {
   recovery: 'recovery',
   TRANSFER_MASTERY: 'transfer',
   replacement: 'replacement',
+  probes_baseline: 'probes-baseline',
+  probes_intervention: 'probes-intervention',
+  retention: 'retention',
+  TRANSFER_MEASUREMENT: 'transfer',
 };
+
+/**
+ * Envolturas de las sondas: el **núcleo del KC embebido en cuatro superficies
+ * distintas**. No son el reactivo de enseñanza con otros nombres —renombrar
+ * átomos no crea forma nueva (§7.8)— sino el mismo KC alcanzado por una ruta de
+ * prueba distinta, que es lo que §5.11 pide para medir sin reutilizar.
+ *
+ * Hay exactamente cuatro porque hay cuatro reservas de medición y
+ * `collisionProhibited()` **prohíbe la colisión entre dos reservas de medición
+ * distintas**: dos sondas de reservas distintas no pueden ser isomorfas. Dentro
+ * de una misma reserva sí pueden serlo —son una familia, formas paralelas del
+ * mismo problema, que es justo lo que una serie SCED necesita para medir varias
+ * veces sin gastar material nuevo cada vez—.
+ */
+const ENVOLTURAS = {
+  // Añade una eliminación por delante: la premisa llega dentro de una conjunción.
+  conj_premisa: (premises, goal, w) => [[`(${premises[0]})∧${w}`, ...premises.slice(1)], goal],
+  // Añade una subprueba: la meta pasa a ser condicional.
+  cond_meta: (premises, goal, w) => [premises, `${w}→(${goal})`],
+  // Añade una introducción de disyunción sobre la meta.
+  disy_meta: (premises, goal, w) => [premises, `(${goal})∨${w}`],
+  // Añade una introducción de conjunción: hay que conservar además una premisa.
+  conj_meta: (premises, goal) => [premises, `(${goal})∧(${premises[0]})`],
+};
+
+/**
+ * Reserva de medición ← envoltura, y cuántas variantes de átomos por reserva.
+ * Las primarias (`probes_baseline` y `probes_intervention`) llevan seis cada
+ * una porque el calendario nominal pide 57 por conjunto y con reserva 69: con
+ * 18 KC salen 216 primarias, por encima de las 207 de los tres conjuntos.
+ */
+const SONDAS = [
+  { reserva: 'probes_baseline', envoltura: 'conj_premisa', variantes: 8 },
+  { reserva: 'probes_intervention', envoltura: 'cond_meta', variantes: 8 },
+  { reserva: 'retention', envoltura: 'disy_meta', variantes: 2 },
+  { reserva: 'TRANSFER_MEASUREMENT', envoltura: 'conj_meta', variantes: 2 },
+];
+
+/** Ternas de átomos para las variantes de sonda, más la letra de la envoltura. */
+const ATOMOS_SONDA = [
+  [['A', 'B', 'C'], 'W'],
+  [['D', 'E', 'F'], 'Y'],
+  [['G', 'H', 'J'], 'Z'],
+  [['K', 'L', 'M'], 'W'],
+  [['N', 'O', 'S'], 'Y'],
+  [['T', 'U', 'V'], 'Z'],
+  [['P', 'Q', 'R'], 'W'],
+  [['B', 'C', 'D'], 'Y'],
+  [['E', 'F', 'G'], 'Z'],
+];
+
+/**
+ * Ocho formas paralelas por reserva primaria, no una sola. Dentro de **una
+ * misma** reserva la colisión no está prohibida (§7.7: solo lo está entre
+ * reservas distintas cuando una es de medición), y una serie SCED mide el mismo
+ * KC muchas veces: formas paralelas del mismo problema es exactamente lo que
+ * hace falta para no reutilizar material entre oportunidades. Lo que **no** se
+ * repite son las ternas de átomos: dos sondas con los mismos átomos y la misma
+ * estructura serían el mismo reactivo con otro id, y eso el conteo por id no lo
+ * distinguiría.
+ */
 
 function sustituir(formula, [p, q, r]) {
   return formula.split('p').join(p).split('q').join(q).split('r').join(r);
@@ -304,20 +369,15 @@ async function main() {
       );
     }
 
-    for (const variante of VARIANTES) {
-      const [premisasPlantilla, metaPlantilla, objetivo] = plantilla[variante.forma];
-      const candidateId = `${kcId.toLowerCase()}-${variante.sufijo}`;
-      const premises = premisasPlantilla.map((p) => sustituir(p, variante.atomos));
-      const goal = sustituir(metaPlantilla, variante.atomos);
-
+    const agregar = ({ candidateId, templateId, premises, goal, reserva, repone, objetivo }) => {
       candidates.push({
         candidateId,
-        generatorTemplateId: `plt-${kcId.toLowerCase()}-${variante.forma}`,
+        generatorTemplateId: templateId,
         statement: { premises, goal },
         promptText: `Deriva ${goal} a partir de ${premises.join(', ')} usando solo las reglas del cálculo autorizado.`,
         targetKcs: [kcId],
-        bankFunction: variante.reserva,
-        ...(variante.repone === undefined ? {} : { replacesReserve: variante.repone }),
+        bankFunction: reserva,
+        ...(repone === undefined ? {} : { replacesReserve: repone }),
         targetComplexity: objetivo,
         prohibitions: [
           'no se admite ninguna regla fuera de la whitelist del cálculo autorizado',
@@ -384,6 +444,49 @@ async function main() {
         ],
         verdict: 'approve',
       });
+    };
+
+    for (const variante of VARIANTES) {
+      const [premisasPlantilla, metaPlantilla, objetivo] = plantilla[variante.forma];
+      agregar({
+        candidateId: `${kcId.toLowerCase()}-${variante.sufijo}`,
+        templateId: `plt-${kcId.toLowerCase()}-${variante.forma}`,
+        premises: premisasPlantilla.map((p) => sustituir(p, variante.atomos)),
+        goal: sustituir(metaPlantilla, variante.atomos),
+        reserva: variante.reserva,
+        repone: variante.repone,
+        objetivo,
+      });
+    }
+
+    // Sondas: el núcleo del KC en cuatro superficies distintas, una por reserva
+    // de medición. La complejidad objetivo **sube un escalón** respecto de la
+    // forma base porque cada envoltura añade pasos: declararla igual sería
+    // declarar como equivalente algo que se sabe más largo.
+    const [premisasNucleo, metaNucleo, objetivoNucleo] = plantilla.base;
+    const SUBE = { baja: 'media', media: 'alta', alta: 'alta' };
+    for (const sonda of SONDAS) {
+      if (sonda.variantes > ATOMOS_SONDA.length) {
+        throw new Error(
+          `${sonda.reserva} pide ${sonda.variantes} variantes y solo hay ${ATOMOS_SONDA.length} ` +
+            `ternas de átomos: la repetición produciría el mismo reactivo con otro id, y el ` +
+            `conteo por id no lo distinguiría.`,
+        );
+      }
+      for (let i = 0; i < sonda.variantes; i += 1) {
+        const [atomos, w] = ATOMOS_SONDA[i];
+        const nucleoPremisas = premisasNucleo.map((x) => sustituir(x, atomos));
+        const nucleoMeta = sustituir(metaNucleo, atomos);
+        const [premises, goal] = ENVOLTURAS[sonda.envoltura](nucleoPremisas, nucleoMeta, w);
+        agregar({
+          candidateId: `${kcId.toLowerCase()}-${sonda.reserva.toLowerCase()}-${i + 1}`,
+          templateId: `plt-${kcId.toLowerCase()}-sonda-${sonda.envoltura}`,
+          premises,
+          goal,
+          reserva: sonda.reserva,
+          objetivo: SUBE[objetivoNucleo],
+        });
+      }
     }
   }
   console.log(`  ${candidates.length} candidatos, ${hintSets.length} conjuntos de pistas, ${critiques.length} críticas`);
