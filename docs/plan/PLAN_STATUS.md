@@ -890,4 +890,7 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   del mismo caso inválido) y **W3 re-ejecutado**. La guarda de artefactos de W3 fijaba que KC13
   estaba a cero: esa afirmación caducó con el arreglo y **se sustituyó por la contraria**, que es la
   que ahora hay que defender.
+  **CI: corrida `32541960670` sobre `f39e4ef` observada en verde el 2026-08-22, los diez jobs**,
+  incluidos `ci:logic:mutation` y el conjunto dorado — que es lo que confirma que tocar el
+  buscador no movió al verificador ni al cálculo congelado.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

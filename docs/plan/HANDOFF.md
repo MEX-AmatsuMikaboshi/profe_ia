@@ -38,6 +38,9 @@
 > 4. Pendiente del propietario: la auditoría de lo que redactó el asistente (extracción de W2,
 >    objetivos de Rol B, plantillas y pistas de W3) antes del freeze de W5.
 >
+> **CI observado: la corrida `32541960670` sobre `f39e4ef` salió verde, los diez jobs**, incluidos
+> `ci:logic:mutation` y el conjunto dorado. No queda ninguna corrida sin observar.
+>
 > **Pruebas al cerrar: 1788 en verde** (1657 unitarias + 131 contra PostgreSQL 17 real).
 
 > ## Cierre de la undécima sesión (2026-08-22) — **superado por el de arriba**
