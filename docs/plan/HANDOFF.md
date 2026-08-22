@@ -107,8 +107,9 @@
 >   pruebas encuentra en producción**, y está arreglado en el commit siguiente, con guarda propia.
 > - **`32557212031` sobre `a335c43` (el arreglo): verde, los diez jobs**, incluidos `ci:logic:mutation`
 >   y el conjunto dorado. Con eso **D-61 y D-62 quedan `VERIFICADAS`**.
-> - **`32557616817` sobre `331c589` (documentación): verde, los diez jobs.** **No queda ninguna
->   corrida sin observar.**
+> - **`32557616817` sobre `331c589` y `32557987058` sobre `4a5f561` (documentación): verdes, los diez
+>   jobs cada una.** La única posterior es la de este mismo commit de cierre, y solo toca este
+>   archivo.
 
 > ## Cierre de la decimotercera sesión (2026-08-22, noche) — **superado por el de arriba**
 >
