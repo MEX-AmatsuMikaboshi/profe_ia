@@ -8,9 +8,14 @@ import { describe, expect, it } from 'vitest';
 
 import {
   KC_CATALOG,
+  premiseEntryRule,
+  probeRuleClosureViolations,
+  probesExemptFromRuleClosure,
   W3_REJECTION_CODES,
   type KcId,
   type PrivateSolution,
+  type ProbeRuleClosureInput,
+  type Reserve,
   type W3ItemRecord,
 } from '../src/index.js';
 
@@ -274,5 +279,137 @@ describe('banco publicado en items/ (T-H5-05)', () => {
     }
     expect(contadas).toBeGreaterThan(0);
     expect(discrepancias).toEqual([]);
+  });
+});
+
+/**
+ * Sondas del banco con las reglas que sus certificados usan **de verdad**.
+ *
+ * La secuencia de enseñanza se lee del artefacto de Rol B en vez de escribirse
+ * aquí: es el orden congelado contra el que hay que comprobar, y copiarlo
+ * dejaría la prueba pasando cuando la secuencia cambiara.
+ */
+const secuencia = leerJsonConCabecera<{ readonly teachingSequence: readonly KcId[] }>(
+  'objectives/objectives.yaml',
+).teachingSequence;
+
+const sondasDelBanco: readonly ProbeRuleClosureInput[] = publicados.map((item) => ({
+  itemId: item.candidateId,
+  reserve: item.bankFunction as Reserve,
+  targetKcId: item.targetKcs[0] as KcId,
+  ruleIdsInCertificate: (certificadosPorId.get(item.candidateId) ?? []).map((l) => l.rule),
+}));
+
+describe('clausura de reglas del banco publicado (D-65, G1)', () => {
+  it('FIJA EL DEFECTO DE HOY: 70 sondas exigen una regla que su fase no ha enseñado', () => {
+    // Esta prueba nace afirmando lo que hay que arreglar, no lo que se quiere.
+    // Es el mismo movimiento que la de KC13: fija el estado defectuoso para que
+    // no se olvide, y **se sustituye por la contraria** —`toEqual([])`— cuando
+    // se regenere el banco con plantillas que no importen reglas ajenas.
+    //
+    // La causa es común y está en las plantillas de sonda, no en los reactivos:
+    // `sonda-cond_meta` envuelve la meta en un condicional y con ello mete `→I`
+    // (KC09); `sonda-conj_premisa` entierra una premisa en una conjunción y mete
+    // `∧E` (KC05); `sonda-disy_meta` mete `∨I` (KC07). Por eso no se parchean
+    // los setenta a mano.
+    const violaciones = probeRuleClosureViolations(sondasDelBanco, secuencia);
+    const afectadas = new Set(violaciones.map((v) => v.itemId));
+    expect(afectadas.size).toBe(70);
+
+    // Y lo que la guarda deja fuera queda contado: las sondas de los tres KC de
+    // fundamento, que no enseñan regla. Un recorte sin contar se lee como
+    // cobertura completa.
+    expect(probesExemptFromRuleClosure(sondasDelBanco)).toHaveLength(128);
+
+    // Y sale de las dos reservas que se administran antes de haber enseñado la
+    // secuencia entera. `retention` y `TRANSFER_MEASUREMENT` no tienen techo.
+    const porReserva: Record<string, number> = {};
+    for (const itemId of afectadas) {
+      const reserva = publicados.find((i) => i.candidateId === itemId)?.bankFunction ?? '?';
+      porReserva[reserva] = (porReserva[reserva] ?? 0) + 1;
+    }
+    expect(porReserva).toEqual({ probes_baseline: 14, probes_intervention: 56 });
+  });
+
+  it('la comprobación no pasa por vacío: mira sondas de verdad y todas las reservas', () => {
+    // Sin esto, un banco sin sondas —o un `bankFunction` que dejara de casar con
+    // `Reserve`— daría cero violaciones y parecería un banco sano.
+    const deMedicion = sondasDelBanco.filter((s) =>
+      ['probes_baseline', 'probes_intervention', 'retention', 'TRANSFER_MEASUREMENT'].includes(
+        s.reserve,
+      ),
+    );
+    expect(deMedicion.length).toBe(474);
+    expect(deMedicion.every((s) => s.ruleIdsInCertificate.length > 0)).toBe(true);
+  });
+});
+
+describe('regla de entrada nombrada por las pistas (D-65, G4 parcial)', () => {
+  /**
+   * Reactivos cuya pista de nivel 2 manda a una regla que no abre ninguna de sus
+   * premisas.
+   *
+   * Se deriva con `premiseEntryRule()` —el mismo código que el generador usa
+   * desde D-65— en vez de buscar la cadena `¬E` a pelo: una comprobación que
+   * reimplementa el criterio no prueba que el criterio sea el que se aplica.
+   */
+  function pistasQueMandanAReglaAjena(
+    items: readonly ReactivoPublicado[],
+  ): readonly { readonly candidateId: string; readonly nombra: string; readonly deberia: string }[] {
+    const malas: { candidateId: string; nombra: string; deberia: string }[] = [];
+    for (const item of items) {
+      const entradas = new Set(
+        item.statement.premises
+          .map((p) => premiseEntryRule(parse(p)))
+          .filter((r): r is NonNullable<typeof r> => r !== null),
+      );
+      if (entradas.size === 0) continue;
+      const texto = item.hints.find((h) => h.level === 2)?.text ?? '';
+      // Reglas que el texto nombra como salida de una premisa.
+      // Ninguno de los seis nombres lleva metacaracteres, así que van literales.
+      const nombradas = ['∧E', '∨E', '→E', '↔E', '¬E', 'DNE'].filter((r) =>
+        new RegExp(`elimina[n]? (?:es|son)[^.]*${r}`).test(texto),
+      );
+      for (const regla of nombradas) {
+        if (!entradas.has(regla as never)) {
+          malas.push({ candidateId: item.candidateId, nombra: regla, deberia: [...entradas].join('/') });
+        }
+      }
+    }
+    return malas;
+  }
+
+  it('FIJA EL DEFECTO DE HOY: 10 reactivos de KC16 mandan a ¬E donde va DNE', () => {
+    // `¬E` es «φ, ¬φ ⊢ ⊥» y no saca `A` de `¬¬A`. La pista enseñaba una
+    // aplicación falsa de la regla. La causa era una tabla que asignaba a la
+    // negación una sola regla de eliminación, sin mirar si era simple o doble;
+    // está corregida en `premiseEntryRule()` y en el generador, y **el banco no
+    // se ha regenerado**: por eso esto sigue en 10.
+    //
+    // Se sustituye por `toEqual([])` cuando se regenere.
+    const malas = pistasQueMandanAReglaAjena(publicados);
+    expect(malas.map((m) => m.candidateId).sort()).toEqual([
+      'kc16-diag',
+      'kc16-guia',
+      'kc16-indep',
+      'kc16-recup',
+      'kc16-repos',
+      'kc16-retention-1',
+      'kc16-retention-2',
+      'kc16-transf',
+      'kc16-transfer_measurement-1',
+      'kc16-transfer_measurement-2',
+    ]);
+    expect(new Set(malas.map((m) => m.nombra))).toEqual(new Set(['¬E']));
+    expect(new Set(malas.map((m) => m.deberia))).toEqual(new Set(['DNE']));
+  });
+
+  it('esa comprobación no pasa por vacío: mira las pistas de todo el banco', () => {
+    const conPremisaAbrible = publicados.filter((i) =>
+      i.statement.premises.some((p) => premiseEntryRule(parse(p)) !== null),
+    );
+    expect(conPremisaAbrible.length).toBeGreaterThan(100);
+    // Y el resto del banco —el que no es KC16— sí nombra la regla correcta.
+    expect(pistasQueMandanAReglaAjena(conPremisaAbrible.filter((i) => !i.targetKcs.includes('KC16')))).toEqual([]);
   });
 });

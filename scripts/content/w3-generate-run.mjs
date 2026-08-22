@@ -39,6 +39,7 @@ import {
   COVERAGE_PARAMETERS,
   criticIndependence,
   perKcCoverageGaps,
+  premiseEntryRule,
   runW3Generation,
 } from '../../packages/authoring-core/dist/index.js';
 import { tryParse } from '../../packages/logic-core/dist/index.js';
@@ -282,7 +283,10 @@ const FORMAS = {
   or: { nombre: 'una disyunción', el: 'la disyunción', de: 'de la disyunción', simbolo: '∨', intro: '∨I', elim: '∨E' },
   implies: { nombre: 'un condicional', el: 'el condicional', de: 'del condicional', simbolo: '→', intro: '→I', elim: '→E' },
   iff: { nombre: 'un bicondicional', el: 'el bicondicional', de: 'del bicondicional', simbolo: '↔', intro: '↔I', elim: '↔E' },
-  not: { nombre: 'una negación', el: 'la negación', de: 'de la negación', simbolo: '¬', intro: '¬I', elim: '¬E' },
+  // Sin `elim`: la regla que abre una negación depende de si es simple o doble
+  // (`¬E` frente a `DNE`), y la responde `premiseEntryRule()`. Tabular una sola
+  // aquí es exactamente el defecto de D-65.
+  not: { nombre: 'una negación', el: 'la negación', de: 'de la negación', simbolo: '¬', intro: '¬I', elim: null },
   // `⊥` **no es un conectivo**: es el átomo distinguido del cálculo. Por eso no
   // tiene símbolo que citar entre paréntesis ni entra en la lista de conectivos
   // a repasar, y por eso el nivel 2 lo trata en una rama propia en vez de decir
@@ -354,20 +358,31 @@ function textoNivel2(premises, goal) {
       `El conectivo principal de la meta es ${conSimbolo(meta.kind)}, y la regla que lo ` +
       `introduce es ${FORMAS[meta.kind].intro}`;
   }
-  const principales = [...new Set(premises.map((p) => analizar(p).kind))].filter(
-    (k) => FORMAS[k].elim !== null,
-  );
+  // La regla de entrada se pregunta por la **forma** de cada premisa, no por su
+  // conectivo principal: `¬A` se ataca con `¬E` y `¬¬A` con `DNE`, y tabular la
+  // negación con una sola regla mandaba al alumno a `¬E` desde `¬¬A`, donde no
+  // aplica (D-65). Vive en `authoring-core` para poder probarse.
+  const entradas = [];
+  for (const p of premises) {
+    const formula = analizar(p);
+    const regla = premiseEntryRule(formula);
+    if (regla === null) continue;
+    if (!entradas.some((e) => e.kind === formula.kind && e.rule === regla)) {
+      entradas.push({ kind: formula.kind, rule: regla });
+    }
+  }
   let partePremisas;
-  if (principales.length === 0) {
+  if (entradas.length === 0) {
     partePremisas = 'Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas';
-  } else if (principales.length === 1) {
+  } else if (entradas.length === 1) {
     partePremisas =
-      `En las premisas el conectivo principal es ${conSimbolo(principales[0])}, y la regla que lo ` +
-      `elimina es ${FORMAS[principales[0]].elim}`;
+      `En las premisas el conectivo principal es ${conSimbolo(entradas[0].kind)}, y la regla que ` +
+      `lo elimina es ${entradas[0].rule}`;
   } else {
+    const conectivos = [...new Set(entradas.map((e) => e.kind))];
     partePremisas =
-      `En las premisas los conectivos principales son ${enumerar(principales.map((k) => conSimbolo(k)))}, ` +
-      `y las reglas que los eliminan son ${enumerar(principales.map((k) => FORMAS[k].elim))}`;
+      `En las premisas los conectivos principales son ${enumerar(conectivos.map((k) => conSimbolo(k)))}, ` +
+      `y las reglas que los eliminan son ${enumerar(entradas.map((e) => e.rule))}`;
   }
   return `${parteMeta}. ${partePremisas}. Empieza por esas entradas del texto.`;
 }

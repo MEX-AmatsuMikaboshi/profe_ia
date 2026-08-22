@@ -1,6 +1,83 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — relevo después de las Partes A/B con OpenAI Codex (2026-08-22, tarde)
+> ## EMPIEZA AQUÍ — G1 y el arreglo de las pistas de DNE (2026-08-22, tarde)
+>
+> Se auditó el intento de Codex contra los artefactos y se aplicó **el tramo de corrección que no
+> depende de ninguna decisión pendiente**. El detalle completo está en **D-65** de `PLAN_STATUS.md`.
+> **No se regeneró contenido**: el banco sigue siendo el de la corrida del 2026-08-22.
+>
+> ### Lo que quedó comprobado del intento Codex
+>
+> - Las **trece** descripciones de contaminación de la Parte A son **exactas** línea por línea contra
+>   los certificados. Codex leyó bien, incluso las subpruebas anidadas.
+> - Los **36 certificados re-verifican**: 36/36 válidos y con meta alcanzada, comprobado otra vez.
+> - Pero la Parte A tiene un **falso negativo bajo su propio criterio**: `kc15-probes_baseline-11` es
+>   la misma forma «premisa enterrada + `∧E` + regla practicada» que sí marcó en kc10, kc12 y kc17.
+>   Marcó 3 de las 4 instancias. **Es diagnóstico, no censo.** No lo trates como cobertura.
+>
+> ### Una lectura intermedia que resultó falsa, y por qué importa
+>
+> Al medir el banco salen **96 firmas estructurales para 571 reactivos**: los cinco de enseñanza de
+> cada KC comparten firma, y los catorce de cada grupo KC×reserva también. Parece un hallazgo enorme
+> y **no lo es**: P-I §7.8 define familia justamente así y dice que renombrar átomos no crea familia
+> nueva; `collisionProhibited()` documenta que dentro de una reserva la colisión **no** está
+> prohibida —prohibirla dejaría toda familia en un miembro— y que entre dos reservas de enseñanza
+> tampoco, porque guiada y después independiente sobre la misma estructura es andamiaje.
+>
+> **Consecuencia: el desacuerdo de D-64 sigue abierto exactamente como estaba.** Es sonda contra
+> reactivo de **enseñanza**, donde la colisión sí está prohibida, y ahí las firmas son todas distintas
+> (0 compartidas). No hay atajo: sigue haciendo falta adjudicarlo.
+>
+> ### Lo que se construyó
+>
+> **G1 — clausura de reglas** (`packages/authoring-core/src/probe-rule-closure.ts`). Una sonda no
+> puede exigir la regla de un KC **posterior** al que mide en la `teachingSequence` congelada. La
+> regla del KC medido **sí** entra, también en línea base: que el alumno no la haya recibido es lo que
+> la línea base mide.
+>
+> - **70 sondas incumplen**: 14 de `probes_baseline`, 56 de `probes_intervention`. Causa común en las
+>   plantillas —`cond_meta` importa `→I` (KC09), `conj_premisa` importa `∧E` (KC05), `disy_meta`
+>   importa `∨I` (KC07)—. **No se parchean a mano**: caen con la regeneración.
+> - **128 sondas quedan sin juzgar y contadas**, las de los tres KC de fundamento, que no enseñan
+>   regla. Se devuelven por `probesExemptFromRuleClosure()`, no se descartan en silencio.
+> - Lee **las líneas del certificado**, no `FoundProof.rulesUsed`, que no registra la reiteración.
+>
+> **Arreglo de la regla de entrada de las pistas** (`premiseEntryRule()` en `hints.ts`). `¬E` es
+> «φ, ¬φ ⊢ ⊥» y no saca `A` de `¬¬A`; eso es `DNE`. La distinción es de **forma** de la premisa, no de
+> conectivo —`¬A` sí se ataca con `¬E`—, así que `FORMAS.not.elim` queda en `null` para que nadie
+> reintroduzca la tabla. **Alcance real 10 reactivos de KC16 en 7 reservas**, no los 2 de la muestra.
+> El generador está arreglado; **el banco no**, y hay prueba que fija los 10.
+>
+> Las dos comprobaciones **nacen afirmando el defecto** —fijan 70 y 10— y se sustituyen por la
+> contraria al regenerar, como la de KC13. Sus controles positivos ejercitan el mismo código que la
+> comprobación.
+>
+> ### Lo que sigue, en orden
+>
+> 1. **Decisión del propietario:** aplicar el arreglo de `→E` y re-congelar como `cal-09-v2`. La
+>    recomendación es **sí y ahora**: el banco se va a regenerar de todos modos, así que el coste que
+>    hacía cara esta decisión ya está comprometido y el marginal es casi cero.
+> 2. **Decisión del propietario:** si el renombrado de átomos crea reactivo nuevo a efectos de §7.7.
+>    De ahí salen los umbrales de G2 (variedad de formas) y G3 (anticontaminación). Propuesto llevarla
+>    a `blocked-by-spec.md`; **no se ha hecho**, esperaba la decisión.
+> 3. Escribir G2, G3 y el resto de G4 **antes** de regenerar, viéndolas fallar sobre el banco actual.
+> 4. Rediseñar las plantillas: variar el **núcleo** —estructura de los operandos, multiplicidad de la
+>    regla objetivo, dirección— en vez de envolverlo. Ninguno de esos ejes importa una regla ajena,
+>    así que resuelve G1 y G3 a la vez. Aviso: operandos compuestos mueven `complexityIndex`, otra
+>    razón para hacerlo en la misma pasada que `cal-09-v2`.
+> 5. Reejecutar W3 → paso 5 de W2 (A/B/C) → `T-H5-12` → W4, con semilla nueva.
+> 6. Parte A **realmente ciega** de familia que no sea candidata de BENCH-01, y después la lectura
+>    humana por muestra del paso 19, que ningún modelo sustituye.
+>
+> ### Verificación
+>
+> **1687 pruebas unitarias en verde** (1665 antes, +22) más las **131 contra PostgreSQL 17 real**.
+> Lint, typecheck, build, depcruise con sus dos controles positivos, separación de modos, sesión seca,
+> adversarial, conjunto dorado —regenerado con diff vacío—, PBT, pureza del verificador, pasarela,
+> grants, SBOM, drift y las 159 de hardening: todo verde en local. **CI: sin observar todavía.**
+
+
+> ## Relevo después de las Partes A/B con OpenAI Codex (2026-08-22, tarde) — **superado por el de arriba**
 >
 > El propietario vuelve a trabajar con Claude. **No continúes desde el bloque de Kimi de §2.9 como
 > si no hubiera pasado nada:** Kimi no pudo completar el encargo por falta de créditos y se intentó
@@ -77,7 +154,7 @@
 > contenido (`c3dc0dd`); este bloque y D-64 registran la interpretación en el monorepo. El contenido
 > se subió primero y el monorepo va después, como exige §8.
 
-> ## EMPIEZA AQUÍ — cierre de la decimocuarta sesión (2026-08-22, madrugada)
+> ## Cierre de la decimocuarta sesión (2026-08-22, madrugada) — **superado por el de arriba**
 >
 > **Sesión de «haz todo lo que no requiera mi intervención».** Se hizo, y lo que queda son **tres
 > decisiones del propietario**, ninguna de código. Las dos de la sesión anterior siguen en pie con

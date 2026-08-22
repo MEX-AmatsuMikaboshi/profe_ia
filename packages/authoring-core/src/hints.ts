@@ -1,5 +1,5 @@
 import type { MasteryHintFacts } from '@profesor-ia/domain-engine';
-import { isBinary, parse, print, type Formula } from '@profesor-ia/logic-core';
+import { isBinary, parse, print, type Formula, type RuleId } from '@profesor-ia/logic-core';
 import { areIsomorphic, type CanonicalProof } from '@profesor-ia/isomorphism-canonicalizer';
 import { HintPolicyError, MasteryFlagNotAuthoritativeError } from './errors.js';
 
@@ -236,4 +236,42 @@ export function authoritativeMasteryDisqualifying(hint: Hint): never {
       `El valor lo recalcula la política determinista de dominio (T-H6-03) y el linter de paquete ` +
       `rechaza la discrepancia (T-H5-13).`,
   );
+}
+
+/**
+ * Regla que abre una premisa: la que el nivel 2 puede nombrar como entrada
+ * cuando dice «la regla que lo elimina es …» (D-65 ← P-I §8.6).
+ *
+ * **Existe por un defecto concreto.** El generador de pistas tabulaba la regla
+ * de eliminación por el **conectivo principal** de la premisa, y para la
+ * negación devolvía siempre `¬E`. Pero `¬E` es «φ, ¬φ ⊢ ⊥»: consume una fórmula
+ * y su negación para producir `⊥`, y **no saca `A` de `¬¬A`». La regla que quita
+ * la doble negación es `DNE`, «¬¬A ⊢ A». Con premisa `¬¬A` la pista mandaba al
+ * alumno a una regla que ahí no aplica —el hallazgo de KC16, diez reactivos en
+ * siete reservas—.
+ *
+ * La distinción es de **forma de la premisa**, no de conectivo: `¬A` sí se ataca
+ * con `¬E`. Por eso no basta corregir la tabla.
+ *
+ * Devuelve `null` cuando no hay nada que eliminar: un átomo o `⊥` no tienen
+ * conectivo principal que abrir.
+ */
+export function premiseEntryRule(premise: Formula): RuleId | null {
+  switch (premise.kind) {
+    case 'and':
+      return '∧E';
+    case 'or':
+      return '∨E';
+    case 'implies':
+      return '→E';
+    case 'iff':
+      return '↔E';
+    case 'not':
+      return premise.sub.kind === 'not' ? 'DNE' : '¬E';
+    default:
+      // `atom` y `falsum`. `X` elimina `⊥`, pero `⊥` como premisa no es una
+      // situación de Etapa 1 (`KC12 PC:KC10`) y afirmar una entrada aquí
+      // inventaría una orientación que el corpus no da.
+      return null;
+  }
 }

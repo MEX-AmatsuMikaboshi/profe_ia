@@ -32,3 +32,4 @@ export * from './regeneration.js';
 export * from './experimental-selection.js';
 export * from './package-linter.js';
 export * from './preaudit.js';
+export * from './probe-rule-closure.js';

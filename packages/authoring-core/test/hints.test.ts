@@ -1,7 +1,9 @@
+import { AUTHORIZED_RULE_IDS, parse } from '@profesor-ia/logic-core';
 import { search } from '@profesor-ia/proof-search';
 import { describe, expect, it } from 'vitest';
 import {
   assertHintSet,
+  premiseEntryRule,
   authoritativeMasteryDisqualifying,
   HINT_LEVEL_DESCRIPTIONS,
   HINT_LEVELS,
@@ -241,5 +243,40 @@ describe('ejemplo análogo del nivel 4 (§8.6, §9.6)', () => {
         contexto(),
       ),
     ).not.toThrow();
+  });
+});
+
+describe('regla de entrada de una premisa (D-65, arreglo de las pistas de KC16)', () => {
+  const regla = (texto: string) => premiseEntryRule(parse(texto));
+
+  it('la doble negación se abre con DNE, no con ¬E', () => {
+    // El defecto: `¬E` es «φ, ¬φ ⊢ ⊥» y no saca `A` de `¬¬A`. La pista de nivel
+    // 2 de los diez reactivos de KC16 mandaba a `¬E`, que ahí no aplica.
+    expect(regla('¬¬A')).toBe('DNE');
+    expect(regla('¬¬(A∧B)')).toBe('DNE');
+    expect(regla('¬¬¬A')).toBe('DNE');
+  });
+
+  it('la negación simple sí se ataca con ¬E: no basta cambiar la tabla', () => {
+    expect(regla('¬A')).toBe('¬E');
+    expect(regla('¬(A∨B)')).toBe('¬E');
+  });
+
+  it('los demás conectivos conservan su regla de eliminación', () => {
+    expect(regla('A∧B')).toBe('∧E');
+    expect(regla('A∨B')).toBe('∨E');
+    expect(regla('A→B')).toBe('→E');
+    expect(regla('A↔B')).toBe('↔E');
+  });
+
+  it('devuelve null donde no hay conectivo que abrir, en vez de inventar una entrada', () => {
+    expect(regla('A')).toBeNull();
+    expect(regla('⊥')).toBeNull();
+  });
+
+  it('la regla que nombra es siempre una del cálculo autorizado', () => {
+    for (const texto of ['¬¬A', '¬A', 'A∧B', 'A∨B', 'A→B', 'A↔B']) {
+      expect(AUTHORIZED_RULE_IDS as readonly string[]).toContain(regla(texto) as string);
+    }
   });
 });

@@ -384,3 +384,10 @@ export class PackageLintError extends AuthoringCoreError {
     super(message);
   }
 }
+
+/**
+ * Una sonda exige una regla que en la fase en que se administra todavía no se
+ * ha enseñado, así que un fallo no distingue el KC medido de la regla ajena
+ * (D-65).
+ */
+export class ProbeRuleClosureError extends AuthoringCoreError {}
