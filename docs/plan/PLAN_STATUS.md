@@ -1278,4 +1278,5 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   y el umbral de contaminación —si el renombrado de átomos crea reactivo nuevo a efectos de §7.7—,
   que fija las guardas de variedad de formas y anticontaminación y que va a `blocked-by-spec.md`.
   **+22 pruebas unitarias: 1687 en verde** (1665 antes), más las 131 contra PostgreSQL 17 real.
+  **CI: corrida `32604466870` sobre `f7d0ad2` observada en verde, los diez jobs — D-65 `VERIFICADA`.**
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

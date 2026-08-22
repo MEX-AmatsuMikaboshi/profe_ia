@@ -74,7 +74,10 @@
 > **1687 pruebas unitarias en verde** (1665 antes, +22) más las **131 contra PostgreSQL 17 real**.
 > Lint, typecheck, build, depcruise con sus dos controles positivos, separación de modos, sesión seca,
 > adversarial, conjunto dorado —regenerado con diff vacío—, PBT, pureza del verificador, pasarela,
-> grants, SBOM, drift y las 159 de hardening: todo verde en local. **CI: sin observar todavía.**
+> grants, SBOM, drift y las 159 de hardening: todo verde en local.
+>
+> **CI: corrida `32604466870` sobre `f7d0ad2` observada en verde, los diez jobs** —incluidos
+> `ci:logic:mutation` y el conjunto dorado—. **D-65 queda `VERIFICADA`.**
 
 
 > ## Relevo después de las Partes A/B con OpenAI Codex (2026-08-22, tarde) — **superado por el de arriba**
