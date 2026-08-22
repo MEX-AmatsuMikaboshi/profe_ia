@@ -1047,6 +1047,11 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   abajo—. Y el informe declara ahora **qué se comprobó a máquina y qué no**: con cero defectos y sin
   ese apartado, el cero se leería como «se comprobó todo el libro de códigos», y lo único mecánico es
   la etiqueta de KC.
+  **Guarda añadida: la muestra tiene que ser de esta corrida.** `w4-audit-apply.mjs` comprueba que la
+  población auditada es exactamente el conjunto de aceptados de `audits/w3-run.yaml`. Un informe
+  computado sobre una población vieja **cuadraría igual** —el gate divide por el denominador que le
+  den— y estaría midiendo un banco que ya no existe. Comprobado con siembra: retirando un elemento de
+  la población, aborta.
   **Lo que se movió, medido.** Aceptados **557 → 571** de 684 candidatos; los 14 nuevos son
   `kc05-probes_intervention-*`, que estaban rechazados por duplicar al viejo `kc03-transf`.
   `probes_intervention` **168 → 182**; el resto de reservas, idéntico. Rechazos **127 → 113** (99

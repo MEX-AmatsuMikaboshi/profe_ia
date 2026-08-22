@@ -129,6 +129,24 @@ function main() {
   const soluciones = leerJsonConCabecera('solutions-private/w3-solutions.yaml').privateSolutions;
   const familiaPorId = new Map(muestra.population.map((p) => [p.artifactId, p.itemFamilyId]));
 
+  // La muestra tiene que ser de **esta** corrida de W3. Un informe computado
+  // sobre una población vieja cuadraría igual —el gate divide por el denominador
+  // que le den— y estaría midiendo un banco que ya no existe.
+  const corrida = leerJsonConCabecera('audits/w3-run.yaml');
+  const aceptados = new Set(
+    corrida.items.filter((item) => item.accepted).map((item) => item.candidateId),
+  );
+  const poblacion = new Set(muestra.population.map((p) => p.artifactId));
+  const faltan = [...aceptados].filter((id) => !poblacion.has(id));
+  const sobran = [...poblacion].filter((id) => !aceptados.has(id));
+  if (faltan.length > 0 || sobran.length > 0) {
+    throw new Error(
+      `la muestra de W4 no corresponde a la corrida de W3 en disco: ${faltan.length} aceptados sin ` +
+        `auditar y ${sobran.length} auditados que ya no existen. Vuelve a correr ` +
+        `\`w4-preaudit-run.mjs\` antes de juzgar.`,
+    );
+  }
+
   const { defectos, comprobados } = defectosDeEtiquetaKc(muestra.population, soluciones);
   console.log(
     `0/2 Etiqueta de KC: ${comprobados} certificados recorridos, ${defectos.length} defecto(s).`,
