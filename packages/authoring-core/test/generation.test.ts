@@ -576,6 +576,12 @@ describe('pistas y crítica dentro del pipeline (pasos 7 y 8)', () => {
     text: 'Supón A y llega a ⊥.',
     anchors: ['frag-001'],
     proposedMasteryDisqualifying: true,
+    masteryFacts: {
+      level: 3,
+      levelOneReminderOnly: false,
+      selectsRuleOrNextStep: true,
+      containsDecisiveContent: true,
+    },
   };
 
   it('una pista que filtra un paso oculto tumba al reactivo', () => {

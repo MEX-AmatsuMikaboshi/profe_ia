@@ -1,3 +1,4 @@
+import type { MasteryHintFacts } from '@profesor-ia/domain-engine';
 import { isBinary, parse, print, type Formula } from '@profesor-ia/logic-core';
 import { areIsomorphic, type CanonicalProof } from '@profesor-ia/isomorphism-canonicalizer';
 import { HintPolicyError, MasteryFlagNotAuthoritativeError } from './errors.js';
@@ -46,6 +47,17 @@ export interface Hint {
    * propósito: un campo llamado `masteryDisqualifying` se leería como el valor.
    */
   readonly proposedMasteryDisqualifying: boolean;
+  /**
+   * Hechos estructurados sobre el contenido de la ayuda. **Son la entrada de
+   * la política autoritativa** (`masteryDisqualifying()`, DEC-HINT-AUTHORITY-001)
+   * y por eso viajan con la pista: sin ellos, el linter de paquete (`T-H5-13`)
+   * no tiene contra qué contrastar `proposedMasteryDisqualifying` y su
+   * comprobación `authoritative_mastery_flags` **pasaría por vacío**.
+   *
+   * Describirlos es trabajo de Rol D —dice qué hace su pista—; convertirlos en
+   * el valor de dominio no lo es, y por eso aquí no se calcula nada.
+   */
+  readonly masteryFacts: MasteryHintFacts;
   /** Obligatoria cuando la propuesta es `false` (P-II §5.2, salida de Rol D). */
   readonly nonRevelationExplanation?: string;
   /** Ejemplo análogo; §8.6 lo sitúa en el nivel 4 y lo exige **no isomorfo**. */
@@ -147,6 +159,26 @@ export function assertHintSet(set: HintSet, context: HintCheckContext): void {
     if (pista.text.trim() === '') {
       throw new HintPolicyError(`${set.itemId}: la pista de nivel ${pista.level} no tiene texto.`);
     }
+    // El campo es obligatorio en el tipo, y eso **no protege a nadie**: los
+    // archivos de prueba no se typechequean y `undefined` es falsy, así que una
+    // pista sin hechos llegaría al linter y su comprobación de banderas pasaría
+    // por vacío. La garantía la hace esta comprobación, no la declaración.
+    const hechos = pista.masteryFacts as MasteryHintFacts | undefined;
+    if (hechos === undefined) {
+      throw new HintPolicyError(
+        `${set.itemId}: la pista de nivel ${pista.level} no trae hechos de dominio. Son la entrada ` +
+          `de la política autoritativa (DEC-HINT-AUTHORITY-001): sin ellos, la propuesta no se ` +
+          `puede contrastar con nada y el linter aprobaría cualquier bandera.`,
+      );
+    }
+    if (hechos.level !== pista.level) {
+      throw new HintPolicyError(
+        `${set.itemId}: la pista de nivel ${pista.level} declara hechos de nivel ${hechos.level}. ` +
+          `La política decide por nivel, así que con los hechos de otro nivel calcularía la bandera ` +
+          `de una ayuda que no es esta.`,
+      );
+    }
+
     if (pista.anchors.length === 0) {
       throw new HintPolicyError(
         `${set.itemId}: la pista de nivel ${pista.level} no trae anclajes, y Rol D los enumera ` +

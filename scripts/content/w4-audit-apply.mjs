@@ -20,7 +20,11 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { evaluatePreAudit } from '../../packages/authoring-core/dist/index.js';
+import {
+  AUDIT_CODEBOOK,
+  KC_CATALOG,
+  evaluatePreAudit,
+} from '../../packages/authoring-core/dist/index.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const CONTENIDO = join(RAIZ, 'content/unidad-deduccion-natural');
@@ -29,26 +33,57 @@ const AHORA = new Date().toISOString();
 const AUDITOR = 'modelo asistente (anthropic-claude) — NO independiente del generador';
 
 /**
- * Defectos hallados, con el código cerrado que les corresponde.
+ * Defectos de etiqueta de KC, **derivados** y no escritos a mano.
  *
- * Solo uno, y sale de una comprobación mecánica: recorrer cada certificado y
- * ver si la regla que el KC declara aparece en él. 96 de 97 la usan.
+ * La corrida anterior los traía como una lista literal, con la nota de que
+ * salían «de recorrer cada certificado». Eso hacía la conclusión imposible de
+ * repetir: si un reactivo nuevo perdía su regla, la lista no se enteraba. Aquí
+ * se recorre de verdad — por cada reactivo aceptado, si el KC que declara tiene
+ * `ruleId`, esa regla tiene que aparecer en alguna línea de su certificado.
+ *
+ * **Se miran las líneas del certificado, no `rulesUsed`.** `rulesUsed` sale del
+ * término de derivación y la reiteración se inserta al linealizar, así que `R`
+ * no aparece ahí ni cuando la prueba la usa: quien pregunte por `rulesUsed`
+ * concluiría que **ningún** reactivo de KC03 ejercita su regla.
+ *
+ * KC01, KC02, KC08 y KC18 no tienen `ruleId` en el catálogo —son de notación,
+ * alcance y estrategia— y por eso no entran: exigirles una regla concreta sería
+ * inventarles una que el Maestro no les da.
  */
-const DEFECTOS = [
-  {
-    artifactId: 'kc03-transf',
-    severity: 'major',
-    code: 'incorrect_kc_label',
-    canChangeAnswerOrVerdict: false,
-    canContaminateMeasureLeakOrTeachFalseRule: true,
-    scope: 'local',
-    rationale:
-      'El reactivo declara KC03 (reiteración, regla R) y su certificado no usa R en ninguna línea: ' +
-      'el buscador obtiene el antecedente por ∧E dentro de la subprueba y cierra con →I. Un alumno ' +
-      'que lo resuelva no habrá ejercitado la regla que el reactivo dice medir, y la cobertura de ' +
-      'KC03 contaría una oportunidad que no lo es. Evidencia: reglas del certificado = →I, ∧E.',
-  },
-];
+function defectosDeEtiquetaKc(poblacion, soluciones) {
+  const certificadoPorId = new Map(soluciones.map((s) => [s.itemId, s.certificate]));
+  const defectos = [];
+  let comprobados = 0;
+
+  for (const artefacto of poblacion) {
+    const regla = KC_CATALOG[artefacto.kcId]?.ruleId;
+    if (regla === undefined) continue;
+    const certificado = certificadoPorId.get(artefacto.artifactId);
+    if (certificado === undefined) {
+      throw new Error(
+        `${artefacto.artifactId} está en la población auditada y no tiene certificado. Sin él, la ` +
+          `comprobación de etiqueta pasaría por vacío justo en el reactivo que no se puede mirar.`,
+      );
+    }
+    comprobados += 1;
+    const reglas = [...new Set(certificado.lines.map((l) => l.rule))];
+    if (reglas.includes(regla)) continue;
+    defectos.push({
+      artifactId: artefacto.artifactId,
+      severity: 'major',
+      code: 'incorrect_kc_label',
+      canChangeAnswerOrVerdict: false,
+      canContaminateMeasureLeakOrTeachFalseRule: true,
+      scope: 'local',
+      rationale:
+        `El reactivo declara ${artefacto.kcId} (regla ${regla}) y su certificado no usa ${regla} en ` +
+        `ninguna línea. Un alumno que lo resuelva no habrá ejercitado la regla que el reactivo dice ` +
+        `medir, y la cobertura de ${artefacto.kcId} contaría una oportunidad que no lo es. ` +
+        `Evidencia: reglas del certificado = ${reglas.join(', ')}.`,
+    });
+  }
+  return { defectos, comprobados };
+}
 
 /**
  * Lo que se observó y **no** tiene código en el libro cerrado. Se registra
@@ -57,21 +92,6 @@ const DEFECTOS = [
  * código nuevo sería ampliar por la puerta de atrás lo que el auditor evalúa.
  */
 const OBSERVACIONES_SIN_CODIGO = [
-  {
-    alcance: 'las 97 pistas de nivel 3',
-    observacion:
-      'Las tres pistas son idénticas en los 97 reactivos: no mencionan el reactivo concreto, así ' +
-      'que no pueden filtrar la solución —y por eso pasan la comprobación de fuga— pero tampoco ' +
-      'ayudan de forma específica. §8.6 pide para el nivel 3 «indicar el siguiente tipo de operación ' +
-      'sin resolverla», y una pista igual para todos no indica nada del reactivo que se tiene ' +
-      'delante.',
-    porQueNoLlevaCodigo:
-      'El libro de códigos cubre la pista que resuelve de más (`hint_practically_solves`), no la que ' +
-      'ayuda de menos. Inventar un código sería ampliar lo que el auditor evalúa.',
-    consecuencia:
-      'No bloquea el gate. Conviene resolverlo antes del freeze: las pistas deberían derivarse del ' +
-      'reactivo, no ser una plantilla constante.',
-  },
   {
     alcance: 'KC09',
     observacion:
@@ -83,6 +103,14 @@ const OBSERVACIONES_SIN_CODIGO = [
     consecuencia: 'Ya cuenta como hueco `COV-KC-TRANSFER` y se arregla completando el banco.',
   },
 ];
+
+/*
+ * La observación sobre las pistas de la corrida anterior —«las tres pistas son
+ * idénticas en los 97 reactivos»— **ya no describe este paquete**: se derivan del
+ * enunciado desde esta corrida de W3. No se conserva aquí porque el informe
+ * describe lo que se auditó hoy; el rastro de que existió está en PLAN_STATUS.
+ */
+
 
 function leerJsonConCabecera(ruta) {
   return JSON.parse(readFileSync(join(CONTENIDO, ruta), 'utf8').replace(/^(#[^\n]*\n)+/, ''));
@@ -98,9 +126,15 @@ function main() {
   console.log(`W4 — juicios de auditoría — ${AHORA}`);
 
   const muestra = leerJsonConCabecera('audits/w4-preaudit-sample.yaml');
+  const soluciones = leerJsonConCabecera('solutions-private/w3-solutions.yaml').privateSolutions;
   const familiaPorId = new Map(muestra.population.map((p) => [p.artifactId, p.itemFamilyId]));
 
-  const judgments = DEFECTOS.map((d) => {
+  const { defectos, comprobados } = defectosDeEtiquetaKc(muestra.population, soluciones);
+  console.log(
+    `0/2 Etiqueta de KC: ${comprobados} certificados recorridos, ${defectos.length} defecto(s).`,
+  );
+
+  const judgments = defectos.map((d) => {
     const itemFamilyId = familiaPorId.get(d.artifactId);
     if (itemFamilyId === undefined) {
       throw new Error(`${d.artifactId} no está en la población auditada.`);
@@ -140,6 +174,38 @@ function main() {
         'puede usarse como evidencia de calidad para congelar la familia. Este informe adelanta el ' +
         'trabajo; la firma sigue siendo del propietario.',
       reviewedArtifactIds: revisados,
+      // **Qué se comprobó de verdad, y qué no.** Un informe con cero defectos
+      // se lee como «todo bien», y aquí lo único que se recorrió a máquina son
+      // las etiquetas de KC. Los demás códigos del libro —fuga, notación,
+      // correspondencia con el objetivo— siguen dependiendo de una lectura, y
+      // la lectura que hubo no es independiente. Sin este apartado, el cero
+      // afirmaría algo que nadie comprobó.
+      checksApplied: [
+        {
+          check: 'etiqueta_de_kc',
+          codes: ['incorrect_kc_label'],
+          mechanical: true,
+          coverage: `${comprobados} de ${muestra.population.length} reactivos con \`ruleId\` en el catálogo`,
+          method:
+            'Por cada reactivo aceptado cuyo KC declara `ruleId`, esa regla debe aparecer en alguna ' +
+            'línea de su certificado. Se leen las líneas, no `rulesUsed`: la reiteración se inserta ' +
+            'al linealizar y no consta en el término.',
+        },
+        {
+          check: 'resto_del_libro_de_codigos',
+          codes: [
+            ...AUDIT_CODEBOOK.critical,
+            ...AUDIT_CODEBOOK.major,
+            ...AUDIT_CODEBOOK.minor,
+          ].filter((code) => code !== 'incorrect_kc_label'),
+          mechanical: false,
+          coverage: 'ninguna comprobación automática',
+          method:
+            'Requieren lectura. La de esta corrida la hizo el mismo modelo que generó el material, ' +
+            'así que **no cuenta como evidencia de calidad** (§7.3): el cero de esta fila significa ' +
+            '«no se halló», no «se comprobó y no hay».',
+        },
+      ],
       judgments,
       observationsWithoutCode: OBSERVACIONES_SIN_CODIGO,
       gateReport: informe,

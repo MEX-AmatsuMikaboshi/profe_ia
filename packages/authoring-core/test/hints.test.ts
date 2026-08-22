@@ -34,11 +34,21 @@ function contexto(): HintCheckContext {
 }
 
 function pista(overrides: Partial<Hint> = {}): Hint {
+  const level = overrides.level ?? 1;
   return {
-    level: 1,
+    level,
     text: 'Recuerda qué hay que probar y qué dice la definición de negación.',
     anchors: ['frag-001'],
     proposedMasteryDisqualifying: true,
+    // Los hechos siguen al nivel del ayudante de prueba a propósito: fijarlos en
+    // el nivel 1 haría que cualquier caso con `level` sobrescrito disparase la
+    // comprobación de coherencia y la prueba pasaría por el motivo equivocado.
+    masteryFacts: {
+      level,
+      levelOneReminderOnly: level === 1,
+      selectsRuleOrNextStep: level >= 2,
+      containsDecisiveContent: false,
+    },
     ...overrides,
   };
 }
@@ -115,6 +125,37 @@ describe('propuesta de masteryDisqualifying (no autoritativa)', () => {
         contexto(),
       ),
     ).not.toThrow();
+  });
+
+  it('una pista sin hechos de dominio se rechaza: sin ellos el linter aprueba por vacío', () => {
+    // Los hechos son la **entrada** de la política autoritativa. Si faltan, el
+    // registro que llega a `authoritative_mastery_flags` no tiene con qué
+    // computarse y la comprobación pasa sin mirar nada. El tipo ya lo exige y
+    // eso no basta: los archivos de prueba no se typechequean.
+    const sinHechos = { ...pista() } as Partial<Hint>;
+    delete sinHechos.masteryFacts;
+    expect(() => assertHintSet(conjunto([sinHechos as Hint]), contexto())).toThrow(
+      /no trae hechos de dominio/u,
+    );
+  });
+
+  it('los hechos de otro nivel se rechazan: la política decidiría sobre otra ayuda', () => {
+    expect(() =>
+      assertHintSet(
+        conjunto([
+          pista({
+            level: 3,
+            masteryFacts: {
+              level: 1,
+              levelOneReminderOnly: true,
+              selectsRuleOrNextStep: false,
+              containsDecisiveContent: false,
+            },
+          }),
+        ]),
+        contexto(),
+      ),
+    ).toThrow(/declara hechos de nivel 1/u);
   });
 
   it('pedir el valor autoritativo falla cerrado, incluso con la propuesta en `true`', () => {

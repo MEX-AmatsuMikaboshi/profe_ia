@@ -100,7 +100,14 @@ const MACROS = [
 const PLANTILLAS = {
   KC01: { base: [['(p∧q)∧r'], 'p∧(q∧r)', 'alta'], transfer: [['p∧(q∧r)'], '(r∧q)∧p', 'alta'] },
   KC02: { base: [['p∧q'], 'q∧p', 'media'], transfer: [['p∧(q∧r)'], 'r∧p', 'alta'] },
-  KC03: { base: [['p'], 'q→p', 'media'], transfer: [['p∧q'], 'r→p', 'media'] },
+  // Transferencia rehecha: `p∧q ⊢ r→p` era el **único defecto** que encontró la
+  // auditoría de W4 (`incorrect_kc_label`). KC03 es reiteración, y el buscador
+  // obtenía el consecuente por `∧E` **dentro** de la subprueba: quien lo
+  // resolviera no habría reiterado nada, y la cobertura de KC03 contaría una
+  // oportunidad que no lo era. Con el consecuente entero disponible fuera, la
+  // única forma de tenerlo dentro es reiterarlo. Comprobado: el certificado pasa
+  // de `PR, AS, ∧E, →I` a `PR, AS, R, →I`, y sigue midiendo `media`.
+  KC03: { base: [['p'], 'q→p', 'media'], transfer: [['p∧q'], 'r→(p∧q)', 'media'] },
   KC04: { base: [['p', 'q'], 'p∧q', 'baja'], transfer: [['p', 'q', 'r'], '(p∧q)∧r', 'media'] },
   KC05: { base: [['p∧q'], 'p', 'baja'], transfer: [['(p∧q)∧r'], 'q', 'media'] },
   KC06: { base: [['p→q', 'p'], 'q', 'baja'], transfer: [['p→(q→r)', 'p', 'q'], 'r', 'media'] },
@@ -241,6 +248,240 @@ const ATOMOS_SONDA = [
 
 function sustituir(formula, [p, q, r]) {
   return formula.split('p').join(p).split('q').join(q).split('r').join(r);
+}
+
+/* ── Rol D: pistas derivadas del reactivo ───────────────────────────────────
+ *
+ * La primera corrida daba a los 557 reactivos **las mismas tres pistas**. No
+ * filtraban solución —por eso pasaban la comprobación de fuga— pero tampoco
+ * decían nada del reactivo que el alumno tenía delante, y §8.6 pide para el
+ * nivel 3 «indicar el siguiente tipo de operación», que es una afirmación
+ * *sobre este* reactivo. Lo registró W4 como observación sin código: el libro
+ * cerrado tiene código para la pista que resuelve de más (`hint_practically_
+ * solves`) y ninguno para la que ayuda de menos.
+ *
+ * Las pistas se derivan ahora del **enunciado**, no del certificado: Rol D no
+ * ve la solución, y con el enunciado basta para las tres primeras. Nombran
+ * conectivos y reglas, **nunca fórmulas**, y eso no es estilo: la comprobación
+ * de fuga busca en el texto, literalmente, toda fórmula del certificado ausente
+ * del enunciado. El único átomo que una derivación introduce sin estar en el
+ * enunciado es `⊥` —todos los demás vienen de las premisas o de la meta—, así
+ * que escribirlo una sola vez tumbaría la pista de cualquier reactivo probado
+ * por reducción. Por eso aquí se dice «la contradicción».
+ */
+
+/**
+ * Nombre del conectivo y reglas que lo introducen y lo eliminan.
+ *
+ * `de` lleva la contracción hecha (`del condicional`, no `de el condicional`):
+ * componer la preposición por concatenación produce texto que un alumno lee
+ * como descuido, y una ayuda que se lee mal ayuda menos.
+ */
+const FORMAS = {
+  and: { nombre: 'una conjunción', el: 'la conjunción', de: 'de la conjunción', simbolo: '∧', intro: '∧I', elim: '∧E' },
+  or: { nombre: 'una disyunción', el: 'la disyunción', de: 'de la disyunción', simbolo: '∨', intro: '∨I', elim: '∨E' },
+  implies: { nombre: 'un condicional', el: 'el condicional', de: 'del condicional', simbolo: '→', intro: '→I', elim: '→E' },
+  iff: { nombre: 'un bicondicional', el: 'el bicondicional', de: 'del bicondicional', simbolo: '↔', intro: '↔I', elim: '↔E' },
+  not: { nombre: 'una negación', el: 'la negación', de: 'de la negación', simbolo: '¬', intro: '¬I', elim: '¬E' },
+  // `⊥` **no es un conectivo**: es el átomo distinguido del cálculo. Por eso no
+  // tiene símbolo que citar entre paréntesis ni entra en la lista de conectivos
+  // a repasar, y por eso el nivel 2 lo trata en una rama propia en vez de decir
+  // «el conectivo principal de la meta es la contradicción», que sería falso.
+  falsum: { nombre: 'la contradicción', el: 'la contradicción', de: 'de la contradicción', simbolo: null, intro: '¬E', elim: 'X' },
+  atom: { nombre: 'una letra proposicional', el: 'la letra proposicional', de: null, simbolo: null, intro: null, elim: null },
+};
+
+function analizar(texto) {
+  const resultado = tryParse(texto);
+  if (!resultado.ok) {
+    throw new Error(`Rol D no puede describir «${texto}»: ${resultado.error.code}`);
+  }
+  return resultado.formula;
+}
+
+/** Conectivos que aparecen en la fórmula. `⊥` no entra: es un átomo, no un conectivo. */
+function conectivosDe(formula, acumulado = new Set()) {
+  if (formula.kind === 'not') {
+    acumulado.add('not');
+    conectivosDe(formula.sub, acumulado);
+  } else if (['and', 'or', 'implies', 'iff'].includes(formula.kind)) {
+    acumulado.add(formula.kind);
+    conectivosDe(formula.left, acumulado);
+    conectivosDe(formula.right, acumulado);
+  }
+  return acumulado;
+}
+
+const enumerar = (xs) =>
+  xs.length <= 1 ? (xs[0] ?? '') : `${xs.slice(0, -1).join(', ')} y ${xs[xs.length - 1]}`;
+
+/** «la conjunción (∧)», con el símbolo entre paréntesis salvo cuando no lo hay. */
+const conSimbolo = (clave, caso = 'el') =>
+  FORMAS[clave].simbolo === null
+    ? FORMAS[clave][caso]
+    : `${FORMAS[clave][caso]} (${FORMAS[clave].simbolo})`;
+
+/** Nivel 1 (§8.6): recordar objetivo o definición. **No** selecciona regla ni paso. */
+function textoNivel1(premises, goal) {
+  const meta = FORMAS[analizar(goal).kind];
+  const conectivos = new Set();
+  for (const p of premises) conectivosDe(analizar(p), conectivos);
+  conectivosDe(analizar(goal), conectivos);
+  const lista = [...conectivos];
+  const repaso =
+    lista.length === 0
+      ? 'Repasa en el texto la notación Fitch y qué se puede citar en cada línea'
+      : `Repasa en el texto la definición ${enumerar(lista.map((k) => conSimbolo(k, 'de')))}`;
+  return (
+    `Vuelve a leer el reactivo antes de escribir nada: partes de ` +
+    `${premises.length} premisa${premises.length === 1 ? '' : 's'} y tienes que llegar a una meta ` +
+    `que es ${meta.nombre}. ${repaso}.`
+  );
+}
+
+/** Nivel 2 (§8.6): señalar región o regla relevante. */
+function textoNivel2(premises, goal) {
+  const meta = analizar(goal);
+  let parteMeta;
+  if (meta.kind === 'atom') {
+    parteMeta =
+      'La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas ' +
+      'aparece y con qué conectivo está unida, porque de ahí tendrá que salir';
+  } else if (meta.kind === 'falsum') {
+    parteMeta = `La meta es la contradicción, y la regla que la produce es ${FORMAS.falsum.intro}`;
+  } else {
+    parteMeta =
+      `El conectivo principal de la meta es ${conSimbolo(meta.kind)}, y la regla que lo ` +
+      `introduce es ${FORMAS[meta.kind].intro}`;
+  }
+  const principales = [...new Set(premises.map((p) => analizar(p).kind))].filter(
+    (k) => FORMAS[k].elim !== null,
+  );
+  let partePremisas;
+  if (principales.length === 0) {
+    partePremisas = 'Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas';
+  } else if (principales.length === 1) {
+    partePremisas =
+      `En las premisas el conectivo principal es ${conSimbolo(principales[0])}, y la regla que lo ` +
+      `elimina es ${FORMAS[principales[0]].elim}`;
+  } else {
+    partePremisas =
+      `En las premisas los conectivos principales son ${enumerar(principales.map((k) => conSimbolo(k)))}, ` +
+      `y las reglas que los eliminan son ${enumerar(principales.map((k) => FORMAS[k].elim))}`;
+  }
+  return `${parteMeta}. ${partePremisas}. Empieza por esas entradas del texto.`;
+}
+
+/**
+ * Nivel 3 (§8.6): indicar el siguiente tipo de operación **sin resolverla**.
+ *
+ * Dice con qué se justifica la última línea y qué exige tener antes. No nombra
+ * ninguna fórmula intermedia ni ninguna cita de línea, que es lo que separa
+ * «indicar el tipo de operación» de «resolverla».
+ */
+const CIERRE = {
+  and:
+    'Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus ' +
+    'dos lados: comprueba si puedes conseguir los dos.',
+  or:
+    'Para construir la meta directamente hace falta ∨I, que pide solo uno de sus dos lados: decide ' +
+    'cuál de los dos puedes alcanzar.',
+  implies:
+    'Para construir la meta directamente hace falta →I, que abre una subprueba: supón el ' +
+    'antecedente y trabaja dentro hasta obtener el consecuente.',
+  iff:
+    'Para construir la meta directamente hace falta ↔I, que abre dos subpruebas, una por cada ' +
+    'dirección.',
+  not:
+    'Para construir la meta directamente hace falta ¬I, que abre una subprueba: supón lo que la ' +
+    'meta niega y busca dentro una contradicción.',
+  falsum:
+    'La meta es la contradicción y se obtiene con ¬E, que pide una fórmula y su negación ' +
+    'disponibles en el mismo ámbito.',
+  atom:
+    'La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: ' +
+    'tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba ' +
+    'indirecta (IP), que abre una subprueba suponiendo la negación de la meta.',
+};
+
+/**
+ * Añadido para los reactivos cuyas premisas son insatisfacibles por diseño
+ * (KC10, KC12 y las sondas construidas sobre sus núcleos).
+ *
+ * Sin él, el nivel 3 de un reactivo de explosión diría «para construir la meta
+ * hace falta ∨I», que es cierto de la meta y **no es la vía**: la prueba pasa
+ * por la contradicción y cierra con `X`. Es dato del enunciado, no del
+ * certificado —la plantilla lo declara con `contradiccionExplicita`—, así que
+ * Rol D lo puede decir sin haber visto la solución.
+ */
+const CIERRE_POR_EXPLOSION =
+  ' Fíjate además en que las premisas no pueden ser verdaderas a la vez: de una contradicción se ' +
+  'sigue cualquier fórmula con X.';
+
+/**
+ * Las tres pistas del reactivo, con sus hechos de dominio.
+ *
+ * **La propuesta de `masteryDisqualifying` cambió, y no por gusto.** La primera
+ * corrida proponía `false` en los tres niveles; DEC-HINT-AUTHORITY-001 dice que
+ * los niveles 2–5 **siempre** descalifican, así que el linter de paquete habría
+ * rechazado 1114 registros por discrepancia en `authoritative_mastery_flags`
+ * —una por cada pista de nivel 2 y 3— justo en el freeze. La propuesta no es
+ * autoritativa, pero eso no la hace libre: es lo que el linter contrasta.
+ */
+function pistasDelReactivo(premises, goal, anclas, contradiccionExplicita) {
+  const comunes = { anchors: anclas.slice(0, 2) };
+  const meta = analizar(goal);
+  const cierre =
+    CIERRE[meta.kind] +
+    (contradiccionExplicita && meta.kind !== 'falsum' ? CIERRE_POR_EXPLOSION : '');
+  return [
+    {
+      level: 1,
+      text: textoNivel1(premises, goal),
+      ...comunes,
+      proposedMasteryDisqualifying: false,
+      nonRevelationExplanation:
+        'Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la ' +
+        'meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna ' +
+        'fórmula que no esté a la vista.',
+      masteryFacts: {
+        level: 1,
+        levelOneReminderOnly: true,
+        selectsRuleOrNextStep: false,
+        containsDecisiveContent: false,
+      },
+    },
+    {
+      level: 2,
+      text: textoNivel2(premises, goal),
+      ...comunes,
+      proposedMasteryDisqualifying: true,
+      nonRevelationExplanation:
+        'Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni ' +
+        'qué fórmula intermedia produce.',
+      masteryFacts: {
+        level: 2,
+        levelOneReminderOnly: false,
+        selectsRuleOrNextStep: true,
+        containsDecisiveContent: false,
+      },
+    },
+    {
+      level: 3,
+      text: cierre,
+      ...comunes,
+      proposedMasteryDisqualifying: true,
+      nonRevelationExplanation:
+        'Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna ' +
+        'fórmula intermedia ni ninguna cita de línea.',
+      masteryFacts: {
+        level: 3,
+        levelOneReminderOnly: false,
+        selectsRuleOrNextStep: true,
+        containsDecisiveContent: false,
+      },
+    },
+  ];
 }
 
 function leerJsonConCabecera(ruta) {
@@ -391,37 +632,11 @@ async function main() {
         contradictionIsExplicitGoal: plantilla.contradiccionExplicita === true,
       });
 
-      // Rol D. Los tres primeros niveles de §8.6, que es el piso de §4.2. Los
-      // textos no nombran ninguna fórmula ausente del enunciado: la meta y las
-      // premisas ya están a la vista, y lo demás se describe por su tipo.
+      // Rol D. Los tres primeros niveles de §8.6, que es el piso de §4.2, y
+      // **derivados del enunciado de este reactivo**: ver `pistasDelReactivo`.
       hintSets.push({
         itemId: candidateId,
-        hints: [
-          {
-            level: 1,
-            text: `Recuerda qué pide el reactivo: llegar a la meta desde las premisas dadas. Repasa la definición de la regla de este bloque antes de escribir nada.`,
-            anchors: anclas.slice(0, 2),
-            proposedMasteryDisqualifying: false,
-            nonRevelationExplanation:
-              'Solo remite a la definición de la regla del bloque y a lo que el enunciado ya muestra; no nombra ningún paso de la derivación.',
-          },
-          {
-            level: 2,
-            text: `Mira el operador principal de la meta y busca la regla que lo introduce; después mira los operadores principales de las premisas y la regla que los elimina.`,
-            anchors: anclas.slice(0, 2),
-            proposedMasteryDisqualifying: false,
-            nonRevelationExplanation:
-              'Señala la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula se obtiene.',
-          },
-          {
-            level: 3,
-            text: `El siguiente paso es de tipo introducción o eliminación según lo anterior: escribe la justificación que planeas usar en la última línea y comprueba qué te falta tener antes de ella.`,
-            anchors: anclas.slice(0, 2),
-            proposedMasteryDisqualifying: false,
-            nonRevelationExplanation:
-              'Indica el tipo de operación siguiente sin resolverla: no nombra la fórmula intermedia ni la línea que la justifica.',
-          },
-        ],
+        hints: pistasDelReactivo(premises, goal, anclas, plantilla.contradiccionExplicita === true),
       });
 
       // Rol E. Mismo modelo que Rol C/D: la crítica se registra y su acuerdo
@@ -559,17 +774,28 @@ async function main() {
     `(${frozenOrder.reportRunId}). Plantillas, pistas y críticas del modelo asistente ` +
     `(salvedad D-41/D-48/D-52/D-53): las audita W4. El crítico **no es independiente**.`;
 
-  const porReserva = new Map();
+  // Se agrupa por **carpeta**, no por reserva, y esa es la corrección de un
+  // defecto silencioso: `items/` tiene nueve carpetas fijadas por §4.3 del plan
+  // y hay diez reservas, porque `TRANSFER_MASTERY` y `TRANSFER_MEASUREMENT`
+  // comparten `transfer/`. Escribiendo por reserva, la segunda **sobrescribía**
+  // el archivo de la primera y los 17 reactivos de `TRANSFER_MASTERY` no
+  // llegaban al banco publicado: estaban en el informe y en los certificados,
+  // pero no en `items/`. No se abre una décima carpeta —la lista es del plan—:
+  // el archivo declara las reservas que contiene y cada reactivo la suya en
+  // `bankFunction`, que es lo que `collisionProhibited()` mira.
+  const porCarpeta = new Map();
   for (const item of aceptados) {
-    porReserva.set(item.bankFunction, [...(porReserva.get(item.bankFunction) ?? []), item]);
+    const carpeta = CARPETA[item.bankFunction];
+    porCarpeta.set(carpeta, [...(porCarpeta.get(carpeta) ?? []), item]);
   }
-  for (const [reserva, lista] of porReserva) {
+  for (const [carpeta, lista] of porCarpeta) {
+    const reservas = [...new Set(lista.map((item) => item.bankFunction))].sort();
     escribirYaml(
-      join(CONTENIDO, `items/${CARPETA[reserva]}/items.yaml`),
-      cabecera(`Reactivos aceptados de la reserva ${reserva}`),
+      join(CONTENIDO, `items/${carpeta}/items.yaml`),
+      cabecera(`Reactivos aceptados de ${reservas.join(' y ')}`),
       {
         courseId: 'unidad-deduccion-natural',
-        reserve: reserva,
+        reserves: reservas,
         authorizedCalculusVersion: resultado.authorizedCalculusVersion,
         variantId: resultado.variantId,
         items: lista.map((item) => ({
