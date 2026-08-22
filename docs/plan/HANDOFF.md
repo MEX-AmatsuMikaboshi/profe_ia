@@ -62,8 +62,10 @@
 >
 > **Estuvo caída entre las 01:29 y las ~04:00 UTC del 2026-08-22**: tres corridas fallaron en uno o
 > dos segundos con `steps: []`, que es la firma de que Actions no arranca —minutos agotados o tope de
-> gasto—. El propietario lo resolvió en la cuenta. **Si vuelve a pasar, mírese el número de pasos del
-> job antes de buscar el fallo en el código: con `steps: []` no es el código.**
+> gasto—. El propietario lo resolvió en la cuenta y **la corrida `32551578360` sobre `a368138` salió
+> verde, los diez jobs**, incluidos `ci:logic:mutation` y el conjunto dorado. Ese árbol lleva D-57,
+> D-58 y D-59, así que **no queda nada sin verificar**. **Si vuelve a pasar, mírese el número de
+> pasos del job antes de buscar el fallo en el código: con `steps: []` no es el código.**
 
 > ## Cierre de la duodécima sesión (2026-08-22, tarde) — **superado por el de arriba**
 >
