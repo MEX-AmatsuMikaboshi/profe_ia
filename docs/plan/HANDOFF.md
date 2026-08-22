@@ -1,6 +1,46 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la undécima sesión (2026-08-22)
+> ## EMPIEZA AQUÍ — cierre de la duodécima sesión (2026-08-22, tarde)
+>
+> **`∨E` implementado en el buscador (D-56).** Era el bloqueo que dejó la sesión anterior. El paso de
+> análisis de casos no cabía en ninguna de las tres familias que `prove()` ya tenía, y por eso
+> faltaba; ahora va entre las eliminaciones y IP, con poda para no reentrar por la misma disyunción.
+>
+> **Lo que se movió, medido:** BENCH-04 sobre los 37 argumentos del libro pasa de **11 a 25 pruebas
+> halladas**; W3 pasa de **91 a 97 aceptados** y `search_budget_exhausted` **desaparece**. KC13 ya
+> tiene reactivos. BENCH-04 quedó **re-congelado** con el buscador arreglado (mismo ganador, mismo
+> margen) y W3 **re-ejecutado**.
+>
+> **Un defecto tapaba otro:** `kc13-transf` resultó ser el ejercicio `corpus-ej-05` del propio libro,
+> y mientras fue indemostrable el control de duplicación no llegaba a verlo. Plantilla rehecha.
+>
+> **Decisión del propietario, y lo que se acepta a cambio.** El repertorio del buscador cambió, así
+> que `SEARCH_ORDER_VERSION` podía subir a `v2`. Se probó: la guarda de `complexity.ts` rechaza
+> comparar perfiles contra una calibración hecha con otro orden, así que **caen cinco de las diez
+> pruebas de CAL-09 y ninguna complejidad se puede comparar** hasta re-congelar. **El propietario
+> decidió dejarla en `v1`**, con la lectura de que la ausencia de `∨E` era un defecto y no una
+> política —`authorized-calculus-v1` siempre listó `∨E` como primitiva— y con la evidencia de que
+> `runCal09Calibration()` **reproduce el manifiesto byte por byte**. **A cambio se acepta** que la
+> etiqueta de versión describe un buscador que ya no es exactamente el mismo: quien compare perfiles
+> de antes y después del 2026-08-22 no tiene la guarda de versión para avisarle. Está en D-56.
+>
+> **LO PRIMERO QUE HAY QUE HACER AL VOLVER:**
+>
+> 1. **El segundo hueco del buscador sigue abierto**: `→E` no encadena hacia atrás sintetizando un
+>    antecedente compuesto, así que `(A∧B)→C, A, B ⊢ C` no se prueba. Mismo patrón que `∨E`, y ahora
+>    hay un sitio evidente donde va. **Menos urgente**: no bloquea ningún KC.
+> 2. **Completar el banco.** Quedan **11 desajustes de complejidad** —que se rechazan y se cuentan,
+>    no se reetiquetan— y por ellos **3 KC bajo el piso de actividades**, 2 bajo recuperación y 1 bajo
+>    transferencia. Y **las 57–69 sondas siguen sin autorar**: son reserva de medición, así que sus
+>    formas deben ser estructuralmente distintas de las de enseñanza.
+> 3. Después W4 (auditoría previa) y W5 (freeze). Solo con el freeze quedan medibles los dos gates
+>    que hoy impiden el dictamen de BENCH-01.
+> 4. Pendiente del propietario: la auditoría de lo que redactó el asistente (extracción de W2,
+>    objetivos de Rol B, plantillas y pistas de W3) antes del freeze de W5.
+>
+> **Pruebas al cerrar: 1788 en verde** (1657 unitarias + 131 contra PostgreSQL 17 real).
+
+> ## Cierre de la undécima sesión (2026-08-22) — **superado por el de arriba**
 >
 > **BENCH-04 congelado (D-54) y W3 ejecutado por primera vez sobre material real (D-55).** El orden
 > del pipeline de validez se midió sobre **37 argumentos extraídos del propio libro** —no sobre la

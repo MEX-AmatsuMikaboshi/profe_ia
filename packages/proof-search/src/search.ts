@@ -299,7 +299,44 @@ function prove(
       if (rest) return substitute(rest, step);
     }
 
-    // 4. Prueba indirecta como último recurso (regla primitiva del cálculo).
+    // 4. Análisis de casos: la **única** forma de usar una disyunción.
+    //
+    // No cabe en los otros dos sitios y por eso faltaba: no es una introducción
+    // dirigida por la meta —la meta puede ser cualquier cosa— ni una
+    // eliminación hacia adelante, porque no produce una subfórmula de lo
+    // disponible sino la meta entera, y a cambio de dos subpruebas. Mientras no
+    // estuvo, **ninguna premisa disyuntiva era utilizable**: `A∨B ⊢ B∨A` no se
+    // probaba, y el buscador lo reportaba como «no encontré» —que es cierto y
+    // por eso el hueco no se veía—.
+    //
+    // Va después de las eliminaciones y antes de IP: abrir dos subpruebas es
+    // más caro que cualquier eliminación, y IP sigue siendo el último recurso.
+    for (const f of available) {
+      if (f.kind !== 'or') continue;
+      // Con un disyunto ya disponible, el análisis de casos no añade nada: esa
+      // rama repetiría el contexto actual. Podarlo evita además volver a entrar
+      // por la misma disyunción en la recursión.
+      if (available.some((a) => equals(a, f.left) || equals(a, f.right))) continue;
+      if (!state.work.spend()) return null;
+
+      const left = prove(goal, [...available, f.left], linesLeft - 1, state);
+      if (!left) continue;
+      const right = prove(goal, [...available, f.right], linesLeft - 1, state);
+      if (!right) continue;
+
+      return {
+        kind: 'rule',
+        rule: '∨E',
+        formula: goal,
+        args: [{ kind: 'have', formula: f }],
+        subs: [
+          { assumption: f.left, body: left },
+          { assumption: f.right, body: right },
+        ],
+      };
+    }
+
+    // 5. Prueba indirecta como último recurso (regla primitiva del cálculo).
     if (goal.kind !== 'falsum') {
       if (!state.work.spend()) return null;
       const negated: Formula = { kind: 'not', sub: goal };

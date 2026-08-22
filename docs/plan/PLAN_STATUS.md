@@ -854,4 +854,40 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   **CI: corrida `32540724131` sobre `dea06df` observada en verde el 2026-08-22, los diez jobs.**
   `T-H5-05` queda `VERIFICADA` **como código y corrida**, no como banco completo: la cobertura
   sigue con cuatro KC bajo el piso y las sondas sin autorar, y eso lo miran W4 y W5.
+- **D-56 — `∨E` implementado en el buscador; `SEARCH_ORDER_VERSION` se queda en `v1` por decisión
+  del propietario (2026-08-22).** El hueco de D-55: `prove()` cubría explosión, introducciones
+  dirigidas por la meta, eliminaciones hacia adelante e IP, y **el análisis de casos no cabía en
+  ninguna de las tres** —no es una introducción dirigida por la meta, porque la meta puede ser
+  cualquier cosa, ni una eliminación hacia adelante, porque no produce una subfórmula sino la meta
+  entera a cambio de dos subpruebas—. Por eso faltaba. Se añade como paso propio **después de las
+  eliminaciones y antes de IP**: abrir dos subpruebas es más caro que cualquier eliminación, e IP
+  sigue siendo el último recurso. Poda: una disyunción con un disyunto ya disponible no abre casos
+  —esa rama repetiría el contexto— y eso evita además reentrar por la misma disyunción.
+  **Lo que destapó el arreglo, medido:** en BENCH-04 sobre los 37 argumentos del libro las pruebas
+  halladas pasan de **11 a 25**; en W3 los aceptados pasan de **91 a 97** y `search_budget_exhausted`
+  **desaparece**. Y apareció que **un defecto tapaba otro**: `kc13-transf` era el ejercicio
+  `corpus-ej-05` del propio libro, y mientras fue indemostrable el control de duplicación no llegaba
+  a verlo. Plantilla rehecha.
+  **La decisión de versión, que es del propietario y no técnica.** El repertorio del buscador cambió,
+  así que `SEARCH_ORDER_VERSION` podía moverse a `v2`. Se probó, y el radio de acción es grande:
+  la guarda de `complexity.ts` rechaza comparar un perfil contra una calibración hecha con otro
+  orden, así que **cinco de las diez pruebas de CAL-09 caen y ninguna complejidad se puede comparar**
+  hasta re-congelar la calibración. **El propietario decidió dejarla en `v1`**, con dos evidencias a
+  favor: (1) con `v1`, `runCal09Calibration()` **re-corre y reproduce el manifiesto byte por byte**
+  —13 casos, pesos, bandas y hash idénticos—, así que el arreglo no mueve la calibración; y (2) las
+  seis medidas con peso del índice son **estructurales**, salen de la prueba hallada y no de la
+  telemetría, y la única de telemetría tiene peso cero. La lectura que sostiene la decisión es que
+  la ausencia de `∨E` era un **defecto**, no una política de exploración: `authorized-calculus-v1`
+  siempre listó `∨E` entre sus primitivas. **Queda dicho lo que se acepta a cambio:** la etiqueta de
+  versión describe un buscador que ya no es exactamente el mismo, y quien compare perfiles de antes
+  y después del 2026-08-22 no tiene la guarda de versión para avisarle.
+  **Regresión:** 6 pruebas nuevas en `packages/proof-search/test/search.test.ts` —incluida una de que
+  el silogismo disyuntivo se deriva de las primitivas **sin citar DS**, que está fuera de la
+  whitelist, y otra de que CALC-03 sigue en pie: ampliar lo demostrable no cambia lo que el buscador
+  puede **afirmar**—. **Control positivo: sembrada la desactivación del paso de casos, caen 4 de las
+  6**, exactamente las que exigen que `∨E` dispare. **BENCH-04 re-congelado** con el buscador
+  arreglado (`bench04-dd2c211a8d4c05d0`; gana `prefilter_then_search`, mismo margen de 35 unidades
+  del mismo caso inválido) y **W3 re-ejecutado**. La guarda de artefactos de W3 fijaba que KC13
+  estaba a cero: esa afirmación caducó con el arreglo y **se sustituyó por la contraria**, que es la
+  que ahora hay que defender.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

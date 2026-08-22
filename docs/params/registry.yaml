@@ -40,8 +40,13 @@ parameters:
     data_policy: no_participant_data
     measured_on: real_content_package
     content_package_version: forallx-yyc/tfl-deduccion-natural@7a988a58d38187cf
-    report_run_id: bench04-ef5340ade353cb38
+    report_run_id: bench04-dd2c211a8d4c05d0
     sample_size: 37
+    refrozen_at: 2026-08-22
+    refrozen_reason: >-
+      Re-congelado tras implementar la eliminacion de disyuncion en el buscador (D-56). El orden
+      anterior se midio con un buscador que no podia usar premisas disyuntivas. Ganador y margen
+      identicos; las pruebas halladas sobre la muestra pasan de 11 a 25 de 37.
     winning_variant: prefilter_then_search
     work_units_saved: 35
     comparable: true

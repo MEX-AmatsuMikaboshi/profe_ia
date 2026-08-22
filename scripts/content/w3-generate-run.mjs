@@ -122,7 +122,10 @@ const PLANTILLAS = {
     transfer: [['p∧¬p'], 'q∨r', 'alta'],
     contradiccionExplicita: true,
   },
-  KC13: { base: [['p∨q', 'p→r', 'q→r'], 'r', 'alta'], transfer: [['(p∧q)∨(p∧r)'], 'p', 'alta'] },
+  // Transferencia rehecha: `(p∧q)∨(p∧r) ⊢ p` es el ejercicio corpus-ej-05 del
+  // libro. Antes se rechazaba por indemostrable y eso **tapaba** la
+  // duplicación; con `∨E` arreglado (D-56) el control la vio.
+  KC13: { base: [['p∨q', 'p→r', 'q→r'], 'r', 'alta'], transfer: [['(p∨q)∧r'], '(p∧r)∨(q∧r)', 'alta'] },
   // Base rehecha: la anterior era el ejercicio corpus-ej-10 del libro.
   KC14: { base: [['p', 'q'], 'p↔q', 'alta'], transfer: [['p→q', 'q→p'], 'p↔q', 'alta'] },
   KC15: { base: [['p↔q', 'p'], 'q', 'baja'], transfer: [['p↔q', 'q'], 'p', 'baja'] },

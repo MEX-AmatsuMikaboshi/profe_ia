@@ -96,12 +96,23 @@ describe('corrida W3 materializada (T-H5-05)', () => {
     expect(corrida.criticIndependence.independent).toBe(false);
   });
 
-  it('los huecos de cobertura siguen declarados y KC13 sigue sin una sola actividad', () => {
+  it('los huecos de cobertura se declaran sobre los dieciocho KC, sin sacar ninguno', () => {
     // No se tapan quitando el KC del piloto: un KC fuera de la lista dejaría la
-    // cobertura completa justo donde falta todo (D-18). KC13 está a cero porque
-    // el buscador no construye `∨E`, no porque nadie escribiera reactivos.
-    const kc13 = corrida.coverageGaps.filter((g) => g.kcId === 'KC13');
+    // cobertura completa justo donde falta todo (D-18). Lo que se comprueba es
+    // que los huecos que haya estén **dichos**, no que no los haya.
+    const kcsConHueco = new Set(corrida.coverageGaps.map((g) => g.kcId));
+    for (const kcId of kcsConHueco) {
+      expect(corrida.items.some((i) => i.targetKcs.includes(kcId))).toBe(true);
+    }
+  });
+
+  it('KC13 tiene reactivos: es la regresión del arreglo de ∨E (D-56)', () => {
+    // Esta prueba nació al revés. Cuando se escribió, fijaba que KC13 estaba a
+    // **cero** porque el buscador no construía `∨E` y ninguna premisa
+    // disyuntiva era utilizable. Arreglado el buscador, la afirmación de
+    // entonces caducó: se sustituye por la contraria, que es la que ahora hay
+    // que defender. Si `∨E` volviera a desaparecer, esto cae.
+    const kc13 = corrida.items.filter((i) => i.targetKcs.includes('KC13') && i.accepted);
     expect(kc13.length).toBeGreaterThan(0);
-    expect(corrida.items.filter((i) => i.targetKcs.includes('KC13') && i.accepted)).toHaveLength(0);
   });
 });

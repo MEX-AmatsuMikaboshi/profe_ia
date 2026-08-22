@@ -192,3 +192,69 @@ describe('estados prohibidos', () => {
     }
   });
 });
+
+describe('∨E — análisis de casos (regresión de D-56)', () => {
+  // El buscador construía quince de las dieciséis justificaciones del cálculo y
+  // le faltaba `∨E`, así que **ninguna premisa disyuntiva era utilizable**. Lo
+  // destapó la primera corrida de W3 (D-55): KC13 se quedaba con cero
+  // reactivos. Como el buscador reportaba «no encontré» —cierto, y por eso
+  // CALC-03 se respetaba— el hueco no se veía desde fuera.
+  it('usa una disyunción de las premisas para llegar a la meta', () => {
+    const result = search(req(['A∨B', 'A→C', 'B→C'], 'C'));
+    expect(result.status).toBe('proof_found');
+    if (result.status === 'proof_found') {
+      expect(result.proof.rulesUsed).toContain('∨E');
+    }
+  });
+
+  it('prueba la conmutación de la disyunción, que sin ∨E era inalcanzable', () => {
+    const result = search(req(['A∨B'], 'B∨A'));
+    expect(result.status).toBe('proof_found');
+    if (result.status === 'proof_found') {
+      expect(result.proof.rulesUsed).toEqual(expect.arrayContaining(['∨E', '∨I']));
+    }
+  });
+
+  it('deriva el silogismo disyuntivo desde las primitivas, sin usar DS', () => {
+    // DS está fuera de la whitelist del cálculo: el libro lo deriva de las
+    // básicas, y el buscador debe hacer lo mismo en vez de citarlo.
+    const result = search(req(['A∨B', '¬A'], 'B'));
+    expect(result.status).toBe('proof_found');
+    if (result.status === 'proof_found') {
+      expect(result.proof.rulesUsed).toContain('∨E');
+      expect(result.proof.rulesUsed).not.toContain('DS');
+    }
+  });
+
+  it('el certificado con ∨E pasa la verificación de logic-core', () => {
+    // El buscador ya re-verifica por dentro; esto lo comprueba desde fuera con
+    // el verificador, que es quien tiene autoridad sobre la validez.
+    const result = search(req(['(A∧B)∨(A∧C)'], 'A'));
+    expect(result.status).toBe('proof_found');
+    if (result.status === 'proof_found') {
+      const veredicto = verify({ lines: result.proof.lines, goal: 'A' });
+      expect(veredicto.valid).toBe(true);
+      expect(veredicto.goalReached).toBe(true);
+    }
+  });
+
+  it('no abre casos sobre una disyunción cuyo disyunto ya está disponible', () => {
+    // Con `A` disponible, `A∨B` no aporta nada: esa poda evita además volver a
+    // entrar por la misma disyunción en la recursión. La prueba sale igual, sin
+    // ∨E y sin gastar el presupuesto en dos subpruebas redundantes.
+    const result = search(req(['A', 'A∨B'], 'A∨C'));
+    expect(result.status).toBe('proof_found');
+    if (result.status === 'proof_found') {
+      expect(result.proof.rulesUsed).not.toContain('∨E');
+    }
+  });
+
+  it('sigue sin afirmar inexistencia cuando no encuentra prueba (CALC-03)', () => {
+    // Añadir ∨E amplía lo demostrable; no cambia lo que el buscador puede
+    // **afirmar**. Un argumento inválido sigue sin proof_found y sin ninguna
+    // afirmación de que no exista prueba.
+    const result = search(req(['A∨B'], 'A∧B'));
+    expect(result.status).not.toBe('proof_found');
+    expect(SEARCH_ORDER_VERSION).toBe('search-order-v1');
+  });
+});
