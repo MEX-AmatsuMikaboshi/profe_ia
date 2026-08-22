@@ -923,4 +923,5 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   calibrado contra CAL-09** en vez de declararse a ojo, y eso es una tarea con su propio alcance. Se
   registra en vez de seguir ajustando la regla, que es lo que convertiría el objetivo en un espejo de
   la medida por la puerta de atrás.
+  **CI: corrida `32543149315` sobre `a458933` observada en verde el 2026-08-22, los diez jobs.**
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.
