@@ -1,18 +1,71 @@
 # HANDOFF — punto de continuación
 
-> ## AVISO — CI NO ESTÁ CORRIENDO (2026-08-22, 02:32 UTC)
+> ## EMPIEZA AQUÍ — cierre de la decimotercera sesión (2026-08-22, noche)
 >
-> **Las tres últimas corridas fallaron sin ejecutar un solo paso**: los diez jobs empiezan y terminan
-> en uno o dos segundos, con `steps: []`. Eso no es el código —en local hay 1788 pruebas en verde y
-> lint limpio— sino que Actions no llega a arrancar. **Última corrida verde: `32543149315` sobre
-> `a458933`**, 01:20 UTC. Causa más probable: **minutos de Actions agotados o tope de gasto**, que ya
-> ocurrió antes en este repo.
+> **F6/H5 está a un paso del freeze.** Esta sesión cerró la cadena entera de contenido: W2, Rol B,
+> BENCH-04, W3, W4 y el paso 5 de W2. Lo que queda antes de W5 **no es código**: son dos decisiones.
 >
-> **Mientras siga así, nada nuevo puede marcarse `VERIFICADA`**: el criterio de este proyecto es el
-> check verde observado en `main`, y no lo hay. Lo hecho desde `a458933` —D-58, el banco de sondas—
-> está `HECHA` y verificado en local, nada más. **Se arregla en la cuenta, no en el árbol.**
+> ### Estado del paquete de contenido
+>
+> | Etapa | Estado |
+> |---|---|
+> | W0 · corpus autorizado | ✅ firmado (D-50) |
+> | W1 · ingesta | ✅ 77 fragmentos (D-51) |
+> | W2 · extracción | ✅ 43 elementos, 30 claims, 4 decisiones (D-52) |
+> | Rol B · pedagogía | ✅ secuencia, 18 objetivos, política (D-53) |
+> | BENCH-04 · orden de validez | ✅ congelado sobre el paquete real (D-54, re-congelado en D-56) |
+> | W3 · autoría | ✅ **557 reactivos aceptados** (D-55, D-58) |
+> | W2 paso 5 · conjuntos A/B/C | ✅ propuestos y ordenados, **sin congelar** (D-59) |
+> | W4 · auditoría previa | 🟡 muestra y juicios hechos; **falta firma humana** |
+> | W5 · freeze | ❌ |
+>
+> ### LO PRIMERO AL VOLVER — dos decisiones, ninguna de código
+>
+> 1. **Los tres conjuntos no son estructuralmente comparables (D-59).** Diferencia máxima **90,86**
+>    contra la banda congelada de **12,065296**; tomando **solo las sondas primarias** sale **71,28**,
+>    siete veces la banda. No hay lectura cómoda: se comprobaron las dos. **No bloquea** —la política
+>    dice registrar, no bloquear— pero limita lo que el piloto puede afirmar. Hay que decidir si el
+>    banco se **reequilibra** (acotando el rango de complejidad de las sondas) o si se **asume y se
+>    declara** en la interpretación. Es diseño experimental.
+> 2. **La auditoría de W4 la hizo el asistente, y no cierra el gate.** Encontró **un solo defecto en
+>    557** (`kc03-transf`, `incorrect_kc_label`: dice ser de reiteración y su certificado no usa `R`).
+>    §7.3 dice que el acuerdo de un crítico no independiente no vale como evidencia de calidad. **La
+>    decisión del propietario cabe en una línea**: acepta la auditoría del asistente para esta unidad
+>    piloto, o no. No hace falta releer los 557.
+>
+> Con esas dos, W5 (freeze) es ejecutable.
+>
+> ### Hallazgos abiertos que conviene no perder
+>
+> - **Segundo hueco del buscador**: `→E` no encadena hacia atrás sintetizando un antecedente
+>   compuesto, así que `(A∧B)→C, A, B ⊢ C` no se prueba. Mismo patrón que `∨E`, y ahora hay un sitio
+>   evidente donde va. **No bloquea ningún KC.**
+> - **El objetivo de complejidad no se deja predecir con una regla estructural simple** (D-57): toda
+>   ↔I lleva dos subpruebas, así que la regla la manda a `alta` siempre y `cal-09-v1` la mide `media`.
+>   Los desajustes se rechazan y se cuentan; **no se reetiquetan**. Debería derivarse de un predictor
+>   calibrado contra CAL-09, y eso es una tarea con su propio alcance.
+> - **Las tres pistas son idénticas en los 557 reactivos.** No filtran solución —por eso pasan la
+>   comprobación— pero tampoco ayudan de forma específica. El libro de códigos no tiene código para
+>   «ayuda de menos», así que quedó registrado aparte. Conviene resolverlo antes del freeze.
+> - **`SEARCH_ORDER_VERSION` se quedó en `v1`** tras implementar `∨E`, por decisión del propietario
+>   (D-56). Lo que se acepta a cambio: quien compare perfiles de complejidad de antes y después del
+>   2026-08-22 no tiene la guarda de versión para avisarle.
+>
+> ### Para el propietario, ya preparado
+>
+> La revisión está publicada como artefacto: los reactivos con su enunciado y sus pistas, los 18
+> objetivos con su evidencia, las 4 decisiones curriculares y las 3 inferencias del sistema, con el
+> libro de códigos cerrado a mano. Los artefactos crudos están en `content/unidad-deduccion-natural/`:
+> `audits/`, `items/`, `objectives/` y `provenance/`.
+>
+> ### CI
+>
+> **Estuvo caída entre las 01:29 y las ~04:00 UTC del 2026-08-22**: tres corridas fallaron en uno o
+> dos segundos con `steps: []`, que es la firma de que Actions no arranca —minutos agotados o tope de
+> gasto—. El propietario lo resolvió en la cuenta. **Si vuelve a pasar, mírese el número de pasos del
+> job antes de buscar el fallo en el código: con `steps: []` no es el código.**
 
-> ## EMPIEZA AQUÍ — cierre de la duodécima sesión (2026-08-22, tarde)
+> ## Cierre de la duodécima sesión (2026-08-22, tarde) — **superado por el de arriba**
 >
 > **`∨E` implementado en el buscador (D-56).** Era el bloqueo que dejó la sesión anterior. El paso de
 > análisis de casos no cabía en ninguna de las tres familias que `prove()` ya tenía, y por eso
