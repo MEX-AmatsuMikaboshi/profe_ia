@@ -960,4 +960,13 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   **Auditoría re-corrida sobre los 389: sigue habiendo un solo defecto** (`kc03-transf`,
   `incorrect_kc_label`), ahora 0,26 % de mayores. Las 292 sondas nuevas **sí** ejercitan la regla de
   su KC —la envoltura conserva el núcleo—, comprobado recorriendo los 389 certificados.
+  **SIN EVIDENCIA DE CI, y hay que decirlo:** la corrida `32546539785` sobre `d94997f` **falló, y con
+  ella las tres últimas** (`32543600446`/`573f00d`, `32545859223`/`5b1729c` y esta). No es el código:
+  los diez jobs **empezaron y terminaron en uno o dos segundos con cero pasos ejecutados**, que es la
+  firma de que Actions no llegó a arrancar. La última corrida verde es `32543149315` sobre `a458933`
+  (2026-08-22 01:20 UTC). Causa más probable: **minutos de Actions agotados o tope de gasto**, que ya
+  le pasó a este repo (ver la nota de `T-H4-10` sobre la corrida `32218704675`). **Consecuencia para
+  el registro: nada posterior a `a458933` puede marcarse `VERIFICADA`**, D-58 incluida, por más que
+  en local estén las 1788 pruebas en verde y el lint limpio. Se resuelve con la cuenta, no con el
+  árbol.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

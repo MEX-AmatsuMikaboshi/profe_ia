@@ -1,5 +1,17 @@
 # HANDOFF — punto de continuación
 
+> ## AVISO — CI NO ESTÁ CORRIENDO (2026-08-22, 02:32 UTC)
+>
+> **Las tres últimas corridas fallaron sin ejecutar un solo paso**: los diez jobs empiezan y terminan
+> en uno o dos segundos, con `steps: []`. Eso no es el código —en local hay 1788 pruebas en verde y
+> lint limpio— sino que Actions no llega a arrancar. **Última corrida verde: `32543149315` sobre
+> `a458933`**, 01:20 UTC. Causa más probable: **minutos de Actions agotados o tope de gasto**, que ya
+> ocurrió antes en este repo.
+>
+> **Mientras siga así, nada nuevo puede marcarse `VERIFICADA`**: el criterio de este proyecto es el
+> check verde observado en `main`, y no lo hay. Lo hecho desde `a458933` —D-58, el banco de sondas—
+> está `HECHA` y verificado en local, nada más. **Se arregla en la cuenta, no en el árbol.**
+
 > ## EMPIEZA AQUÍ — cierre de la duodécima sesión (2026-08-22, tarde)
 >
 > **`∨E` implementado en el buscador (D-56).** Era el bloqueo que dejó la sesión anterior. El paso de
