@@ -893,4 +893,34 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   **CI: corrida `32541960670` sobre `f39e4ef` observada en verde el 2026-08-22, los diez jobs**,
   incluidos `ci:logic:mutation` y el conjunto dorado — que es lo que confirma que tocar el
   buscador no movió al verificador ni al cálculo congelado.
+- **D-57 — W4 produce censo, las sondas son 207 y no 69, y el objetivo de complejidad no se puede
+  predecir con una regla estructural simple (2026-08-22).** Tres cosas que salieron de cerrar W3 y
+  abrir W4, y las tres corrigen algo que este documento decía mal.
+  **(1) La muestra de auditoría previa salió 97 de 97.** No es un fallo del muestreo: el estrato es
+  KC × función × complejidad × regla × origen × subprueba × riesgo, con 97 reactivos repartidos en 18
+  KC y 6 funciones cada combinación es única, y `cal-audit-pre-v1` exige **al menos uno por estrato
+  observado**. Con un banco así, la política correcta *es* el censo; la fracción bajará sola cuando
+  el banco crezca. El riesgo por reserva es un juicio declarado —ninguna autoridad lo enumera— y
+  viaja con su consecuencia al lado: alto en `TRANSFER_MASTERY`, porque un defecto ahí hace afirmar
+  transferencia que no hubo (§5.11).
+  **(2) Las sondas son 207, no «57–69».** El handoff venía diciendo 57 nominales y 69 con reserva, y
+  eso es **por conjunto experimental**: `requiredProbesForCalendar()` multiplica las 19 oportunidades
+  del sobre congelado por `k_set = 3`, y eso da 57 **para A, para B y para C**. Total real: **171 por
+  calendario y 207 con la reserva del 20 %**. Además cada sonda debe ser no isomorfa a los 97
+  reactivos de enseñanza —`collisionProhibited()` prohíbe la colisión en cuanto una de las dos
+  reservas es de medición— y su **asignación a conjunto depende de `T-H5-12`, que no se ha corrido**.
+  Autorar las 207 antes de saber la composición de los conjuntos sería construir sobre una decisión
+  que no está tomada.
+  **(3) El objetivo de complejidad no se deja predecir con una regla estructural simple, y no se
+  siguió retocando.** Tras corregir la regla (D-55) quedaron 11 desajustes en tres formas:
+  `kc09-transfer` (media declarada, alta medida), `kc14-base` (alta declarada, media medida) y
+  `kc18-base` (media declarada, alta medida). El caso de `kc14-base` es el que lo dice todo: **toda**
+  introducción de bicondicional lleva dos subpruebas, así que la regla la manda a `alta` siempre,
+  y `cal-09-v1` la mide `media`. Rediseñar el reactivo no arregla eso —la forma de ↔I es la que es— y
+  reetiquetarlo sería el espejo que se prohibió. **Se deja el desajuste y se cuenta**: son 3 KC bajo
+  el piso de actividades, 2 bajo recuperación y 1 bajo transferencia, todos declarados. Lo que esto
+  sugiere para quien complete el banco es que el objetivo debería **derivarse de un predictor
+  calibrado contra CAL-09** en vez de declararse a ojo, y eso es una tarea con su propio alcance. Se
+  registra en vez de seguir ajustando la regla, que es lo que convertiría el objetivo en un espejo de
+  la medida por la puerta de atrás.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

@@ -29,10 +29,16 @@
 > 1. **El segundo hueco del buscador sigue abierto**: `→E` no encadena hacia atrás sintetizando un
 >    antecedente compuesto, así que `(A∧B)→C, A, B ⊢ C` no se prueba. Mismo patrón que `∨E`, y ahora
 >    hay un sitio evidente donde va. **Menos urgente**: no bloquea ningún KC.
-> 2. **Completar el banco.** Quedan **11 desajustes de complejidad** —que se rechazan y se cuentan,
->    no se reetiquetan— y por ellos **3 KC bajo el piso de actividades**, 2 bajo recuperación y 1 bajo
->    transferencia. Y **las 57–69 sondas siguen sin autorar**: son reserva de medición, así que sus
->    formas deben ser estructuralmente distintas de las de enseñanza.
+> 2. **Completar el banco, y son más sondas de las que decía este documento (D-57).** No son «57–69»:
+>    esas son **por conjunto**, así que el total real es **171 por calendario y 207 con reserva**.
+>    Cada una debe ser no isomorfa a los 97 reactivos de enseñanza, y **su asignación a conjunto
+>    depende de `T-H5-12`, que no se ha corrido**: autorarlas antes sería construir sobre una decisión
+>    que no está tomada. Quedan además **11 desajustes de complejidad** que se rechazan y se cuentan
+>    —3 KC bajo el piso de actividades, 2 bajo recuperación, 1 bajo transferencia—; **no se siguieron
+>    retocando a propósito**, porque toda ↔I lleva dos subpruebas y ninguna regla estructural simple
+>    la va a predecir. Ver D-57.
+> 2b. **La muestra de W4 ya está** (`audits/w4-preaudit-sample.yaml`) y salió **97 de 97**: con este
+>    banco la política congelada exige censo. Falta el juicio del auditor con el libro de códigos.
 > 3. Después W4 (auditoría previa) y W5 (freeze). Solo con el freeze quedan medibles los dos gates
 >    que hoy impiden el dictamen de BENCH-01.
 > 4. Pendiente del propietario: la auditoría de lo que redactó el asistente (extracción de W2,
