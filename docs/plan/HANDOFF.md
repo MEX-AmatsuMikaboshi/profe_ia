@@ -31,6 +31,9 @@
 > piso** (KC09 5/6, KC14 1/6, KC18 1/6, KC13 0/6) y **las 57–69 sondas sin autorar**. KC13 **no se
 > saca del piloto** para que la cobertura salga limpia.
 >
+> **CI observado: la corrida `32540724131` sobre `dea06df` salió verde, los diez jobs.**
+> `T-H5-05` queda `VERIFICADA` **como código y corrida**, no como banco completo.
+>
 > **Pruebas al cerrar: 1650 unitarias en verde** (+7 de la guarda de artefactos de W3). Lint limpio.
 
 > ## Cierre de la décima sesión (2026-08-21, tarde) — **superado por el de arriba**
