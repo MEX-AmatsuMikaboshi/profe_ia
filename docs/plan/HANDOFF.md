@@ -1,6 +1,101 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la decimotercera sesión (2026-08-22, noche)
+> ## EMPIEZA AQUÍ — cierre de la decimocuarta sesión (2026-08-22, madrugada)
+>
+> **Sesión de «haz todo lo que no requiera mi intervención».** Se hizo, y lo que queda son **tres
+> decisiones del propietario**, ninguna de código. Las dos de la sesión anterior siguen en pie con
+> los números actualizados, y hay una tercera nueva.
+>
+> ### Estado del paquete de contenido
+>
+> | Etapa | Estado |
+> |---|---|
+> | W0 · corpus autorizado | ✅ firmado (D-50) |
+> | W1 · ingesta | ✅ 77 fragmentos (D-51) |
+> | W2 · extracción | ✅ 43 elementos, 30 claims, 4 decisiones (D-52) |
+> | Rol B · pedagogía | ✅ secuencia, 18 objetivos, política (D-53) |
+> | BENCH-04 · orden de validez | ✅ congelado (D-54, re-congelado en D-56) |
+> | W3 · autoría | ✅ **571 reactivos aceptados** (D-60; antes 557) |
+> | W2 paso 5 · conjuntos A/B/C | ✅ re-corrido, **sin congelar** (D-60) |
+> | W4 · auditoría previa | 🟡 censo 571/571, **0 defectos**; **falta firma humana** |
+> | W5 · freeze | ❌ — bloqueado solo por las decisiones de abajo |
+>
+> ### LAS TRES DECISIONES, ninguna de código
+>
+> 1. **Los tres conjuntos no son estructuralmente comparables (D-59, sin cambios).** La diferencia
+>    máxima sigue siendo **90,857143** contra la banda congelada de **12,065296**; con solo sondas
+>    primarias, **71,28**. Re-corrido con el banco nuevo: **mismo ganador `sel-por-conectivo`, mismas
+>    cero aristas cruzadas, misma diferencia**. Inventario por conjunto **112/112/98** (antes
+>    98/112/98). **No bloquea** —la política dice registrar—, pero limita lo que el piloto puede
+>    afirmar. Hay que decidir si el banco se **reequilibra** acotando el rango de complejidad de las
+>    sondas o si se **asume y se declara** en la interpretación.
+> 2. **La auditoría de W4 la sigue haciendo el asistente.** Ahora es **censo de 571 con cero
+>    defectos**, y el único que había (`kc03-transf`) está arreglado. **Ojo con leer ese cero como
+>    «todo bien»**: el informe declara ahora, en `checksApplied`, que **lo único mecánico es la
+>    etiqueta de KC** —424 certificados recorridos— y que el resto del libro de códigos sigue
+>    dependiendo de una lectura que no es independiente (§7.3). La decisión cabe en una línea: se
+>    acepta esta auditoría para la unidad piloto, o no.
+> 3. **NUEVA — el segundo hueco del buscador tiene arreglo escrito y medido, y mueve `cal-09-v1`
+>    (D-61).** `→E` no encadena hacia atrás, así que `(A∧B)→C, A, B ⊢ C` no se prueba. El arreglo
+>    está escrito y probado; **compra** tres formas hoy indemostrables, entre ellas
+>    `(p∧q)→r, p ⊢ q→r`, que es la plantilla de transferencia de KC18 que hubo que rehacer. Y
+>    **cuesta** el manifiesto congelado: ninguna de las trece pruebas de CAL-09 cambia —mismas
+>    líneas, mismas reglas, mismo `costExplored`— pero el **trabajo gastado** sube en cinco casos
+>    (4→5, 9→11, 10→16, 15→16, 82→98) y `workUnitsLog2` **pesa 47**, así que las bandas se desplazan
+>    y el `sampleHash` deja de coincidir. Re-congelar una calibración es decisión del propietario.
+>    **No se aplicó**; queda una prueba que fija el estado de hoy y que se sustituirá por la contraria
+>    cuando se decida, como pasó con la de KC13.
+>
+> ### Lo que se hizo, y no hay que rehacer
+>
+> - **Las pistas se derivan del reactivo (D-60).** Era la única observación sin código de W4. Nivel 1
+>   nombra la forma de la meta y los conectivos a repasar; nivel 2, el conectivo principal y la regla
+>   que introduce y la que elimina; nivel 3, la regla que construiría la meta y qué exige. **64 ternas
+>   distintas** donde había una. Se derivan del **enunciado**, no del certificado: Rol D no ve la
+>   solución.
+> - **Dos defectos que esperaban en el freeze, destapados al arreglar lo anterior (D-60).** (a) Las
+>   tres pistas proponían `masteryDisqualifying: false` y DEC-HINT-AUTHORITY-001 descalifica
+>   **siempre** de nivel 2 en adelante: **1114 discrepancias** que el linter de paquete habría
+>   rechazado en W5. (b) `items/transfer/items.yaml` **se sobrescribía a sí mismo** —nueve carpetas,
+>   diez reservas— y **perdía los 17 reactivos de `TRANSFER_MASTERY`** con todos los conteos
+>   cuadrando.
+> - **Los archivos de prueba ya se typechequean (D-62)**, y eso destapó **tres defectos**: una
+>   propiedad de fast-check declaraba un generador y nunca lo usaba —200 corridas midiendo siempre
+>   cinco pasos—; ocho llamadas omitían `codeFence`, que es obligatorio y sin valor por omisión; y una
+>   guarda de artefactos importaba un paquete que su paquete **no declara y no puede declarar** —sería
+>   un ciclo—, que resolvía en local y rompía en CI. 65 errores en 20 archivos, todos resueltos sin
+>   debilitar una sola prueba.
+> - **La auditoría de W4 ya no lleva la lista de defectos escrita a mano**: la deriva recorriendo los
+>   certificados.
+>
+> ### Lo que se decidió NO hacer, y por qué
+>
+> - **No se tocó el desajuste de complejidad de KC09** (el hueco `COV-KC-TRANSFER`). Rediseñar el
+>   reactivo hasta que la medida cuadre con la declaración es el espejo de D-57 en cámara lenta.
+>   Sigue siendo lo que dijo D-57: hace falta un **predictor calibrado contra CAL-09**, y esa es una
+>   tarea con su propio alcance y su propia discusión.
+> - **No se rehízo el refresco documental.** Caducó, y rehacerlo ahora volvería a caducar antes de que
+>   BENCH-01 pueda dictaminar —que exige el freeze, que exige las decisiones de arriba—. Es gratis y
+>   se hace **justo antes** de la corrida, no ahora.
+>
+> ### Números al cerrar
+>
+> **1665 pruebas unitarias en verde** (1657 al abrir; +7 de D-60, +1 de D-61) más las 131 contra
+> PostgreSQL 17 real. Lint, typecheck —ahora **incluidas las pruebas**—, depcruise y sus dos controles
+> positivos, separación de modos, sesión seca, conjunto dorado, PBT, pureza del verificador,
+> adversarial y SBOM, todo en verde en local.
+>
+> ### CI
+>
+> - **`32555340076` sobre `e0789e0` (D-60): verde, los diez jobs.**
+> - **`32556710586` sobre `278fae2` (D-61 + D-62): roja**, y por un motivo que vale la pena conocer.
+>   El job de typecheck cayó con `Cannot find module '@profesor-ia/experiment'` en una prueba de
+>   `authoring-core`: en local resolvía por el `node_modules` de la raíz con `dist/` ya construido, y
+>   en CI no, porque `turbo` solo construye lo declarado. **Es el primer fallo que el typecheck de
+>   pruebas encuentra en producción**, y está arreglado en el commit siguiente, con guarda propia.
+> - La corrida del arreglo hay que **observarla**.
+
+> ## Cierre de la decimotercera sesión (2026-08-22, noche) — **superado por el de arriba**
 >
 > **F6/H5 está a un paso del freeze.** Esta sesión cerró la cadena entera de contenido: W2, Rol B,
 > BENCH-04, W3, W4 y el paso 5 de W2. Lo que queda antes de W5 **no es código**: son dos decisiones.

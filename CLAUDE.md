@@ -194,20 +194,22 @@ Son reales y cuestan una hora cada una si no se conocen (`docs/env/windows.md`).
    `%LOCALAPPDATA%\Docker\run` **y** `%LOCALAPPDATA%\docker-secrets-engine` —los dos, limpiar uno
    sólo mueve el fallo al otro— antes de lanzarlo. Desde el icono seguirá fallando (D-31).
 
-## 6. Estado actual (2026-08-19)
+## 6. Estado actual (2026-08-22)
 
 F0/H0, F1/H1 y F2/H2 completas. **F3/H3 con sus 5 tareas y el criterio técnico cubierto**: los tres
 checks de infraestructura (`ci:infra:hardening`, `ci:infra:compose-up`, `ci:infra:otel`) están en CI
 y verdes en `main`; el gate espera sólo Infisical y firmas. F4/H4 con 10 de 12 más `T-H4-10` en curso
-—el gasto de la corrida material **ya está autorizado** (USD 3.64, D-40), pero **faltan los 200 casos
-escritos a mano y dos defectos de diseño del piloto**: ver `docs/plan/HANDOFF.md` §3.3—. F5/H4.5 con
-8 de 8 y F6/H5 con 17 de 17 **mecanismos, no contenido**: `content/` y `research/` siguen en
-placeholders. F7/H6 con 14 de 14 y el AC cubierto. **F8/H7 con 2 de 7**: `T-H7-02` (validador de
+—el gasto de la corrida material **ya está autorizado** (USD 3.64, D-40); los 200 casos están
+escritos y falta **leerlos**, que es revisión humana: ver `docs/plan/HANDOFF.md` §3.3—. F5/H4.5 con
+8 de 8 y F6/H5 con 17 de 17. **`content/` ya no son placeholders**: W0–W4 corridos sobre el corpus
+real, **571 reactivos aceptados** y censo de auditoría previa sin defectos; W5 (freeze) espera **tres
+decisiones del propietario**, no código — ver `docs/plan/HANDOFF.md`.
+F7/H6 con 14 de 14 y el AC cubierto. **F8/H7 con 2 de 7**: `T-H7-02` (validador de
 anclaje) y `T-H7-03` (no revelación y suite adversarial), que eran **las dos únicas construibles sin
 proveedor**. Las cuatro restantes viven dentro del bucle W7 y exigen el ganador de BENCH-01, así que
 **F8 no avanza escribiendo código**. F9–F16 no empezadas.
 
-**1666 pruebas en verde: 1535 unitarias + 131 contra PostgreSQL 17 real.** Mutation testing sobre
+**1796 pruebas en verde: 1665 unitarias + 131 contra PostgreSQL 17 real.** Mutation testing sobre
 `logic-core` en verde (Stryker muta sólo ese paquete: las pruebas de otros no mueven ese número).
 
 **El estado tarea por tarea, con evidencia, está en `docs/plan/PLAN_STATUS.md`, y por dónde seguir en

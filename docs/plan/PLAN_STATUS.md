@@ -1134,6 +1134,14 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   donde `undefined` significaba «ausente» se retira la clave en vez de escribirla, que con
   `exactOptionalPropertyTypes` no es lo mismo — y es justo la distinción que D-42 exige de
   `classification` en una caída de transporte.
+  **Y un tercer defecto, que solo apareció en CI y por eso hay guarda nueva.** La guarda de
+  artefactos de Rol B importaba `@profesor-ia/experiment` desde `authoring-core`, **que no lo declara
+  como dependencia y no puede declararlo**: `experiment` depende de `authoring-core` y sería un ciclo.
+  En local resolvía —la resolución sube hasta el `node_modules` de la raíz, donde pnpm enlaza lo que
+  la raíz sí declara, y `dist/` estaba construido de una corrida anterior— y en CI no, porque `turbo`
+  solo construye lo **declarado**. La comprobación se mudó a `packages/experiment/test/`, que es la
+  dirección correcta. El control positivo comprueba ahora también esto: **ninguna prueba importa un
+  paquete del workspace sin declararlo**, con su propia siembra.
   **Control positivo, porque el check es fácil de vaciar sin que se note.**
   `scripts/arch/verify-test-typecheck-catches.mjs` siembra un error de tipos **dentro de un archivo
   de prueba** y exige que el proyecto de pruebas lo vea y el de `src/` **no**; además comprueba que

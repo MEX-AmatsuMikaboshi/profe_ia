@@ -185,7 +185,7 @@ function main() {
           check: 'etiqueta_de_kc',
           codes: ['incorrect_kc_label'],
           mechanical: true,
-          coverage: `${comprobados} de ${muestra.population.length} reactivos con \`ruleId\` en el catálogo`,
+          coverage: `${comprobados} de ${muestra.population.length} reactivos — los que declaran un KC con \`ruleId\` en el catálogo; KC01, KC02, KC08 y KC18 no lo tienen`,
           method:
             'Por cada reactivo aceptado cuyo KC declara `ruleId`, esa regla debe aparecer en alguna ' +
             'línea de su certificado. Se leen las líneas, no `rulesUsed`: la reiteración se inserta ' +

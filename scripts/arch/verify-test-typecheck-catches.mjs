@@ -14,7 +14,7 @@
  * retira siempre.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOT = process.cwd();
@@ -42,6 +42,51 @@ function paquetesConPruebas() {
     }
   }
   return salida;
+}
+
+/** Archivos `.ts`/`.tsx` bajo un directorio, recursivo. */
+function archivosTs(dir) {
+  const salida = [];
+  for (const entrada of readdirSync(dir)) {
+    const ruta = join(dir, entrada);
+    if (statSync(ruta).isDirectory()) salida.push(...archivosTs(ruta));
+    else if (/\.tsx?$/u.test(entrada)) salida.push(ruta);
+  }
+  return salida;
+}
+
+/**
+ * Que ninguna prueba importe un paquete del workspace **sin declararlo**.
+ *
+ * No es una regla de estilo: la resolución de Node sube hasta el `node_modules`
+ * de la raíz, donde pnpm enlaza los paquetes que la raíz sí declara, así que en
+ * una máquina con todo compilado el import resuelve y en CI —donde `turbo` solo
+ * construye las dependencias **declaradas**— no. Ya pasó: la guarda de
+ * artefactos de Rol B importaba `@profesor-ia/experiment` desde `authoring-core`,
+ * que no puede declararlo porque sería un ciclo. Pasaba en local y rompía en CI.
+ */
+function importesNoDeclarados(paquetes) {
+  const fallos = [];
+  for (const { nombre, ruta } of paquetes) {
+    const manifiesto = JSON.parse(readFileSync(join(ruta, 'package.json'), 'utf8'));
+    const declarados = new Set([
+      manifiesto.name,
+      ...Object.keys(manifiesto.dependencies ?? {}),
+      ...Object.keys(manifiesto.devDependencies ?? {}),
+    ]);
+    for (const archivo of archivosTs(join(ruta, 'test'))) {
+      const contenido = readFileSync(archivo, 'utf8');
+      for (const [, importado] of contenido.matchAll(/from '(@profesor-ia\/[^']+)'/gu)) {
+        // Los subcaminos (`@profesor-ia/logic-core/syntax`) los declara el
+        // paquete importado en sus `exports`; lo que hay que declarar aquí es
+        // el paquete.
+        const paquete = importado.split('/').slice(0, 2).join('/');
+        if (declarados.has(paquete)) continue;
+        fallos.push(`${nombre} → ${importado} (${archivo.slice(ruta.length + 1)})`);
+      }
+    }
+  }
+  return fallos;
 }
 
 /** Corre `tsc -p` y dice si falló. */
@@ -163,6 +208,17 @@ function main() {
     );
   }
   console.log('ok: todos lo corren desde su script `typecheck`');
+
+  const noDeclarados = importesNoDeclarados(conPruebas);
+  if (noDeclarados.length > 0) {
+    throw new Error(
+      `estas pruebas importan un paquete del workspace que su paquete no declara. Resuelve en local ` +
+        `por el \`node_modules\` de la raíz y rompe en CI, donde solo se construye lo declarado:` +
+        '\n' +
+        noDeclarados.map((f) => `  - ${f}`).join('\n'),
+    );
+  }
+  console.log('ok: ninguna prueba importa un paquete del workspace sin declararlo');
 }
 
 main();

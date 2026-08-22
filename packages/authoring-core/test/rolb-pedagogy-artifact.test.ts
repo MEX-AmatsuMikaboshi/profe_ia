@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { BKT_SHADOW_H5_CONFIGURATION } from '@profesor-ia/experiment';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -97,7 +96,6 @@ const seleccion = leerJsonConCabecera<SeleccionDoc>('pedagogy/selection-rules.ya
 const ayudas = leerJsonConCabecera<AyudasDoc>('pedagogy/assistance-policy.yaml');
 const retrieval = leerJsonConCabecera<RetrievalDoc>('pedagogy/retrieval-spacing.yaml');
 const catalogo = leerJsonConCabecera<CatalogoDoc>('pedagogy/strategy-catalog.yaml');
-const sombra = leerJsonConCabecera<{ bktShadow: unknown }>('pedagogy/shadow-metrics.yaml');
 const plantillas = leerJsonConCabecera<{ patterns: readonly { patternId: string }[] }>(
   'session-templates/base-patterns.yaml',
 );
@@ -174,10 +172,6 @@ describe('política pedagógica de Rol B materializada (T-H5-04)', () => {
     expect(seleccion.basePatterns.map((p) => p.patternId)).toEqual(
       BASE_PATTERNS.map((p) => p.patternId),
     );
-  });
-
-  it('BKT sombra sigue congelado en deshabilitado, sin parámetros ni autoridad', () => {
-    expect(sombra.bktShadow).toEqual({ ...BKT_SHADOW_H5_CONFIGURATION });
   });
 
   it('los perfiles por KC no inventan tipos de conocimiento y marcan los fundamentos', () => {
