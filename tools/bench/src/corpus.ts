@@ -1,11 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import type {
-  AuthorizedFragment,
-  FeedbackTemplate,
-  FrozenAsset,
-  FrozenAssetKind,
+import {
+  validateAnchoredOutput,
+  type AuthorizedCalculus,
+  type AuthorizedFragment,
+  type FeedbackTemplate,
+  type FrozenAsset,
+  type FrozenAssetKind,
 } from '@profesor-ia/model-gateway';
 
 /**
@@ -373,4 +375,79 @@ export function assertPackageMayCrownWinner(paquete: ContentPackage): void {
         `corrida sobre él corona un ganador de BENCH-01. ${paquete.frozenReason}`,
     );
   }
+}
+
+/**
+ * Sonda de segmentos factuales para el gate de anclas (P-III §6.2).
+ *
+ * **No cuenta anclas: cuenta segmentos que anclaron**, y quien decide si un
+ * ancla resuelve es `validateAnchoredOutput()` —el validador de `T-H7-02`—, no
+ * una comparación de cadenas escrita aquí. Una segunda implementación del
+ * anclaje dentro del harness sería la que se queda vieja, y además mediría al
+ * candidato contra una regla distinta de la que la sesión va a aplicarle.
+ *
+ * **Qué cuenta como segmento factual.** Los de función `definition`,
+ * `explanation` y `example`. `transition` queda fuera porque P-I §8.5 la admite
+ * expresamente como acompañamiento no factual: contarla como factual haría
+ * fallar el gate a un candidato por escribir «vamos por partes».
+ *
+ * **Una salida rechazada aporta sus segmentos al denominador y ninguno al
+ * numerador.** Descartarla encogería el denominador justo en el caso peor, que
+ * es el fraude que `assertDenominatorIntact` existe para impedir.
+ */
+export function anchoredSegmentsProbe(
+  paquete: ContentPackage,
+  calculus: AuthorizedCalculus,
+): (
+  outcome: { readonly data?: unknown },
+  caso: { readonly caseId: string; readonly blockId?: string; readonly operation: string },
+) => { readonly total: number; readonly withResolvableAnchors: number } {
+  return (outcome, caso) => {
+    const bloque = caso.blockId;
+    if (bloque === undefined) {
+      throw new CorpusLoadError(
+        `El caso ${caso.caseId} alimenta el gate de anclas y no declara bloque. Sin bloque no ` +
+          `hay fragmentos contra los que resolver, y el cero resultante hablaría del harness.`,
+      );
+    }
+    const fragmentos = paquete.authorizedFragmentsByBlock.get(bloque) ?? [];
+    if (fragmentos.length === 0) {
+      throw new CorpusLoadError(
+        `El paquete no tiene fragmentos para ${bloque}, declarado por ${caso.caseId}.`,
+      );
+    }
+
+    const datos = outcome.data as
+      | { readonly segmentos?: readonly { readonly function?: string }[] }
+      | undefined;
+    const segmentos = datos?.segmentos ?? [];
+    const factuales = segmentos.filter((s) => s.function !== 'transition');
+    if (factuales.length === 0) {
+      // Cero segmentos factuales en una respuesta: no aporta ni al numerador ni
+      // al denominador. `observarAnclas()` ya rechaza que el total del gate
+      // entero sea cero, que es el caso que sí escondería una medición ausente.
+      return { total: 0, withResolvableAnchors: 0 };
+    }
+
+    const veredicto = validateAnchoredOutput(
+      {
+        operationId: caso.operation,
+        authorizedBlockId: bloque,
+        segments: segmentos,
+      },
+      { blockId: bloque, authorizedFragments: fragmentos, calculus },
+    );
+    if (veredicto.outcome === 'rejected') {
+      return { total: factuales.length, withResolvableAnchors: 0 };
+    }
+
+    // `standings` viene en el orden de `segments`, así que el índice sirve para
+    // separar los factuales de los de acompañamiento.
+    let anclados = 0;
+    veredicto.standings.forEach((standing, indice) => {
+      if (segmentos[indice]?.function === 'transition') return;
+      if (standing.kind === 'anchored') anclados += 1;
+    });
+    return { total: factuales.length, withResolvableAnchors: anclados };
+  };
 }

@@ -143,6 +143,16 @@ export interface BenchCase {
    * los casos.
    */
   readonly degradedBlockId?: string;
+  /**
+   * Bloque autorizado cuyos fragmentos viajan con la pregunta.
+   *
+   * Obligatorio en las familias que alimentan el gate de anclas
+   * (`explanation_request` y `rephrasing`): sin bloque no hay fragmentos que
+   * enviar, y sin fragmentos toda ancla de la respuesta es irresoluble — el
+   * gate no daría 95 %, daría cero, y el cero hablaría del harness y no del
+   * candidato.
+   */
+  readonly blockId?: string;
 }
 
 /**
@@ -278,6 +288,33 @@ export function assertFaultDeclarationCoherent(set: CaseSet): void {
       `Los casos ${bloqueDeMas.map((c) => c.caseId).join(', ')} declaran bloque degradado sin ` +
         'declarar caída. Un bloque degradado en un caso que no cae no se usa nunca, y su ' +
         'presencia haría creer que ese caso ejercita la ruta degradada.',
+    );
+  }
+}
+
+/** Familias cuya respuesta alimenta `factual_segments_with_resolvable_anchors`. */
+export const ANCHOR_GATE_FAMILIES: readonly CaseFamily[] = Object.freeze([
+  'explanation_request',
+  'rephrasing',
+]);
+
+/**
+ * Que las familias que alimentan el gate de anclas declaren su bloque.
+ *
+ * Se comprueba aparte de la coherencia de fallos porque protege otro gate. Un
+ * caso de explicación sin bloque llegaría al modelo **sin fragmentos**, y una
+ * respuesta que no tiene contra qué anclar produce anclas irresolubles por
+ * construcción: el gate mediría el harness y no al candidato (P-II §8.3/§8.4).
+ */
+export function assertAnchorBlocksDeclared(set: CaseSet): void {
+  const sinBloque = set.cases.filter(
+    (c) => ANCHOR_GATE_FAMILIES.includes(c.family) && c.blockId === undefined,
+  );
+  if (sinBloque.length > 0) {
+    throw new CaseSetError(
+      `Los casos ${sinBloque.map((c) => c.caseId).join(', ')} alimentan el gate de anclas y no ` +
+        'declaran bloque autorizado. Sin bloque no hay fragmentos que enviar, y sin fragmentos ' +
+        'toda ancla es irresoluble.',
     );
   }
 }

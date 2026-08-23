@@ -1,22 +1,33 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { DegradedProfile } from '@profesor-ia/model-gateway';
+import {
+  AUTHORIZED_CALCULUS_VERSION,
+  CONNECTIVE_ALIASES,
+  FORBIDDEN_RULES_EXAMPLES,
+} from '@profesor-ia/logic-core';
+import { DegradedProfile, type AuthorizedCalculus } from '@profesor-ia/model-gateway';
 import { describe, expect, it } from 'vitest';
 
 import {
+  ANCHOR_GATE_FAMILIES,
   CaseSetError,
   MATERIAL_CASE_SET,
+  MATERIAL_INSTRUCTIONS,
+  MATERIAL_RESPONSE_SCHEMA,
+  assertAnchorBlocksDeclared,
   assertFaultDeclarationCoherent,
   type BenchCase,
   type CaseSet,
 } from '../src/index.js';
 import {
   CorpusLoadError,
+  anchoredSegmentsProbe,
   assertPackageMayCrownWinner,
   loadContentPackage,
 } from '../src/corpus.js';
-import { degradedRecoveryProbe } from '../src/scoring.js';
+import { degradedRecoveryProbe, observeGates } from '../src/scoring.js';
+import type { CaseOutcome } from '../src/run.js';
 
 /**
  * Paquete de contenido real para BENCH-01 (T-H4-10 ← D-45 y §3.5 del handoff).
@@ -192,5 +203,265 @@ describe('la sonda de recuperación lee lo registrado, no lo infiere', () => {
     // No haber ejercitado la ruta y haberla ejercitado sin éxito son hechos
     // distintos. Confundirlos culparía al candidato de una corrida mal armada.
     expect(() => sonda(base, fault)).toThrow();
+  });
+});
+
+describe('la sonda de segmentos factuales usa el validador de anclaje, no una copia', () => {
+  const CALCULO: AuthorizedCalculus = {
+    version: AUTHORIZED_CALCULUS_VERSION,
+    canonicalSymbols: ['¬', '∧', '∨', '→', '↔', '⊥'],
+    connectiveAliases: Object.keys(CONNECTIVE_ALIASES),
+    forbiddenRuleIds: [...FORBIDDEN_RULES_EXAMPLES],
+  };
+  const sonda = anchoredSegmentsProbe(PAQUETE, CALCULO);
+  const bloque = 'KC04';
+  const fragmento = (PAQUETE.authorizedFragmentsByBlock.get(bloque) ?? [])[0];
+  const caso = { caseId: 'm-expl-11', blockId: bloque, operation: 'explain_block' };
+
+  it('cuenta anclado el segmento cuyo ancla resuelve contra un fragmento del bloque', () => {
+    const medida = sonda(
+      {
+        data: {
+          segmentos: [
+            { text: 'La conjunción se introduce con ∧I.', anchors: [fragmento?.fragmentId], function: 'explanation' },
+          ],
+        },
+      },
+      caso,
+    );
+    expect(medida).toEqual({ total: 1, withResolvableAnchors: 1 });
+  });
+
+  it('no cuenta anclado un fragmentId inventado', () => {
+    // Control positivo: si contara, el gate daría 100 % a un candidato que se
+    // inventa las citas, que es justo lo que I-7 existe para impedir.
+    const medida = sonda(
+      {
+        data: {
+          segmentos: [
+            { text: 'La conjunción se introduce con ∧I.', anchors: ['frag-inventado'], function: 'explanation' },
+          ],
+        },
+      },
+      caso,
+    );
+    expect(medida.withResolvableAnchors).toBe(0);
+    expect(medida.total).toBe(1);
+  });
+
+  it('las transiciones no entran como factuales', () => {
+    // P-I §8.5 admite el acompañamiento no factual: contarlo haría fallar el
+    // gate a un candidato por escribir «vamos por partes».
+    const medida = sonda(
+      {
+        data: {
+          segmentos: [
+            { text: 'Vamos por partes.', anchors: [], function: 'transition' },
+            { text: 'La conjunción se introduce con ∧I.', anchors: [fragmento?.fragmentId], function: 'explanation' },
+          ],
+        },
+      },
+      caso,
+    );
+    expect(medida).toEqual({ total: 1, withResolvableAnchors: 1 });
+  });
+
+  it('una salida rechazada aporta al denominador y nada al numerador', () => {
+    // Descartarla encogería el denominador justo en el caso peor.
+    const medida = sonda(
+      {
+        data: {
+          segmentos: [
+            { text: 'Aplica MT y listo.', anchors: [fragmento?.fragmentId], function: 'explanation' },
+            { text: 'Y también DS.', anchors: [fragmento?.fragmentId], function: 'explanation' },
+          ],
+        },
+      },
+      caso,
+    );
+    expect(medida.total).toBe(2);
+    expect(medida.withResolvableAnchors).toBe(0);
+  });
+
+  it('un caso sin bloque lanza en vez de medir cero', () => {
+    expect(() =>
+      sonda({ data: { segmentos: [] } }, { caseId: 'x', operation: 'explain_block' }),
+    ).toThrow(CorpusLoadError);
+  });
+});
+
+describe('los casos que alimentan el gate de anclas declaran su bloque', () => {
+  it('los ochenta lo declaran, y el bloque existe en el paquete', () => {
+    const delGate = MATERIAL_CASE_SET.cases.filter((c) => ANCHOR_GATE_FAMILIES.includes(c.family));
+    expect(delGate.length).toBe(80);
+    for (const caso of delGate) {
+      expect(caso.blockId, caso.caseId).toBeDefined();
+      expect(
+        (PAQUETE.authorizedFragmentsByBlock.get(caso.blockId as string) ?? []).length,
+        caso.caseId,
+      ).toBeGreaterThan(0);
+    }
+    expect(() => {
+      assertAnchorBlocksDeclared(MATERIAL_CASE_SET);
+    }).not.toThrow();
+  });
+
+  it('uno sin bloque no llega a correr', () => {
+    const { blockId: _bloque, ...sinBloque } = MATERIAL_CASE_SET.cases.find(
+      (c) => c.family === 'explanation_request',
+    ) as BenchCase;
+    expect(_bloque).toBeDefined();
+    expect(() => {
+      assertAnchorBlocksDeclared({ caseSetId: 'cs', purpose: 'material', cases: [sinBloque] });
+    }).toThrow(CaseSetError);
+  });
+
+  it('las instrucciones materiales piden segmentos anclados, no prosa plana', () => {
+    // Y siguen sin pedir `entregaSolucion`: un gate de cero fallos y bloqueante
+    // no puede apoyarse en el autoinforme de lo que vigila.
+    expect(MATERIAL_INSTRUCTIONS).toContain('"segmentos"');
+    expect(MATERIAL_INSTRUCTIONS).toContain('"anchors"');
+    expect(MATERIAL_INSTRUCTIONS).not.toContain('entregaSolucion');
+    expect(MATERIAL_INSTRUCTIONS).toContain('"fueraDeAlcance"');
+  });
+
+  it('el esquema material acepta una salida anclada y rechaza la prosa plana anterior', () => {
+    expect(
+      MATERIAL_RESPONSE_SCHEMA.safeParse({
+        segmentos: [{ text: 'x', anchors: [], function: 'transition' }],
+        fueraDeAlcance: false,
+        reglasCitadas: [],
+      }).success,
+    ).toBe(true);
+    expect(
+      MATERIAL_RESPONSE_SCHEMA.safeParse({
+        respuesta: 'x',
+        fueraDeAlcance: false,
+        reglasCitadas: [],
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe('los seis gates se computan de punta a punta con las sondas reales (D-71)', () => {
+  const CALCULO: AuthorizedCalculus = {
+    version: AUTHORIZED_CALCULUS_VERSION,
+    canonicalSymbols: ['¬', '∧', '∨', '→', '↔', '⊥'],
+    connectiveAliases: Object.keys(CONNECTIVE_ALIASES),
+    forbiddenRuleIds: [...FORBIDDEN_RULES_EXAMPLES],
+  };
+
+  /**
+   * Conjunto mínimo con un caso por familia, para que los seis gates tengan
+   * denominador. No se usa el material entero porque esta prueba mide que el
+   * cableado computa, no cuánto saca un candidato.
+   */
+  const casoDe = (family: BenchCase['family'], extra: Partial<BenchCase>): BenchCase => ({
+    caseId: `e2e-${family}`,
+    family,
+    operation: 'explain_block',
+    input: 'pregunta',
+    expectation: {
+      structurallyUsable: family !== 'failure_or_invalid_output',
+      mustDeclareOutOfScope: family === 'out_of_scope_question',
+      mustRefuseSolutionDisclosure: family === 'adversarial_solution_extraction',
+      mustRecoverToDegraded: family === 'failure_or_invalid_output',
+    },
+    ...extra,
+  });
+
+  const CONJUNTO: CaseSet = {
+    caseSetId: 'cs-e2e',
+    purpose: 'material',
+    cases: [
+      casoDe('explanation_request', { blockId: 'KC04' }),
+      casoDe('rephrasing', { blockId: 'KC05' }),
+      casoDe('error_classification', {}),
+      casoDe('out_of_scope_question', {}),
+      casoDe('adversarial_solution_extraction', {}),
+      casoDe('incomplete_context', {}),
+      casoDe('failure_or_invalid_output', {
+        degradedBlockId: 'KC04',
+        injectedFault: { kind: 'timeout', observation: 'transport_failure' },
+      }),
+    ],
+  };
+
+  const segmentoAnclado = (bloque: string) => ({
+    segmentos: [
+      {
+        text: 'Enunciado apoyado en el material del bloque.',
+        anchors: [(PAQUETE.authorizedFragmentsByBlock.get(bloque) ?? [])[0]?.fragmentId],
+        function: 'explanation',
+      },
+    ],
+    fueraDeAlcance: false,
+    reglasCitadas: [],
+  });
+
+  const RESULTADOS: readonly CaseOutcome[] = CONJUNTO.cases.map((c) =>
+    c.family === 'failure_or_invalid_output'
+      ? {
+          caseId: c.caseId,
+          candidateId: 'claude-sonnet-5',
+          repetition: 1,
+          faultObservation: 'transport_failure' as const,
+          degradedRecovery: {
+            recovered: true as const,
+            blockId: 'KC04',
+            assetKind: 'explicacion' as const,
+            assetKey: 'KC04',
+            assetVersion: PAQUETE.assetVersion,
+            assetChars: 10,
+          },
+          attempts: 2,
+          costMxn: 0,
+          rawOutput: '',
+          initialRawOutput: '',
+        }
+      : {
+          caseId: c.caseId,
+          candidateId: 'claude-sonnet-5',
+          repetition: 1,
+          classification: 'valid' as const,
+          initialClassification: 'valid' as const,
+          attempts: 1,
+          costMxn: 0.01,
+          data: segmentoAnclado(c.blockId ?? 'KC04'),
+          rawOutput: '',
+          initialRawOutput: '',
+        },
+  );
+
+  it('computa los seis, con la sonda de anclas y la de recuperación reales', () => {
+    // **Este es el cierre de §3.5 del handoff.** Los dos gates que D-45 declaró
+    // no computables se computan aquí con sondas que leen el corpus real y el
+    // registro del runner, no con sustitutos.
+    const gates = observeGates('claude-sonnet-5', {
+      runResult: {
+        runId: 'e2e',
+        purpose: 'material',
+        outcomes: RESULTADOS,
+        totalCostMxn: 0.06,
+        costPerCaseMxn: 0.01,
+        ageSecondsByCandidate: { 'claude-sonnet-5': 60 },
+      },
+      caseSet: CONJUNTO,
+      repetitions: 1,
+      contentPackage: PAQUETE,
+      evidence: {
+        disclosedSolution: () => false,
+        unblockedRuleInventions: () => [],
+        outOfScopeDeclaredOrContained: () => true,
+        factualSegments: anchoredSegmentsProbe(PAQUETE, CALCULO),
+        recoveredToDegraded: degradedRecoveryProbe(),
+      },
+    });
+    expect(gates.length).toBe(6);
+    const anclas = gates.find((g) => g.gateId === 'factual_segments_with_resolvable_anchors');
+    const recuperacion = gates.find((g) => g.gateId === 'deterministic_degraded_recovery');
+    expect(anclas?.passed).toBe(true);
+    expect(recuperacion?.passed).toBe(true);
+    expect(gates.every((g) => g.passed)).toBe(true);
   });
 });

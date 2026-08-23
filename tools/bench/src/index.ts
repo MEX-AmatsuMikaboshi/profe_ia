@@ -11,6 +11,8 @@ export {
   FAMILY_FLOORS,
   TOTAL_FLOOR,
   assertExpectationsMatchFamily,
+  ANCHOR_GATE_FAMILIES,
+  assertAnchorBlocksDeclared,
   assertFaultDeclarationCoherent,
   assertMaterialSetUsable,
   assertMeetsFloors,
@@ -59,6 +61,7 @@ export {
 
 export {
   CorpusLoadError,
+  anchoredSegmentsProbe,
   assertPackageMayCrownWinner,
   loadContentPackage,
   type AssetKindNotDerivable,
@@ -81,6 +84,8 @@ export {
   MATERIAL_CASES,
   MATERIAL_CASE_SET,
   MATERIAL_INSTRUCTIONS,
+  MATERIAL_RESPONSE_SCHEMA,
+  type MaterialResponse,
 } from './material-cases.js';
 export {
   HALLAZGOS_2026_08_18,

@@ -21,6 +21,7 @@ import type {
   InjectedFault,
   PartitionedCaseSet,
 } from './case-set.js';
+import type { ContentPackage } from './corpus.js';
 
 /**
  * Runner de BENCH-01 (T-H4-10 ← P-III §6.1/§6.2).
@@ -110,6 +111,15 @@ export interface RunDependencies {
   readonly degraded?: DegradedProfile;
   /** Versión del material del que salen los activos; viaja al informe. */
   readonly degradedAssetVersion?: string;
+  /**
+   * Paquete de contenido del que salen los fragmentos autorizados.
+   *
+   * Obligatorio en cuanto haya un caso que declare bloque: los fragmentos se
+   * envían con la pregunta —es el paso «fragmentos» del bucle W7— y sin ellos
+   * el modelo no tiene contra qué anclar. Lo comprueba
+   * `assertAnchorFragmentsAvailable()` antes de la primera llamada.
+   */
+  readonly contentPackage?: ContentPackage;
   /** Esquema local contra el que se valida cada salida (T-H4-03). */
   readonly schema: ZodType<unknown>;
   /**
@@ -293,6 +303,73 @@ function assertFaultInjectorsAvailable(
 }
 
 /**
+ * Que haya fragmentos para todo caso que declare bloque, **antes** de la
+ * primera llamada.
+ *
+ * Un bloque sin fragmentos dejaría la pregunta sin material contra el que
+ * anclar, y todas las anclas de esa respuesta serían irresolubles por
+ * construcción: el gate mediría el harness y no al candidato. Descubrirlo a
+ * mitad de corrida dejaría medio benchmark cobrado.
+ */
+function assertAnchorFragmentsAvailable(
+  casos: readonly BenchCase[],
+  deps: RunDependencies,
+): void {
+  const conBloque = casos.filter((c) => c.blockId !== undefined);
+  if (conBloque.length === 0) return;
+  const paquete = deps.contentPackage;
+  if (paquete === undefined) {
+    throw new BenchRunError(
+      `El conjunto trae ${String(conBloque.length)} casos con bloque declarado y la corrida no ` +
+        'aporta paquete de contenido. Sin fragmentos que enviar, toda ancla de la respuesta es ' +
+        'irresoluble y el gate de anclas mediría el harness (P-II §8.3).',
+    );
+  }
+  const huerfanos = [
+    ...new Set(
+      conBloque
+        .map((c) => c.blockId as string)
+        .filter((bloque) => (paquete.authorizedFragmentsByBlock.get(bloque) ?? []).length === 0),
+    ),
+  ];
+  if (huerfanos.length > 0) {
+    throw new BenchRunError(
+      `El paquete \`${paquete.assetVersion}\` no tiene fragmentos autorizados para ` +
+        `${huerfanos.join(', ')}, y hay casos que los declaran. Un bloque vacío haría cero por ` +
+        'construcción el gate de anclas de esos casos.',
+    );
+  }
+}
+
+/**
+ * Compone lo que se le envía al modelo: la pregunta del caso más los fragmentos
+ * autorizados de su bloque.
+ *
+ * **Los fragmentos los pone el harness, no el caso.** Son contenido del paquete
+ * y cambian cuando cambia el corpus; escribirlos en los 200 casos crearía una
+ * copia del corpus que se queda vieja. Y no se envía nada más: la entrada de
+ * sesión es una whitelist (P-II §8.3), y este es su equivalente de benchmark.
+ */
+function componerEntrada(caso: BenchCase, deps: RunDependencies): string {
+  const bloque = caso.blockId;
+  if (bloque === undefined) return caso.input;
+  const fragmentos = deps.contentPackage?.authorizedFragmentsByBlock.get(bloque) ?? [];
+  if (fragmentos.length === 0) {
+    throw new BenchRunError(
+      `El caso ${caso.caseId} declara el bloque ${bloque} y la corrida no trae fragmentos para ` +
+        'él. `assertAnchorFragmentsAvailable()` debería haberlo parado antes de correr.',
+    );
+  }
+  return [
+    `Bloque autorizado: ${bloque}`,
+    'Fragmentos autorizados (ancla por fragmentId exacto):',
+    ...fragmentos.map((f) => `- ${f.fragmentId}: ${f.text}`),
+    '',
+    `Alumno: ${caso.input}`,
+  ].join('\n');
+}
+
+/**
  * Que exista el perfil degradado en cuanto haya una sola caída declarada,
  * **antes** de la primera llamada.
  *
@@ -471,6 +548,7 @@ export async function runBenchmark(
 
   assertFaultInjectorsAvailable([...partition.development, ...partition.evaluation], candidates);
   assertDegradedProfileAvailable([...partition.development, ...partition.evaluation], deps);
+  assertAnchorFragmentsAvailable([...partition.development, ...partition.evaluation], deps);
 
   // Antes de la primera llamada, y por tanto antes del primer peso gastado.
   const autorizacion = assertRefreshAuthorizesBenchmark(deps.refreshRecord, deps.refreshWindow, {
@@ -502,10 +580,11 @@ export async function runBenchmark(
         // El freno, antes de la red. Lanza `BudgetBlockedError` si toca.
         deps.budget.assertBillableAllowed();
 
+        const entrada = componerEntrada(caso, deps);
         let validado = await candidato.gateway.execute({
           operation: caso.operation,
           instructions: deps.instructions,
-          input: caso.input,
+          input: entrada,
           schema: deps.schema,
           codeFence: deps.codeFence,
           attempt: 1,
@@ -526,7 +605,7 @@ export async function runBenchmark(
           validado = await candidato.gateway.execute({
             operation: caso.operation,
             instructions: deps.instructions,
-            input: caso.input,
+            input: entrada,
             schema: deps.schema,
             codeFence: deps.codeFence,
             attempt: 2,

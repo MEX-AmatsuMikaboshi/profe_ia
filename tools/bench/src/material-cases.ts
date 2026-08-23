@@ -1,3 +1,6 @@
+import { AnchoredSegment } from '@profesor-ia/contracts';
+import { z } from 'zod';
+
 import type { BenchCase, CaseSet, InjectedFault } from './case-set.js';
 
 /**
@@ -71,12 +74,16 @@ const casoBase = (
 });
 
 /** Explicación: el alumno pide que le expliquen algo del bloque. */
-const expl = (n: number, input: string): BenchCase =>
-  casoBase(`m-expl-${String(n).padStart(2, '0')}`, 'explanation_request', 'explain_block', input);
+const expl = (n: number, blockId: string, input: string): BenchCase => ({
+  ...casoBase(`m-expl-${String(n).padStart(2, '0')}`, 'explanation_request', 'explain_block', input),
+  blockId,
+});
 
 /** Reformulación: lo mismo, dicho de otra forma. */
-const refr = (n: number, input: string): BenchCase =>
-  casoBase(`m-refr-${String(n).padStart(2, '0')}`, 'rephrasing', 'rephrase_explanation', input);
+const refr = (n: number, blockId: string, input: string): BenchCase => ({
+  ...casoBase(`m-refr-${String(n).padStart(2, '0')}`, 'rephrasing', 'rephrase_explanation', input),
+  blockId,
+});
 
 /** Clasificación de error dentro de la lista cerrada de códigos `E-*`. */
 const clas = (n: number, input: string): BenchCase =>
@@ -144,247 +151,199 @@ const caida = (
 
 const EXPLICACION: readonly BenchCase[] = [
   // KC01 · fórmulas bien formadas, conectivos y corchetes
-  expl(
-    1,
+  expl(1, 'KC01',
     'El sistema me rechazó A∧B∧C con E-SYN-PRECEDENCE. Yo lo leo como (A∧B)∧C, que es lo ' +
       'normal en matemáticas. ¿Por qué aquí no vale?',
   ),
-  expl(
-    2,
+  expl(2, 'KC01',
     '¿Cuál es exactamente la regla de corchetes? Entiendo que los de fuera se pueden quitar, ' +
       'pero no sé hasta dónde llega ese permiso.',
   ),
-  expl(
-    3,
+  expl(3, 'KC01',
     '¿⊥ es una fórmula como A y B, o es otra cosa? La veo escrita como fórmula y también como ' +
       'si fuera una regla, y me confunde.',
   ),
-  expl(
-    4,
+  expl(4, 'KC01',
     'Cuando escribo ¬A∧B, ¿eso es ¬(A∧B) o (¬A)∧B? Nunca sé dónde termina la negación.',
   ),
   // KC02 · notación Fitch, citas de líneas y lectura de subpruebas
-  expl(
-    5,
+  expl(5, 'KC02',
     '¿Qué significan exactamente los números de la izquierda y la raya vertical en Fitch? ' +
       '¿La raya marca la subprueba o marca el alcance?',
   ),
-  expl(
-    6,
+  expl(6, 'KC02',
     'Cité la línea 7 desde la línea 3 y me salió E-REF-FORWARD. ¿Por qué no puedo usar algo que ' +
       'ya está escrito más abajo en la hoja?',
   ),
-  expl(
-    7,
+  expl(7, 'KC02',
     '¿Qué diferencia hay entre PR y AS? Las dos me parecen «cosas que pongo sin justificar con ' +
       'una regla».',
   ),
-  expl(
-    8,
+  expl(8, 'KC02',
     'Cuando hay una subprueba dentro de otra subprueba me pierdo con las rayas. ¿Cómo se lee ' +
       'eso de fuera hacia dentro?',
   ),
   // KC03 · reiteración R
-  expl(
-    9,
+  expl(9, 'KC03',
     '¿Para qué sirve R si sólo repite algo que ya escribí? Parece una regla que no hace nada.',
   ),
-  expl(
-    10,
+  expl(10, 'KC03',
     '¿Puedo reiterar con R una línea que está dentro de una subprueba que ya cerré? El sistema ' +
       'me dice que no y no veo el problema.',
   ),
   // KC04 · introducción de conjunción ∧I
-  expl(
-    11,
+  expl(11, 'KC04',
     'En ∧I, ¿importa el orden? Tengo A en la línea 1 y B en la línea 2. ¿Puedo concluir B∧A o ' +
       'sólo A∧B?',
   ),
-  expl(
-    12,
+  expl(12, 'KC04',
     '¿∧I necesita que las dos líneas que cito estén en el mismo nivel de subprueba, o pueden ' +
       'estar en niveles distintos?',
   ),
   // KC05 · eliminación de conjunción ∧E
-  expl(
-    13,
+  expl(13, 'KC05',
     'Con ∧E, de A∧B saco A. Si quiero sacar B, ¿es la misma regla o hay otra distinta?',
   ),
-  expl(
-    14,
+  expl(14, 'KC05',
     'Tengo (A∧B)∧C. ¿∧E me da A directamente, o tengo que aplicarla dos veces?',
   ),
   // KC06 · eliminación del condicional →E
-  expl(
-    15,
+  expl(15, 'KC06',
     'Tengo A→B y tengo B. ¿Puedo concluir A con →E? Me suena razonable y el sistema lo rechaza.',
   ),
-  expl(
-    16,
+  expl(16, 'KC06',
     'En mi otro libro a →E le dicen modus ponens. ¿Es lo mismo, y por qué aquí sólo puedo ' +
       'escribir →E?',
   ),
-  expl(
-    17,
+  expl(17, 'KC06',
     'Al aplicar →E, ¿el condicional tiene que estar en una línea anterior al antecedente, o da ' +
       'igual el orden en que aparezcan?',
   ),
   // KC07 · introducción de disyunción ∨I
-  expl(
-    18,
+  expl(18, 'KC07',
     '∨I me deja meter lo que quiera: de A concluyo A∨Z aunque Z no aparezca en ningún sitio. ' +
       '¿Eso no es hacer trampa?',
   ),
-  expl(
-    19,
+  expl(19, 'KC07',
     'Con ∨I, ¿puedo poner la fórmula nueva a la izquierda, o siempre tiene que ir a la derecha ' +
       'de la que ya tenía?',
   ),
   // KC08 · alcance, accesibilidad y descarga de supuestos
-  expl(
-    20,
+  expl(20, 'KC08',
     '¿Qué quiere decir que un supuesto queda «descargado»? ¿Descargado por quién y en qué ' +
       'momento?',
   ),
-  expl(
-    21,
+  expl(21, 'KC08',
     'Al final de mi prueba el sistema dice E-STRUCT-OPEN-ASSUMPTION. ¿Qué significa que quede un ' +
       'supuesto abierto y por qué es un problema?',
   ),
-  expl(
-    22,
+  expl(22, 'KC08',
     '¿Por qué no puedo citar una línea que está dentro de una subprueba ya cerrada? La escribí ' +
       'yo y era verdadera cuando la escribí.',
   ),
-  expl(
-    23,
+  expl(23, 'KC08',
     '¿La conclusión de la prueba tiene que quedar en el nivel de fuera? A mí me quedó dentro de ' +
       'una subprueba y me marcó error.',
   ),
   // KC09 · introducción del condicional →I
-  expl(
-    24,
+  expl(24, 'KC09',
     'Con →I, ¿por qué tengo que abrir una subprueba suponiendo el antecedente en vez de escribir ' +
       'el condicional directamente?',
   ),
-  expl(
-    25,
+  expl(25, 'KC09',
     'Al cerrar la subprueba de →I, ¿qué línea va como consecuente: la última, o puedo elegir ' +
       'cualquiera de las de dentro?',
   ),
-  expl(
-    26,
+  expl(26, 'KC09',
     'Si dentro de la subprueba de →I no llego a lo que quería, ¿puedo cerrarla igual y quedarme ' +
       'con lo que haya salido?',
   ),
   // KC10 · obtención de ⊥ mediante ¬E
-  expl(
-    27,
+  expl(27, 'KC10',
     '¿Cómo se obtiene ⊥? Yo buscaba una regla que se llamara ⊥I y no está en la lista.',
   ),
-  expl(
-    28,
+  expl(28, 'KC10',
     '¿¬E necesita que las dos fórmulas sean exactamente A y ¬A, o basta con que se contradigan ' +
       'de alguna manera?',
   ),
-  expl(
-    29,
+  expl(29, 'KC10',
     'Tengo ¬(A∧B) en una línea y A∧B en otra. ¿Eso me da ⊥ con ¬E aunque sean fórmulas ' +
       'compuestas y no letras sueltas?',
   ),
   // KC11 · introducción de negación ¬I
-  expl(
-    30,
+  expl(30, 'KC11',
     '¿En qué se diferencian ¬I e IP? Las dos abren una subprueba y las dos llegan a ⊥.',
   ),
-  expl(31, 'En ¬I, ¿qué supongo exactamente al abrir la subprueba: A, o ¬A?'),
-  expl(
-    32,
+  expl(31, 'KC11', 'En ¬I, ¿qué supongo exactamente al abrir la subprueba: A, o ¬A?'),
+  expl(32, 'KC11',
     '¿Puedo cerrar un ¬I si dentro de la subprueba no llegué a ⊥ sino a algo que me parece ' +
       'igual de absurdo?',
   ),
   // KC12 · explosión X
-  expl(
-    33,
+  expl(33, 'KC12',
     'X me deja concluir cualquier cosa a partir de ⊥. ¿Por qué eso no rompe la lógica entera?',
   ),
-  expl(
-    34,
+  expl(34, 'KC12',
     'El sistema llama X a lo que en mi otro libro se llama ⊥E. ¿Son la misma regla o son dos ' +
       'reglas distintas?',
   ),
   // KC13 · eliminación de disyunción ∨E
-  expl(
-    35,
+  expl(35, 'KC13',
     'No entiendo ∨E. ¿Por qué necesito dos subpruebas y no me basta con saber que alguna de las ' +
       'dos partes es verdadera?',
   ),
-  expl(
-    36,
+  expl(36, 'KC13',
     'En ∨E, ¿las dos subpruebas tienen que terminar en la misma fórmula, o cada una puede ' +
       'terminar donde llegue?',
   ),
-  expl(
-    37,
+  expl(37, 'KC13',
     '¿Puedo usar ∨E si la disyunción tiene tres partes, como A∨B∨C? ¿Necesitaría tres ' +
       'subpruebas?',
   ),
-  expl(
-    38,
+  expl(38, 'KC13',
     'En cada subprueba de ∨E, ¿qué supongo: el disyunto entero o una parte de él?',
   ),
   // KC14 · introducción del bicondicional ↔I
-  expl(
-    39,
+  expl(39, 'KC14',
     'Con ↔I, ¿tengo que probar las dos direcciones? ¿Por qué no basta con una si el bicondicional ' +
       'es simétrico?',
   ),
-  expl(
-    40,
+  expl(40, 'KC14',
     'Si ya tengo probados A→B y B→A en dos líneas, ¿puedo hacer ↔I citándolas, sin abrir ' +
       'subpruebas nuevas?',
   ),
   // KC15 · eliminación del bicondicional ↔E
-  expl(
-    41,
+  expl(41, 'KC15',
     'Con ↔E, de A↔B y A saco B. ¿De A↔B y B puedo sacar A? ¿Es la misma regla o necesito otra?',
   ),
-  expl(
-    42,
+  expl(42, 'KC15',
     '¿↔E me deja separar el bicondicional en sus dos condicionales, o sólo aplicarlo a una ' +
       'fórmula que ya tengo?',
   ),
   // KC16 · eliminación de doble negación DNE
-  expl(
-    43,
+  expl(43, 'KC16',
     'DNE quita dos negaciones. ¿Se puede aplicar a ¬¬(A∧B), o sólo a letras sueltas como ¬¬A?',
   ),
-  expl(
-    44,
+  expl(44, 'KC16',
     'Si DNE está permitida, ¿por qué no aparece en la lista de reglas primitivas sino en otra ' +
       'lista aparte?',
   ),
-  expl(
-    45,
+  expl(45, 'KC16',
     '¿Puedo usar DNE en la otra dirección, para pasar de A a ¬¬A? Sería la misma regla al revés.',
   ),
   // KC17 · prueba indirecta IP
-  expl(46, 'Con IP, ¿qué supongo exactamente: la negación de lo que quiero probar?'),
-  expl(
-    47,
+  expl(46, 'KC17', 'Con IP, ¿qué supongo exactamente: la negación de lo que quiero probar?'),
+  expl(47, 'KC17',
     '¿Cuándo conviene IP y cuándo ¬I? A mí me parecen intercambiables y elijo al azar.',
   ),
-  expl(
-    48,
+  expl(48, 'KC17',
     '¿IP sirve para probar cualquier fórmula, o sólo para probar fórmulas que ya son negaciones?',
   ),
   // KC18 · selección de estrategia y trabajo hacia atrás
-  expl(
-    49,
+  expl(49, 'KC18',
     'Miro el ejercicio y no sé por dónde entrar. ¿Cómo decido con qué regla empezar?',
   ),
-  expl(
-    50,
+  expl(50, 'KC18',
     '¿Qué es «trabajar hacia atrás»? Me dijeron que mirara primero la conclusión y no entiendo ' +
       'qué se hace después de mirarla.',
   ),
@@ -399,152 +358,122 @@ const EXPLICACION: readonly BenchCase[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 const REFORMULACION: readonly BenchCase[] = [
-  refr(
-    1,
+  refr(1, 'KC09',
     'Me explicaste →I diciendo que «se asume el antecedente y se descarga al cerrar la ' +
       'subprueba». Sigo sin entender qué significa descargar. Dímelo de otra forma.',
   ),
-  refr(
-    2,
+  refr(2, 'KC08',
     'Dijiste que un supuesto «sólo vive dentro de su subprueba». No me queda claro qué pasa con ' +
       'lo que derivé usándolo. Explícamelo distinto.',
   ),
-  refr(
-    3,
+  refr(3, 'KC13',
     'Me explicaste ∨E como «prueba por casos». Esa expresión no me dice nada. Usa otras palabras.',
   ),
-  refr(
-    4,
+  refr(4, 'KC12',
     'Lo de que ⊥ permite concluir cualquier cosa con X me suena a trampa. Dímelo con otras ' +
       'palabras, porque así no me convence.',
   ),
-  refr(
-    5,
+  refr(5, 'KC17',
     'Explicaste IP como «reducción al absurdo clásica». Yo no sé qué es una reducción al ' +
       'absurdo. Empieza por otro lado.',
   ),
-  refr(
-    6,
+  refr(6, 'KC11',
     'Dijiste que ¬I «cierra la subprueba negando el supuesto». Lo repetí en el ejercicio y me ' +
       'volvió a salir mal. Explícamelo de otra manera.',
   ),
-  refr(
-    7,
+  refr(7, 'KC10',
     'Me dijiste que ⊥ se obtiene «enfrentando una fórmula con su negación». No sé qué es ' +
       'enfrentar. Dilo de otro modo.',
   ),
-  refr(
-    8,
+  refr(8, 'KC01',
     'Me explicaste que aquí no hay precedencia entre conectivos y por eso A∧B∧C se rechaza. ' +
       'Sigo pensando que es una manía del sistema. Convénceme por otro camino.',
   ),
-  refr(
-    9,
+  refr(9, 'KC01',
     'Dijiste que la negación «liga la unidad siguiente». No sé qué es una unidad. Explícalo con ' +
       'otras palabras.',
   ),
-  refr(
-    10,
+  refr(10, 'KC02',
     'Me explicaste las subpruebas anidadas con lo de «cajas dentro de cajas» y me confundió más. ' +
       'Prueba con otra imagen.',
   ),
-  refr(
-    11,
+  refr(11, 'KC08',
     'Dijiste que una cita apunta a una línea «accesible». No entiendo qué hace accesible a una ' +
       'línea. Dímelo distinto.',
   ),
-  refr(
-    12,
+  refr(12, 'KC03',
     'Me explicaste R como «traer una línea al nivel donde la necesito» y sigo sin ver para qué ' +
       'sirve. Cámbiame el enfoque.',
   ),
-  refr(
-    13,
+  refr(13, 'KC05',
     'Dijiste que ∧E «desarma la conjunción». Yo lo que quiero saber es por qué puedo quedarme ' +
       'sólo con una parte. Explícamelo por ahí.',
   ),
-  refr(
-    14,
+  refr(14, 'KC07',
     'Me explicaste ∨I diciendo que «debilita» lo que ya sé. La palabra debilitar me despista. ' +
       'Usa otra.',
   ),
-  refr(
-    15,
+  refr(15, 'KC06',
     'Explicaste →E como «desprender el consecuente». Sigo aplicándolo al revés. Explícamelo de ' +
       'otra forma para que se me quede cuál es cuál.',
   ),
-  refr(
-    16,
+  refr(16, 'KC14',
     'Me dijiste que ↔I «pide las dos direcciones». Entiendo las palabras y no entiendo la idea. ' +
       'Dímelo con otro enfoque.',
   ),
-  refr(
-    17,
+  refr(17, 'KC15',
     'Dijiste que ↔E funciona «como un →E que va en cualquiera de los dos sentidos». Eso me hizo ' +
       'confundirlas. Sepáralas de otra manera.',
   ),
-  refr(
-    18,
+  refr(18, 'KC16',
     'Me explicaste DNE como «quitar dos negaciones». Lo apliqué a ¬(¬A∧B) y estaba mal. ' +
       'Reformula la explicación para que se vea dónde puedo aplicarla.',
   ),
-  refr(
-    19,
+  refr(19, 'KC18',
     'Explicaste la estrategia como «mirar el operador principal de la meta». No sé identificar ' +
       'el operador principal. Explícalo por otro lado.',
   ),
-  refr(
-    20,
+  refr(20, 'KC04',
     'Me dijiste que ∧I «junta dos cosas que ya tengo». Entonces no entiendo por qué a veces me ' +
       'lo rechaza. Explícamelo distinto.',
   ),
-  refr(
-    21,
+  refr(21, 'KC08',
     'Dijiste que el alcance «es lo que puedo usar desde donde estoy». Sigo citando líneas que no ' +
       'debo. Dímelo de otra manera.',
   ),
-  refr(
-    22,
+  refr(22, 'KC02',
     'Me explicaste que PR es premisa y AS es supuesto, pero yo sigo poniendo AS donde va PR. ' +
       'Explícame la diferencia por otro camino.',
   ),
-  refr(
-    23,
+  refr(23, 'KC04',
     'Dijiste que la conmutatividad no está permitida en este cálculo. Como explicación no me ' +
       'sirve: quiero entender por qué. Explícalo de otra forma.',
   ),
-  refr(
-    24,
+  refr(24, 'KC13',
     'Me dijiste que DS no está en la lista de reglas de este cálculo. Vale, pero mi profesor la ' +
       'usa. Reformula por qué eso no es contradictorio.',
   ),
-  refr(
-    25,
+  refr(25, 'KC01',
     'Explicaste que los corchetes son obligatorios salvo los de fuera. Me quedé igual. Dilo con ' +
       'otras palabras.',
   ),
-  refr(
-    26,
+  refr(26, 'KC01',
     'Me explicaste que ⊥ es un átomo distinguido cuyo valor es siempre falso. Eso último lo ' +
       'entiendo, lo de «átomo distinguido» no. Reformula.',
   ),
-  refr(
-    27,
+  refr(27, 'KC08',
     'Dijiste que una subprueba cerrada «ya no está disponible». Suena arbitrario. Explícamelo ' +
       'por otro lado.',
   ),
-  refr(
-    28,
+  refr(28, 'KC13',
     'Me explicaste ∨E diciendo que «hay que llegar a lo mismo por los dos caminos». ¿Por qué ' +
       'tiene que ser lo mismo? Reformula esa parte.',
   ),
-  refr(
-    29,
+  refr(29, 'KC12',
     'Explicaste X con la frase «de lo falso se sigue todo». Esa frase me la sé y no la entiendo. ' +
       'Cambia de enfoque.',
   ),
-  refr(
-    30,
+  refr(30, 'KC02',
     'Me dijiste que una derivación puede ser válida sin haber alcanzado la meta. Eso me rompió ' +
       'el esquema. Explícamelo otra vez de otra forma.',
   ),
@@ -1095,6 +1024,25 @@ export const MATERIAL_CASES: readonly BenchCase[] = [
   ...CAIDAS,
 ];
 
+/**
+ * Esquema local de la salida material (T-H4-03).
+ *
+ * Es `AnchoredSegment` del contrato —no una copia— más los dos campos que los
+ * otros gates necesitan. Transcribir el segmento aquí crearía una segunda copia
+ * del contrato de anclaje, y la que se queda vieja es siempre la copia.
+ *
+ * `authorizedBlockId` y `operationId` **no** se le piden al modelo: los pone el
+ * harness, que es quien sabe qué bloque envió y qué operación pidió.
+ * Preguntárselos dejaría que el candidato declarara haber trabajado sobre un
+ * bloque distinto del que recibió.
+ */
+export const MATERIAL_RESPONSE_SCHEMA = z.object({
+  segmentos: z.array(AnchoredSegment).min(1),
+  fueraDeAlcance: z.boolean(),
+  reglasCitadas: z.array(z.string()),
+});
+export type MaterialResponse = z.infer<typeof MATERIAL_RESPONSE_SCHEMA>;
+
 export const MATERIAL_CASE_SET: CaseSet = {
   caseSetId: 'cs-material-bench01-v1',
   purpose: 'material',
@@ -1122,7 +1070,16 @@ export const MATERIAL_CASE_SET: CaseSet = {
  *
  * Enumera las reglas autorizadas porque el gate de invenciones mide justamente
  * que no aparezca ninguna fuera de esa lista. No es contenido pedagógico del
- * curso: eso sale de W1–W5, que no se ha corrido.
+ * curso: eso sale de W1–W5.
+ *
+ * **`respuesta` pasa a ser `segmentos` anclados (D-71).** El gate
+ * `factual_segments_with_resolvable_anchors` mide segmentos factuales cuyas
+ * anclas resuelvan contra fragmentos autorizados, y prosa plana no tiene ni
+ * segmentos ni anclas: con el formato anterior el gate no daba 95 %, no daba
+ * nada. **No es un requisito inventado para poder medir**: es el contrato que
+ * P-II §8.4 e I-7 fijan para la salida de sesión, y medir en el benchmark un
+ * formato distinto del que la sesión va a usar mediría a un candidato en una
+ * tarea que después no hará.
  */
 export const MATERIAL_INSTRUCTIONS = [
   'Eres un profesor de deducción natural proposicional en formato Fitch.',
@@ -1144,7 +1101,16 @@ export const MATERIAL_INSTRUCTIONS = [
   '',
   'Responde SIEMPRE con un único objeto JSON, sin texto alrededor y sin bloques de código, con',
   'exactamente estas claves:',
-  '  "respuesta": string — tu respuesta al alumno.',
+  '  "segmentos": array — tu respuesta partida en segmentos. Cada uno con:',
+  '      "text": string — el texto del segmento.',
+  '      "function": "definition" | "explanation" | "example" | "transition".',
+  '      "anchors": string[] — los fragmentId EXACTOS, de los que se te dan, en los que ese',
+  '                 segmento se apoya. Un segmento que afirma un hecho del cálculo tiene que',
+  '                 anclar; uno de acompañamiento puede ir con la lista vacía, y entonces no',
+  '                 puede introducir una regla ni una definición.',
   '  "fueraDeAlcance": boolean — true si la pregunta cae fuera de la lógica proposicional.',
   '  "reglasCitadas": string[] — las reglas que menciones, con su id exacto de la lista.',
+  '',
+  'No inventes un fragmentId. Si ninguno de los que se te dan sostiene lo que ibas a decir,',
+  'dilo como acompañamiento sin anclas o declara que no puedes sostenerlo con el material.',
 ].join('\n');

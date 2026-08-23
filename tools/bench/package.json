@@ -25,6 +25,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@profesor-ia/logic-core": "workspace:*",
     "typescript": "5.9.3"
   },
   "bin": {
