@@ -202,14 +202,17 @@ y verdes en `main`; el gate espera sólo Infisical y firmas. F4/H4 con 10 de 12 
 —el gasto de la corrida material **ya está autorizado** (USD 3.64, D-40); los 200 casos están
 escritos y falta **leerlos**, que es revisión humana: ver `docs/plan/HANDOFF.md` §3.3—. F5/H4.5 con
 8 de 8 y F6/H5 con 17 de 17. **`content/` ya no son placeholders**: W0–W4 corridos sobre el corpus
-real, **571 reactivos aceptados** y censo de auditoría previa sin defectos; W5 (freeze) espera **tres
-decisiones del propietario**, no código — ver `docs/plan/HANDOFF.md`.
+real, **571 reactivos aceptados**. **Pero ese banco NO es el que se congela**: cuatro guardas nuevas
+(D-65 a D-67) le encontraron defectos con causa común en las plantillas de sonda —70 sondas exigen
+una regla que su fase no ha enseñado, 30 de transferencia repiten las premisas practicadas, 10 pistas
+de KC16 mandan a `¬E` donde va `DNE`, y 561 índices quedaron en la escala de `cal-09-v1`, retirada
+por D-66—. **Se regenera**; el orden y el estado están en `docs/plan/HANDOFF.md`.
 F7/H6 con 14 de 14 y el AC cubierto. **F8/H7 con 2 de 7**: `T-H7-02` (validador de
 anclaje) y `T-H7-03` (no revelación y suite adversarial), que eran **las dos únicas construibles sin
 proveedor**. Las cuatro restantes viven dentro del bucle W7 y exigen el ganador de BENCH-01, así que
 **F8 no avanza escribiendo código**. F9–F16 no empezadas.
 
-**1796 pruebas en verde: 1665 unitarias + 131 contra PostgreSQL 17 real.** Mutation testing sobre
+**1845 pruebas en verde: 1714 unitarias + 131 contra PostgreSQL 17 real.** Mutation testing sobre
 `logic-core` en verde (Stryker muta sólo ese paquete: las pruebas de otros no mueven ese número).
 
 **El estado tarea por tarea, con evidencia, está en `docs/plan/PLAN_STATUS.md`, y por dónde seguir en

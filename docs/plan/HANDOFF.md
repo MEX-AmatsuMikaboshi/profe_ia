@@ -1,71 +1,132 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — G3 y G4 escritas (2026-08-22, noche)
+> ## EMPIEZA AQUÍ — cierre de la decimoquinta sesión (2026-08-22, noche)
 >
-> Detalle completo en **D-67** de `PLAN_STATUS.md`. **No se regeneró contenido.** Con esto quedan
-> escritas las cuatro guardas que el plan de corrección pedía; lo que falta es **rediseñar las
-> plantillas de sonda** y volver a correr la cadena.
+> **Sesión de auditar el intento de Codex y ejecutar el plan de corrección que salió de ahí.** Se
+> cerraron **D-65, D-66 y D-67** y se adjudicó el desacuerdo que D-64 dejó abierto. **No se regeneró
+> contenido**: el banco sigue siendo el de la corrida del 2026-08-22, ahora con sus defectos medidos y
+> fijados por pruebas.
 >
-> ### G3 — el control de superficie que la norma exigía y no existía
+> ### ⚠ Lo primero: CI está caída y necesita al propietario
 >
-> §5.11 dice que el detector opera sobre representación estructural **«además de controles de
-> superficie»**. Lo estructural estaba; **lo de superficie no**. Importa porque miden cosas distintas:
-> una envoltura que añade un paso cambia la firma estructural y **deja la superficie intacta**, así
-> que el control estructural la aprueba mientras el alumno lee las mismas premisas que ya practicó.
+> Cuatro corridas seguidas —`32604879521`, `32607585306` (**también tras relanzarla**), `32607813380`
+> y `32610129732`— fallaron **en uno a tres segundos con cero pasos ejecutados** en los diez jobs. Es
+> exactamente la firma que D-58 documentó: «con `steps: []` en los jobs, el fallo no está en el
+> código». El propietario lo resolvió entonces **en la cuenta de GitHub**.
 >
-> - **Falla** el enunciado idéntico bajo renombrado en toda reserva de medición (§7.8) — hoy **0
->   casos**, guarda que se cumple — y las premisas idénticas en las dos reservas de transferencia
->   (§5.11, «suficientemente distinta de las prácticas inmediatas»): **30 sondas
->   `TRANSFER_MEASUREMENT`**, la plantilla `sonda-conj_meta`.
-> - **Se censa sin declarar violación** el solapamiento fuera de transferencia, porque ninguna
->   autoridad fija ahí umbral: `probes_intervention` 55 literales + 99 bajo renombrado de 182;
->   `retention` 30 de 34; **`probes_baseline` limpia, 224 de 224**.
+> La última corrida real es **`32604466870` sobre `f7d0ad2`: 129 pasos, verde**, y es la que verifica
+> D-65. **D-66 y D-67 quedan `HECHAS`, no `VERIFICADAS`.** Cuando Actions arranque basta relanzar la
+> corrida del último commit y observarla; no hace falta tocar nada.
 >
-> **Ese contraste es la pista para el rediseño:** `sonda-conj_premisa` entierra la premisa en una
-> conjunción y **sí** cambia la superficie; las otras tres envuelven la **meta** y no la tocan.
+> ### Estado del plan de corrección
 >
-> ### G4 — fidelidad de las reglas que nombran las pistas
+> | Paso | Estado |
+> |---|---|
+> | Adjudicar el desacuerdo de D-64 | ✅ lo resuelve el Maestro, ver abajo |
+> | G1 · clausura de reglas de las sondas | ✅ D-65 |
+> | Arreglo de las pistas de negación | ✅ D-65 (generador; el banco no) |
+> | Arreglo de `→E` + `cal-09-v2` | ✅ D-66, decisión del propietario |
+> | BENCH-04 re-medido | ✅ D-66, 26 de 37 (antes 25) |
+> | G3 · control de superficie §5.11 | ✅ D-67 |
+> | G4 · fidelidad de las pistas | ✅ D-67 |
+> | Enchufar las guardas a `runW3Generation()` | ❌ va **con** el rediseño, no antes |
+> | Rediseño de las plantillas de sonda | ❌ **el paso siguiente** |
+> | W3 → A/B/C → `T-H5-12` → W4 | ❌ después del rediseño |
+> | Lectura humana por muestra (paso 19) | ❌ del propietario, no delegable |
 >
-> `expectedHintRules()` deriva del enunciado qué regla construye la meta y cuáles abren las premisas;
-> `hintNamesForeignRule()` comprueba que las **cláusulas directivas** no nombren otra. Reencuentra los
-> **10 de KC16** y ninguno más. El acotamiento a las cláusulas directivas es necesario, no cómodo: el
-> nivel 3 ofrece `IP` como alternativa legítima que el certificado no usa.
+> ### La adjudicación de D-64, con la cita — no hizo falta decidir nada
 >
-> ### Ojo con esto
+> §7.7 dice que las reservas de medición son disjuntas «respecto de duplicados/isomorfismos
+> **prohibidos por la canonicalización congelada**», y §5.11 define ese isomorfismo: la **estructura
+> de prueba normalizada coincide** bajo renombrado de átomos y reordenamiento de pasos independientes.
+> Una sonda con un paso más no coincide. **D-58 tiene razón en la letra y los 13 críticos de la Parte
+> A no se sostienen** con ese código —que además es de nuestro libro: `reused_or_contaminated_probe`
+> **no aparece en el Maestro**—.
 >
-> **Las guardas todavía NO están enchufadas a `runW3Generation()`.** Enchufarlas ahora abortaría W3,
-> porque las plantillas actuales las incumplen. Van **con** el rediseño de plantillas, no antes. Hasta
-> entonces son guardas medidas contra el banco, no puertas del pipeline.
+> **Pero §5.11 exige dos cosas que el banco incumple y que no nombró nadie:** controles de superficie
+> «además de» los estructurales —inexistentes entre enseñanza y sonda—, y en transferencia «una forma
+> superficial **suficientemente distinta de las prácticas inmediatas**». De ahí sale G3.
 >
-> ### Lo que sigue, sin decisiones pendientes
+> **Lo que se verificó del intento Codex:** las trece descripciones son **exactas** línea por línea
+> contra los certificados, y los 36 certificados re-verifican (36/36, comprobado de nuevo). Pero tiene
+> un **falso negativo bajo su propio criterio** —`kc15-probes_baseline-11`, la misma forma que sí marcó
+> en kc10, kc12 y kc17—, así que **es diagnóstico, no censo**.
 >
-> 1. **Rediseñar las plantillas de sonda.** Variar el **núcleo** —estructura de los operandos,
->    multiplicidad de la regla objetivo, dirección— en vez de envolverlo. Ninguno de esos ejes importa
->    una regla ajena, así que satisface G1 y G3 a la vez. Aviso: operandos compuestos mueven
->    `complexityIndex`, y ya se hizo el re-congelado, así que hay que comprobar estratos.
-> 2. **Enchufar G1, G3 y G4 a `runW3Generation()`** en la misma pasada.
-> 3. **W3 → paso 5 de W2 (A/B/C) → `T-H5-12` → W4**, semilla nueva.
+> ### El registro de defectos fijados — esto es lo más operativo
 >
-> **Sigue siendo del propietario:** la lectura humana por muestra del paso 19, la Parte A ciega de
-> familia no candidata de BENCH-01, y **resolver la avería de Actions** (abajo).
+> Cada uno tiene una prueba que **afirma el defecto** y que se sustituye por la contraria al
+> regenerar, como se hizo con la de KC13 en D-56. Si al regenerar alguna no falla, la regeneración no
+> arregló lo que dice arreglar.
 >
-> ### Verificación
+> | Defecto | Cuánto | Dónde se fija | Causa |
+> |---|---|---|---|
+> | Sondas que exigen una regla no enseñada en su fase | **70** (14 baseline, 56 intervention) | `w3-run-artifact.test.ts` | `cond_meta` importa `→I`, `conj_premisa` importa `∧E`, `disy_meta` importa `∨I` |
+> | Sondas de transferencia con premisas idénticas a la práctica | **30** de 34 | id. | `sonda-conj_meta` envuelve la meta y no toca las premisas |
+> | Pistas que mandan a `¬E` donde va `DNE` | **10**, todo KC16 | id. | tabla que daba una sola regla a la negación; **ya corregida en el generador** |
+> | Índices de complejidad en escala retirada | **561** de 571 | id. | el banco se midió con `cal-09-v1` |
 >
-> **1714 pruebas unitarias en verde** (1691 antes) más las **131 contra PostgreSQL 17 real**. Lint,
-> typecheck, build, depcruise con sus dos controles positivos, separación de modos, sesión seca,
-> adversarial, conjunto dorado —regenerado con diff vacío—, PBT, pureza del verificador, pasarela y
-> drift: verde en local.
+> Además hay **128 sondas que G1 no juzga** —las de los tres KC de fundamento, que no enseñan regla— y
+> se devuelven **contadas** por `probesExemptFromRuleClosure()`, no descartadas en silencio.
 >
-> ### ⚠ CI sigue caída, y no por el código — **necesita al propietario**
+> **Y un censo que NO es lista de defectos:** el solapamiento de superficie fuera de transferencia
+> —`probes_intervention` 55 literales + 99 bajo renombrado de 182, `retention` 30 de 34— se cuenta y
+> **no se declara violación**, porque ninguna autoridad fija ahí un umbral. Es el dato con el que el
+> propietario puede decidir si hace falta uno.
 >
-> Las corridas `32604879521`, `32607585306` —también tras relanzarla— y `32607813380` fallaron **en
-> uno o dos segundos con cero pasos ejecutados** en los diez jobs. Es la firma que D-58 documentó, y
-> que el propietario resolvió entonces **en la cuenta de GitHub**. La última corrida real es
-> `32604466870` sobre `f7d0ad2`: 129 pasos, verde, la que verifica D-65.
+> ### Dos cosas que se creyeron y eran falsas — no volver a derivarlas
 >
-> **D-66 y D-67 quedan `HECHAS`, no `VERIFICADAS`.** Cuando Actions arranque, basta relanzar la
-> corrida del último commit y observarla.
-
+> 1. **«El banco tiene 96 formas para 571 reactivos, luego está inflado.»** El número es cierto y la
+>    conclusión no: §7.8 define familia exactamente así y dice que renombrar átomos **no** crea familia
+>    nueva; `collisionProhibited()` documenta que dentro de una reserva la colisión no está prohibida
+>    —prohibirla dejaría toda familia en un miembro— y que entre dos reservas de enseñanza tampoco,
+>    porque guiada y después independiente sobre la misma estructura es andamiaje. **Es el diseño
+>    funcionando.**
+> 2. **«Una sonda de línea base no puede usar la regla que mide.»** Falso: que el alumno no la haya
+>    recibido **es** lo que la línea base mide, y un fallo por esa regla es el dato buscado. Con ese
+>    criterio equivocado G1 contaba 308 violaciones en vez de 70. Lo que arruina la medida es la regla
+>    de **otro** KC posterior, porque entonces el fallo ya no distingue una causa de la otra.
+>
+> ### Lo que hay que saber del rediseño antes de empezarlo
+>
+> - **La forma de envolver decide si se pasa G3.** `sonda-conj_premisa` entierra la premisa en una
+>   conjunción y **sí** cambia la superficie: `probes_baseline` sale limpia, 224 de 224. Las otras tres
+>   envuelven la **meta** y dejan las premisas intactas.
+> - **Los tres ejes que sirven** —estructura de los operandos, multiplicidad de la regla objetivo,
+>   dirección u operando elegido— **no importan ninguna regla ajena**, así que satisfacen G1 y G3 a la
+>   vez.
+> - **Aviso:** operandos compuestos suben `connectivesInStatement` y `structuralDistance`, así que
+>   mueven `complexityIndex`. Con `cal-09-v2` ya congelada, hay que comprobar estratos al regenerar o
+>   saltará `complexity_target_mismatch`.
+> - **Las guardas se enchufan a `runW3Generation()` en esa misma pasada.** Antes no: abortarían W3 con
+>   las plantillas de hoy.
+>
+> ### Orden exacto para retomar
+>
+> 1. Rediseñar las plantillas de sonda con los tres ejes de arriba.
+> 2. Enchufar G1, G3 y G4 a `runW3Generation()`.
+> 3. Correr W3 con **semilla nueva**; comprobar que las cuatro pruebas de defecto ahora fallan y
+>    voltearlas.
+> 4. Paso 5 de W2 (A/B/C) → `T-H5-12` → W4.
+> 5. Parte A **realmente ciega**, de familia que no sea candidata de BENCH-01.
+> 6. Lectura humana por muestra del paso 19 y, solo entonces, decidir W5.
+>
+> ### Lo que es del propietario y no lo sustituye ningún modelo
+>
+> - **Resolver la avería de Actions** en la cuenta.
+> - La **lectura humana por muestra** del paso 19 —es por muestra: §I.132 descarta expresamente el
+>   reactivo por reactivo, y el mismo paquete de 36 sirve—.
+> - Encargar la **Parte A ciega** a una familia que no sea candidata de BENCH-01.
+>
+> ### Números al cerrar
+>
+> **1714 pruebas unitarias en verde** (1665 al abrir la sesión) más las **131 contra PostgreSQL 17
+> real**. Lint, typecheck, build, depcruise con sus dos controles positivos, separación de modos,
+> sesión seca, adversarial, conjunto dorado —regenerado con diff vacío—, PBT, pureza del verificador,
+> pasarela, grants, SBOM, drift y las 159 de hardening: todo verde en local.
+>
+> **Commits de la sesión:** `f7d0ad2` (D-65), `ab6b399` (D-65 verificada), `8e1027a` (D-66),
+> `fd999df` (BENCH-04 + estado de CI), `1cf06e3` (D-67). En contenido, `35bb578`, subido **antes** que
+> el monorepo como exige §8.
 
 > ## `cal-09-v2` congelada (2026-08-22, noche) — **superado por el de arriba**
 >
@@ -842,6 +903,22 @@ mano vuelve a fallar. Las pruebas contra PostgreSQL **ya corren en local**; 131 
 vez fuera de CI. El diagnóstico anterior era incorrecto y el correcto está en §3.0.c.
 
 ## 2.9 Encargo para el auditor independiente (Kimi) — las tres decisiones de W5
+
+> **PARCIALMENTE SUPERADA (2026-08-22, noche).** Sigue siendo la plantilla buena del encargo y la
+> explicación de por qué §I.145 y §11.7 lo hacen el instrumento correcto. Lo que ya no vale:
+>
+> - **El paquete de 36 (`audits/w4-second-auditor-packet.yaml`) se armó del banco que se va a
+>   regenerar.** Entregarlo ahora gastaría la auditoría ciega sobre material que se va a tirar. Se
+>   rearma **después** de la nueva corrida de W4; ver el orden en el bloque de arriba.
+> - **La decisión 2 ya está tomada**: el arreglo de `→E` se aplicó y la calibración se re-congeló como
+>   `cal-09-v2` (D-66).
+> - **La decisión 3 tiene criterio nuevo**: el desacuerdo sobre contaminación lo resuelve el Maestro
+>   (§5.11/§7.7/§7.8), no un auditor; lo que queda es que el banco regenerado pase G1–G4.
+> - **La decisión 1 —comparabilidad A/B/C— sigue abierta**, pero sus números cambiarán: la selección
+>   se vuelve a correr sobre el banco nuevo y con la banda de `cal-09-v2` (12,110589, antes 12,065296).
+>
+> Kimi no completó el encargo por falta de créditos (D-64). Quien lo retome elige familia: la única
+> condición dura es que **no sea candidata de BENCH-01**, porque el paquete lleva soluciones.
 
 El propietario decidió mandar las tres decisiones de W5 a **Kimi (Moonshot)**, un modelo de familia
 distinta del que generó el material. Esta sección es el encargo, listo para copiar y pegar.
