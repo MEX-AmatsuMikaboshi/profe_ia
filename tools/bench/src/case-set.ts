@@ -131,6 +131,18 @@ export interface BenchCase {
    * `assertFaultDeclarationCoherent()`.
    */
   readonly injectedFault?: InjectedFault;
+  /**
+   * Bloque del corpus con el que el modo degradado continúa cuando la llamada
+   * cae. Obligatorio en `failure_or_invalid_output` y prohibido en el resto.
+   *
+   * **Es dato del caso porque la caída ocurre sobre un bloque concreto.** P-II
+   * §8.6 define el modo degradado sobre activos congelados, y servir «el
+   * activo que haya» convertiría el gate en una comprobación de que el mapa no
+   * está vacío. Derivarlo del texto de la pregunta a la hora de correr sería
+   * peor todavía: el bloque lo decidiría un heurístico escrito después de ver
+   * los casos.
+   */
+  readonly degradedBlockId?: string;
 }
 
 /**
@@ -245,6 +257,27 @@ export function assertFaultDeclarationCoherent(set: CaseSet): void {
       `Los casos ${sobran.map((c) => c.caseId).join(', ')} declaran fallo inyectado fuera de ` +
         'failure_or_invalid_output. Un fallo inyectado ahí mediría recuperación donde el gate ' +
         'espera medir otra cosa.',
+    );
+  }
+  const sinBloque = set.cases.filter(
+    (c) => c.family === 'failure_or_invalid_output' && c.degradedBlockId === undefined,
+  );
+  if (sinBloque.length > 0) {
+    throw new CaseSetError(
+      `Los casos ${sinBloque.map((c) => c.caseId).join(', ')} declaran una caída y no declaran ` +
+        'con qué bloque continúa el modo degradado. Sin bloque, la recuperación se mediría ' +
+        'contra el activo que hubiera a mano, y el gate —de 100 % y bloqueante— pasaría por ' +
+        'comprobar que el mapa de activos no está vacío (P-II §8.6).',
+    );
+  }
+  const bloqueDeMas = set.cases.filter(
+    (c) => c.family !== 'failure_or_invalid_output' && c.degradedBlockId !== undefined,
+  );
+  if (bloqueDeMas.length > 0) {
+    throw new CaseSetError(
+      `Los casos ${bloqueDeMas.map((c) => c.caseId).join(', ')} declaran bloque degradado sin ` +
+        'declarar caída. Un bloque degradado en un caso que no cae no se usa nunca, y su ' +
+        'presencia haría creer que ese caso ejercita la ruta degradada.',
     );
   }
 }

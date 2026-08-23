@@ -52,13 +52,24 @@ export {
   type Candidate,
   type CaseOutcome,
   type RunDependencies,
+  type DegradedRecovery,
   type RunPlan,
   type RunResult,
 } from './run.js';
 
 export {
+  CorpusLoadError,
+  assertPackageMayCrownWinner,
+  loadContentPackage,
+  type AssetKindNotDerivable,
+  type ContentPackage,
+} from './corpus.js';
+
+export {
   ScoringError,
   declaredDenominators,
+  degradedRecoveryProbe,
+  observeGates,
   scoreCandidate,
   scoreRun,
   type GateEvidence,

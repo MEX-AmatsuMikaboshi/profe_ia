@@ -3,9 +3,13 @@ import { describe, expect, it } from 'vitest';
 import type { BenchCase, CaseSet } from '../src/case-set.js';
 import { GATE_SPECS, GateError } from '../src/gates.js';
 import type { CaseOutcome, RunResult } from '../src/run.js';
+import { CorpusLoadError, loadContentPackage, type ContentPackage } from '../src/corpus.js';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   ScoringError,
   declaredDenominators,
+  observeGates,
   scoreCandidate,
   scoreRun,
   type GateEvidence,
@@ -124,14 +128,48 @@ const TODOS = CONJUNTO.cases.map((c) =>
     : resultado(c.caseId),
 );
 
+/**
+ * Paquete congelado **de fixture**.
+ *
+ * Se declara congelado a mano porque el del repositorio no lo está y no lo
+ * estará hasta que W5 corra: sin esto no habría forma de probar el camino del
+ * dictamen. Que sea fixture es justamente lo que obliga a la prueba de más
+ * abajo, que carga el paquete **real** y comprueba que `scoreCandidate()` lo
+ * rechaza — un fixture congelado sin ese contrapunto sería un permiso escondido.
+ */
+const PAQUETE_CONGELADO: ContentPackage = {
+  courseId: 'unidad-deduccion-natural',
+  corpusVersion: 'w1-corpus-v1',
+  itemsGeneratedAt: '2026-08-23T03:33:57.153Z',
+  assetVersion: 'fixture-congelado-v1',
+  frozen: true,
+  frozenReason: 'fixture de prueba',
+  authorizedFragmentsByBlock: new Map([
+    ['KC04', [{ fragmentId: 'frag-kc04', blockId: 'KC04', text: 'De A y de B se obtiene (A∧B).' }]],
+  ]),
+  fragmentsWithoutExtractedText: 0,
+  frozenAssets: [
+    {
+      kind: 'explicacion',
+      key: 'KC04',
+      text: 'De A y de B se obtiene (A∧B).',
+      freezeVersion: 'fixture-congelado-v1',
+    },
+  ],
+  feedbackTemplates: [],
+  assetKindsNotDerivable: [],
+};
+
 const entrada = (
   outcomes: readonly CaseOutcome[],
   evidence: GateEvidence = evidenciaLimpia(),
+  contentPackage: ContentPackage = PAQUETE_CONGELADO,
 ): ScoringInput => ({
   runResult: corrida(outcomes),
   caseSet: CONJUNTO,
   repetitions: 1,
   evidence,
+  contentPackage,
 });
 
 describe('denominadores derivados del plan congelado', () => {
@@ -341,5 +379,30 @@ describe('scoreRun compara candidatos', () => {
     const veredictos = scoreRun(entrada(dobles));
     expect(veredictos.map((v) => v.candidateId)).toEqual([CANDIDATO, otro]);
     expect(veredictos.every((v) => v.gates.length === GATE_SPECS.length)).toBe(true);
+  });
+});
+
+describe('medir no es coronar: el paquete real se mide y no dictamina (D-70)', () => {
+  const PAQUETE_REAL = loadContentPackage(
+    join(dirname(fileURLToPath(import.meta.url)), '../../../content/unidad-deduccion-natural'),
+  );
+
+  it('observeGates computa los seis gates sobre material sin congelar', () => {
+    // Ésta es la corrida parcial declarada de §3.5 del handoff: mide y compara,
+    // no corona. La alternativa real no era esperar, era aproximar el gate con
+    // un sustituto — y un gate medido contra un sucedáneo pasa diciendo algo
+    // que nadie comprobó.
+    const gates = observeGates(CANDIDATO, entrada(TODOS, evidenciaLimpia(), PAQUETE_REAL));
+    expect(gates.length).toBe(GATE_SPECS.length);
+    expect(gates.every((g) => g.passed)).toBe(true);
+  });
+
+  it('scoreCandidate se niega sobre ese mismo paquete', () => {
+    // Y este es el punto: los mismos seis gates verdes **no** producen ganador.
+    // P-III §6.2 mide sobre activos congelados y W5 no ha corrido.
+    expect(PAQUETE_REAL.frozen).toBe(false);
+    expect(() =>
+      scoreCandidate(CANDIDATO, entrada(TODOS, evidenciaLimpia(), PAQUETE_REAL)),
+    ).toThrow(CorpusLoadError);
   });
 });

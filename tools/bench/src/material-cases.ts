@@ -116,7 +116,12 @@ const inc = (n: number, input: string): BenchCase =>
  * —tiene que serlo: si además fuera rara, no se sabría si lo que falló fue el
  * transporte o la pregunta— y el fallo entra por el transporte.
  */
-const caida = (n: number, input: string, injectedFault: InjectedFault): BenchCase => ({
+const caida = (
+  n: number,
+  input: string,
+  degradedBlockId: string,
+  injectedFault: InjectedFault,
+): BenchCase => ({
   ...casoBase(
     `m-caida-${String(n).padStart(2, '0')}`,
     'failure_or_invalid_output',
@@ -124,6 +129,7 @@ const caida = (n: number, input: string, injectedFault: InjectedFault): BenchCas
     input,
     { structurallyUsable: false, mustRecoverToDegraded: true },
   ),
+  degradedBlockId,
   injectedFault,
 });
 
@@ -989,91 +995,91 @@ const CONTEXTO_INCOMPLETO: readonly BenchCase[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 const CAIDAS: readonly BenchCase[] = [
-  caida(1, '¿Qué diferencia hay entre ∧I y ∧E?', {
+  caida(1, '¿Qué diferencia hay entre ∧I y ∧E?', 'KC04', {
     kind: 'http_status',
     status: 429,
     observation: 'provider_error',
   }),
-  caida(2, '¿Cómo cierro una subprueba de →I?', {
+  caida(2, '¿Cómo cierro una subprueba de →I?', 'KC09', {
     kind: 'http_status',
     status: 429,
     observation: 'provider_error',
   }),
-  caida(3, '¿Para qué sirve la regla R?', {
+  caida(3, '¿Para qué sirve la regla R?', 'KC03', {
     kind: 'http_status',
     status: 500,
     observation: 'provider_error',
   }),
-  caida(4, '¿Qué significa que un supuesto quede descargado?', {
+  caida(4, '¿Qué significa que un supuesto quede descargado?', 'KC08', {
     kind: 'http_status',
     status: 500,
     observation: 'provider_error',
   }),
-  caida(5, '¿Puedo aplicar ∧E a (A∧B)∧C directamente?', {
+  caida(5, '¿Puedo aplicar ∧E a (A∧B)∧C directamente?', 'KC05', {
     kind: 'http_status',
     status: 503,
     observation: 'provider_error',
   }),
-  caida(6, '¿Cómo se obtiene ⊥ en este cálculo?', {
+  caida(6, '¿Cómo se obtiene ⊥ en este cálculo?', 'KC10', {
     kind: 'http_status',
     status: 529,
     observation: 'provider_error',
   }),
-  caida(7, '¿Por qué se rechaza A∧B∧C?', {
+  caida(7, '¿Por qué se rechaza A∧B∧C?', 'KC01', {
     kind: 'http_status',
     status: 400,
     observation: 'provider_error',
   }),
-  caida(8, '¿Qué diferencia hay entre PR y AS?', {
+  caida(8, '¿Qué diferencia hay entre PR y AS?', 'KC02', {
     kind: 'http_status',
     status: 401,
     observation: 'provider_error',
   }),
-  caida(9, '¿Cuándo conviene usar IP en vez de ¬I?', {
+  caida(9, '¿Cuándo conviene usar IP en vez de ¬I?', 'KC17', {
     kind: 'connection_dropped',
     observation: 'transport_failure',
   }),
-  caida(10, '¿∨E necesita siempre dos subpruebas?', {
+  caida(10, '¿∨E necesita siempre dos subpruebas?', 'KC13', {
     kind: 'connection_dropped',
     observation: 'transport_failure',
   }),
-  caida(11, '¿DNE se puede aplicar a fórmulas compuestas?', {
+  caida(11, '¿DNE se puede aplicar a fórmulas compuestas?', 'KC16', {
     kind: 'connection_dropped',
     observation: 'transport_failure',
   }),
-  caida(12, '¿Qué es trabajar hacia atrás desde la conclusión?', {
+  caida(12, '¿Qué es trabajar hacia atrás desde la conclusión?', 'KC18', {
     kind: 'timeout',
     observation: 'transport_failure',
   }),
-  caida(13, '¿Por qué no puedo citar dentro de una subprueba cerrada?', {
+  caida(13, '¿Por qué no puedo citar dentro de una subprueba cerrada?', 'KC08', {
     kind: 'timeout',
     observation: 'transport_failure',
   }),
-  caida(14, '¿↔I exige probar las dos direcciones?', {
+  caida(14, '¿↔I exige probar las dos direcciones?', 'KC14', {
     kind: 'timeout',
     observation: 'transport_failure',
   }),
-  caida(15, '¿Qué hace exactamente la regla X?', {
+  caida(15, '¿Qué hace exactamente la regla X?', 'KC12', {
     kind: 'truncated_body',
     observation: 'truncated',
   }),
-  caida(16, '¿Cómo se lee una subprueba dentro de otra?', {
+  caida(16, '¿Cómo se lee una subprueba dentro de otra?', 'KC02', {
     kind: 'truncated_body',
     observation: 'truncated',
   }),
-  caida(17, '¿Qué es el alcance de una línea?', {
+  caida(17, '¿Qué es el alcance de una línea?', 'KC08', {
     kind: 'truncated_body',
     observation: 'truncated',
   }),
-  caida(18, '¿Puedo usar ∨I para añadir cualquier fórmula?', {
+  caida(18, '¿Puedo usar ∨I para añadir cualquier fórmula?', 'KC07', {
     kind: 'refusal_body',
     observation: 'refusal',
   }),
-  caida(19, '¿Qué relación hay entre ¬E y ⊥?', {
+  caida(19, '¿Qué relación hay entre ¬E y ⊥?', 'KC10', {
     kind: 'schema_violating_text',
     observation: 'schema_violation',
   }),
-  caida(20, '¿↔E me deja ir en las dos direcciones?', {
+  caida(20, '¿↔E me deja ir en las dos direcciones?', 'KC15', {
     kind: 'empty_text',
     observation: 'schema_violation',
   }),

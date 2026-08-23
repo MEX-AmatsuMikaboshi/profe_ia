@@ -2,6 +2,7 @@ import { ModelBinding } from '@profesor-ia/contracts';
 import {
   BudgetController,
   CostLedger,
+  DegradedProfile,
   ModelGateway,
   PRICING_MANIFEST_2026_08_18,
   TransportError,
@@ -122,6 +123,7 @@ const casoDeCaida = (fault: InjectedFault): BenchCase => ({
     mustRefuseSolutionDisclosure: false,
     mustRecoverToDegraded: true,
   },
+  degradedBlockId: 'KC04',
   injectedFault: fault,
 });
 
@@ -182,6 +184,24 @@ const PLAN: RunPlan = {
   startedAt: STARTED_AT,
 };
 
+/**
+ * Perfil degradado del fixture. Un solo activo, el del bloque que los casos de
+ * caída declaran: si trajera activos de sobra, la prueba de que un bloque sin
+ * activo **no** recupera pasaría por tener el mapa lleno.
+ */
+const VERSION_DE_ACTIVOS = 'fixture-degradado-v1';
+const PERFIL_DEGRADADO = new DegradedProfile({
+  assets: [
+    {
+      kind: 'explicacion',
+      key: 'KC04',
+      text: 'Introducción de conjunción: de A y de B se obtiene (A∧B).',
+      freezeVersion: VERSION_DE_ACTIVOS,
+    },
+  ],
+  feedbackTemplates: [],
+});
+
 function dependencias() {
   const ledger = new CostLedger();
   return {
@@ -193,6 +213,8 @@ function dependencias() {
     schema: z.object({ ok: z.boolean() }),
     codeFence: 'reject' as const,
     instructions: 'instrucciones de sesión',
+    degraded: PERFIL_DEGRADADO,
+    degradedAssetVersion: VERSION_DE_ACTIVOS,
   };
 }
 
@@ -262,6 +284,62 @@ describe('una caída simulada no factura', () => {
     const resultado = await runBenchmark(PLAN, particion, [candidato()], dependencias());
     expect(resultado.outcomes[0]?.classification).toBeUndefined();
     expect(resultado.outcomes[0]?.faultObservation).toBe('transport_failure');
+  });
+});
+
+describe('la continuación degradada se registra con el activo servido', () => {
+  it('sirve el activo congelado del bloque que el caso declara', async () => {
+    const particion = partitionBySeed(
+      conjunto([casoDeCaida({ kind: 'timeout', observation: 'transport_failure' })]),
+      1,
+      0.5,
+    );
+    const resultado = await runBenchmark(PLAN, particion, [candidato()], dependencias());
+    const recuperacion = resultado.outcomes[0]?.degradedRecovery;
+    // Se registra el activo y no un booleano: un `true` no dejaría comprobar
+    // después que lo que continuó la clase salió del banco y no de un relleno.
+    expect(recuperacion).toEqual({
+      recovered: true,
+      blockId: 'KC04',
+      assetKind: 'explicacion',
+      assetKey: 'KC04',
+      assetVersion: VERSION_DE_ACTIVOS,
+      assetChars: expect.any(Number) as number,
+    });
+  });
+
+  it('un bloque sin activo congelado NO recupera, y dice por qué', async () => {
+    // **Control positivo.** Sin él, la prueba de arriba estaría verde por tener
+    // el mapa lleno y no por servir el activo correcto. El modo degradado no
+    // rellena huecos: un texto de relleno haría pasar por «el núcleo respondió»
+    // algo que no estaba (P-II §8.6).
+    const sinActivo: BenchCase = {
+      ...casoDeCaida({ kind: 'timeout', observation: 'transport_failure' }),
+      caseId: 'caida-bloque-vacio',
+      degradedBlockId: 'KC17',
+    };
+    const particion = partitionBySeed(conjunto([sinActivo]), 1, 0.5);
+    const resultado = await runBenchmark(PLAN, particion, [candidato()], dependencias());
+    const recuperacion = resultado.outcomes[0]?.degradedRecovery;
+    expect(recuperacion?.recovered).toBe(false);
+    expect(recuperacion?.blockId).toBe('KC17');
+    expect(recuperacion && 'reason' in recuperacion ? recuperacion.reason : '').toContain('KC17');
+  });
+
+  it('una corrida con caídas y sin perfil degradado no empieza', async () => {
+    // Mismo freno que el inyector de fallos, por el otro extremo de la ruta:
+    // sin perfil hay caída y no hay continuación, y el gate —100 % y
+    // bloqueante— se apoyaría en una ruta que el sistema no tiene.
+    const particion = partitionBySeed(
+      conjunto([casoDeCaida({ kind: 'timeout', observation: 'transport_failure' })]),
+      1,
+      0.5,
+    );
+    const { degraded, ...sinDegradado } = dependencias();
+    expect(degraded).toBeDefined();
+    await expect(runBenchmark(PLAN, particion, [candidato()], sinDegradado)).rejects.toThrow(
+      BenchRunError,
+    );
   });
 });
 

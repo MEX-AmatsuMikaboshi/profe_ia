@@ -1,6 +1,7 @@
 import type { ModelOutputClassification } from '@profesor-ia/contracts';
 
 import type { BenchCase, CaseFamily, CaseSet, InjectedFault } from './case-set.js';
+import { assertPackageMayCrownWinner, type ContentPackage } from './corpus.js';
 import {
   GATE_SOURCE_FAMILIES,
   GATE_SPECS,
@@ -10,6 +11,7 @@ import {
   type BenchVerdict,
   type GateId,
   type GateObservation,
+  type GateResult,
 } from './gates.js';
 import type { CaseOutcome, RunResult } from './run.js';
 
@@ -367,12 +369,45 @@ const OBSERVADORES: Readonly<Record<GateId, (ctx: Contexto) => GateObservation>>
   deterministic_degraded_recovery: observarDegradado,
 });
 
+/**
+ * Sonda de recuperación derivada de lo que el runner registró.
+ *
+ * **No infiere**: el runner intenta la continuación degradada después del
+ * reintento único y deja constancia del activo servido. Aquí sólo se lee. Un
+ * caso que alimenta este gate y no trae constancia **lanza** en vez de contarse
+ * como fallo: no haber ejercitado la ruta y haberla ejercitado sin éxito son
+ * hechos distintos, y confundirlos convertiría una corrida mal armada en un
+ * candidato malo.
+ */
+export function degradedRecoveryProbe(): NonNullable<GateEvidence['recoveredToDegraded']> {
+  return (outcome) => {
+    const registro = outcome.degradedRecovery;
+    if (registro === undefined) {
+      throw new ScoringError(
+        `El resultado de ${outcome.caseId} alimenta el gate de recuperación y no trae constancia ` +
+          'de continuación degradada. No haber ejercitado la ruta no es haberla fallado: ' +
+          'contarlo como fallo culparía al candidato de una corrida mal armada.',
+      );
+    }
+    return registro.recovered;
+  };
+}
+
 export interface ScoringInput {
   readonly runResult: RunResult;
   readonly caseSet: CaseSet;
   /** Repeticiones del plan congelado; el denominador se deriva de ellas. */
   readonly repetitions: number;
   readonly evidence: GateEvidence;
+  /**
+   * Paquete de contenido del que salieron fragmentos y activos.
+   *
+   * Es obligatorio y no opcional a propósito: P-III §6.2 mide sobre material
+   * congelado, y un campo que se puede omitir se omite el día que estorba.
+   * `scoreCandidate()` lo exige congelado; `observeGates()` no, porque medir y
+   * coronar no son lo mismo.
+   */
+  readonly contentPackage: ContentPackage;
 }
 
 /**
@@ -385,6 +420,22 @@ export interface ScoringInput {
  * un ganador coronado sobre cinco de seis gates es un ganador que nadie midió.
  */
 export function scoreCandidate(candidateId: string, input: ScoringInput): BenchVerdict {
+  // **Medir no es coronar.** Un dictamen sobre material sin congelar afirmaría
+  // el resultado que P-III §6.2 define sobre activos congelados; para medir sin
+  // dictaminar está `observeGates()`, que es la corrida parcial declarada.
+  assertPackageMayCrownWinner(input.contentPackage);
+  return verdictFor(candidateId, input.runResult.purpose, observeGates(candidateId, input));
+}
+
+/**
+ * Los seis gates de un candidato **sin dictamen**.
+ *
+ * Es la corrida parcial declarada: mide y compara sin coronar a nadie. Existe
+ * porque la alternativa real no es «esperar» sino «aproximar el gate con un
+ * sustituto», y un gate medido contra un sucedáneo pasa diciendo algo que nadie
+ * comprobó.
+ */
+export function observeGates(candidateId: string, input: ScoringInput): readonly GateResult[] {
   const deCandidato = input.runResult.outcomes.filter((o) => o.candidateId === candidateId);
   if (deCandidato.length === 0) {
     throw new ScoringError(
@@ -418,8 +469,7 @@ export function scoreCandidate(candidateId: string, input: ScoringInput): BenchV
   };
 
   const observaciones = GATE_SPECS.map((spec) => OBSERVADORES[spec.gateId](ctx));
-  const resultados = observaciones.map((obs) => evaluateGate(obs));
-  return verdictFor(candidateId, input.runResult.purpose, resultados);
+  return observaciones.map((obs) => evaluateGate(obs));
 }
 
 /**

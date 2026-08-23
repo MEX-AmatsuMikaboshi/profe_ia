@@ -1,5 +1,6 @@
 import type { CostEvent, ModelBinding, PricingManifest } from '@profesor-ia/contracts';
 import {
+  FrozenAssetMissingError,
   TransportError,
   assertRefreshAuthorizesBenchmark,
   priceCall,
@@ -7,6 +8,7 @@ import {
   type CodeFencePolicy,
   type CostLedger,
   type ModelGateway,
+  type DegradedProfile,
   type ProviderUsage,
   type ValidatedOutput,
 } from '@profesor-ia/model-gateway';
@@ -97,6 +99,17 @@ export interface RunDependencies {
   /** Registro del refresco documental (T-H4-09) y su ventana. */
   readonly refreshRecord: unknown;
   readonly refreshWindow: unknown;
+  /**
+   * Perfil degradado con los activos congelados del paquete de contenido.
+   *
+   * Obligatorio en cuanto el conjunto trae una sola caída: sin él la corrida
+   * mediría que el reintento falló y nada más, y el gate de recuperación —100 %
+   * y bloqueante— se apoyaría en una ruta que nunca se ejecutó. Lo comprueba
+   * `assertDegradedProfileAvailable()` antes de la primera llamada.
+   */
+  readonly degraded?: DegradedProfile;
+  /** Versión del material del que salen los activos; viaja al informe. */
+  readonly degradedAssetVersion?: string;
   /** Esquema local contra el que se valida cada salida (T-H4-03). */
   readonly schema: ZodType<unknown>;
   /**
@@ -114,6 +127,25 @@ export interface RunDependencies {
    */
   readonly parameters?: Readonly<Record<string, unknown>>;
 }
+
+/**
+ * Qué hizo el sistema con la caída, una vez agotado el reintento único.
+ *
+ * Se registra el **activo servido**, no un booleano: un `true` no dejaría
+ * comprobar después que lo que continuó la clase salió del banco congelado y no
+ * de un texto de relleno, y ese es justo el hecho que el gate de recuperación
+ * —100 % y bloqueante— dice medir (P-II §8.6).
+ */
+export type DegradedRecovery =
+  | {
+      readonly recovered: true;
+      readonly blockId: string;
+      readonly assetKind: 'explicacion';
+      readonly assetKey: string;
+      readonly assetVersion: string;
+      readonly assetChars: number;
+    }
+  | { readonly recovered: false; readonly blockId: string; readonly reason: string };
 
 export interface CaseOutcome {
   readonly caseId: string;
@@ -168,6 +200,12 @@ export interface CaseOutcome {
   readonly initialRawOutput: string;
   /** Clasificación del primer intento; ausente si no hubo respuesta. */
   readonly initialClassification?: ValidatedOutput<unknown>['classification'];
+  /**
+   * Sólo en casos con caída declarada. **Ausente no significa «no recuperó»**:
+   * significa que el caso no ejercitó la ruta degradada, y `scoring.ts`
+   * distingue las dos cosas en vez de contar la ausencia como fallo.
+   */
+  readonly degradedRecovery?: DegradedRecovery;
 }
 
 export interface RunResult {
@@ -255,6 +293,74 @@ function assertFaultInjectorsAvailable(
 }
 
 /**
+ * Que exista el perfil degradado en cuanto haya una sola caída declarada,
+ * **antes** de la primera llamada.
+ *
+ * Mismo motivo que el inyector de fallos, por el otro extremo de la ruta: sin
+ * inyector no hay caída que medir; sin perfil degradado hay caída y no hay
+ * continuación, y el gate de recuperación se computaría sobre una ruta que el
+ * sistema no tiene. Que el gate sea de 100 % y bloqueante es justo lo que hace
+ * inaceptable descubrirlo a mitad de corrida.
+ */
+function assertDegradedProfileAvailable(
+  casos: readonly BenchCase[],
+  deps: RunDependencies,
+): void {
+  const conFallo = casos.filter((c) => c.injectedFault !== undefined);
+  if (conFallo.length === 0) return;
+  if (deps.degraded === undefined) {
+    throw new BenchRunError(
+      `El conjunto trae ${String(conFallo.length)} casos con caída simulada y la corrida no ` +
+        'declara perfil degradado. P-II §8.6 define la continuidad ante caída sobre activos ' +
+        'congelados: sin ellos la corrida sólo mediría que el reintento falló, y el gate de ' +
+        'recuperación —100 % y bloqueante— se apoyaría en una ruta que no se ejecutó.',
+    );
+  }
+}
+
+/**
+ * Continúa con contenido congelado tras agotar el reintento único.
+ *
+ * **Un activo ausente no se disfraza de recuperación fallida silenciosa**: se
+ * registra con su motivo y cuenta como fallo del gate, que es lo que es. Y no
+ * se rellena con texto genérico: `DegradedProfile` lanza a propósito, porque un
+ * relleno haría pasar por «el núcleo respondió» algo que no estaba y el perfil
+ * dejaría de servir para aislar si el fallo vino del modelo o del núcleo.
+ */
+function continuarDegradado(caso: BenchCase, deps: RunDependencies): DegradedRecovery {
+  const bloque = caso.degradedBlockId;
+  if (bloque === undefined) {
+    throw new BenchRunError(
+      `El caso ${caso.caseId} declara caída y no declara bloque degradado. ` +
+        '`assertFaultDeclarationCoherent()` debería haberlo parado antes de correr.',
+    );
+  }
+  const perfil = deps.degraded;
+  if (perfil === undefined) {
+    throw new BenchRunError(
+      `La corrida no declara perfil degradado y el caso ${caso.caseId} cayó. ` +
+        '`assertDegradedProfileAvailable()` debería haberlo parado antes de correr.',
+    );
+  }
+  try {
+    const activo = perfil.asset('explicacion', bloque);
+    return {
+      recovered: true,
+      blockId: bloque,
+      assetKind: 'explicacion',
+      assetKey: bloque,
+      assetVersion: activo.freezeVersion,
+      assetChars: activo.text.length,
+    };
+  } catch (error) {
+    if (error instanceof FrozenAssetMissingError) {
+      return { recovered: false, blockId: bloque, reason: error.message };
+    }
+    throw error;
+  }
+}
+
+/**
  * Ejecuta un caso con fallo inyectado. **No sale a la red y no factura**: la
  * caída se sintetiza, así que no hay tokens que tarifar ni presupuesto que
  * consumir. Por eso tampoco pasa por `assertBillableAllowed()`: ese freno
@@ -318,6 +424,11 @@ async function ejecutarCaida(
   // demuestra que la ruta de reintento funcione.
   const segundo = await intentar(2);
 
+  // La continuación degradada se intenta **después** del reintento único, no en
+  // su lugar: caer al modo degradado ante el primer fallo escondería que el
+  // reintento habría bastado, y P-III §6.2 mide las dos cosas por separado.
+  const degradedRecovery = continuarDegradado(caso, deps);
+
   return {
     caseId: caso.caseId,
     candidateId: candidato.candidateId,
@@ -326,6 +437,7 @@ async function ejecutarCaida(
     ...(primero.classification === undefined ? {} : { initialClassification: primero.classification }),
     initialRawOutput: primero.rawOutput,
     faultObservation: segundo.observation,
+    degradedRecovery,
     attempts: 2,
     // Costo cero **medido**, no supuesto: la caída se sintetiza y no se abre
     // ninguna conexión, así que no hay nada que tarifar.
@@ -358,6 +470,7 @@ export async function runBenchmark(
   }
 
   assertFaultInjectorsAvailable([...partition.development, ...partition.evaluation], candidates);
+  assertDegradedProfileAvailable([...partition.development, ...partition.evaluation], deps);
 
   // Antes de la primera llamada, y por tanto antes del primer peso gastado.
   const autorizacion = assertRefreshAuthorizesBenchmark(deps.refreshRecord, deps.refreshWindow, {
