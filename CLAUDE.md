@@ -64,6 +64,7 @@ pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && 
 | `pnpm run db:grants:check` | Que la migración de `GRANT` corresponde a la matriz vigente |
 | `pnpm run ci:supply:sbom` / `:drift` | SBOM CycloneDX + digest de lockfile / drift y advisories (bloqueante) |
 | `pnpm run ci:infra:hardening` | 159 propiedades sobre la config **resuelta** por Docker |
+| `pnpm run bench:preparacion <runId> [cands]` | Qué falta para la corrida material de BENCH-01. No gasta nada; sale con 1 si aún no se puede correr (D-72) |
 | `pnpm run ci:adversarial:session` | AC de `T-H7-03`: extracción/injection del alumno (P-II §14.4 de sesión) y la puerta de no revelación de P-I §9.6 |
 | `pnpm run ci:infra:compose-up` | Arranque limpio del stack + verificador por spool + prueba de que `core` no sale a Internet |
 | `pnpm run ci:infra:otel` | AC de `T-H3-05`: los spans llegan al colector, y la derivación del alumno no |
@@ -213,9 +214,10 @@ handoff: dos de los seis gates de P-III §6.2 no se podían computar. Ya se comp
 `tools/bench/src/corpus.ts` carga el paquete real —18 fragmentos con texto, los 18 KC con
 fragmentos, 493 activos congelados— y la salida material pasó a `AnchoredSegment`, que es el contrato
 que la sesión usará. **Medir no es coronar**: `observeGates()` computa sin dictamen y
-`scoreCandidate()` exige `frozen: true`, que hoy es `false` porque W5 no ha corrido. Lo que falta
-para **correr** es humano (revisión de los 200 casos, refresco documental, elección de candidatos);
-lo que falta para **coronar** es W5.
+`scoreCandidate()` exige `frozen: true`, que hoy es `false` porque W5 no ha corrido. **`pnpm run bench:preparacion <runId> [candidatos]`
+dice qué falta sin gastar nada** (D-72): hoy pasan tres de las cuatro comprobaciones bloqueantes y la
+única que falla es el **refresco documental** —caducado, y sin `claude-sonnet-5`—. Lo que falta para
+**coronar** es W5.
 
 **F8/H7 con 2 de 7**: `T-H7-02` (validador de anclaje) y `T-H7-03` (no revelación y suite
 adversarial). Las cuatro restantes viven dentro del bucle W7 y exigen el ganador de BENCH-01.

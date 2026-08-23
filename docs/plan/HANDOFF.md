@@ -76,6 +76,22 @@
 > método de pago, o hacer el repositorio público (los repos públicos no consumen cuota). **Mientras
 > siga así, D-69, D-70 y D-71 quedan `HECHAS`, no `VERIFICADAS`.**
 >
+> ### Lo que falta para correr BENCH-01, medido y no estimado (D-72)
+>
+> `pnpm run bench:preparacion <runId> [candidatos]` lo responde **sin gastar nada**. Hoy dice:
+>
+> ```text
+> ok    conjunto_material_ejecutable            200 casos, pisos cubiertos, ids únicos
+> ok    fragmentos_para_el_gate_de_anclas       los 80 casos apuntan a bloques con fragmentos
+> ok    activos_para_el_gate_de_recuperacion    toda caída tiene su explicación congelada
+> FALLA refresco_documental_vigente             caducado, y claude-sonnet-5 no está en él
+> aviso paquete_de_contenido_congelado          mide pero no corona (W5 no ha corrido)
+> ```
+>
+> **Tres de las cuatro comprobaciones bloqueantes pasan.** La que falla es documental: el refresco del
+> 2026-08-18 tiene 434 702 s medidos y la ventana admite 432 000. Y el candidato que §3.4 recomienda,
+> `claude-sonnet-5`, **no aparece en ese refresco**: elegirlo exige refrescar, no editar el binding.
+>
 > ### Orden exacto para retomar
 >
 > 1. **Resolver Actions** y observar la corrida del último commit. No hay nada que tocar en el código.
@@ -87,8 +103,9 @@
 > 4. **Decidir a quién se mide.** `claude-sonnet-5` entra directo (§3.4). Para el segundo proveedor
 >    hay que producir la huella de comportamiento sobre el set canario, que es lo único que desbloquea
 >    BENCH-02.
-> 5. **Correr BENCH-01** —el gasto está autorizado, USD 3.64— con `observeGates()`. **No corona**: el
->    paquete no está congelado y el código lo impide.
+> 5. **Correr BENCH-01** —el gasto está autorizado, USD 3.64— con `observeGates()`. Antes,
+>    `pnpm run bench:preparacion` para confirmar que ya no falta nada; sale con 1 mientras falte.
+>    **No corona**: el paquete no está congelado y el código lo impide.
 > 6. **W5**, que es lo único que convierte esa medición en dictamen. Exige clave Ed25519, auditoría
 >    aprobada y la sección `proveedores_modelos_y_politicas_tts_stt_vision`, que depende del ganador:
 >    **ahí hay una circularidad que el propietario tendrá que romper declarando el orden**.
@@ -2117,7 +2134,7 @@ Lo que queda, con los números delante:
 | Banco de reactivos incompleto | **Cerrado**: 656 candidatos, 656 aceptados, sondas incluidas (D-68) |
 | W4 (auditoría) | **Corrido sobre el banco de 656** (D-69). Falta la **lectura humana por muestra** del paso 19 |
 | Dos gates de BENCH-01 no computables | **Cerrado** (D-70, D-71): los seis se computan contra el corpus real |
-| BENCH-01 sin correr | El gasto está autorizado y el código está. Faltan: revisión humana de los 200 casos, refresco documental rehecho y elección de candidatos |
+| BENCH-01 sin correr | El gasto está autorizado y el código está. **Medido con `bench:preparacion` (D-72): lo único que falla es el refresco documental** —caducado, y sin `claude-sonnet-5`—. Aparte, la revisión humana de los 200 casos sigue siendo condición previa a coronar |
 | W5 (freeze) | Sin ejecutar. **Es lo único que convierte la medición en dictamen**, y exige clave, auditoría aprobada y una sección que depende del ganador |
 | F8 · bucle de clase en vivo | 2 de 7 tareas |
 | F9–F16 | **39 tareas del plan sin empezar** — ahí viven voz, pizarrón, medición y `LOCAL_SELF_USE` |
