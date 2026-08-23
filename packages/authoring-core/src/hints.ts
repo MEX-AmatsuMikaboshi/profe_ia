@@ -1,5 +1,12 @@
 import type { MasteryHintFacts } from '@profesor-ia/domain-engine';
-import { isBinary, parse, print, type Formula, type RuleId } from '@profesor-ia/logic-core';
+import {
+  AUTHORIZED_RULE_IDS,
+  isBinary,
+  parse,
+  print,
+  type Formula,
+  type RuleId,
+} from '@profesor-ia/logic-core';
 import { areIsomorphic, type CanonicalProof } from '@profesor-ia/isomorphism-canonicalizer';
 import { HintPolicyError, MasteryFlagNotAuthoritativeError } from './errors.js';
 
@@ -274,4 +281,91 @@ export function premiseEntryRule(premise: Formula): RuleId | null {
       // inventaría una orientación que el corpus no da.
       return null;
   }
+}
+
+/**
+ * Regla que **construye** una meta según su conectivo principal (D-67).
+ *
+ * Contrapartida de `premiseEntryRule()`. Devuelve `null` para una letra
+ * proposicional: ninguna regla la introduce, y decir una la inventaría.
+ */
+export function goalIntroductionRule(goal: Formula): RuleId | null {
+  switch (goal.kind) {
+    case 'and':
+      return '∧I';
+    case 'or':
+      return '∨I';
+    case 'implies':
+      return '→I';
+    case 'iff':
+      return '↔I';
+    case 'not':
+      return '¬I';
+    case 'falsum':
+      // `⊥` no es un conectivo sino el átomo distinguido, y lo que lo produce es
+      // `¬E`. Se nombra porque el nivel 2 tiene una rama propia para esa meta.
+      return '¬E';
+    default:
+      return null;
+  }
+}
+
+/** Reglas que una pista puede nombrar con verdad para este enunciado. */
+export interface ExpectedHintRules {
+  readonly goalIntroduction: RuleId | null;
+  readonly premiseEntries: readonly RuleId[];
+}
+
+export function expectedHintRules(statement: {
+  readonly premises: readonly string[];
+  readonly goal: string;
+}): ExpectedHintRules {
+  const entries: RuleId[] = [];
+  for (const premise of statement.premises) {
+    const rule = premiseEntryRule(parse(premise));
+    if (rule !== null && !entries.includes(rule)) entries.push(rule);
+  }
+  return { goalIntroduction: goalIntroductionRule(parse(statement.goal)), premiseEntries: entries };
+}
+
+/**
+ * Reglas del cálculo que un texto de pista nombra **como salida de una premisa**
+ * o **como constructora de la meta**, y que no lo son para ese enunciado (D-67).
+ *
+ * **Por qué se lee el texto y no una estructura.** Rol D emite prosa; el reactivo
+ * no guarda qué regla dijo la pista. Se acota el riesgo de dos formas: se busca
+ * solo dentro de las cláusulas directivas —«la regla que lo introduce es X», «la
+ * regla que lo elimina es X»—, no en todo el texto, y solo se reconocen ids del
+ * cálculo autorizado. El nivel 3 nombra alternativas legítimas que el certificado
+ * no usa —`IP` cuando la meta es un átomo—, así que una comprobación de «toda
+ * regla nombrada aparece en el certificado» daría falsos positivos: por eso se
+ * comparan las cláusulas directivas contra `expectedHintRules()` y no contra el
+ * certificado.
+ *
+ * Lo encontró el defecto de KC16: la pista mandaba a `¬E` desde `¬¬A`, donde la
+ * regla es `DNE`.
+ */
+export function hintNamesForeignRule(
+  hintText: string,
+  expected: ExpectedHintRules,
+): readonly { readonly named: RuleId; readonly clause: 'introduction' | 'elimination' }[] {
+  const foreign: { named: RuleId; clause: 'introduction' | 'elimination' }[] = [];
+  for (const [clause, patron, permitidas] of [
+    ['introduction', /introduce[n]? (?:es|son)([^.]*)/gu, expected.goalIntroduction === null ? [] : [expected.goalIntroduction]],
+    ['elimination', /elimina[n]? (?:es|son)([^.]*)/gu, expected.premiseEntries],
+  ] as const) {
+    for (const match of hintText.matchAll(patron)) {
+      const fragmento = match[1] ?? '';
+      for (const regla of AUTHORIZED_RULE_IDS) {
+        if (!fragmento.includes(regla)) continue;
+        // `¬E` es subcadena de nada, pero `∧E`/`∨E` sí podrían confundirse con
+        // otra si se ampliara el cálculo: se compara el id completo.
+        if ((permitidas as readonly RuleId[]).includes(regla)) continue;
+        if (!foreign.some((f) => f.named === regla && f.clause === clause)) {
+          foreign.push({ named: regla, clause });
+        }
+      }
+    }
+  }
+  return foreign;
 }

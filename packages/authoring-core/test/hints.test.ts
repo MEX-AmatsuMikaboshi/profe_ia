@@ -3,6 +3,8 @@ import { search } from '@profesor-ia/proof-search';
 import { describe, expect, it } from 'vitest';
 import {
   assertHintSet,
+  expectedHintRules,
+  hintNamesForeignRule,
   premiseEntryRule,
   authoritativeMasteryDisqualifying,
   HINT_LEVEL_DESCRIPTIONS,
@@ -278,5 +280,74 @@ describe('regla de entrada de una premisa (D-65, arreglo de las pistas de KC16)'
     for (const texto of ['¬¬A', '¬A', 'A∧B', 'A∨B', 'A→B', 'A↔B']) {
       expect(AUTHORIZED_RULE_IDS as readonly string[]).toContain(regla(texto) as string);
     }
+  });
+});
+
+describe('fidelidad de las reglas que nombra una pista (D-67, G4)', () => {
+  const esperado = (premises: string[], goal: string) => expectedHintRules({ premises, goal });
+
+  it('deriva del enunciado qué regla construye la meta y cuáles abren las premisas', () => {
+    expect(esperado(['A∧B'], 'C∨D')).toEqual({
+      goalIntroduction: '∨I',
+      premiseEntries: ['∧E'],
+    });
+    expect(esperado(['¬¬A', 'B→C'], 'A')).toEqual({
+      goalIntroduction: null, // una letra proposicional no la introduce ninguna regla
+      premiseEntries: ['DNE', '→E'],
+    });
+  });
+
+  // ── Control positivo: el defecto real de KC16 ─────────────────────────────
+  it('ve la pista de KC16 que manda a ¬E desde ¬¬A', () => {
+    const texto =
+      'El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. ' +
+      'En las premisas el conectivo principal es la negación (¬), y la regla que lo elimina es ¬E. ' +
+      'Empieza por esas entradas del texto.';
+    const ajenas = hintNamesForeignRule(texto, esperado(['¬¬A'], '(A)∧(¬¬A)'));
+    expect(ajenas).toEqual([{ named: '¬E', clause: 'elimination' }]);
+  });
+
+  it('acepta la misma pista una vez corregida a DNE', () => {
+    const texto =
+      'El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. ' +
+      'En las premisas el conectivo principal es la negación (¬), y la regla que lo elimina es DNE. ' +
+      'Empieza por esas entradas del texto.';
+    expect(hintNamesForeignRule(texto, esperado(['¬¬A'], '(A)∧(¬¬A)'))).toEqual([]);
+  });
+
+  it('no confunde ¬E con DNE cuando la premisa es una negación simple', () => {
+    const texto = 'En las premisas el conectivo principal es la negación (¬), y la regla que lo elimina es ¬E.';
+    expect(hintNamesForeignRule(texto, esperado(['¬A', 'A'], '⊥'))).toEqual([]);
+  });
+
+  it('ve también una regla de introducción equivocada', () => {
+    const texto = 'El conectivo principal de la meta es la disyunción (∨), y la regla que lo introduce es ∧I.';
+    expect(hintNamesForeignRule(texto, esperado(['A'], 'A∨B'))).toEqual([
+      { named: '∧I', clause: 'introduction' },
+    ]);
+  });
+
+  it('solo mira las cláusulas directivas: el nivel 3 puede nombrar IP sin usarla', () => {
+    // Sin este acotamiento, «toda regla nombrada aparece en el certificado»
+    // daría falsos positivos en todo el banco: el nivel 3 ofrece la prueba
+    // indirecta como alternativa cuando la meta es un átomo.
+    const nivel3 =
+      'La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: ' +
+      'tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba ' +
+      'indirecta (IP), que abre una subprueba suponiendo la negación de la meta.';
+    expect(hintNamesForeignRule(nivel3, esperado(['¬¬A'], 'A'))).toEqual([]);
+  });
+
+  it('la lista plural de reglas también se revisa entera', () => {
+    const texto =
+      'En las premisas los conectivos principales son la conjunción (∧) y la negación (¬), ' +
+      'y las reglas que los eliminan son ∧E y ¬E.';
+    expect(hintNamesForeignRule(texto, esperado(['A∧B', '¬¬C'], 'D'))).toEqual([
+      { named: '¬E', clause: 'elimination' },
+    ]);
+  });
+
+  it('un texto sin cláusula directiva no produce hallazgos', () => {
+    expect(hintNamesForeignRule('Vuelve a leer el reactivo antes de escribir nada.', esperado(['A∧B'], 'A'))).toEqual([]);
   });
 });

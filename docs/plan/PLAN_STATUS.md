@@ -1339,4 +1339,45 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   entonces en la cuenta. La última corrida real es `32604466870` sobre `f7d0ad2` —129 pasos, verde—,
   que es la que verifica D-65. **D-66 queda `HECHA`, no `VERIFICADA`**, hasta observar un check verde
   en `main`.
+- **D-67 — G3, el control de superficie que §5.11 exigía y no existía, y G4, la fidelidad de las
+  reglas que nombran las pistas (2026-08-22).** Las dos guardas que quedaban sin decisiones
+  pendientes. No se regeneró contenido.
+  **G3 nace de leer la norma, no de un criterio propio.** §5.11 dice, de la protección de reservas,
+  que «el detector opera sobre representación estructural/grafo normalizado **además de controles de
+  superficie**». La parte estructural estaba —`structuralSignature()`, aplicada por
+  `collisionProhibited()`—; **la de superficie no existía**. El hueco importa porque las dos miden
+  cosas distintas: una envoltura que añade un paso cambia la firma estructural y **deja la superficie
+  intacta**, así que el control estructural la aprueba mientras el alumno lee exactamente las mismas
+  premisas que ya practicó.
+  **Lo que falla y lo que solo se cuenta, separado a propósito.** Fallan dos reglas que salen del
+  texto normativo: (a) el enunciado idéntico a un reactivo de enseñanza **bajo renombrado**, en toda
+  reserva de medición, porque §7.8 dice que renombrar átomos no crea forma nueva —hoy **0 casos**, es
+  una guarda que se cumple—; y (b) en las dos reservas de transferencia, premisas idénticas a las de
+  la práctica, porque §5.11 exige «una forma superficial **suficientemente distinta de las prácticas
+  inmediatas**» y eso define la reserva. **Resultado: 30 sondas `TRANSFER_MEASUREMENT`** repiten las
+  premisas con las mismas letras y solo envuelven la meta; es la plantilla `sonda-conj_meta`.
+  **Fuera de transferencia el solapamiento se censa y NO se declara violación**, porque ninguna
+  autoridad fija ahí un umbral e inventarlo sería decidir por cuenta propia. El censo:
+  `probes_intervention` 55 con premisas literales y 99 bajo renombrado de 182; `retention` 30 de 34;
+  **`probes_baseline` limpia, 224 de 224**. Ese contraste es informativo para el rediseño:
+  `sonda-conj_premisa` entierra la premisa en una conjunción y **sí** cambia la superficie; las otras
+  tres envuelven la **meta** y dejan las premisas intactas. Contar lo que no se rechaza es lo que
+  impide que el control pase por vacío y lo que le da al propietario el dato para decidir si hace
+  falta un umbral ahí.
+  **G4 generaliza el defecto de KC16 a una propiedad comprobable.** `expectedHintRules()` deriva del
+  enunciado qué regla construye la meta y cuáles abren las premisas —usando `premiseEntryRule()` de
+  D-65 y el nuevo `goalIntroductionRule()`—, y `hintNamesForeignRule()` comprueba que las **cláusulas
+  directivas** del texto no nombren otra. **Reencuentra los 10 reactivos de KC16 y ninguno más.**
+  **El acotamiento a las cláusulas directivas no es comodidad, es corrección**: el nivel 3 ofrece `IP`
+  como alternativa legítima que el certificado no usa, así que una comprobación de «toda regla
+  nombrada aparece en el certificado» daría falsos positivos en el banco entero.
+  **Las comprobaciones sobre el banco usan el mismo código que las guardas**, no una
+  reimplementación, y comprueban antes que no pasan por vacío: 224 sondas de línea base miradas, más
+  de 500 reactivos con cláusula directiva, y el resto del banco nombrando la regla correcta. Fijan 30
+  y 10, y se invierten al regenerar.
+  **Lo que NO se hizo y hay que saber:** las guardas todavía **no están enchufadas a
+  `runW3Generation()`**. Enchufarlas ahora abortaría W3, porque las plantillas actuales las incumplen;
+  van con el rediseño de plantillas, que es el paso siguiente. Hasta entonces son guardas medidas
+  contra el banco, no puertas del pipeline.
+  **1714 pruebas unitarias en verde** (1691 antes) más las 131 contra PostgreSQL 17 real.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

@@ -1,6 +1,73 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — `cal-09-v2` congelada (2026-08-22, noche)
+> ## EMPIEZA AQUÍ — G3 y G4 escritas (2026-08-22, noche)
+>
+> Detalle completo en **D-67** de `PLAN_STATUS.md`. **No se regeneró contenido.** Con esto quedan
+> escritas las cuatro guardas que el plan de corrección pedía; lo que falta es **rediseñar las
+> plantillas de sonda** y volver a correr la cadena.
+>
+> ### G3 — el control de superficie que la norma exigía y no existía
+>
+> §5.11 dice que el detector opera sobre representación estructural **«además de controles de
+> superficie»**. Lo estructural estaba; **lo de superficie no**. Importa porque miden cosas distintas:
+> una envoltura que añade un paso cambia la firma estructural y **deja la superficie intacta**, así
+> que el control estructural la aprueba mientras el alumno lee las mismas premisas que ya practicó.
+>
+> - **Falla** el enunciado idéntico bajo renombrado en toda reserva de medición (§7.8) — hoy **0
+>   casos**, guarda que se cumple — y las premisas idénticas en las dos reservas de transferencia
+>   (§5.11, «suficientemente distinta de las prácticas inmediatas»): **30 sondas
+>   `TRANSFER_MEASUREMENT`**, la plantilla `sonda-conj_meta`.
+> - **Se censa sin declarar violación** el solapamiento fuera de transferencia, porque ninguna
+>   autoridad fija ahí umbral: `probes_intervention` 55 literales + 99 bajo renombrado de 182;
+>   `retention` 30 de 34; **`probes_baseline` limpia, 224 de 224**.
+>
+> **Ese contraste es la pista para el rediseño:** `sonda-conj_premisa` entierra la premisa en una
+> conjunción y **sí** cambia la superficie; las otras tres envuelven la **meta** y no la tocan.
+>
+> ### G4 — fidelidad de las reglas que nombran las pistas
+>
+> `expectedHintRules()` deriva del enunciado qué regla construye la meta y cuáles abren las premisas;
+> `hintNamesForeignRule()` comprueba que las **cláusulas directivas** no nombren otra. Reencuentra los
+> **10 de KC16** y ninguno más. El acotamiento a las cláusulas directivas es necesario, no cómodo: el
+> nivel 3 ofrece `IP` como alternativa legítima que el certificado no usa.
+>
+> ### Ojo con esto
+>
+> **Las guardas todavía NO están enchufadas a `runW3Generation()`.** Enchufarlas ahora abortaría W3,
+> porque las plantillas actuales las incumplen. Van **con** el rediseño de plantillas, no antes. Hasta
+> entonces son guardas medidas contra el banco, no puertas del pipeline.
+>
+> ### Lo que sigue, sin decisiones pendientes
+>
+> 1. **Rediseñar las plantillas de sonda.** Variar el **núcleo** —estructura de los operandos,
+>    multiplicidad de la regla objetivo, dirección— en vez de envolverlo. Ninguno de esos ejes importa
+>    una regla ajena, así que satisface G1 y G3 a la vez. Aviso: operandos compuestos mueven
+>    `complexityIndex`, y ya se hizo el re-congelado, así que hay que comprobar estratos.
+> 2. **Enchufar G1, G3 y G4 a `runW3Generation()`** en la misma pasada.
+> 3. **W3 → paso 5 de W2 (A/B/C) → `T-H5-12` → W4**, semilla nueva.
+>
+> **Sigue siendo del propietario:** la lectura humana por muestra del paso 19, la Parte A ciega de
+> familia no candidata de BENCH-01, y **resolver la avería de Actions** (abajo).
+>
+> ### Verificación
+>
+> **1714 pruebas unitarias en verde** (1691 antes) más las **131 contra PostgreSQL 17 real**. Lint,
+> typecheck, build, depcruise con sus dos controles positivos, separación de modos, sesión seca,
+> adversarial, conjunto dorado —regenerado con diff vacío—, PBT, pureza del verificador, pasarela y
+> drift: verde en local.
+>
+> ### ⚠ CI sigue caída, y no por el código — **necesita al propietario**
+>
+> Las corridas `32604879521`, `32607585306` —también tras relanzarla— y `32607813380` fallaron **en
+> uno o dos segundos con cero pasos ejecutados** en los diez jobs. Es la firma que D-58 documentó, y
+> que el propietario resolvió entonces **en la cuenta de GitHub**. La última corrida real es
+> `32604466870` sobre `f7d0ad2`: 129 pasos, verde, la que verifica D-65.
+>
+> **D-66 y D-67 quedan `HECHAS`, no `VERIFICADAS`.** Cuando Actions arranque, basta relanzar la
+> corrida del último commit y observarla.
+
+
+> ## `cal-09-v2` congelada (2026-08-22, noche) — **superado por el de arriba**
 >
 > El propietario decidió **aplicar el arreglo de `→E` y re-congelar**. Hecho: **D-66** en
 > `PLAN_STATUS.md`. También quedó **adjudicada** la pregunta de contaminación que D-64 dejó abierta,

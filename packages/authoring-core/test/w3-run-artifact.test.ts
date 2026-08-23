@@ -14,8 +14,11 @@ import { describe, expect, it } from 'vitest';
 
 import {
   KC_CATALOG,
-  premiseEntryRule,
+  expectedHintRules,
+  hintNamesForeignRule,
   probeRuleClosureViolations,
+  surfaceControlViolations,
+  surfaceOverlapCensus,
   probesExemptFromRuleClosure,
   W3_REJECTION_CODES,
   type KcId,
@@ -350,73 +353,115 @@ describe('clausura de reglas del banco publicado (D-65, G1)', () => {
   });
 });
 
-describe('regla de entrada nombrada por las pistas (D-65, G4 parcial)', () => {
-  /**
-   * Reactivos cuya pista de nivel 2 manda a una regla que no abre ninguna de sus
-   * premisas.
-   *
-   * Se deriva con `premiseEntryRule()` —el mismo código que el generador usa
-   * desde D-65— en vez de buscar la cadena `¬E` a pelo: una comprobación que
-   * reimplementa el criterio no prueba que el criterio sea el que se aplica.
-   */
-  function pistasQueMandanAReglaAjena(
-    items: readonly ReactivoPublicado[],
-  ): readonly { readonly candidateId: string; readonly nombra: string; readonly deberia: string }[] {
-    const malas: { candidateId: string; nombra: string; deberia: string }[] = [];
-    for (const item of items) {
-      const entradas = new Set(
-        item.statement.premises
-          .map((p) => premiseEntryRule(parse(p)))
-          .filter((r): r is NonNullable<typeof r> => r !== null),
-      );
-      if (entradas.size === 0) continue;
-      const texto = item.hints.find((h) => h.level === 2)?.text ?? '';
-      // Reglas que el texto nombra como salida de una premisa.
-      // Ninguno de los seis nombres lleva metacaracteres, así que van literales.
-      const nombradas = ['∧E', '∨E', '→E', '↔E', '¬E', 'DNE'].filter((r) =>
-        new RegExp(`elimina[n]? (?:es|son)[^.]*${r}`).test(texto),
-      );
-      for (const regla of nombradas) {
-        if (!entradas.has(regla as never)) {
-          malas.push({ candidateId: item.candidateId, nombra: regla, deberia: [...entradas].join('/') });
+describe('fidelidad de las reglas que nombran las pistas (D-67, G4)', () => {
+  it('FIJA EL DEFECTO DE HOY: 10 reactivos de KC16 mandan a ¬E donde va DNE', () => {
+    // `¬E` es «φ, ¬φ ⊢ ⊥» y no saca `A` de `¬¬A`: la pista enseñaba una
+    // aplicación falsa de la regla. La causa era una tabla que asignaba a la
+    // negación una sola regla de eliminación sin mirar si era simple o doble;
+    // está corregida en `premiseEntryRule()` y en el generador, y **el banco no
+    // se ha regenerado**, por eso sigue en 10.
+    //
+    // La comprobación usa `hintNamesForeignRule()`, que es el mismo código que
+    // la guarda: una prueba que reimplementara el criterio no probaría que el
+    // criterio aplicado sea ése. Se sustituye por `toEqual([])` al regenerar.
+    const malas: string[] = [];
+    for (const item of publicados) {
+      const esperado = expectedHintRules(item.statement);
+      for (const pista of item.hints) {
+        if (hintNamesForeignRule(pista.text, esperado).length > 0) {
+          malas.push(`${item.candidateId}#${pista.level}`);
         }
       }
     }
-    return malas;
-  }
-
-  it('FIJA EL DEFECTO DE HOY: 10 reactivos de KC16 mandan a ¬E donde va DNE', () => {
-    // `¬E` es «φ, ¬φ ⊢ ⊥» y no saca `A` de `¬¬A`. La pista enseñaba una
-    // aplicación falsa de la regla. La causa era una tabla que asignaba a la
-    // negación una sola regla de eliminación, sin mirar si era simple o doble;
-    // está corregida en `premiseEntryRule()` y en el generador, y **el banco no
-    // se ha regenerado**: por eso esto sigue en 10.
-    //
-    // Se sustituye por `toEqual([])` cuando se regenere.
-    const malas = pistasQueMandanAReglaAjena(publicados);
-    expect(malas.map((m) => m.candidateId).sort()).toEqual([
-      'kc16-diag',
-      'kc16-guia',
-      'kc16-indep',
-      'kc16-recup',
-      'kc16-repos',
-      'kc16-retention-1',
-      'kc16-retention-2',
-      'kc16-transf',
-      'kc16-transfer_measurement-1',
-      'kc16-transfer_measurement-2',
+    expect(malas.sort()).toEqual([
+      'kc16-diag#2',
+      'kc16-guia#2',
+      'kc16-indep#2',
+      'kc16-recup#2',
+      'kc16-repos#2',
+      'kc16-retention-1#2',
+      'kc16-retention-2#2',
+      'kc16-transf#2',
+      'kc16-transfer_measurement-1#2',
+      'kc16-transfer_measurement-2#2',
     ]);
-    expect(new Set(malas.map((m) => m.nombra))).toEqual(new Set(['¬E']));
-    expect(new Set(malas.map((m) => m.deberia))).toEqual(new Set(['DNE']));
   });
 
-  it('esa comprobación no pasa por vacío: mira las pistas de todo el banco', () => {
-    const conPremisaAbrible = publicados.filter((i) =>
-      i.statement.premises.some((p) => premiseEntryRule(parse(p)) !== null),
+  it('esa comprobación no pasa por vacío: el resto del banco sí nombra la regla correcta', () => {
+    const conCláusulaDirectiva = publicados.filter((item) =>
+      item.hints.some((h) => /(?:introduce|elimina)[n]? (?:es|son)/u.test(h.text)),
     );
-    expect(conPremisaAbrible.length).toBeGreaterThan(100);
-    // Y el resto del banco —el que no es KC16— sí nombra la regla correcta.
-    expect(pistasQueMandanAReglaAjena(conPremisaAbrible.filter((i) => !i.targetKcs.includes('KC16')))).toEqual([]);
+    expect(conCláusulaDirectiva.length).toBeGreaterThan(500);
+    const fueraDeKc16 = conCláusulaDirectiva.filter((i) => !i.targetKcs.includes('KC16'));
+    for (const item of fueraDeKc16) {
+      const esperado = expectedHintRules(item.statement);
+      for (const pista of item.hints) {
+        expect(
+          hintNamesForeignRule(pista.text, esperado),
+          `${item.candidateId}#${pista.level}`,
+        ).toEqual([]);
+      }
+    }
+  });
+});
+
+/** Enunciados del banco en la forma que pide el control de superficie. */
+const superficieDe = (item: ReactivoPublicado) => ({
+  itemId: item.candidateId,
+  reserve: item.bankFunction as Reserve,
+  targetKcId: item.targetKcs[0] as string,
+  premises: item.statement.premises,
+  goal: item.statement.goal,
+});
+const ENSENANZA_NO_TRANSFERENCIA = [
+  'diagnostic',
+  'guided_practice',
+  'independent_practice',
+  'recovery',
+  'replacement',
+];
+
+describe('control de superficie de §5.11 (D-67, G3)', () => {
+  const sondas = publicados
+    .filter((i) =>
+      ['probes_baseline', 'probes_intervention', 'retention', 'TRANSFER_MEASUREMENT'].includes(
+        i.bankFunction,
+      ),
+    )
+    .map(superficieDe);
+  const ensenanza = publicados
+    .filter((i) => ENSENANZA_NO_TRANSFERENCIA.includes(i.bankFunction))
+    .map(superficieDe);
+
+  it('FIJA EL DEFECTO DE HOY: 30 sondas de transferencia repiten las premisas practicadas', () => {
+    // §5.11 exige que una actividad de transferencia aplique el KC «en una forma
+    // superficial **suficientemente distinta de las prácticas inmediatas**». Estas
+    // treinta llevan las mismas premisas con las mismas letras y solo envuelven la
+    // meta: la plantilla `sonda-conj_meta`. Se invierte al regenerar.
+    const hallazgos = surfaceControlViolations(sondas, ensenanza);
+    expect(new Set(hallazgos.map((h) => h.itemId)).size).toBe(30);
+    expect(new Set(hallazgos.map((h) => h.reserve))).toEqual(new Set(['TRANSFER_MEASUREMENT']));
+  });
+
+  it('censa el solapamiento que NO declara violación, en vez de callarlo', () => {
+    // Fuera de transferencia ninguna autoridad fija un umbral de superficie, así
+    // que compartir premisas se cuenta y no se rechaza. El número importa: es lo
+    // que el propietario necesita para decidir si hace falta ese umbral, y es lo
+    // que impide que el control parezca sano sobre un banco que no lo es.
+    const censo = surfaceOverlapCensus(sondas, ensenanza);
+    expect(censo.probes_baseline).toMatchObject({ distinct: 224, premises_literal: 0 });
+    expect(censo.probes_intervention).toMatchObject({ premises_literal: 55, premises_renaming: 99 });
+    expect(censo.retention).toMatchObject({ premises_literal: 30, distinct: 4 });
+    // Y ninguna sonda del banco es el reactivo de enseñanza renombrado entero:
+    // esa regla sí vale para toda reserva, y hoy se cumple.
+    for (const fila of Object.values(censo)) expect(fila.statement_renaming).toBe(0);
+  });
+
+  it('la envoltura de premisa sí cambia la superficie, y por eso `probes_baseline` está limpia', () => {
+    // Contraste útil para el rediseño: `sonda-conj_premisa` entierra la premisa
+    // en una conjunción y el alumno deja de leer lo mismo. Las otras tres
+    // plantillas envuelven la **meta** y dejan las premisas intactas.
+    expect(surfaceOverlapCensus(sondas, ensenanza).probes_baseline?.distinct).toBe(224);
   });
 });
 

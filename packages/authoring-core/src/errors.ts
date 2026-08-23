@@ -391,3 +391,11 @@ export class PackageLintError extends AuthoringCoreError {
  * (D-65).
  */
 export class ProbeRuleClosureError extends AuthoringCoreError {}
+
+/**
+ * Una sonda no supera el control de **superficie** de P-I §5.11: su enunciado es
+ * el de un reactivo de enseñanza renombrado, o —en transferencia— no es «una
+ * forma superficial suficientemente distinta de las prácticas inmediatas»
+ * (D-67).
+ */
+export class SurfaceControlError extends AuthoringCoreError {}
