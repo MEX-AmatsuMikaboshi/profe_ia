@@ -91,18 +91,69 @@ function defectosDeEtiquetaKc(poblacion, soluciones) {
  * libro es cerrado por el mismo motivo que la lista de `E-*`, y meter aquí un
  * código nuevo sería ampliar por la puerta de atrás lo que el auditor evalúa.
  */
-const OBSERVACIONES_SIN_CODIGO = [
-  {
-    alcance: 'KC09',
-    observacion:
-      'Se quedó sin reactivo de transferencia porque su forma fue rechazada por desajuste de ' +
-      'complejidad. Los otros 17 KC tienen el suyo, y los 17 son estructuralmente distintos de sus ' +
-      'reactivos de práctica: ni duplicado trivial ni isomorfo bajo la canonicalización congelada.',
-    porQueNoLlevaCodigo:
-      'Es un hueco de cobertura ya declarado en la corrida de W3, no un defecto de un reactivo.',
-    consecuencia: 'Ya cuenta como hueco `COV-KC-TRANSFER` y se arregla completando el banco.',
-  },
-];
+/**
+ * Lo que se observó y **no** tiene código en el libro cerrado, **derivado de la
+ * corrida de W3 en disco**.
+ *
+ * La corrida anterior lo traía como una lista literal —«KC09 se quedó sin
+ * reactivo de transferencia»— y esa frase sobrevivió al banco que la hacía
+ * cierta: D-68 regeneró W3, KC09 recuperó su transferencia y `coverageGaps`
+ * quedó vacío, pero la lista no se enteró. Un informe de auditoría que publica
+ * una carencia que ya no existe es exactamente el defecto que la auditoría
+ * busca en otros, así que se deriva.
+ *
+ * Se registra aparte de `judgments` en vez de forzarlo dentro de un código que
+ * no le corresponde: el libro es cerrado por el mismo motivo que la lista de
+ * `E-*`, y meter aquí un código nuevo ampliaría por la puerta de atrás lo que el
+ * auditor evalúa.
+ */
+function observacionesSinCodigo(corrida) {
+  const observaciones = [];
+
+  for (const hueco of corrida.coverageGaps ?? []) {
+    observaciones.push({
+      alcance: hueco.kcId ?? hueco.setId ?? 'banco',
+      observacion:
+        `La corrida de W3 declara el hueco de cobertura \`${hueco.code ?? 'COV'}\`: ` +
+        `${String(hueco.detail ?? JSON.stringify(hueco)).replace(/\.$/, '')}.`,
+      porQueNoLlevaCodigo:
+        'Es un hueco de cobertura declarado por la corrida de W3, no un defecto de un reactivo ' +
+        'concreto: no hay reactivo al que asignarle un código del libro.',
+      consecuencia: 'Se arregla completando el banco, no corrigiendo un reactivo.',
+    });
+  }
+
+  for (const reserva of corrida.probeReservesNotGenerated ?? []) {
+    observaciones.push({
+      alcance: reserva.kcId ?? 'banco',
+      observacion:
+        `No se generó la reserva \`${reserva.reserve ?? reserva.bankFunction}\`: ` +
+        `${(reserva.reason ?? 'sin motivo declarado').replace(/\.$/, '')}.`,
+      porQueNoLlevaCodigo:
+        'Es una consecuencia declarada del cálculo y de la secuencia congelada —la reserva no ' +
+        'existe—, no un reactivo defectuoso. Auditar lo que no se generó no tiene objeto; lo que ' +
+        'hay que decidir es si el diseño experimental lo admite.',
+      consecuencia:
+        'El conjunto experimental que lleve ese KC como objetivo trae menos sondas primarias. La ' +
+        'selección A/B/C lo registra y comprueba que sigue por encima del piso del calendario.',
+    });
+  }
+
+  if (observaciones.length === 0) {
+    observaciones.push({
+      alcance: 'banco',
+      observacion:
+        'La corrida de W3 no declara huecos de cobertura ni reservas sin generar, así que no hay ' +
+        'nada observado fuera del libro de códigos.',
+      porQueNoLlevaCodigo: 'No hay observación que codificar.',
+      consecuencia:
+        'Ninguna. **Esto no dice que el paquete esté bien**: dice que W3 no dejó carencias ' +
+        'declaradas, que es un dato distinto del de la lectura humana pendiente.',
+    });
+  }
+
+  return observaciones;
+}
 
 /*
  * La observación sobre las pistas de la corrida anterior —«las tres pistas son
@@ -225,7 +276,7 @@ function main() {
         },
       ],
       judgments,
-      observationsWithoutCode: OBSERVACIONES_SIN_CODIGO,
+      observationsWithoutCode: observacionesSinCodigo(corrida),
       gateReport: informe,
     },
   );

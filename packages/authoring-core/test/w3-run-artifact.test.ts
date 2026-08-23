@@ -566,32 +566,43 @@ describe('la calibración con la que se midió el banco (D-66)', () => {
   });
 });
 
-describe('los artefactos de W4 frente al banco vigente (D-68)', () => {
+describe('los artefactos de W4 frente al banco vigente (D-69)', () => {
   const muestraW4 = leerJsonConCabecera<{
     readonly generatedAt: string;
     readonly population: readonly { readonly artifactId: string }[];
   }>('audits/w4-preaudit-sample.yaml');
 
-  it('FIJA EL DESAJUSTE DE HOY: la muestra de W4 es del banco anterior', () => {
-    // El rediseño de las plantillas de sonda (D-68) regeneró W3, y la muestra de
-    // auditoría previa se sacó del banco de 571 reactivos del 2026-08-22. Los
-    // juicios de defecto que hay sobre ella son trabajo humano y **no se
-    // reciclan**: la auditoría se repite sobre el banco nuevo, en su turno del
-    // orden de trabajo —después de la selección A/B/C—.
+  const paqueteW4 = leerJsonConCabecera<{
+    readonly artifactCount: number;
+    readonly strataWithoutCoverage: readonly unknown[];
+    readonly artifacts: readonly { readonly artifactId: string }[];
+  }>('audits/w4-second-auditor-packet.yaml');
+
+  it('la muestra de auditoría previa describe el banco vigente, no uno anterior', () => {
+    // **Ésta es la contraria de la prueba que D-68 dejó puesta.** Aquella fijaba
+    // el desajuste —14 artefactos de la población ya no existían— y decía por
+    // escrito que se sustituiría al volver a correr W4. Se corrió (D-69) y aquí
+    // está la sustituta: cero desaparecidos y la misma población.
     //
-    // Lo que esta prueba impide es que ese desajuste pase inadvertido. Sin ella,
-    // `w4-preaudit-sample.yaml` seguiría describiendo una población que ya no
-    // existe y nada lo diría; es el mismo agujero que D-66 cerró exigiendo que
-    // el banco registrara su calibración.
-    //
-    // **Se sustituye por la contraria —`toEqual([])` y poblaciones iguales—
-    // cuando se vuelva a correr W4.**
+    // El valor de haber pasado por las dos es que la de hoy no pasa por vacío ni
+    // por casualidad: falló mientras el desajuste existía.
     const vivos = new Set(publicados.map((i) => i.candidateId));
     const desaparecidos = muestraW4.population
       .map((x) => x.artifactId)
       .filter((id) => !vivos.has(id));
-    expect(desaparecidos.length).toBe(14);
-    expect(muestraW4.population.length).not.toBe(publicados.length);
+    expect(desaparecidos).toEqual([]);
+    expect(muestraW4.population.length).toBe(publicados.length);
+  });
+
+  it('el paquete del segundo auditor sale del mismo banco', () => {
+    // El paquete ciego se re-armó en la misma pasada. Si se hubiera reciclado,
+    // el auditor de otra familia estaría juzgando reactivos que ya no se
+    // publican, y su dictamen no diría nada del paquete candidato.
+    const vivos = new Set(publicados.map((i) => i.candidateId));
+    const fuera = paqueteW4.artifacts.map((a) => a.artifactId).filter((id) => !vivos.has(id));
+    expect(fuera).toEqual([]);
+    expect(paqueteW4.artifacts.length).toBe(paqueteW4.artifactCount);
+    expect(paqueteW4.strataWithoutCoverage).toEqual([]);
   });
 
   it('esa comprobación no pasa por vacío: la muestra existe y tiene población', () => {
@@ -599,5 +610,145 @@ describe('los artefactos de W4 frente al banco vigente (D-68)', () => {
     // muestra al día.
     expect(muestraW4.population.length).toBeGreaterThan(500);
     expect(publicados.length).toBeGreaterThan(500);
+    expect(paqueteW4.artifacts.length).toBeGreaterThan(0);
+  });
+});
+
+describe('la selección A/B/C frente al banco vigente (D-69)', () => {
+  const seleccion = leerJsonConCabecera<{
+    readonly status: string;
+    readonly calendar: { readonly kSet: number };
+    readonly leadingProposalId: string;
+    readonly leadingProposalInventory: {
+      readonly probeInventoryItemIdsBySet: Readonly<Record<string, readonly string[]>>;
+      readonly transferMeasurementItemIdsBySet: Readonly<Record<string, readonly string[]>>;
+    };
+    readonly ranking: readonly {
+      readonly proposalId: string;
+      readonly probeCountsBySet: Readonly<Record<string, number>>;
+      readonly nominalProbeItemsBySet: Readonly<Record<string, number>>;
+      readonly formalCrossEdges: readonly unknown[];
+      readonly contentPolicyCrossEdges: readonly unknown[];
+      readonly sets: readonly { readonly setId: string; readonly targetKcs: readonly string[] }[];
+    }[];
+  }>('kc/experimental-sets.yaml');
+
+  it('el inventario de la propuesta que encabeza sale del banco publicado', () => {
+    // Mismo agujero que cerró la prueba de la muestra de W4: un artefacto que
+    // describe una población que ya no existe y nada lo dice. La selección se
+    // re-corrió sobre el banco de D-68 (D-69) y esto lo fija.
+    const vivos = new Set(publicados.map((i) => i.candidateId));
+    const inventario = [
+      ...Object.values(seleccion.leadingProposalInventory.probeInventoryItemIdsBySet).flat(),
+      ...Object.values(seleccion.leadingProposalInventory.transferMeasurementItemIdsBySet).flat(),
+    ];
+    expect(inventario.length).toBeGreaterThan(0);
+    expect(inventario.filter((id) => !vivos.has(id))).toEqual([]);
+  });
+
+  it('sigue sin congelar y encabeza la partición sin aristas cruzadas F/PC', () => {
+    // `freezeExperimentalSelection()` exige la decisión del EXPERIMENT_AUDITOR;
+    // que el artefacto se declare congelado sin ella fabricaría esa decisión.
+    expect(seleccion.status).toBe('propuesta_ordenada_sin_congelar');
+    const primera = seleccion.ranking[0];
+    expect(primera?.proposalId).toBe(seleccion.leadingProposalId);
+    expect(primera?.formalCrossEdges).toEqual([]);
+    expect(primera?.contentPolicyCrossEdges).toEqual([]);
+  });
+
+  it('los tres conjuntos superan el piso de sondas, y el desnivel de A es exactamente KC03', () => {
+    // **Esto es el registro del hallazgo 4 de D-68, no un número mágico.** KC03
+    // no puede tener sondas de línea base ni de intervención —su regla es `R`, y
+    // con `R` sola la meta es siempre una premisa—, así que el conjunto que lo
+    // lleva como KC objetivo trae 28 sondas primarias menos. Las tres
+    // particiones propuestas colocan KC03 en A, así que el desnivel no cambia el
+    // orden; lo que hay que comprobar es que **sigue por encima del piso**, que
+    // es lo que decide si KC03 puede ser KC objetivo.
+    const primariasDeKc03 = publicados.filter(
+      (i) =>
+        i.targetKcs[0] === 'KC03' &&
+        (i.bankFunction === 'probes_baseline' || i.bankFunction === 'probes_intervention'),
+    );
+    expect(primariasDeKc03).toEqual([]);
+
+    for (const evaluacion of seleccion.ranking) {
+      const conKc03 = evaluacion.sets.find((s) => s.targetKcs.includes('KC03'))?.setId;
+      expect(conKc03).toBeDefined();
+      for (const [setId, cuenta] of Object.entries(evaluacion.probeCountsBySet)) {
+        expect(cuenta).toBeGreaterThanOrEqual(evaluacion.nominalProbeItemsBySet[setId] ?? 0);
+      }
+      const otros = Object.entries(evaluacion.probeCountsBySet)
+        .filter(([setId]) => setId !== conKc03)
+        .map(([, cuenta]) => cuenta);
+      const deficit = Math.max(...otros) - (evaluacion.probeCountsBySet[conKc03 as string] ?? 0);
+      expect(deficit).toBe(28);
+    }
+  });
+});
+
+describe('el informe de auditoría previa frente a la corrida de W3 (D-69)', () => {
+  const informe = leerJsonConCabecera<{
+    readonly auditor: string;
+    readonly independent: boolean;
+    readonly closesGate: boolean;
+    readonly reviewedArtifactIds: readonly string[];
+    readonly judgments: readonly { readonly artifactId: string; readonly code: string }[];
+    readonly observationsWithoutCode: readonly {
+      readonly alcance: string;
+      readonly observacion: string;
+    }[];
+    readonly gateReport: { readonly blocked: boolean };
+  }>('audits/w4-audit-report.yaml');
+
+  const corrida = leerJsonConCabecera<{
+    readonly coverageGaps: readonly unknown[];
+    readonly probeReservesNotGenerated: readonly { readonly kcId: string; readonly reserve: string }[];
+  }>('audits/w3-run.yaml');
+
+  it('el informe audita el banco vigente entero y no bloquea', () => {
+    expect(informe.reviewedArtifactIds.length).toBe(publicados.length);
+    const vivos = new Set(publicados.map((i) => i.candidateId));
+    expect(informe.reviewedArtifactIds.filter((id) => !vivos.has(id))).toEqual([]);
+    expect(informe.gateReport.blocked).toBe(false);
+  });
+
+  it('cero defectos de etiqueta de KC, que es lo único que se comprobó a máquina', () => {
+    // El cero es el resultado de recorrer los certificados, no de no mirar: la
+    // corrida anterior encontró `kc03-transf` con este mismo recorrido. Lo que
+    // el cero **no** dice es que el resto del libro esté limpio, y el informe lo
+    // declara en `checksApplied`.
+    expect(informe.judgments).toEqual([]);
+  });
+
+  it('las observaciones sin código describen esta corrida, no una anterior', () => {
+    // **Ésta es la prueba que faltaba cuando D-68 regeneró el banco.** El informe
+    // publicaba «KC09 se quedó sin reactivo de transferencia» después de que KC09
+    // recuperara el suyo, porque la lista estaba escrita a mano. Ahora se deriva
+    // de `w3-run.yaml`, y esto comprueba que la derivación es fiel.
+    const esperadas = corrida.coverageGaps.length + corrida.probeReservesNotGenerated.length;
+    expect(informe.observationsWithoutCode.length).toBe(Math.max(esperadas, 1));
+    for (const reserva of corrida.probeReservesNotGenerated) {
+      const encontrada = informe.observationsWithoutCode.find(
+        (o) => o.alcance === reserva.kcId && o.observacion.includes(reserva.reserve),
+      );
+      expect(encontrada).toBeDefined();
+    }
+    // Control positivo del sesgo que se acaba de cerrar: ninguna observación
+    // puede nombrar un hueco de cobertura cuando la corrida no declara ninguno.
+    if (corrida.coverageGaps.length === 0) {
+      const inventadas = informe.observationsWithoutCode.filter((o) =>
+        o.observacion.includes('hueco de cobertura'),
+      );
+      expect(inventadas).toEqual([]);
+    }
+  });
+
+  it('el informe sigue diciendo que no cierra el gate', () => {
+    // Auditor y generador son el mismo modelo: §7.3 impide usarlo como evidencia
+    // de calidad. Si algún día el artefacto dijera `closesGate: true` sin haber
+    // cambiado de auditor, esta prueba lo para.
+    expect(informe.independent).toBe(false);
+    expect(informe.closesGate).toBe(false);
+    expect(informe.auditor).toContain('NO independiente');
   });
 });
