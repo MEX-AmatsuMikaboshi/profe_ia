@@ -69,13 +69,24 @@ parameters:
     data_policy: no_participant_data
     measured_on: real_content_package
     content_package_version: forallx-yyc/tfl-deduccion-natural@7a988a58d38187cf
-    report_run_id: bench04-dd2c211a8d4c05d0
+    report_run_id: bench04-7ea6860a41113495
     sample_size: 37
-    refrozen_at: 2026-08-22
+    proofs_found: 26
+    refrozen_at: 2026-08-23
     refrozen_reason: >-
-      Re-congelado tras implementar la eliminacion de disyuncion en el buscador (D-56). El orden
-      anterior se midio con un buscador que no podia usar premisas disyuntivas. Ganador y margen
-      identicos; las pruebas halladas sobre la muestra pasan de 11 a 25 de 37.
+      Segundo re-congelado, tras aplicar el encadenamiento hacia atras de -> y <-> al buscador
+      (D-66). El orden anterior se midio con un buscador que no encadenaba un antecedente que hay
+      que construir. Ganador, margen (35 unidades) y hallazgos de seguridad (0) identicos; las
+      pruebas halladas sobre la muestra pasan de 25 a 26 de 37: corpus-20 deja de agotar
+      presupuesto y sale con una derivacion de seis lineas re-verificada.
+    refreeze_history:
+      - at: 2026-08-22
+        report_run_id: bench04-dd2c211a8d4c05d0
+        proofs_found: 25
+        reason: >-
+          Re-congelado tras implementar la eliminacion de disyuncion en el buscador (D-56). El
+          orden anterior se midio con un buscador que no podia usar premisas disyuntivas. Ganador
+          y margen identicos; las pruebas halladas pasan de 11 a 25 de 37.
     winning_variant: prefilter_then_search
     work_units_saved: 35
     comparable: true

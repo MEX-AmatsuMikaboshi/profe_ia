@@ -1322,8 +1322,21 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   calibraciones distintas tienen índices incomparables, y una declaración que los mezclara afirmaría
   un orden de complejidad no decreciente sobre una escala que no existe. Ensancharlo a un enum habría
   abierto justo ese hueco. No hay datos de participantes bajo v1, así que no se pierde nada.
-  **Lo que esto obliga y todavía no se ha hecho:** BENCH-04 se midió con un buscador que no encadenaba
-  hacia atrás, así que hay que re-medirlo como se hizo tras D-56, y después W3 → selección A/B/C →
-  `T-H5-12` → W4 con semilla nueva.
-  **1689 pruebas unitarias en verde** (1687 antes) más las 131 contra PostgreSQL 17 real.
+  **BENCH-04 re-medido en la misma sesión, segundo re-congelado.** Se había medido con un buscador
+  que no encadenaba hacia atrás, igual que antes de D-56. **Ganador, margen (35 unidades) y hallazgos
+  de seguridad (0) idénticos**; las pruebas halladas sobre la muestra pasan de **25 a 26 de 37**:
+  `corpus-20` deja de agotar presupuesto y sale con una derivación de seis líneas re-verificada por
+  `logic-core`. Informe comparable y sin reloj de pared. `reportRunId`
+  `bench04-dd2c211a8d4c05d0` → `bench04-7ea6860a41113495`; contenido en `35bb578`.
+  **Queda pendiente**, ya sin decisiones: G3 (control de superficie de §5.11) y G4, rediseño de las
+  plantillas de sonda, y W3 → selección A/B/C → `T-H5-12` → W4 con semilla nueva.
+  **1691 pruebas unitarias en verde** (1687 antes) más las 131 contra PostgreSQL 17 real. El mensaje
+  del commit `8e1027a` dice 1689: se contaron antes de añadir las dos guardas de calibración que van
+  en ese mismo commit.
+  **CI: NO verificada, y no por el código.** Las corridas `32604879521` (`ab6b399`) y `32607585306`
+  (`8e1027a`, también tras relanzarla) fallaron **en un segundo y con cero pasos ejecutados** en los
+  diez jobs. Es la firma que D-58 ya documentó: Actions no arranca, y el propietario lo resolvió
+  entonces en la cuenta. La última corrida real es `32604466870` sobre `f7d0ad2` —129 pasos, verde—,
+  que es la que verifica D-65. **D-66 queda `HECHA`, no `VERIFICADA`**, hasta observar un check verde
+  en `main`.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

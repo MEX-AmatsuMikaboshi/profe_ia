@@ -42,26 +42,42 @@
 > - **Agujero cerrado:** el banco no registraba su calibración. Ahora W3 la escribe, y hay prueba que
 >   fija que el banco de hoy está desactualizado.
 >
+> ### BENCH-04 re-medido, en la misma sesión
+>
+> Se había medido con un buscador que no encadenaba hacia atrás, igual que antes de D-56. **Ganador,
+> margen (35 unidades) y hallazgos de seguridad (0) idénticos**; las pruebas halladas pasan de **25 a
+> 26 de 37** —`corpus-20` deja de agotar presupuesto y sale con seis líneas re-verificadas—. Contenido
+> subido primero (`35bb578`), como exige §8.
+>
 > ### Lo que sigue, sin decisiones pendientes
 >
-> 1. **Re-medir BENCH-04.** Se midió con un buscador que no encadenaba hacia atrás; mismo caso que
->    tras D-56, que ya tiene precedente de re-congelado en el registro.
-> 2. **G3 (control de superficie §5.11) y G4 (fidelidad de pistas)**, escritas antes de regenerar y
+> 1. **G3 (control de superficie §5.11) y G4 (fidelidad de pistas)**, escritas antes de regenerar y
 >    vistas fallar sobre el banco actual.
-> 3. **Rediseñar las plantillas de sonda**: variar el núcleo —estructura de los operandos,
+> 2. **Rediseñar las plantillas de sonda**: variar el núcleo —estructura de los operandos,
 >    multiplicidad de la regla objetivo, dirección— en vez de envolverlo. Ninguno de esos ejes importa
 >    una regla ajena, así que resuelve G1 y G3 a la vez.
-> 4. **W3 → paso 5 de W2 (A/B/C) → `T-H5-12` → W4**, semilla nueva.
+> 3. **W3 → paso 5 de W2 (A/B/C) → `T-H5-12` → W4**, semilla nueva.
 >
 > **Sigue siendo del propietario y no lo sustituye ningún modelo:** la lectura humana por muestra del
 > paso 19, y una Parte A ciega de familia que no sea candidata de BENCH-01.
 >
 > ### Verificación
 >
-> **1689 pruebas unitarias en verde** (1687 antes) más las **131 contra PostgreSQL 17 real**. Lint,
+> **1691 pruebas unitarias en verde** (1687 antes) más las **131 contra PostgreSQL 17 real**. Lint,
 > typecheck, build, depcruise con sus dos controles positivos, separación de modos, sesión seca,
 > adversarial, conjunto dorado —regenerado con diff vacío—, PBT, pureza del verificador, pasarela,
-> grants, SBOM y drift: verde en local. **CI: sin observar todavía.**
+> grants, SBOM y drift: verde en local.
+>
+> ### ⚠ CI caída, y no por el código — **necesita al propietario**
+>
+> Las corridas `32604879521` (`ab6b399`) y `32607585306` (`8e1027a`, **también tras relanzarla**)
+> fallaron **en un segundo y con cero pasos ejecutados** en los diez jobs. Es exactamente la firma que
+> D-58 documentó —«con `steps: []` en los jobs, el fallo no está en el código»— y que el propietario
+> resolvió entonces **en la cuenta de GitHub**. La última corrida real es `32604466870` sobre
+> `f7d0ad2`: 129 pasos, verde, y es la que verifica D-65.
+>
+> **D-66 queda `HECHA`, no `VERIFICADA`.** En cuanto Actions vuelva a arrancar, basta relanzar la
+> corrida del último commit y observarla.
 
 
 > ## Relevo de G1 y las pistas de DNE (2026-08-22, tarde) — **superado por el de arriba**
