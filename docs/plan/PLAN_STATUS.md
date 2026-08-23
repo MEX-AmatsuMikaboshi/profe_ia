@@ -1594,4 +1594,35 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   esperando a W5**, y antes a la lectura humana del paso 19 y a la revisión humana de los 200 casos
   (D-41).
   **1890 pruebas unitarias en verde** (1880 antes) más las 131 contra PostgreSQL 17 real.
+- **D-72 — Comprobación de preparación de la corrida material: qué falta exactamente, sin gastar
+  (2026-08-23).** Cierra la pregunta que D-70 y D-71 dejaron abierta —«¿ya se puede correr?»— con una
+  respuesta ejecutable en vez de una lectura del handoff.
+  **1. El problema era de orden, no de frenos.** El runner ya paraba antes de la primera llamada
+  —`assertFaultInjectorsAvailable`, `assertDegradedProfileAvailable`, `assertAnchorFragmentsAvailable`
+  y `assertRefreshAuthorizesBenchmark`—, pero para llegar hasta ellos hay que haber montado
+  credenciales, pasarelas y transporte. Descubrir así que falta un bloque obliga a repetir el montaje
+  entero, y el runner es el único punto del repositorio donde eso cuesta dinero.
+  `assessMaterialReadiness()` adelanta esas comprobaciones **sin abrir un socket y sin credenciales**.
+  **No sustituye a los frenos**: si los sustituyera, bastaría con no llamar a esto para correr sin red
+  de seguridad.
+  **2. Distingue correr de coronar, y esa es su decisión de diseño.** `paquete_de_contenido_congelado`
+  se informa con `blocksRun: false`: un paquete sin congelar **no impide medir**, y tratarlo como
+  bloqueo haría esperar a W5 para poder ejecutar nada. Lo que impide dictaminar es
+  `scoreCandidate()`, y no se duplica esa puerta aquí — dos puertas para lo mismo es una que alguien
+  quita.
+  **3. El resultado medido, que es el dato operativo de la sesión.** Contra el conjunto material real
+  y el corpus real: **tres de las cuatro comprobaciones bloqueantes pasan** —200 casos con pisos
+  cubiertos e ids únicos, los 80 casos del gate de anclas apuntando a bloques con fragmentos, y todo
+  caso con caída con su explicación congelada—. **La única que falla es documental**: el refresco del
+  2026-08-18 caducó —434 702 s medidos frente a los 432 000 de la ventana— y `claude-sonnet-5`, el
+  candidato que §3.4 recomienda, **no aparece en él**. Arreglarlo no es código: es rehacer el refresco
+  y decidir a quién se mide.
+  **4. `pnpm run bench:preparacion <runId> [candidatos]`** imprime el informe y sale con 1 si no se
+  puede correr. **El 1 no es un error del comando: es su respuesta.**
+  **Controles positivos:** un caso del gate de anclas con un bloque inexistente, una caída cuyo bloque
+  no tiene activo, un conjunto recortado por debajo de los pisos y una lista de candidatos vacía —cada
+  uno hace fallar su comprobación y sólo la suya—; más la prueba de que el paquete real no pasa por
+  vacío. Y una prueba fija que **el aviso de paquete sin congelar no entra en `blockingReasons`**, que
+  es la confusión que este módulo existe para no cometer.
+  **1903 pruebas unitarias en verde** (1890 antes) más las 131 contra PostgreSQL 17 real.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

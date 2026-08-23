@@ -16,6 +16,9 @@ import {
 import { z } from 'zod';
 
 import { partitionBySeed } from './case-set.js';
+import { loadContentPackage } from './corpus.js';
+import { MATERIAL_CASE_SET } from './material-cases.js';
+import { assessMaterialReadiness, formatReadiness } from './readiness.js';
 import { PILOT_CASE_SET, PILOT_INSTRUCTIONS } from './pilot-cases.js';
 import { REFRESH_2026_08_18, REFRESH_WINDOW_5D } from './refresh-2026-08-18.js';
 import { runBenchmark, type Candidate, type RunPlan } from './run.js';
@@ -93,11 +96,53 @@ function bindingDe(candidateId: string, provider: string): ModelBinding {
   });
 }
 
+/**
+ * `preparacion <runId> [candidatoA,candidatoB]` — ¿está todo para la corrida
+ * material?
+ *
+ * **No abre un socket, no lee credenciales y no cuesta nada.** Responde la
+ * pregunta anterior a gastar: qué falta. Los frenos del runner siguen donde
+ * estaban —esto los adelanta, no los sustituye—, y el motivo de adelantarlos es
+ * que para llegar hasta ellos hay que haber montado credenciales, pasarelas y
+ * transporte, y descubrir así que falta un bloque obliga a repetirlo todo.
+ *
+ * Sale con 0 si se puede correr y con 1 si no. El 1 no es un error del comando:
+ * es su respuesta.
+ */
+function preparacion(): number {
+  const runId = process.argv[3];
+  if (runId === undefined || runId.trim() === '') {
+    console.error('uso: node dist/bin.js preparacion <runId> [candidatoA,candidatoB]');
+    return 2;
+  }
+  const candidateIds = (process.argv[4] ?? 'claude-haiku-4-5-20251001')
+    .split(',')
+    .map((c) => c.trim())
+    .filter((c) => c !== '');
+
+  const readiness = assessMaterialReadiness({
+    runId,
+    assessedAt: new Date().toISOString(),
+    caseSet: MATERIAL_CASE_SET,
+    contentPackage: loadContentPackage(join(REPO, 'content', 'unidad-deduccion-natural')),
+    refreshRecord: REFRESH_2026_08_18,
+    refreshWindow: REFRESH_WINDOW_5D,
+    candidateIds,
+  });
+  console.log(formatReadiness(readiness));
+  return readiness.readyToRun ? 0 : 1;
+}
+
 async function main(): Promise<number> {
+  if (process.argv[2] === 'preparacion') return preparacion();
+
   const runId = process.argv[2];
   const timeoutMs = Number.parseInt(process.argv[3] ?? '60000', 10);
   if (runId === undefined || runId.trim() === '') {
-    console.error('uso: node dist/bin.js <runId> [timeoutMs]');
+    console.error(
+      'uso: node dist/bin.js <runId> [timeoutMs]   (corrida piloto, GASTA DINERO)\n' +
+        '     node dist/bin.js preparacion <runId> [candidatos]   (comprobación, no gasta)',
+    );
     return 2;
   }
 

@@ -79,6 +79,14 @@ export {
   type ScoringInput,
 } from './scoring.js';
 
+export {
+  assessMaterialReadiness,
+  formatReadiness,
+  type MaterialReadiness,
+  type MaterialReadinessInput,
+  type ReadinessCheck,
+} from './readiness.js';
+
 export { PILOT_CASES, PILOT_CASE_SET, PILOT_INSTRUCTIONS } from './pilot-cases.js';
 export {
   MATERIAL_CASES,
