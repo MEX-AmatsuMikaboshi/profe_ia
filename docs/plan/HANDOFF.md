@@ -69,12 +69,26 @@
 > conjunto es `pilot`, el refresco es `test_fixture`, y una corrida material **rechaza toda
 > renuncia**. Sin renuncia, la regla sigue exactamente donde estaba.
 >
-> ### ⚠ CI: sin observar todavía en esta sesión
+> ### ⚠ CI sigue caída — observada en esta sesión, y van ocho
 >
-> Las tres sesiones anteriores dejaron Actions caída con la firma de D-58 —diez jobs a cero pasos en
-> dos segundos—, y eso es **de la cuenta, no del código**: minutos agotados o límite de gasto en cero
-> en una cuenta de usuario con repositorio privado. **Mientras siga así, D-74, D-75 y D-76 quedan
-> `HECHAS`, no `VERIFICADAS`.** Lo primero al retomar es mirar la corrida del último commit.
+> La corrida de esta sesión es **`32673608669` sobre `6368af3`: los diez jobs a cero pasos, de
+> 23:26:25 a 23:26:30 UTC**. Es exactamente la firma de D-58: «con `steps: []` en los jobs, el fallo
+> no está en el código». **Aviso para no perder tiempo:** la corrida aparece unos segundos como
+> `queued` antes de fallar, así que verla encolada **no significa que haya arrancado**; hay que
+> esperar al `conclusion`.
+>
+> Lo comprobado de nuevo desde aquí, para no repetirlo: `actions/permissions` devuelve
+> `{"enabled":true,"allowed_actions":"all"}`; el repositorio no está `archived` ni `disabled`; el
+> dueño es cuenta **de usuario** y el repositorio es **privado**, así que las corridas consumen cuota
+> de minutos. El endpoint de facturación sigue dando 404 porque el token tiene scopes
+> `gist, read:org, repo, workflow` y **le falta `user`**; se pide con
+> `gh auth refresh -h github.com -s user` y es una autorización interactiva que sólo puede dar el
+> propietario.
+>
+> **La hipótesis que queda sigue siendo una sola:** minutos de Actions agotados o límite de gasto en
+> cero. Las salidas son tres y todas del propietario: esperar al corte de ciclo, añadir método de
+> pago, o hacer público el repositorio (los repos públicos no consumen cuota). **Mientras siga así,
+> D-74, D-75 y D-76 quedan `HECHAS`, no `VERIFICADAS`.**
 >
 > ### Orden exacto para retomar
 >

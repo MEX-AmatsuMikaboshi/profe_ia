@@ -244,8 +244,10 @@ empezar `T-H7-01`. F9–F16 no empezadas.
 comparables — parecen haber sumado los proyectos `unit` y `db` bajo la misma etiqueta. Medido hoy,
 `--project unit` da 1824 y `--project db` da 131.
 
-**⚠ CI está caída y es de la cuenta, no del código.** Van siete corridas seguidas con la firma de
-D-58: los diez jobs a cero pasos en dos segundos. Comprobado que Actions está `enabled` con
+**⚠ CI está caída y es de la cuenta, no del código.** Van **ocho** corridas seguidas con la firma de
+D-58: los diez jobs a cero pasos en dos a cinco segundos —la última, `32673608669` sobre `6368af3`—.
+**La corrida aparece unos segundos como `queued` antes de fallar**, así que verla encolada no
+significa que haya arrancado. Comprobado que Actions está `enabled` con
 `allowed_actions: all` y que el repositorio no está `archived` ni `disabled`. Queda la facturación
 —repositorio privado en cuenta de usuario, así que consume cuota de minutos— y eso necesita al
 propietario. **Mientras siga así, nada nuevo pasa de `HECHA` a `VERIFICADA`.**
