@@ -25,11 +25,20 @@
 >
 > ### ⚠ Lo primero, y sigue igual: CI está caída y necesita al propietario
 >
-> La avería de Actions **no se ha resuelto**: cuatro corridas seguidas fallaron en uno a tres segundos
-> con cero pasos ejecutados en los diez jobs, que es la firma que D-58 documentó —«con `steps: []`,
-> el fallo no está en el código»—. El propietario lo resolvió entonces en la cuenta de GitHub.
+> La avería de Actions **no se ha resuelto**. La corrida de esta sesión, **`32616390276` sobre
+> `e5b23d8`, falló en dos segundos con los diez jobs a cero pasos** —`startedAt` 03:51:24,
+> `completedAt` 03:51:26—, que es exactamente la firma que D-58 documentó: «con `steps: []` en los
+> jobs, el fallo no está en el código». Van cinco corridas seguidas así.
+>
+> **Lo que sí se comprobó desde aquí**, para que el propietario no lo repita: Actions está `enabled`
+> con `allowed_actions: all`, y el repositorio no está `archived` ni `disabled`. Descartado eso, la
+> causa que produce esta firma exacta es **de cuenta, no de repositorio**, y el repositorio es
+> **privado**, así que consume minutos de la cuota. El sitio a mirar es la facturación de Actions
+> —minutos agotados o límite de gasto en cero—. No se pudo confirmar desde el CLI: el endpoint de
+> facturación pide el scope `user`, que no se solicitó.
+>
 > Mientras siga así, **D-66, D-67 y D-68 quedan `HECHAS`, no `VERIFICADAS`**. Cuando Actions arranque
-> basta relanzar la corrida del último commit y observarla; no hay nada que tocar.
+> basta relanzar la corrida del último commit y observarla; no hay nada que tocar en el código.
 >
 > ### El rediseño, lo justo para entenderlo sin releer el código
 >

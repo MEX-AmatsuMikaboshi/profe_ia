@@ -1457,4 +1457,5 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   de trabajo. Una prueba nueva afirma ese desajuste —14 artefactos de la población ya no existen— y se
   invierte cuando W4 se vuelva a correr.
   **1853 pruebas unitarias en verde** (1714 antes) más las 131 contra PostgreSQL 17 real.
+  **CI: la corrida `32616390276` sobre `e5b23d8` volvió a fallar en dos segundos con los diez jobs a cero pasos** —la firma de D-58, van cinco seguidas—. Comprobado desde el CLI que Actions está `enabled` con `allowed_actions: all` y que el repositorio no está `archived` ni `disabled`; queda la facturación de la cuenta, que necesita al propietario. **D-68 queda `HECHA`, no `VERIFICADA`.**
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.
