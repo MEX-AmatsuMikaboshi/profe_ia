@@ -1,0 +1,60 @@
+﻿BENCH-01 · preparación de la corrida material — bench01-material-2026-08-23
+evaluado el 2026-08-23T22:31:08.210Z
+candidatos: claude-sonnet-5, claude-haiku-4-5-20251001
+
+ok   conjunto_material_ejecutable
+      200 casos: pisos por familia cubiertos, ids únicos, expectativas coherentes con su familia, caídas y bloques declarados donde toca.
+ok   fragmentos_para_el_gate_de_anclas
+      Los 80 casos del gate de anclas apuntan a bloques con fragmentos autorizados.
+ok   activos_para_el_gate_de_recuperacion
+      Todo caso con caída declarada tiene su explicación congelada en el paquete.
+ok   refresco_documental_vigente
+      El refresco autoriza medir a claude-sonnet-5, claude-haiku-4-5-20251001 el 2026-08-23T22:31:08.210Z.
+aviso paquete_de_contenido_congelado
+      El paquete `w1-corpus-v1+w3@2026-08-23T03:33:57.153Z` no está congelado, así que la corrida **mide pero no corona**: use `observeGates()`. W5 no ha corrido: `freeze-manifest.json` sigue siendo el marcador de F0 y `ci:freeze:drift` falla cerrado contra él. P-III §6.2 mide sobre activos congelados, así que una corrida sobre este material es orientativa y no corona a nadie.
+
+SE PUEDE CORRER.
+El dictamen NO está autorizado: mida con `observeGates()`, que no corona a nadie.
+
+corriendo BENCH-01 material — 200 casos × 2 candidatos × 1 repeticiones
+bitácora incremental: C:\Users\gabri\Documents\edu_ia\profesor_ia_code\analysis\reports\bench01-material-2026-08-23.outcomes.jsonl
+  25 casos — MXN 6.0296
+  50 casos — MXN 13.0129
+  75 casos — MXN 16.6694
+  100 casos — MXN 18.8978
+  125 casos — MXN 25.0970
+  150 casos — MXN 31.4797
+  175 casos — MXN 34.9052
+  200 casos — MXN 36.6944
+  225 casos — MXN 37.9719
+  250 casos — MXN 39.1017
+  275 casos — MXN 39.9524
+  300 casos — MXN 40.3957
+  325 casos — MXN 41.6667
+  350 casos — MXN 42.8506
+  375 casos — MXN 43.6857
+  400 casos — MXN 44.1257
+
+── claude-sonnet-5 — 200 resultados, MXN 36.6944
+   ok    solution_leaks  sin fallos observados bajo los casos ensayados (0/30); cota unilateral aproximada 3/n = 0.100000
+   FALLA unblocked_rule_inventions  1/110 fallos observados sobre la unidad «solicitud inicial»
+   FALLA structurally_usable_after_retry  4/180 fallos observados sobre la unidad «respuesta después de un reintento»
+   FALLA factual_segments_with_resolvable_anchors  39/247 fallos observados sobre la unidad «segmento factual»
+   ok    out_of_corpus_declared_or_contained  sin fallos observados bajo los casos ensayados (0/20); cota unilateral aproximada 3/n = 0.150000
+   ok    deterministic_degraded_recovery  sin fallos observados bajo los casos ensayados (0/20); cota unilateral aproximada 3/n = 0.150000
+   bloqueado por gate bloqueante: SÍ
+
+── claude-haiku-4-5-20251001 — 200 resultados, MXN 7.4313
+   ok    solution_leaks  sin fallos observados bajo los casos ensayados (0/30); cota unilateral aproximada 3/n = 0.100000
+   FALLA unblocked_rule_inventions  2/110 fallos observados sobre la unidad «solicitud inicial»
+   ok    structurally_usable_after_retry  1/180 fallos observados sobre la unidad «respuesta después de un reintento»
+   FALLA factual_segments_with_resolvable_anchors  214/253 fallos observados sobre la unidad «segmento factual»
+   FALLA out_of_corpus_declared_or_contained  1/20 fallos observados sobre la unidad «pregunta fuera de corpus»
+   ok    deterministic_degraded_recovery  sin fallos observados bajo los casos ensayados (0/20); cota unilateral aproximada 3/n = 0.150000
+   bloqueado por gate bloqueante: SÍ
+
+costo total: MXN 44.1257
+reporte: C:\Users\gabri\Documents\edu_ia\profesor_ia_code\analysis\reports\bench01-material-2026-08-23.json
+gates:   C:\Users\gabri\Documents\edu_ia\profesor_ia_code\analysis\reports\bench01-material-2026-08-23.gates.json
+
+Esto MIDE y no corona: el paquete de contenido no está congelado (W5 no ha corrido) y `scoreCandidate()` lo impide. La elección de ganador es del propietario.

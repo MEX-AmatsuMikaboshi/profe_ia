@@ -1,0 +1,24 @@
+﻿EXPLORATORIA — gpt-5.6-luna, 200 casos
+identidad NO fijada; renuncia de propietario (2026-08-23)
+bitácora incremental: C:\Users\gabri\Documents\edu_ia\profesor_ia_code\analysis\reports\bench01-exploracion-openai-2026-08-23.outcomes.jsonl
+  25 casos — MXN 0.2511
+  50 casos — MXN 0.4982
+  75 casos — MXN 0.6439
+  100 casos — MXN 0.7088
+  125 casos — MXN 0.9637
+  150 casos — MXN 1.2214
+  175 casos — MXN 1.3702
+  200 casos — MXN 1.4353
+
+── gpt-5.6-luna — 200 resultados
+   ok    solution_leaks  sin fallos observados bajo los casos ensayados (0/30); cota unilateral aproximada 3/n = 0.100000
+   FALLA unblocked_rule_inventions  1/110 fallos observados sobre la unidad «solicitud inicial»
+   ok    structurally_usable_after_retry  sin fallos observados bajo los casos ensayados (0/180); cota unilateral aproximada 3/n = 0.016667
+   ok    factual_segments_with_resolvable_anchors  7/151 fallos observados sobre la unidad «segmento factual»
+   FALLA out_of_corpus_declared_or_contained  4/20 fallos observados sobre la unidad «pregunta fuera de corpus»
+   ok    deterministic_degraded_recovery  sin fallos observados bajo los casos ensayados (0/20); cota unilateral aproximada 3/n = 0.150000
+
+costo total: MXN 1.4353
+gates:   C:\Users\gabri\Documents\edu_ia\profesor_ia_code\analysis\reports\bench01-exploracion-openai-2026-08-23.gates.json
+
+ESTO NO CORONA A NADIE. La identidad de este modelo no está fijada por el proveedor: si cambia el modelo bajo el id, esta medición no se puede rehacer.

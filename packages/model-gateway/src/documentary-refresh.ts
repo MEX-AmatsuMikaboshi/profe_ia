@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-import { assertPinnedIdentity } from './capabilities.js';
+import {
+  assertIdentityFixedOrWaived,
+  waiverFor,
+  type UnpinnedIdentityWaiver,
+} from './capabilities.js';
 import { ModelGatewayError } from './errors.js';
 
 /**
@@ -215,6 +219,16 @@ export interface BenchmarkRun {
   /** Candidatos que la corrida va a medir. */
   readonly candidateIds: readonly string[];
   readonly purpose: 'material' | 'test_fixture';
+  /**
+   * Renuncias a la identidad fijada, por candidato (T-H4-02).
+   *
+   * **Una corrida material las rechaza todas**, y esa es la propiedad que
+   * importa: la renuncia sirve para medir a un candidato que el proveedor no
+   * fija, no para colarlo en el benchmark que elige ganador. Las dos puertas
+   * —esta y la de la pasarela— se cierran por su cuenta, así que abrir una no
+   * abre la otra.
+   */
+  readonly unpinnedIdentityWaivers?: readonly UnpinnedIdentityWaiver[];
 }
 
 export interface RefreshAuthorization {
@@ -255,6 +269,21 @@ export function assertRefreshAuthorizesBenchmark(
   }
   const record = parsedRecord.data;
   const refreshWindow = parsedWindow.data;
+
+  // **La puerta que hace inofensiva la renuncia.** Va antes que nada porque una
+  // corrida material no admite un candidato cuya identidad nadie fija: el
+  // ganador tiene que poder rehacerse, y un id que puede cambiar de modelo por
+  // debajo lo impide. Medir a ese candidato es legítimo; coronarlo, no.
+  if (run.purpose === 'material' && (run.unpinnedIdentityWaivers ?? []).length > 0) {
+    fail(
+      `La corrida ${run.runId} es material y trae ${String(
+        (run.unpinnedIdentityWaivers ?? []).length,
+      )} renuncia(s) a la identidad fijada ` +
+        `(${(run.unpinnedIdentityWaivers ?? []).map((w) => w.subject).join(', ')}). Una renuncia ` +
+        `autoriza a **medir** un candidato que el proveedor no fija, nunca a coronarlo: un ` +
+        `ganador atado a un id que puede cambiar de modelo sin aviso no se puede rehacer (§8.1).`,
+    );
+  }
 
   if (run.purpose === 'material') {
     if (record.purpose !== 'material') {
@@ -298,7 +327,12 @@ export function assertRefreshAuthorizesBenchmark(
     // compartida en vez de fabricar aquí un `ModelBinding`: hacerlo obligaría a
     // inventarle capacidades que el refresco no afirma, y un dato inventado en
     // la evidencia de reverificación es peor que no tenerla.
-    assertPinnedIdentity(`El candidato ${candidateId}`, candidate);
+    assertIdentityFixedOrWaived(
+      candidateId,
+      `El candidato ${candidateId}`,
+      candidate,
+      waiverFor(candidateId, run.unpinnedIdentityWaivers),
+    );
 
     if (run.purpose === 'material') {
       const noConsultado = DATA_POLICY_FIELDS.filter((field) => {

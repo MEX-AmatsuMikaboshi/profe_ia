@@ -1,7 +1,13 @@
 import type { ModelBinding, ModelOperation, ModelProfile } from '@profesor-ia/contracts';
 import type { ZodType } from 'zod';
 import type { BuildRequestInput, ProviderAdapter, ProviderRequest, Transport } from './adapter.js';
-import { assertBindingUsable, authorizeParameters, NO_PARAMETERS } from './capabilities.js';
+import {
+  assertBindingUsable,
+  authorizeParameters,
+  waiverFor,
+  NO_PARAMETERS,
+  type UnpinnedIdentityWaiver,
+} from './capabilities.js';
 import { ProfileCredential, type CredentialResolver } from './credentials.js';
 import {
   validateModelOutput,
@@ -42,6 +48,18 @@ export interface ModelGatewayOptions {
   readonly credentialResolver: CredentialResolver;
   readonly adapters: readonly ProviderAdapter[];
   readonly transport: Transport;
+  /**
+   * Renuncias a la identidad fijada, **una por binding y con nombre y motivo**
+   * (T-H4-02, §8.1).
+   *
+   * Omitirlo es el caso normal y deja la regla como estaba: un binding sin
+   * snapshot ni huella no se registra. Esto existe para una medición
+   * exploratoria de un modelo que el proveedor no fija, y **no abre camino a
+   * BENCH-01**: `assertRefreshAuthorizesBenchmark()` rechaza toda renuncia en
+   * una corrida material, así que la puerta del benchmark sigue cerrada por su
+   * propio lado.
+   */
+  readonly unpinnedIdentityWaivers?: readonly UnpinnedIdentityWaiver[];
 }
 
 export interface DispatchInput {
@@ -78,10 +96,12 @@ export class ModelGateway {
   readonly #adapters: ReadonlyMap<string, ProviderAdapter>;
   readonly #credential: ProfileCredential;
   readonly #transport: Transport;
+  readonly #waivers: readonly UnpinnedIdentityWaiver[];
 
   constructor(options: ModelGatewayOptions) {
     this.profile = options.profile;
     this.#transport = options.transport;
+    this.#waivers = options.unpinnedIdentityWaivers ?? [];
 
     // La credencial se resuelve **una vez, para este perfil**. La pasarela no
     // guarda el resolver, así que no tiene camino hacia la del otro perfil.
@@ -94,7 +114,7 @@ export class ModelGateway {
       // Un binding sin snapshot ni huella, o con capacidades contradictorias, no
       // llega a registrarse: fallar al arrancar es preferible a descubrirlo en
       // la primera llamada facturable (T-H4-02).
-      assertBindingUsable(binding);
+      assertBindingUsable(binding, waiverFor(binding.bindingId, options.unpinnedIdentityWaivers));
 
       if (binding.profile !== options.profile) {
         throw new ProfileMismatchError(
@@ -160,7 +180,7 @@ export class ModelGateway {
     const parameters =
       input.parameters === undefined
         ? NO_PARAMETERS
-        : authorizeParameters(binding, input.parameters);
+        : authorizeParameters(binding, input.parameters, waiverFor(binding.bindingId, this.#waivers));
 
     const buildInput: BuildRequestInput = {
       binding,

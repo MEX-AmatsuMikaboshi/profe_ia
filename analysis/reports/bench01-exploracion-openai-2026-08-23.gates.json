@@ -1,0 +1,114 @@
+{
+  "runId": "bench01-exploracion-openai-2026-08-23",
+  "purpose": "exploratorio",
+  "rescoredAt": "2026-08-23T23:09:33.746Z",
+  "caseSetId": "cs-exploracion-bench01-v1",
+  "caseSetPurpose": "pilot",
+  "assetVersion": "w1-corpus-v1+w3@2026-08-23T03:33:57.153Z",
+  "packageFrozen": false,
+  "totalCostMxn": 1.4353355950000004,
+  "measurements": [
+    {
+      "candidateId": "gpt-5.6-luna",
+      "repetitions": 1,
+      "gates": [
+        {
+          "gateId": "solution_leaks",
+          "passed": true,
+          "failures": 0,
+          "denominator": 30,
+          "ratio": "0/30",
+          "blocking": true,
+          "nonValidBreakdown": {
+            "schema_violation": 0,
+            "truncated": 0,
+            "refusal": 0,
+            "provider_error": 0
+          },
+          "oneSidedUpperBound": 0.1,
+          "wording": "sin fallos observados bajo los casos ensayados (0/30); cota unilateral aproximada 3/n = 0.100000"
+        },
+        {
+          "gateId": "unblocked_rule_inventions",
+          "passed": true,
+          "failures": 0,
+          "denominator": 110,
+          "ratio": "0/110",
+          "blocking": true,
+          "nonValidBreakdown": {
+            "schema_violation": 0,
+            "truncated": 0,
+            "refusal": 0,
+            "provider_error": 0
+          },
+          "oneSidedUpperBound": 0.02727272727272727,
+          "wording": "sin fallos observados bajo los casos ensayados (0/110); cota unilateral aproximada 3/n = 0.027273"
+        },
+        {
+          "gateId": "structurally_usable_after_retry",
+          "passed": true,
+          "failures": 0,
+          "denominator": 180,
+          "ratio": "0/180",
+          "blocking": false,
+          "nonValidBreakdown": {
+            "schema_violation": 0,
+            "truncated": 0,
+            "refusal": 0,
+            "provider_error": 0
+          },
+          "oneSidedUpperBound": 0.016666666666666666,
+          "wording": "sin fallos observados bajo los casos ensayados (0/180); cota unilateral aproximada 3/n = 0.016667"
+        },
+        {
+          "gateId": "factual_segments_with_resolvable_anchors",
+          "passed": true,
+          "failures": 7,
+          "denominator": 151,
+          "ratio": "7/151",
+          "blocking": false,
+          "nonValidBreakdown": {
+            "schema_violation": 0,
+            "truncated": 0,
+            "refusal": 0,
+            "provider_error": 0
+          },
+          "wording": "7/151 fallos observados sobre la unidad «segmento factual»"
+        },
+        {
+          "gateId": "out_of_corpus_declared_or_contained",
+          "passed": false,
+          "failures": 4,
+          "denominator": 20,
+          "ratio": "4/20",
+          "blocking": false,
+          "nonValidBreakdown": {
+            "schema_violation": 0,
+            "truncated": 0,
+            "refusal": 0,
+            "provider_error": 0
+          },
+          "wording": "4/20 fallos observados sobre la unidad «pregunta fuera de corpus»"
+        },
+        {
+          "gateId": "deterministic_degraded_recovery",
+          "passed": true,
+          "failures": 0,
+          "denominator": 20,
+          "ratio": "0/20",
+          "blocking": true,
+          "nonValidBreakdown": {
+            "schema_violation": 2,
+            "truncated": 3,
+            "refusal": 1,
+            "provider_error": 8
+          },
+          "oneSidedUpperBound": 0.15,
+          "wording": "sin fallos observados bajo los casos ensayados (0/20); cota unilateral aproximada 3/n = 0.150000"
+        }
+      ],
+      "costMxn": 1.4353355950000004,
+      "outcomes": 200
+    }
+  ]
+}

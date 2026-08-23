@@ -64,8 +64,114 @@ export function assertPinnedIdentity(
   }
 }
 
-export function assertBindingUsable(binding: ModelBinding): void {
-  assertPinnedIdentity(`El binding ${binding.bindingId}`, binding);
+/**
+ * Consecuencia que hay que **escribir** para renunciar a la identidad fijada.
+ * Es un literal y no un booleano por lo mismo que `EgressFilterReceipt` es un
+ * objeto: una renuncia que se satisface poniendo `true` se pone sin leerla.
+ */
+export const UNPINNED_CONSEQUENCE =
+  'la medición es exploratoria, no dictamina y no corona a nadie' as const;
+
+/**
+ * Renuncia explícita a la identidad fijada, para una medición **exploratoria y
+ * no autoritativa**.
+ *
+ * ## Por qué existe, y qué NO autoriza
+ *
+ * §8.1 exige snapshot o huella porque un alias puede cambiar de modelo sin
+ * aviso, y entonces la corrida deja de ser reproducible. Esa exigencia sigue
+ * intacta para todo lo que **dictamine**: `assertRefreshAuthorizesBenchmark()`
+ * **rechaza cualquier renuncia en una corrida material**, así que esto no abre
+ * una puerta a BENCH-01 — abre una puerta a medir un candidato que BENCH-01 no
+ * puede coronar, que es una pregunta legítima y distinta.
+ *
+ * ## Por qué cada campo es obligatorio
+ *
+ * `subject` ata la renuncia a **un** binding o candidato: sin él una renuncia
+ * escrita para un modelo cubriría a todos los de la corrida. `authorizedBy` y
+ * `reason` existen porque esto es una decisión, no un ajuste, y una decisión sin
+ * autor no se puede revisar. `providerReportedModelId` y `probedAt` obligan a
+ * **haber preguntado al proveedor** qué id resuelve: si algún día el proveedor
+ * devolviera un id más específico que el pedido, esa sería la evidencia de
+ * fijación que §8.1 quiere y la renuncia sobraría. Comprobado el 2026-08-23:
+ * OpenAI devuelve el mismo id sin fecha, así que no sobra.
+ */
+export interface UnpinnedIdentityWaiver {
+  /** `bindingId` o `candidateId` exacto. Una renuncia, un sujeto. */
+  readonly subject: string;
+  readonly authorizedBy: string;
+  readonly reason: string;
+  /** Id que el proveedor **reportó** al preguntárselo, y cuándo se preguntó. */
+  readonly providerReportedModelId: string;
+  readonly probedAt: string;
+  readonly consequence: typeof UNPINNED_CONSEQUENCE;
+}
+
+/** La renuncia que cubre a este sujeto, si alguna lo hace. */
+export function waiverFor(
+  subject: string,
+  waivers: readonly UnpinnedIdentityWaiver[] | undefined,
+): UnpinnedIdentityWaiver | undefined {
+  return waivers?.find((w) => w.subject === subject);
+}
+
+/**
+ * Identidad fijada **o renunciada con todos sus campos**.
+ *
+ * Una renuncia incompleta no vale: sin autor, sin motivo o sin la consecuencia
+ * escrita, lo que queda es un modelo sin identificar y nadie a quien preguntarle
+ * por qué. En ese caso se cae al error de siempre.
+ */
+export function assertIdentityFixedOrWaived(
+  subject: string,
+  label: string,
+  identity: { readonly snapshot?: string | undefined; readonly behaviorFingerprint?: string | undefined },
+  waiver: UnpinnedIdentityWaiver | undefined,
+): void {
+  if (identity.snapshot !== undefined || identity.behaviorFingerprint !== undefined) return;
+  if (waiver === undefined) {
+    assertPinnedIdentity(label, identity);
+    return;
+  }
+  if (waiver.subject !== subject) {
+    throw new UnpinnedBindingError(
+      `La renuncia de identidad se escribió para «${waiver.subject}» y se está usando con ` +
+        `«${subject}». Una renuncia cubre a un sujeto y no se extiende al de al lado.`,
+    );
+  }
+  if (waiver.consequence !== UNPINNED_CONSEQUENCE) {
+    throw new UnpinnedBindingError(
+      `La renuncia de identidad de ${subject} no declara su consecuencia literal. Hay que ` +
+        `escribirla: «${UNPINNED_CONSEQUENCE}».`,
+    );
+  }
+  const vacios = (['authorizedBy', 'reason', 'providerReportedModelId', 'probedAt'] as const).filter(
+    (campo) => waiver[campo].trim() === '',
+  );
+  if (vacios.length > 0) {
+    throw new UnpinnedBindingError(
+      `La renuncia de identidad de ${subject} deja vacío ${vacios.join(', ')}. Una renuncia sin ` +
+        `autor, sin motivo o sin constancia de haber preguntado al proveedor no es una decisión: ` +
+        `es un modelo sin identificar.`,
+    );
+  }
+  if (Number.isNaN(Date.parse(waiver.probedAt))) {
+    throw new UnpinnedBindingError(
+      `La renuncia de identidad de ${subject} trae un \`probedAt\` ilegible (${waiver.probedAt}).`,
+    );
+  }
+}
+
+export function assertBindingUsable(
+  binding: ModelBinding,
+  waiver?: UnpinnedIdentityWaiver,
+): void {
+  assertIdentityFixedOrWaived(
+    binding.bindingId,
+    `El binding ${binding.bindingId}`,
+    binding,
+    waiver,
+  );
 
   const { supportedParameters, rejectedParameters } = binding.capabilities;
   const rejected = new Set(rejectedParameters);
@@ -89,8 +195,9 @@ export function assertBindingUsable(binding: ModelBinding): void {
 export function authorizeParameters(
   binding: ModelBinding,
   requested: Readonly<Record<string, unknown>>,
+  waiver?: UnpinnedIdentityWaiver,
 ): AuthorizedParameters {
-  assertBindingUsable(binding);
+  assertBindingUsable(binding, waiver);
 
   const supported = new Set(binding.capabilities.supportedParameters);
   const rejected = new Set(binding.capabilities.rejectedParameters);

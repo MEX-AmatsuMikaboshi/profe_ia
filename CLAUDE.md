@@ -65,6 +65,7 @@ pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && 
 | `pnpm run ci:supply:sbom` / `:drift` | SBOM CycloneDX + digest de lockfile / drift y advisories (bloqueante) |
 | `pnpm run ci:infra:hardening` | 159 propiedades sobre la config **resuelta** por Docker |
 | `pnpm run bench:preparacion <runId> [cands]` | Qué falta para la corrida material de BENCH-01. No gasta nada; sale con 1 si aún no se puede correr (D-72) |
+| `pnpm run bench:material <runId> <cands> <reps> <maxTokens> [timeoutMs]` | **La corrida material de BENCH-01. GASTA DINERO de verdad.** Mide los seis gates con `observeGates()` y **no corona**: el paquete sin congelar lo impide (D-74) |
 | `node scripts/model/refresh-sources.mjs <urls>` | Huellas reproducibles de las fuentes de un refresco documental. Descarga dos veces y falla si difieren (D-73) |
 | `pnpm run ci:adversarial:session` | AC de `T-H7-03`: extracción/injection del alumno (P-II §14.4 de sesión) y la puerta de no revelación de P-I §9.6 |
 | `pnpm run ci:infra:compose-up` | Arranque limpio del stack + verificador por spool + prueba de que `core` no sale a Internet |
@@ -210,23 +211,38 @@ controles positivos—. La selección A/B/C y los tres artefactos de W4 se re-co
 **lectura humana por muestra del paso 19**, la **Parte A ciega** de otra familia de modelo, y **W5**
 (clave Ed25519, auditoría aprobada, firma).
 
-**F4/H4 — BENCH-01 ya puede medir los seis gates (D-70, D-71).** Era el bloqueo declarado en §3.5 del
-handoff: dos de los seis gates de P-III §6.2 no se podían computar. Ya se computan.
-`tools/bench/src/corpus.ts` carga el paquete real —18 fragmentos con texto, los 18 KC con
-fragmentos, 493 activos congelados— y la salida material pasó a `AnchoredSegment`, que es el contrato
-que la sesión usará. **Medir no es coronar**: `observeGates()` computa sin dictamen y
-`scoreCandidate()` exige `frozen: true`, que hoy es `false` porque W5 no ha corrido. **`pnpm run bench:preparacion <runId> [candidatos]`
-dice qué falta sin gastar nada** (D-72), y con `claude-sonnet-5` hoy dice **`SE PUEDE CORRER`**: el
-refresco documental se rehízo el 2026-08-23 (D-73) y las cuatro comprobaciones bloqueantes pasan.
-**Ya no hay bloqueo de código para correr BENCH-01.** Lo que falta para **coronar** es la revisión
-humana de los 200 casos y W5.
+**F4/H4 — BENCH-01 CORRIÓ, y hay ganador provisional (D-74, D-75, D-76).** Los 200 casos materiales
+contra `claude-sonnet-5` y `claude-haiku-4-5-20251001`, los seis gates computados, MXN 47.91 de gasto
+real. **Ganador provisional: `claude-sonnet-5`** — 4 de 6 gates, no bloqueado, frente a 3 de 6 y
+bloqueado del otro. **Ningún candidato aprueba los seis, así que la puerta de H4 NO está cumplida.**
+Lo que falla no es la seguridad —cero fugas y recuperación degradada limpia en los tres candidatos y
+en los 600 casos— sino la **disciplina de formato**: el gate de anclas (≥95 %) da 84.2 % en
+`claude-sonnet-5` y 15.4 % en `claude-haiku-4-5`. Los diagnósticos son distintos y sólo uno es de
+capacidad: el primero **no ancla lo que afirma** (29 segmentos factuales con `anchors: []`, con 77 de
+80 salidas aceptadas); el segundo **acorta el `fragmentId`** y produce 136 anclas inexistentes.
+**El identificador de ~100 caracteres es defecto nuestro**, y acortarlo es la palanca que más rinde.
+Informe completo en `docs/model/bench-01.md`. Para **coronar formalmente** siguen faltando la revisión
+humana de los 200 casos (D-41), la auditoría en muestra ciega de §6.2, y **W5** —que es lo que
+`assertPackageMayCrownWinner()` espera—.
+
+**OpenAI se midió y no corona (D-76).** El propietario autorizó una **medición exploratoria
+declarada**: `gpt-5.6-luna` sacó **5 de 6 gates a MXN 1.44**, el mejor de los tres. No puede coronar
+porque su identidad no está fijada, y la pinza está **comprobada**: los modelos vigentes de OpenAI no
+publican snapshot fechado ni la documentación declara que un id sin fecha lo sea, y los ids que **sí**
+están fijados por fecha están **deprecados con apagado el 2026-12-11**. Se comprobó además que la API
+**no devuelve un snapshot resuelto** en el campo `model`. `UnpinnedIdentityWaiver` permite medirlo y
+**tres puertas independientes** impiden que corone: conjunto `pilot`, refresco `test_fixture`, y una
+corrida material que **rechaza toda renuncia**. `T-H4-11`/BENCH-02 sigue bloqueada por esto, no por
+credenciales.
 
 **F8/H7 con 2 de 7**: `T-H7-02` (validador de anclaje) y `T-H7-03` (no revelación y suite
-adversarial). Las cuatro restantes viven dentro del bucle W7 y exigen el ganador de BENCH-01.
-F9–F16 no empezadas.
+adversarial). Las cuatro restantes viven dentro del bucle W7; ya tienen binding ganador con el que
+empezar `T-H7-01`. F9–F16 no empezadas.
 
-**1890 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
-`logic-core` en verde.
+**1824 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
+`logic-core` en verde. **Aviso:** los conteos de sesiones anteriores («1890», «1918 unitarias») no son
+comparables — parecen haber sumado los proyectos `unit` y `db` bajo la misma etiqueta. Medido hoy,
+`--project unit` da 1824 y `--project db` da 131.
 
 **⚠ CI está caída y es de la cuenta, no del código.** Van siete corridas seguidas con la firma de
 D-58: los diez jobs a cero pasos en dos segundos. Comprobado que Actions está `enabled` con

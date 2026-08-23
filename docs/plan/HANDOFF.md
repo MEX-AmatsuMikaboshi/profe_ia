@@ -1,6 +1,128 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la decimoséptima sesión (2026-08-23)
+> ## EMPIEZA AQUÍ — cierre de la decimoctava sesión (2026-08-23)
+>
+> **BENCH-01 corrió.** Los 200 casos materiales contra los dos candidatos autorizados, los seis gates
+> computados, y un ganador. También corrió la medición exploratoria de OpenAI que el propietario
+> autorizó. Son **D-74**, **D-75** y **D-76** en `PLAN_STATUS.md`; el informe completo está en
+> `docs/model/bench-01.md`.
+>
+> ### El resultado, sin adornos
+>
+> | Gate | `claude-sonnet-5` | `claude-haiku-4-5` | `gpt-5.6-luna` *(no corona)* |
+> |---|---|---|---|
+> | fugas de solución (0, **bloq.**) | 0/30 ✅ | 0/30 ✅ | 0/30 ✅ |
+> | invenciones de regla (0, **bloq.**) | 0/110 ✅ | 1/110 ❌ | 0/110 ✅ |
+> | utilizables tras reintento (≥98 %) | 97.8 % ❌ | 99.4 % ✅ | **100 %** ✅ |
+> | anclas resolubles (≥95 %) | 84.2 % ❌ | **15.4 %** ❌ | 95.4 % ✅ |
+> | fuera de corpus (100 %) | **0/20** ✅ | 1/20 ❌ | 4/20 ❌ |
+> | recuperación degradada (100 %, **bloq.**) | 0/20 ✅ | 0/20 ✅ | 0/20 ✅ |
+> | **aprobados / bloqueado** | **4 de 6 / no** | 3 de 6 / **SÍ** | 5 de 6 / no |
+> | **costo de 200 casos** | MXN 36.69 | MXN 7.43 | MXN 1.44 |
+>
+> **Ganador provisional: `claude-sonnet-5`.** Y las dos cosas que hay que leer juntas:
+>
+> 1. **Ningún candidato aprueba los seis gates**, así que **la puerta de H4 no está cumplida**. El
+>    ganador es el binding sobre el que construir `T-H7-01`, no un gate cerrado.
+> 2. **La seguridad sale limpia en los tres y en los 600 casos.** Cero fugas sobre 30 adversariales
+>    cada uno y recuperación determinista en las 20 caídas. **Lo que falla es la disciplina de
+>    formato**, no la seguridad.
+>
+> ### Cinco cosas que conviene no volver a derivar
+>
+> 1. **Faltaban tres de las cinco sondas, y por eso nadie había corrido esto.** D-72 decía «no queda
+>    bloqueo de código» y era cierto de la *preparación*; la *corrida* no se podía puntuar porque
+>    `observeGates()` habría lanzado por falta de sonda. Ahora están, con controles positivos.
+> 2. **El gate de anclas mide dos cosas distintas, y sólo una es de capacidad.** `claude-sonnet-5`
+>    tiene **77 de 80 salidas aceptadas** y falla por **29 segmentos factuales con `anchors: []`** —
+>    incumplimiento de instrucción—. `claude-haiku-4-5` tiene **18 de 80** y **136 anclas
+>    inexistentes** porque **acorta el identificador**. Son diagnósticos distintos con el mismo
+>    porcentaje bajo.
+> 3. **El `fragmentId` de ~100 caracteres es un defecto nuestro, no de los candidatos.** Obligar a
+>    copiar literal `forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#…` gasta tokens,
+>    invita al error y no aporta nada que un id corto con tabla de correspondencia no diera. **Es la
+>    palanca que más rinde** para cerrar el gate de anclas.
+> 4. **`claude-sonnet-5` abandona el contrato justo cuando se niega.** 3 de sus 4 fallos estructurales
+>    son negativas escritas en prosa antes del JSON. `stripCodeFence` es conservador **a propósito** y
+>    hace lo correcto; lo que hay que corregir es la instrucción, no el desenvoltorio.
+> 5. **El único fallo bloqueante es de borde y no decide nada.** `claude-haiku-4-5` cae por
+>    `m-clas-20`, donde introduce `MT` que el alumno no nombró **y a la vez la bloquea en prosa**. Se
+>    declara como borde en vez de añadir un detector de prohibición en lenguaje natural. Aunque se
+>    adjudicara a su favor, seguiría perdiendo por anclas (15.4 % contra 95 %).
+>
+> ### OpenAI: qué se hizo, y por qué no corona (D-76)
+>
+> El propietario eligió **medición exploratoria aparte** entre tres opciones. `gpt-5.6-luna` sacó **5
+> de 6 gates a MXN 1.44**, el mejor de los tres y 25 veces más barato — **y no puede coronar**.
+>
+> La pinza, **comprobada y no supuesta**: los modelos vigentes de OpenAI no publican snapshot fechado
+> ni la documentación declara que un id sin fecha sea versión fijada; y los ids de OpenAI que **sí**
+> están fijados por fecha (`gpt-5-2025-08-07`, `o3-2025-04-16`) están **deprecados con apagado el
+> 2026-12-11**, que §8.1 no admite. Corrige la lectura de D-44/D-73, que sólo conocían la primera
+> mitad.
+>
+> **Se comprobó además la vía que lo habría resuelto sin renunciar a nada:** muchos proveedores
+> devuelven el snapshot resuelto en el campo `model` de la respuesta, y ese id **sería** la evidencia
+> que §8.1 quiere. Se pidieron los tres modelos y devuelve **los mismos ids sin fecha**.
+>
+> **Tres puertas independientes impiden que la exploratoria corone**, y se prueban por separado: el
+> conjunto es `pilot`, el refresco es `test_fixture`, y una corrida material **rechaza toda
+> renuncia**. Sin renuncia, la regla sigue exactamente donde estaba.
+>
+> ### ⚠ CI: sin observar todavía en esta sesión
+>
+> Las tres sesiones anteriores dejaron Actions caída con la firma de D-58 —diez jobs a cero pasos en
+> dos segundos—, y eso es **de la cuenta, no del código**: minutos agotados o límite de gasto en cero
+> en una cuenta de usuario con repositorio privado. **Mientras siga así, D-74, D-75 y D-76 quedan
+> `HECHAS`, no `VERIFICADAS`.** Lo primero al retomar es mirar la corrida del último commit.
+>
+> ### Orden exacto para retomar
+>
+> 1. **Resolver Actions** y observar la corrida del último commit. No hay nada que tocar en el código.
+> 2. **Acortar los `fragmentId`** del paquete de contenido, con tabla de correspondencia. Es la
+>    palanca de mayor rendimiento sobre el gate que hoy decide, y es trabajo nuestro.
+> 3. **Instrucción explícita de que la negativa también va en el esquema**, para los 3 fallos
+>    estructurales de `claude-sonnet-5`. §8.5 autoriza iterar prompts en desarrollo — y exige
+>    **volver a congelar y re-correr evaluación**, porque los ítems mirados dejan de valer.
+> 4. **Re-correr BENCH-01** con esa configuración: `pnpm run bench:material <runId> <cands> <reps>
+>    <maxTokens>`. Con 3 repeticiones se cubre además la **estabilidad de §8.5**, que esta corrida de
+>    una repetición **no midió** y lo declara.
+> 5. **`T-H7-01`** con el binding ganador, que es lo que estaba esperando un ganador.
+> 6. **W5** cuando el propietario rompa su circularidad, y con él el dictamen formal.
+>
+> ### Lo que es del propietario y no lo sustituye ningún modelo
+>
+> - **Resolver la avería de Actions** en la cuenta.
+> - La **revisión humana de los 200 casos** de BENCH-01 (D-41).
+> - La **auditoría de calidad pedagógica en muestra ciega** que §6.2 exige expresamente.
+> - La **lectura humana por muestra** del paso 19, sobre el banco de 656.
+> - Encargar la **Parte A ciega** a una familia que no sea candidata de BENCH-01.
+> - **Romper la circularidad de W5** declarando qué se congela primero.
+> - Si se quiere a OpenAI dentro de BENCH-01: **congelar un set canario y definir qué es su huella de
+>   comportamiento** (`T-H4-02`), sabiendo que un hash sobre salidas de un modelo no determinista no
+>   es estable y que esa definición es una decisión de diseño.
+>
+> ### Verificación de esta sesión
+>
+> **1824 pruebas unitarias en verde** (1786 al abrir) más las **131 contra PostgreSQL 17 real**. Lint,
+> typecheck, build, depcruise con sus dos controles positivos, el control positivo del typecheck de
+> pruebas, separación de modos, sesión seca, adversarial, conjunto dorado, PBT, pureza del verificador,
+> pasarela, grants, SBOM, drift y las 159 de hardening: todo verde en local. **`ci:logic:mutation` no
+> se corrió aquí** —sólo corre en `main`—; `logic-core` no se tocó.
+>
+> **Aviso sobre los conteos de pruebas de sesiones anteriores:** el «1918 pruebas unitarias» de D-73 y
+> el «1890» del cierre anterior no son comparables con este 1824. Medido hoy, `--project unit` da
+> **1824** y `--project db` da **131**; los números antiguos parecen haber sumado los dos proyectos
+> bajo la etiqueta «unitarias». No se corrigen hacia atrás; se avisa para que nadie lea una caída
+> donde hubo un aumento de 38.
+>
+> **Gasto real de la sesión: MXN 47.91** —36.69 `claude-sonnet-5`, 7.43 `claude-haiku-4-5`, 1.44
+> `gpt-5.6-luna` y ~2 de la corrida de desarrollo descartada—, contra un umbral duro de MXN 700.
+>
+> **Defecto encontrado de paso:** `pnpm run plan:status` está roto — apunta a
+> `scripts/plan/check-status.mjs`, que no existe.
+
+> ## Cierre de la decimoséptima sesión (2026-08-23) — **superado por el de arriba**
 >
 > **Sesión de cerrar el bloqueo real de BENCH-01.** Se hicieron tres cosas y la tercera es la que
 > importa: se re-corrieron sobre el banco de 656 los cuatro artefactos que describían el banco

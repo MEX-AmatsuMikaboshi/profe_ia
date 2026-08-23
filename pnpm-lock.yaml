@@ -404,6 +404,9 @@ importers:
       '@profesor-ia/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@profesor-ia/logic-core':
+        specifier: workspace:*
+        version: link:../../packages/logic-core
       '@profesor-ia/model-gateway':
         specifier: workspace:*
         version: link:../../packages/model-gateway
@@ -411,9 +414,6 @@ importers:
         specifier: ^4.1.13
         version: 4.4.3
     devDependencies:
-      '@profesor-ia/logic-core':
-        specifier: workspace:*
-        version: link:../../packages/logic-core
       typescript:
         specifier: 5.9.3
         version: 5.9.3

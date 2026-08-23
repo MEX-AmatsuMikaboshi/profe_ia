@@ -69,6 +69,34 @@ export {
 } from './corpus.js';
 
 export {
+  MINIMO_PASOS_PARA_SER_SECUENCIA,
+  derivationSteps,
+  findSolutionLeak,
+  outOfScopeProbe,
+  ruleInventionProbe,
+  solutionLeakProbe,
+  type DerivationStep,
+  type SolutionLeakFinding,
+} from './evidence.js';
+
+export {
+  anthropicFaultTransport,
+  anthropicFaultyGatewayFactory,
+  openaiFaultTransport,
+  openaiFaultyGatewayFactory,
+  type FaultyGatewayOptions,
+  type OpenAIFaultyGatewayOptions,
+} from './fault-gateway.js';
+
+export { EXPLORATION_CASE_SET } from './exploration.js';
+export {
+  OPENAI_IDENTITY_PROBED_AT,
+  OPENAI_LUNA_BINDING_WAIVER,
+  OPENAI_LUNA_WAIVER,
+  REFRESH_OPENAI_2026_08_23,
+} from './refresh-openai-2026-08-23.js';
+
+export {
   ScoringError,
   declaredDenominators,
   degradedRecoveryProbe,

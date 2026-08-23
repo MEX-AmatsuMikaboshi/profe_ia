@@ -123,6 +123,10 @@ export {
 
 export {
   assertBindingUsable,
+  assertIdentityFixedOrWaived,
+  waiverFor,
+  UNPINNED_CONSEQUENCE,
+  type UnpinnedIdentityWaiver,
   assertPinnedIdentity,
   authorizeParameters,
   NO_PARAMETERS,

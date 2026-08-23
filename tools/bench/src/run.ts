@@ -10,6 +10,7 @@ import {
   type ModelGateway,
   type DegradedProfile,
   type ProviderUsage,
+  type UnpinnedIdentityWaiver,
   type ValidatedOutput,
 } from '@profesor-ia/model-gateway';
 import type { ZodType } from 'zod';
@@ -101,6 +102,14 @@ export interface RunDependencies {
   readonly refreshRecord: unknown;
   readonly refreshWindow: unknown;
   /**
+   * Renuncias a la identidad fijada, por candidato (T-H4-02).
+   *
+   * Se pasan tal cual a `assertRefreshAuthorizesBenchmark()`, **que las rechaza
+   * en una corrida material**. Aquí no se filtran ni se validan: duplicar esa
+   * regla dejaría dos sitios donde relajarla, y el que corre más tarde gana.
+   */
+  readonly unpinnedIdentityWaivers?: readonly UnpinnedIdentityWaiver[];
+  /**
    * Perfil degradado con los activos congelados del paquete de contenido.
    *
    * Obligatorio en cuanto el conjunto trae una sola caída: sin él la corrida
@@ -136,6 +145,22 @@ export interface RunDependencies {
    * dos casos con distinto `max_tokens` no serían comparables.
    */
   readonly parameters?: Readonly<Record<string, unknown>>;
+  /**
+   * Observador de resultados, llamado en cuanto cada caso termina.
+   *
+   * **No decide nada y no puede cambiar nada**: recibe el resultado ya
+   * construido y su valor de retorno se ignora. Existe para que quien corra
+   * pueda ir escribiendo la evidencia a disco, y el motivo es concreto: la
+   * corrida material son más de mil llamadas seguidas y el runner **falla
+   * cerrado** ante un error de proveedor —a propósito, «no se asume cero»—, así
+   * que un 529 en la llamada novecientos tiraría la corrida entera con el gasto
+   * ya hecho y sin una sola línea de evidencia que enseñar. Anotar lo observado
+   * no rebaja ningún freno; sólo impide que lo ya pagado se pierda.
+   *
+   * Si el observador lanza, **la corrida sigue**: un fallo escribiendo la
+   * bitácora no es motivo para tirar una corrida facturada.
+   */
+  readonly onOutcome?: (outcome: CaseOutcome) => void;
 }
 
 /**
@@ -556,6 +581,9 @@ export async function runBenchmark(
     startedAt: plan.startedAt,
     candidateIds: candidates.map((c) => c.candidateId),
     purpose: plan.purpose === 'material' ? 'material' : 'test_fixture',
+    ...(deps.unpinnedIdentityWaivers === undefined
+      ? {}
+      : { unpinnedIdentityWaivers: deps.unpinnedIdentityWaivers }),
   });
 
   deps.ledger.registerManifest(deps.manifest);
@@ -571,9 +599,9 @@ export async function runBenchmark(
         // Los casos con caída simulada van por su propia rama: no salen a la
         // red, no facturan y su reintento se ejerce igual.
         if (caso.injectedFault !== undefined) {
-          outcomes.push(
-            await ejecutarCaida(caso, caso.injectedFault, candidato, deps, repeticion),
-          );
+          const resultado = await ejecutarCaida(caso, caso.injectedFault, candidato, deps, repeticion);
+          outcomes.push(resultado);
+          anotar(deps, resultado);
           continue;
         }
 
@@ -618,7 +646,7 @@ export async function runBenchmark(
         }
 
         totalCostMxn += costoDelCaso;
-        outcomes.push({
+        const resultado: CaseOutcome = {
           caseId: caso.caseId,
           candidateId: candidato.candidateId,
           repetition: repeticion,
@@ -630,7 +658,9 @@ export async function runBenchmark(
           rawOutput: validado.envelope.rawOutput,
           initialRawOutput: inicial.rawOutput,
           initialClassification: inicial.classification,
-        });
+        };
+        outcomes.push(resultado);
+        anotar(deps, resultado);
       }
     }
   }
@@ -643,6 +673,21 @@ export async function runBenchmark(
     costPerCaseMxn: outcomes.length === 0 ? 0 : totalCostMxn / outcomes.length,
     ageSecondsByCandidate: autorizacion.ageSecondsByCandidate,
   };
+}
+
+/**
+ * Avisa al observador, si lo hay. **Un fallo suyo no tira la corrida**: la
+ * bitácora es evidencia de lo que ya se pagó, y perder la corrida por no poder
+ * escribirla sería cambiar un problema por otro peor.
+ */
+function anotar(deps: RunDependencies, outcome: CaseOutcome): void {
+  const observador = deps.onOutcome;
+  if (observador === undefined) return;
+  try {
+    observador(outcome);
+  } catch {
+    // Intencionalmente vacío: ver arriba.
+  }
 }
 
 function sumarUso(a: ProviderUsage, b: ProviderUsage): ProviderUsage {

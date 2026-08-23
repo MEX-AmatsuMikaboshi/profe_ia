@@ -1,0 +1,20 @@
+﻿BENCH-01 · preparación de la corrida material — bench01-material-2026-08-23
+evaluado el 2026-08-23T22:27:04.141Z
+candidatos: claude-sonnet-5, claude-haiku-4-5-20251001
+
+ok   conjunto_material_ejecutable
+      200 casos: pisos por familia cubiertos, ids únicos, expectativas coherentes con su familia, caídas y bloques declarados donde toca.
+ok   fragmentos_para_el_gate_de_anclas
+      Los 80 casos del gate de anclas apuntan a bloques con fragmentos autorizados.
+ok   activos_para_el_gate_de_recuperacion
+      Todo caso con caída declarada tiene su explicación congelada en el paquete.
+ok   refresco_documental_vigente
+      El refresco autoriza medir a claude-sonnet-5, claude-haiku-4-5-20251001 el 2026-08-23T22:27:04.141Z.
+aviso paquete_de_contenido_congelado
+      El paquete `w1-corpus-v1+w3@2026-08-23T03:33:57.153Z` no está congelado, así que la corrida **mide pero no corona**: use `observeGates()`. W5 no ha corrido: `freeze-manifest.json` sigue siendo el marcador de F0 y `ci:freeze:drift` falla cerrado contra él. P-III §6.2 mide sobre activos congelados, así que una corrida sobre este material es orientativa y no corona a nadie.
+
+SE PUEDE CORRER.
+El dictamen NO está autorizado: mida con `observeGates()`, que no corona a nadie.
+
+corriendo BENCH-01 material — 200 casos × 2 candidatos × 3 repeticiones
+bitácora incremental: C:\Users\gabri\Documents\edu_ia\profesor_ia_code\analysis\reports\bench01-material-2026-08-23.outcomes.jsonl
