@@ -8,7 +8,26 @@ export const DOMAIN_POLICY_SCHEMA_VERSION = 'domain-policy-v1' as const;
 export const DOMAIN_STATE_SCHEMA_VERSION = 'domain-state-v1' as const;
 export const DOMAIN_POLICY_VERSION = 'domain-policy-v1-cal09' as const;
 
-const CAL09_SAMPLE_HASH = '9247a8b0df137c56b742e7650e59848be965fe38374e21c6c1ba5acddb1f830a';
+/**
+ * Identidad material de la calibración vigente, **copiada a propósito**:
+ * `domain-engine` no puede importar `proof-search`, así que la prueba de
+ * `mastery.test.ts` compara las dos copias y falla si se separan.
+ *
+ * `cal-09-v2` desde el 2026-08-22 (D-66). La v1 terminaba en `9247a8b0…`; los
+ * reactivos medidos bajo ella lo fueron con otras bandas y **las dos escalas no
+ * son comparables**.
+ */
+/**
+ * Versión de CAL-09 que los intentos y las declaraciones de dominio deben
+ * llevar. Es **una sola**, no un conjunto: dos intentos medidos con
+ * calibraciones distintas tienen índices que no se pueden comparar, y una
+ * declaración que mezclara ambos afirmaría un orden de complejidad no
+ * decreciente sobre una escala que no existe. Al re-congelar se cambia aquí y
+ * los intentos viejos dejan de validar, que es lo correcto: no hay datos de
+ * participantes bajo v1.
+ */
+export const CAL09_BINDING_VERSION = 'cal-09-v2' as const;
+const CAL09_SAMPLE_HASH = '9a0c1c76f6046d98405024ce41a148a97afe2dd8cff0bd8cda8f88b8473a97b9';
 const NonEmptyText = z.string().trim().min(1).max(500);
 const Purpose = z.enum(['material', 'test_fixture']);
 
@@ -35,7 +54,7 @@ function uniqueArray<T extends z.ZodType>(schema: T, label: string) {
 export const ComplexityCalibrationBinding = z
   .object({
     parameterId: z.literal('CAL-09'),
-    version: z.literal('cal-09-v1'),
+    version: z.literal(CAL09_BINDING_VERSION),
     sampleHash: Sha256Hex,
     profileVersion: z.literal('structural-complexity-v1'),
     authorizedCalculusVersion: z.literal('authorized-calculus-v1'),
@@ -46,7 +65,7 @@ export type ComplexityCalibrationBinding = z.infer<typeof ComplexityCalibrationB
 
 export const CAL09_DOMAIN_BINDING: ComplexityCalibrationBinding = deepFreeze({
   parameterId: 'CAL-09',
-  version: 'cal-09-v1',
+  version: CAL09_BINDING_VERSION,
   sampleHash: CAL09_SAMPLE_HASH,
   profileVersion: 'structural-complexity-v1',
   authorizedCalculusVersion: 'authorized-calculus-v1',
@@ -315,7 +334,7 @@ const AttemptCommon = {
   mode: PedagogicalMode,
   outcome: AttemptOutcome,
   complexityIndex: z.number().min(0).max(100),
-  complexityCalibrationVersion: z.literal('cal-09-v1'),
+  complexityCalibrationVersion: z.literal(CAL09_BINDING_VERSION),
   complexityCalibrationSampleHash: Sha256Hex,
   hints: uniqueArray(MasteryHintFactsSchema, 'hints'),
 };
@@ -493,7 +512,7 @@ const MasteryDeclaration = z
     declaredAt: IsoDateTime,
     consecutiveAttemptIds: z.tuple([Id, Id, Id]),
     nearTransferAttemptId: Id,
-    complexityCalibrationVersion: z.literal('cal-09-v1'),
+    complexityCalibrationVersion: z.literal(CAL09_BINDING_VERSION),
     domainPolicyVersion: NonEmptyText,
   })
   .strict();

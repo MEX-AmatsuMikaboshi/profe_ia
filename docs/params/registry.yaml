@@ -10,24 +10,53 @@
 
 parameters:
   - parameter_id: CAL-09
-    version: cal-09-v1
+    version: cal-09-v2
     status: frozen
-    frozen_at: 2026-08-16
+    frozen_at: 2026-08-22
     gate: H5
     method: pairwise_ordinal_concordance_v1
     data_policy: no_participant_data
     sample_size: 13
-    sample_hash: 9247a8b0df137c56b742e7650e59848be965fe38374e21c6c1ba5acddb1f830a
+    sample_hash: 9a0c1c76f6046d98405024ce41a148a97afe2dd8cff0bd8cda8f88b8473a97b9
     profile_version: structural-complexity-v1
     authorized_calculus_version: authorized-calculus-v1
     verifier_version: 0.1.0
     search_mode: heuristic
     search_order_version: search-order-v1
-    comparability_max_difference: 12.065296
+    comparability_max_difference: 12.110589
     tier_bands:
-      baja: [0, 14.004071]
-      media: [14.004071, 38.57128]
-      alta: [38.57128, 100]
+      baja: [0, 14.05492]
+      media: [14.05492, 38.548779]
+      alta: [38.548779, 100]
+    refrozen_at: 2026-08-22
+    refrozen_reason: >-
+      Re-congelado tras aplicar el encadenamiento hacia atras de -> y <-> al buscador (D-66). El
+      arreglo no cambia ninguna de las trece derivaciones de la muestra -mismas lineas, mismas
+      reglas, mismo costExplored- pero si el trabajo de busqueda en cinco casos (4->5, 9->11,
+      10->16, 15->16, 82->98), y workUnitsLog2 pesa en el indice. Decision del propietario del
+      2026-08-22. Las dos escalas NO son comparables entre si.
+    supersedes:
+      version: cal-09-v1
+      frozen_at: 2026-08-16
+      sample_hash: 9247a8b0df137c56b742e7650e59848be965fe38374e21c6c1ba5acddb1f830a
+      comparability_max_difference: 12.065296
+      tier_bands:
+        baja: [0, 14.004071]
+        media: [14.004071, 38.57128]
+        alta: [38.57128, 100]
+      retained_as: packages/proof-search/src/cal09.ts (CAL09_V1_FROZEN_MANIFEST)
+      note: >-
+        Se conserva porque los reactivos medidos bajo ella lo fueron con estas bandas. El unico
+        peso que cambia es workUnitsLog2 (47 -> 46): con el arreglo, cal09-mid-two-step-chain gasta
+        mas trabajo (5) que cal09-high-nested-subproof (4), asi que ese par deja de concordar con
+        el orden de estratos. Es una senal honesta de que el trabajo de busqueda es un proxy
+        imperfecto de la complejidad pedagogica, y se registra en vez de taparse.
+    impact:
+      bank_indexes_stale: 561 de 571 reactivos
+      bank_tier_changes: 0
+      note: >-
+        Ningun reactivo cambia de estrato medido, asi que las aceptaciones de W3 sobreviven; lo que
+        queda obsoleto son los indices y la banda de comparabilidad que usa la seleccion A/B/C.
     evidence:
       implementation: packages/proof-search/src/cal09.ts
       test: packages/proof-search/test/cal09.test.ts

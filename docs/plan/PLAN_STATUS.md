@@ -1279,4 +1279,51 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   que fija las guardas de variedad de formas y anticontaminación y que va a `blocked-by-spec.md`.
   **+22 pruebas unitarias: 1687 en verde** (1665 antes), más las 131 contra PostgreSQL 17 real.
   **CI: corrida `32604466870` sobre `f7d0ad2` observada en verde, los diez jobs — D-65 `VERIFICADA`.**
+- **D-66 — Aplicado el encadenamiento hacia atrás del buscador y re-congelada la calibración como
+  `cal-09-v2` (2026-08-22).** Decisión del propietario, tomada tras D-65: el banco se regenera de
+  todos modos por los defectos de G1, así que el coste que hacía cara esta decisión ya estaba
+  comprometido y el marginal era casi cero. Sin datos de participantes ni freeze, era el último
+  momento barato.
+  **El arreglo, tal como lo especificó D-61.** Un paso dirigido por la meta en `prove()`, entre las
+  eliminaciones hacia adelante y el análisis de casos —abre **una** submeta, así que va después de lo
+  que no abre ninguna y antes de lo que abre dos—. Por cada fórmula disponible `X→meta`, `X↔meta` o
+  `meta↔X`, prueba `X` como submeta y cierra con `→E`/`↔E`; si `X` ya está disponible se poda, porque
+  lo cubre el paso anterior.
+  **Compra lo que D-61 midió**, comprobado y re-verificado con `logic-core`: `(A∧B)→C, A, B ⊢ C`,
+  `A↔(B∧C), B, C ⊢ A` y **`(P∧Q)→R, P ⊢ Q→R`**, que es la plantilla de transferencia de KC18 que hubo
+  que rehacer por indemostrable. La prueba que fijaba el estado sin arreglo se sustituyó por la
+  contraria, como pasó con la de KC13 en D-56.
+  **Los cuatro números de D-61 se reprodujeron exactos**, lo que confirma su medición de forma
+  independiente: `workUnitsLog2.max` 6,3750394 → **6,6293566**; banda `baja` hasta 14,004071 →
+  **14,054920**; `media` hasta 38,571280 → **38,548779**; `comparabilityMaxDifference` 12,065296 →
+  **12,110589**. El trabajo gastado sube en los cinco casos previstos (4→5, 9→11, 10→16, 15→16,
+  82→98) y ninguna de las trece derivaciones cambia.
+  **Una cosa que D-61 no predijo y conviene no tapar: el peso de `workUnitsLog2` baja de 47 a 46.**
+  El peso sale de concordancia ordinal por pares, así que depende de la muestra: con el arreglo,
+  `cal09-mid-two-step-chain` gasta **más** trabajo (5) que `cal09-high-nested-subproof` (4), y ese par
+  pasa de empatar a discordar. Es una señal honesta de que el trabajo de búsqueda es un proxy
+  imperfecto de la complejidad pedagógica; se registra en vez de esconderse.
+  **Impacto medido sobre el banco: 561 de 571 `complexityIndex` quedan obsoletos y 0 reactivos
+  cambian de estrato.** Importa para planificar: `complexity_target_mismatch` compara **estratos**, no
+  índices, así que **las aceptaciones de W3 sobreviven**; lo que caduca son los índices y la banda de
+  comparabilidad que usa la selección A/B/C.
+  **Agujero cerrado de paso: el banco no registraba con qué calibración se midió.** Un banco medido
+  con una calibración retirada era indistinguible de uno actual —el mismo fallo que se cerró en W4
+  exigiendo que la muestra fuera de esta corrida de W3—. El runner de W3 ya escribe
+  `complexityCalibration` (id, versión, `sampleHash`, fecha), y hay prueba que **fija que el banco de
+  hoy está desactualizado** y se invertirá al regenerar.
+  **`cal-09-v1` se conserva**, no se sobrescribe: `CAL09_V1_FROZEN_MANIFEST` en `cal09.ts` y el bloque
+  `supersedes` de `docs/params/registry.yaml`. **Las dos escalas no son comparables** y nada debe
+  mezclarlas. `CAL09_VERSIONS` es conjunto cerrado: una versión desconocida se rechaza en vez de
+  aceptarse por ser una cadena, y `calibrateComplexity()` exige la versión **sin valor por omisión**,
+  para que una calibración nueva no herede en silencio la identidad de la anterior.
+  **El binding de dominio apunta a una sola versión, no a un conjunto.** `CAL09_BINDING_VERSION` en
+  `domain-engine` gobierna los tres literales de intento y declaración: dos intentos medidos con
+  calibraciones distintas tienen índices incomparables, y una declaración que los mezclara afirmaría
+  un orden de complejidad no decreciente sobre una escala que no existe. Ensancharlo a un enum habría
+  abierto justo ese hueco. No hay datos de participantes bajo v1, así que no se pierde nada.
+  **Lo que esto obliga y todavía no se ha hecho:** BENCH-04 se midió con un buscador que no encadenaba
+  hacia atrás, así que hay que re-medirlo como se hizo tras D-56, y después W3 → selección A/B/C →
+  `T-H5-12` → W4 con semilla nueva.
+  **1689 pruebas unitarias en verde** (1687 antes) más las 131 contra PostgreSQL 17 real.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

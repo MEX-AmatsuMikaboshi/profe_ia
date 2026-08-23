@@ -299,7 +299,43 @@ function prove(
       if (rest) return substitute(rest, step);
     }
 
-    // 4. Análisis de casos: la **única** forma de usar una disyunción.
+    // 4. Encadenamiento hacia atrás de `→` y `↔` (D-61, aplicado en D-66).
+    //
+    // El paso 3 solo dispara `→E` cuando el antecedente **ya** está disponible.
+    // Un antecedente que hay que **construir** no se alcanzaba nunca, así que
+    // `(A∧B)→C, A, B ⊢ C` no se probaba y el buscador lo reportaba como «no
+    // encontré» —cierto, y por eso el hueco no se veía—. Es el mismo patrón que
+    // faltaba con `∨E` antes de D-56: un paso que no es introducción dirigida
+    // por la meta ni eliminación hacia adelante.
+    //
+    // Va **aquí** y no en otro sitio: abre **una** submeta, así que después de
+    // todo lo que no abre ninguna (pasos 1–3) y antes de lo que abre dos
+    // subpruebas (análisis de casos) o supone la negación de la meta (IP).
+    for (const f of available) {
+      const antecedentes: Formula[] = [];
+      if (f.kind === 'implies' && equals(f.right, goal)) antecedentes.push(f.left);
+      if (f.kind === 'iff') {
+        if (equals(f.right, goal)) antecedentes.push(f.left);
+        if (equals(f.left, goal)) antecedentes.push(f.right);
+      }
+      for (const antecedente of antecedentes) {
+        // Ya disponible: lo cubre el paso 3. Entrar aquí repetiría su trabajo y
+        // volvería a expandir el mismo contexto.
+        if (available.some((a) => equals(a, antecedente))) continue;
+        if (!state.work.spend()) return null;
+        const sub = prove(antecedente, available, linesLeft - 1, state);
+        if (!sub) continue;
+        return {
+          kind: 'rule',
+          rule: f.kind === 'implies' ? '→E' : '↔E',
+          formula: goal,
+          args: [{ kind: 'have', formula: f }, sub],
+          subs: [],
+        };
+      }
+    }
+
+    // 5. Análisis de casos: la **única** forma de usar una disyunción.
     //
     // No cabe en los otros dos sitios y por eso faltaba: no es una introducción
     // dirigida por la meta —la meta puede ser cualquier cosa— ni una
@@ -309,8 +345,9 @@ function prove(
     // probaba, y el buscador lo reportaba como «no encontré» —que es cierto y
     // por eso el hueco no se veía—.
     //
-    // Va después de las eliminaciones y antes de IP: abrir dos subpruebas es
-    // más caro que cualquier eliminación, y IP sigue siendo el último recurso.
+    // Va después de las eliminaciones y del encadenamiento hacia atrás, y antes
+    // de IP: abrir dos subpruebas es más caro que abrir una, y IP sigue siendo el
+    // último recurso.
     for (const f of available) {
       if (f.kind !== 'or') continue;
       // Con un disyunto ya disponible, el análisis de casos no añade nada: esa
@@ -336,7 +373,7 @@ function prove(
       };
     }
 
-    // 5. Prueba indirecta como último recurso (regla primitiva del cálculo).
+    // 6. Prueba indirecta como último recurso (regla primitiva del cálculo).
     if (goal.kind !== 'falsum') {
       if (!state.work.spend()) return null;
       const negated: Formula = { kind: 'not', sub: goal };

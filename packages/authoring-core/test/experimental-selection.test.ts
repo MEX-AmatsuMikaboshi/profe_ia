@@ -204,7 +204,7 @@ describe('ranking y frontera del auditor', () => {
         calendar,
         'selection-v1',
       ).complexityCalibrationVersion,
-    ).toBe('cal-09-v1');
+    ).toBe('cal-09-v2');
     expect(() =>
       freezeExperimentalSelection(
         ranked,

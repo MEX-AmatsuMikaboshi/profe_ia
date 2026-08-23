@@ -1,6 +1,70 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — G1 y el arreglo de las pistas de DNE (2026-08-22, tarde)
+> ## EMPIEZA AQUÍ — `cal-09-v2` congelada (2026-08-22, noche)
+>
+> El propietario decidió **aplicar el arreglo de `→E` y re-congelar**. Hecho: **D-66** en
+> `PLAN_STATUS.md`. También quedó **adjudicada** la pregunta de contaminación que D-64 dejó abierta,
+> y no hizo falta que la decidiera nadie: la resuelve el Maestro.
+>
+> ### La adjudicación de D-64, con la cita
+>
+> §7.7 dice que las reservas de medición son disjuntas «respecto de duplicados/isomorfismos
+> **prohibidos por la canonicalización congelada**», y §5.11 define ese isomorfismo: la **estructura
+> de prueba normalizada coincide** bajo renombrado de átomos y reordenamiento de pasos
+> independientes. Una sonda con un paso más no coincide. **D-58 tiene razón en la letra** y los 13
+> críticos de la Parte A **no se sostienen** con ese código —que además es de nuestro libro:
+> `reused_or_contaminated_probe` no aparece en el Maestro—.
+>
+> **Pero §5.11 exige dos cosas que el banco no cumple**, y no las nombró nadie:
+>
+> 1. «El detector opera sobre representación estructural/grafo normalizado **además de controles de
+>    superficie**». Entre enseñanza y sonda **no hay ningún control de superficie**.
+> 2. Una actividad de transferencia exige «una forma superficial **suficientemente distinta de las
+>    prácticas inmediatas**». Medido: **30 de 34 `TRANSFER_MEASUREMENT` tienen premisas idénticas** a
+>    un reactivo de enseñanza de su KC —mismas fórmulas, mismas letras—, con un paso añadido en la
+>    meta. `TRANSFER_MASTERY`: 0, porque sale de otra plantilla. El defecto es de `sonda-conj_meta`.
+>
+> Consecuencia para el plan: **G2 (variedad de formas) se cae** —§7.8 permite el renombrado dentro de
+> la familia explícitamente y sus pisos son «seis oportunidades operativas», no N firmas— y **G3 se
+> reescribe** como el control de superficie que §5.11 exige. Nada va a `blocked-by-spec.md`.
+>
+> ### Lo que se hizo en D-66
+>
+> - Aplicado el paso de encadenamiento hacia atrás de `→`/`↔` en `prove()`, donde D-61 dijo.
+> - **Los cuatro números de D-61 se reprodujeron exactos**, lo que confirma su medición de forma
+>   independiente. Compra `(P∧Q)→R, P ⊢ Q→R`, la plantilla de KC18 que hubo que rehacer.
+> - **Una cosa que D-61 no predijo:** el peso de `workUnitsLog2` baja de 47 a 46, porque un caso
+>   `media` pasa a gastar más trabajo que uno `alta`. Queda registrado, no tapado.
+> - **`cal-09-v1` se conserva** (`CAL09_V1_FROZEN_MANIFEST` y el bloque `supersedes` del registro).
+>   Las dos escalas **no son comparables**.
+> - **Impacto: 561 de 571 índices obsoletos, 0 cambios de estrato.** Las aceptaciones de W3
+>   sobreviven; caducan los índices y la banda de comparabilidad de la selección A/B/C.
+> - **Agujero cerrado:** el banco no registraba su calibración. Ahora W3 la escribe, y hay prueba que
+>   fija que el banco de hoy está desactualizado.
+>
+> ### Lo que sigue, sin decisiones pendientes
+>
+> 1. **Re-medir BENCH-04.** Se midió con un buscador que no encadenaba hacia atrás; mismo caso que
+>    tras D-56, que ya tiene precedente de re-congelado en el registro.
+> 2. **G3 (control de superficie §5.11) y G4 (fidelidad de pistas)**, escritas antes de regenerar y
+>    vistas fallar sobre el banco actual.
+> 3. **Rediseñar las plantillas de sonda**: variar el núcleo —estructura de los operandos,
+>    multiplicidad de la regla objetivo, dirección— en vez de envolverlo. Ninguno de esos ejes importa
+>    una regla ajena, así que resuelve G1 y G3 a la vez.
+> 4. **W3 → paso 5 de W2 (A/B/C) → `T-H5-12` → W4**, semilla nueva.
+>
+> **Sigue siendo del propietario y no lo sustituye ningún modelo:** la lectura humana por muestra del
+> paso 19, y una Parte A ciega de familia que no sea candidata de BENCH-01.
+>
+> ### Verificación
+>
+> **1689 pruebas unitarias en verde** (1687 antes) más las **131 contra PostgreSQL 17 real**. Lint,
+> typecheck, build, depcruise con sus dos controles positivos, separación de modos, sesión seca,
+> adversarial, conjunto dorado —regenerado con diff vacío—, PBT, pureza del verificador, pasarela,
+> grants, SBOM y drift: verde en local. **CI: sin observar todavía.**
+
+
+> ## Relevo de G1 y las pistas de DNE (2026-08-22, tarde) — **superado por el de arriba**
 >
 > Se auditó el intento de Codex contra los artefactos y se aplicó **el tramo de corrección que no
 > depende de ninguna decisión pendiente**. El detalle completo está en **D-65** de `PLAN_STATUS.md`.

@@ -1,6 +1,7 @@
 import { CAL09_FROZEN_MANIFEST } from '@profesor-ia/proof-search';
 import { describe, expect, it } from 'vitest';
 import {
+  CAL09_BINDING_VERSION,
   CAL09_DOMAIN_BINDING,
   DOMAIN_POLICY_V1,
   DeterministicDomainController,
@@ -40,7 +41,7 @@ function commonAttempt(sequence: number) {
     mode: 'LEARNING_MODE' as const,
     outcome: 'correct' as const,
     complexityIndex: sequence * 10,
-    complexityCalibrationVersion: 'cal-09-v1' as const,
+    complexityCalibrationVersion: CAL09_BINDING_VERSION,
     complexityCalibrationSampleHash: CAL09_DOMAIN_BINDING.sampleHash,
     hints: [],
   };
@@ -326,7 +327,7 @@ describe('regla literal de dominio', () => {
     expect(state.masteryDeclaration).toMatchObject({
       consecutiveAttemptIds: ['attempt-1', 'attempt-2', 'attempt-3'],
       nearTransferAttemptId: 'attempt-3',
-      complexityCalibrationVersion: 'cal-09-v1',
+      complexityCalibrationVersion: CAL09_BINDING_VERSION,
     });
     expect(state.postMasteryReconfirmation).toMatchObject({ status: 'pending' });
   });

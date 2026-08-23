@@ -4,6 +4,12 @@ import { fileURLToPath } from 'node:url';
 
 import { masteryDisqualifying, type MasteryHintFacts } from '@profesor-ia/domain-engine';
 import { AUTHORIZED_CALCULUS_VERSION, parse, verify } from '@profesor-ia/logic-core';
+import {
+  CAL09_FROZEN_MANIFEST,
+  classifyComplexity,
+  complexityIndex,
+  type StructuralComplexityProfile,
+} from '@profesor-ia/proof-search';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -411,5 +417,46 @@ describe('regla de entrada nombrada por las pistas (D-65, G4 parcial)', () => {
     expect(conPremisaAbrible.length).toBeGreaterThan(100);
     // Y el resto del banco —el que no es KC16— sí nombra la regla correcta.
     expect(pistasQueMandanAReglaAjena(conPremisaAbrible.filter((i) => !i.targetKcs.includes('KC16')))).toEqual([]);
+  });
+});
+
+describe('la calibración con la que se midió el banco (D-66)', () => {
+  it('FIJA EL DEFECTO DE HOY: el banco se midió con cal-09-v1 y la vigente es cal-09-v2', () => {
+    // Al aplicar el encadenamiento hacia atrás del buscador (D-66) la
+    // calibración se re-congeló, y **el banco no se ha regenerado**: sus
+    // `complexityIndex` están en la escala vieja.
+    //
+    // Lo que esta prueba impide es que eso pase inadvertido. El informe de W3 no
+    // registraba con qué calibración se midió —el runner ya lo escribe, pero
+    // este artefacto es anterior—, así que un banco viejo y uno nuevo eran
+    // indistinguibles. Es el mismo agujero que se cerró en W4 exigiendo que la
+    // muestra fuera de esta corrida de W3.
+    //
+    // Se sustituye por la contraria —índices que coinciden y `complexityCalibration`
+    // declarando `cal-09-v2`— cuando se regenere.
+    const desactualizados = publicados.filter((item) => {
+      const almacenado = (item as unknown as { complexityIndex: number }).complexityIndex;
+      const recomputado = complexityIndex(
+        (item as unknown as { complexity: StructuralComplexityProfile }).complexity,
+        CAL09_FROZEN_MANIFEST,
+      );
+      return Math.abs(almacenado - recomputado) > 1e-6;
+    });
+    expect(CAL09_FROZEN_MANIFEST.version).toBe('cal-09-v2');
+    expect(desactualizados).toHaveLength(561);
+  });
+
+  it('pero ningún reactivo cambia de estrato, así que las aceptaciones de W3 sobreviven', () => {
+    // Importa para planificar: la re-calibración mueve los números, no las
+    // decisiones. `complexity_target_mismatch` compara **estratos**, y ninguno
+    // se mueve, así que regenerar no debería cambiar qué se acepta.
+    const cambianDeEstrato = publicados.filter((item) => {
+      const i = item as unknown as {
+        complexity: StructuralComplexityProfile;
+        measuredComplexityTier: string;
+      };
+      return classifyComplexity(i.complexity, CAL09_FROZEN_MANIFEST) !== i.measuredComplexityTier;
+    });
+    expect(cambianDeEstrato).toEqual([]);
   });
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { SESSION_STATES, SESSION_TRANSVERSAL_STATES } from '@profesor-ia/contracts';
 import {
+  CAL09_BINDING_VERSION,
   CAL09_DOMAIN_BINDING,
   DOMAIN_POLICY_V1,
   DeterministicDomainController,
@@ -693,7 +694,7 @@ describe('estado estructurado de sesión (T-H6-01)', () => {
       mode: 'LEARNING_MODE' as const,
       outcome: 'correct' as const,
       complexityIndex: sequenceNumber,
-      complexityCalibrationVersion: 'cal-09-v1' as const,
+      complexityCalibrationVersion: CAL09_BINDING_VERSION,
       complexityCalibrationSampleHash: CAL09_DOMAIN_BINDING.sampleHash,
       hints: [],
     });

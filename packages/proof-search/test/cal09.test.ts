@@ -118,12 +118,12 @@ describe('CAL-09: pesos y comparabilidad congelados en H5', () => {
 
   it('falla cerrado con estrato insuficiente, ids repetidos o mezcla de modo', () => {
     const samples = cal09Samples();
-    expect(() => calibrateComplexity(samples.slice(0, 2), '2026-08-16')).toThrow(
+    expect(() => calibrateComplexity(samples.slice(0, 2), '2026-08-16', 'cal-09-v2')).toThrow(
       CalibrationPendingError,
     );
 
     const duplicate: ComplexityCalibrationSample = { ...samples[1]!, caseId: samples[0]!.caseId };
-    expect(() => calibrateComplexity([samples[0]!, duplicate, ...samples.slice(2)], '2026-08-16')).toThrow(
+    expect(() => calibrateComplexity([samples[0]!, duplicate, ...samples.slice(2)], '2026-08-16', 'cal-09-v2')).toThrow(
       /repetido/u,
     );
 
@@ -134,7 +134,7 @@ describe('CAL-09: pesos y comparabilidad congelados en H5', () => {
         searchRelative: { ...samples[1]!.profile.searchRelative, mode: 'exhaustive_k' },
       },
     };
-    expect(() => calibrateComplexity([samples[0]!, mixed, ...samples.slice(2)], '2026-08-16')).toThrow(
+    expect(() => calibrateComplexity([samples[0]!, mixed, ...samples.slice(2)], '2026-08-16', 'cal-09-v2')).toThrow(
       /modo/u,
     );
   });

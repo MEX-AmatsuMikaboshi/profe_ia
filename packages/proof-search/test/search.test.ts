@@ -249,34 +249,50 @@ describe('∨E — análisis de casos (regresión de D-56)', () => {
     }
   });
 
-  it('NO encadena hacia atrás un antecedente compuesto, y no es presupuesto', () => {
-    // Hueco conocido del buscador, y **la prueba fija el estado de hoy, no el
-    // deseado**. `→E` solo dispara hacia adelante, cuando el antecedente ya está
-    // disponible; un antecedente que hay que **construir** no se alcanza nunca.
-    // Es el mismo patrón que faltaba con `∨E` antes de D-56.
-    //
-    // El arreglo está escrito y medido —un paso dirigido por la meta, entre las
-    // eliminaciones hacia adelante y el análisis de casos, que prueba el
-    // antecedente como submeta— y **no se aplica** porque mueve el manifiesto
-    // congelado `cal-09-v1`: ninguna de las trece pruebas de CAL-09 cambia, pero
-    // el trabajo gastado sí, y `workUnitsLog2` pesa 47 en el índice. Re-congelar
-    // una calibración es decisión del propietario (misma familia que D-56).
-    // Cuando la tome, esta prueba se sustituye por la contraria, como pasó con
-    // la de KC13.
-    //
-    // Modo exhaustivo con techo 20 y dos millones de unidades: que no lo
-    // encuentre **no es presupuesto**.
+  it('encadena hacia atrás un antecedente compuesto (regresión de D-66)', () => {
+    // Esta prueba nació al revés, como la de KC13. Cuando se escribió fijaba que
+    // `(A∧B)→C, A, B ⊢ C` **no** se probaba: `→E` solo disparaba hacia adelante y
+    // un antecedente que hay que **construir** no se alcanzaba nunca. Aplicado el
+    // arreglo (D-66), la afirmación de entonces caducó y se sustituye por la
+    // contraria, que es la que ahora hay que defender. Si el paso desapareciera,
+    // esto cae.
+    for (const [premisas, meta] of [
+      [['(A∧B)→C', 'A', 'B'], 'C'],
+      [['A↔(B∧C)', 'B', 'C'], 'A'],
+      // La plantilla de transferencia de KC18 que hubo que rehacer por
+      // indemostrable —`(p∧q)→r, p ⊢ q→r` en los huecos de Rol C, instanciada
+      // aquí porque el cálculo solo admite A–Z—: es lo que este paso compra en
+      // contenido, no solo en cobertura del cálculo.
+      [['(P∧Q)→R', 'P'], 'Q→R'],
+    ] as const) {
+      const result = search(req([...premisas], meta));
+      expect(result.status, `${premisas.join(', ')} ⊢ ${meta}`).toBe('proof_found');
+      if (result.status === 'proof_found') {
+        // Re-verificado: que el buscador diga que encontró no es que la prueba
+        // valga. Un certificado que no verifica es incidente de nivel 3.
+        const veredicto = verify({ lines: result.proof.lines, goal: meta });
+        expect(veredicto.valid).toBe(true);
+        expect(veredicto.goalReached).toBe(true);
+      }
+    }
+  });
+
+  it('no entra al encadenamiento cuando el antecedente ya está disponible', () => {
+    // Poda del paso 4: con `A∧B` disponible lo cubre la eliminación hacia
+    // adelante, y entrar aquí repetiría su trabajo. La prueba sale igual.
+    const result = search(req(['(A∧B)→C', 'A∧B'], 'C'));
+    expect(result.status).toBe('proof_found');
+  });
+
+  it('el encadenamiento no convierte un argumento inválido en demostrable', () => {
+    // El paso amplía lo que se **encuentra**, no lo que es derivable. Con el
+    // antecedente inalcanzable sigue sin haber prueba, y con techo generoso para
+    // que «no la encuentra» no sea presupuesto.
     const generoso: Partial<SearchRequest> = {
       mode: 'exhaustive_k',
       budget: { maxWorkUnits: 2_000_000, maxCost: 20 },
     };
-    expect(search(req(['(A∧B)→C', 'A', 'B'], 'C', generoso)).status).not.toBe('proof_found');
-    expect(search(req(['A↔(B∧C)', 'B', 'C'], 'A', generoso)).status).not.toBe('proof_found');
-
-    // Control positivo del control: con el antecedente ya disponible **sí** lo
-    // encuentra. Sin esta línea, la prueba de arriba pasaría igual con un
-    // buscador roto del todo.
-    expect(search(req(['(A∧B)→C', 'A∧B'], 'C')).status).toBe('proof_found');
+    expect(search(req(['(A∧B)→C', 'A'], 'C', generoso)).status).not.toBe('proof_found');
   });
 
   it('sigue sin afirmar inexistencia cuando no encuentra prueba (CALC-03)', () => {

@@ -43,7 +43,7 @@ import {
   runW3Generation,
 } from '../../packages/authoring-core/dist/index.js';
 import { tryParse } from '../../packages/logic-core/dist/index.js';
-import { BENCH04_L0_CASES } from '../../packages/proof-search/dist/index.js';
+import { BENCH04_L0_CASES, CAL09_FROZEN_MANIFEST } from '../../packages/proof-search/dist/index.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const CONTENIDO = join(RAIZ, 'content/unidad-deduccion-natural');
@@ -829,6 +829,17 @@ async function main() {
     {
       ranAt: AHORA,
       frozenOrder,
+      // Con qué calibración se midió la complejidad de este banco. Sin este
+      // campo, un banco medido con una calibración retirada es indistinguible
+      // de uno actual: los índices están en la escala vieja y nada lo dice
+      // (D-66). Es el mismo agujero que se cerró en W4 exigiendo que la muestra
+      // fuera de esta corrida de W3.
+      complexityCalibration: {
+        parameterId: CAL09_FROZEN_MANIFEST.calibrationId,
+        version: CAL09_FROZEN_MANIFEST.version,
+        sampleHash: CAL09_FROZEN_MANIFEST.sampleHash,
+        frozenAt: CAL09_FROZEN_MANIFEST.frozenAt,
+      },
       candidates: candidates.length,
       accepted: aceptados.length,
       rejected: rechazados.length,

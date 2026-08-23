@@ -1,5 +1,6 @@
 import {
   CAL09_FROZEN_MANIFEST,
+  type Cal09Version,
   assertComparable,
   complexityIndex,
   type StructuralComplexityProfile,
@@ -306,7 +307,7 @@ export interface FrozenExperimentalSelection {
   readonly proposalId: string;
   readonly sets: readonly ExperimentalSet[];
   readonly calendarCalibrationVersion: string;
-  readonly complexityCalibrationVersion: 'cal-09-v1';
+  readonly complexityCalibrationVersion: Cal09Version;
   readonly audit: SelectionAuditDecision;
   readonly evaluation: SelectionEvaluation;
 }

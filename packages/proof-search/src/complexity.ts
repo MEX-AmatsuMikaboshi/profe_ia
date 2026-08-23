@@ -208,9 +208,18 @@ export interface CalibratedFeature {
   readonly weight: number;
 }
 
+/**
+ * Versiones de CAL-09 que existen. **Conjunto cerrado**: una versión desconocida
+ * se rechaza en `assertCalibrationApplies()` en vez de aceptarse por ser una
+ * cadena. `cal-09-v1` se conserva porque los reactivos medidos bajo ella lo
+ * fueron con sus bandas; **las dos escalas no son comparables** (D-66).
+ */
+export const CAL09_VERSIONS = ['cal-09-v1', 'cal-09-v2'] as const;
+export type Cal09Version = (typeof CAL09_VERSIONS)[number];
+
 export interface ComplexityCalibrationManifest {
   readonly calibrationId: 'CAL-09';
-  readonly version: 'cal-09-v1';
+  readonly version: Cal09Version;
   readonly status: 'frozen';
   readonly frozenAt: string;
   readonly dataPolicy: 'no_participant_data';
@@ -385,6 +394,13 @@ export function assertComparable(
 export function calibrateComplexity(
   samples: readonly ComplexityCalibrationSample[],
   frozenAt: string,
+  /**
+   * Versión que se congela. **Obligatoria y sin valor por omisión**: una
+   * calibración nueva que heredara en silencio la versión anterior se
+   * confundiría con ella, y las escalas de dos versiones **no** son
+   * directamente comparables (D-66).
+   */
+  version: Cal09Version,
 ): ComplexityCalibrationManifest {
   assertCalibrationSample(samples);
   const vectors = samples.map((sample) => ({ sample, vector: complexityFeatureVector(sample.profile) }));
@@ -415,7 +431,7 @@ export function calibrateComplexity(
 
   const base = {
     calibrationId: 'CAL-09',
-    version: 'cal-09-v1',
+    version,
     status: 'frozen',
     frozenAt,
     dataPolicy: 'no_participant_data',
@@ -648,7 +664,7 @@ function assertCalibrationApplies(
 ): void {
   const invalid: string[] = [];
   if (calibration.calibrationId !== 'CAL-09') invalid.push('calibrationId');
-  if (calibration.version !== 'cal-09-v1') invalid.push('version');
+  if (!(CAL09_VERSIONS as readonly string[]).includes(calibration.version)) invalid.push('version');
   if (calibration.status !== 'frozen') invalid.push('status');
   if (calibration.dataPolicy !== 'no_participant_data') invalid.push('dataPolicy');
   if (calibration.method !== 'pairwise_ordinal_concordance_v1') invalid.push('method');
