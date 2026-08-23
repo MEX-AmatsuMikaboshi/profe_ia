@@ -62,6 +62,18 @@ interface CorridaW3 {
   readonly rejectionsByCode: Readonly<Record<string, readonly string[]>>;
   readonly criticIndependence: { readonly independent: boolean };
   readonly coverageGaps: readonly { readonly kcId: string; readonly parameterId: string }[];
+  readonly complexityCalibration: {
+    readonly parameterId: string;
+    readonly version: string;
+    readonly sampleHash: string;
+  };
+  readonly surfaceCensus: Readonly<Record<string, Readonly<Record<string, number>>>>;
+  readonly probesExemptFromRuleClosure: readonly string[];
+  readonly probeReservesNotGenerated: readonly {
+    readonly kcId: string;
+    readonly reserve: string;
+    readonly reason: string;
+  }[];
   readonly items: readonly W3ItemRecord[];
 }
 
@@ -310,60 +322,97 @@ const sondasDelBanco: readonly ProbeRuleClosureInput[] = publicados.map((item) =
 }));
 
 describe('clausura de reglas del banco publicado (D-65, G1)', () => {
-  it('FIJA EL DEFECTO DE HOY: 70 sondas exigen una regla que su fase no ha enseñado', () => {
-    // Esta prueba nace afirmando lo que hay que arreglar, no lo que se quiere.
-    // Es el mismo movimiento que la de KC13: fija el estado defectuoso para que
-    // no se olvide, y **se sustituye por la contraria** —`toEqual([])`— cuando
-    // se regenere el banco con plantillas que no importen reglas ajenas.
+  it('ninguna sonda exige una regla que su fase no haya enseñado', () => {
+    // **Esta prueba afirmaba el defecto y ahora afirma su ausencia**, que es el
+    // movimiento previsto cuando se regenera: hasta el banco del 2026-08-22
+    // exigía `expect(afectadas.size).toBe(70)`, con la causa en las cuatro
+    // plantillas de envoltura —`cond_meta` importaba `→I`, `conj_premisa` `∧E` y
+    // `disy_meta` `∨I`—. El rediseño de D-68 varía el núcleo del KC por
+    // estructura de los operandos, multiplicidad y dirección, y ninguno de esos
+    // ejes importa una regla ajena.
     //
-    // La causa es común y está en las plantillas de sonda, no en los reactivos:
-    // `sonda-cond_meta` envuelve la meta en un condicional y con ello mete `→I`
-    // (KC09); `sonda-conj_premisa` entierra una premisa en una conjunción y mete
-    // `∧E` (KC05); `sonda-disy_meta` mete `∨I` (KC07). Por eso no se parchean
-    // los setenta a mano.
+    // Que el número fuera 70 y ahora sea 0 es lo que demuestra que la
+    // regeneración arregló lo que dice arreglar. Si esta prueba pasara sin haber
+    // pasado antes por el 70, no probaría nada.
     const violaciones = probeRuleClosureViolations(sondasDelBanco, secuencia);
-    const afectadas = new Set(violaciones.map((v) => v.itemId));
-    expect(afectadas.size).toBe(70);
+    expect(violaciones).toEqual([]);
 
-    // Y lo que la guarda deja fuera queda contado: las sondas de los tres KC de
-    // fundamento, que no enseñan regla. Un recorte sin contar se lee como
-    // cobertura completa.
+    // Y lo que la guarda deja fuera sigue contado: las sondas de los cuatro KC
+    // que no enseñan regla —KC01, KC02, KC08 y KC18—. Un recorte sin contar se
+    // lee como cobertura completa.
     expect(probesExemptFromRuleClosure(sondasDelBanco)).toHaveLength(128);
-
-    // Y sale de las dos reservas que se administran antes de haber enseñado la
-    // secuencia entera. `retention` y `TRANSFER_MEASUREMENT` no tienen techo.
-    const porReserva: Record<string, number> = {};
-    for (const itemId of afectadas) {
-      const reserva = publicados.find((i) => i.candidateId === itemId)?.bankFunction ?? '?';
-      porReserva[reserva] = (porReserva[reserva] ?? 0) + 1;
-    }
-    expect(porReserva).toEqual({ probes_baseline: 14, probes_intervention: 56 });
   });
 
   it('la comprobación no pasa por vacío: mira sondas de verdad y todas las reservas', () => {
     // Sin esto, un banco sin sondas —o un `bankFunction` que dejara de casar con
-    // `Reserve`— daría cero violaciones y parecería un banco sano.
+    // `Reserve`— daría cero violaciones y parecería un banco sano. Es lo que
+    // sostiene la prueba de arriba ahora que su aserto es `[]`.
     const deMedicion = sondasDelBanco.filter((s) =>
       ['probes_baseline', 'probes_intervention', 'retention', 'TRANSFER_MEASUREMENT'].includes(
         s.reserve,
       ),
     );
-    expect(deMedicion.length).toBe(474);
+    expect(deMedicion.length).toBe(548);
     expect(deMedicion.every((s) => s.ruleIdsInCertificate.length > 0)).toBe(true);
+    // Y las sondas cuya clausura **sí** se juzga son mayoría: 548 menos las 128
+    // exentas. Sin esta línea, un catálogo que perdiera los `ruleId` dejaría
+    // todo el banco exento y la prueba de arriba pasaría por vacío.
+    expect(deMedicion.length - probesExemptFromRuleClosure(sondasDelBanco).length).toBe(420);
+  });
+
+  it('KC03 no tiene sondas primarias, y eso está declarado y contado', () => {
+    // No es un hueco: la regla de KC03 es `R`, que solo opera dentro de una
+    // subprueba, y toda regla que abre una subprueba se enseña después. Con el
+    // horizonte «hasta el KC medido inclusive» la única regla disponible es `R`,
+    // y con `R` sola la meta es siempre una premisa. La ausencia se publica en
+    // el informe en vez de dejarse notar por el conteo.
+    expect(corrida.probeReservesNotGenerated).toEqual([
+      expect.objectContaining({ kcId: 'KC03', reserve: 'probes_baseline' }),
+      expect.objectContaining({ kcId: 'KC03', reserve: 'probes_intervention' }),
+    ]);
+    for (const ausencia of corrida.probeReservesNotGenerated) {
+      expect(ausencia.reason.length).toBeGreaterThan(80);
+    }
+    // `sondasDelBanco` lleva el banco entero, así que hay que quedarse con las
+    // reservas de medición: los seis reactivos de enseñanza de KC03 siguen ahí y
+    // no son sondas.
+    const kc03 = sondasDelBanco.filter(
+      (s) => s.targetKcId === 'KC03' && MEASUREMENT_RESERVES.includes(s.reserve),
+    );
+    expect(new Set(kc03.map((s) => s.reserve))).toEqual(
+      new Set(['retention', 'TRANSFER_MEASUREMENT']),
+    );
+  });
+
+  it('las dos sondas de KC03 que quedan sí reiteran: miden lo que dicen medir', () => {
+    // La primera pareja escrita para el rediseño construía la meta de la
+    // subprueba con `∧I` y su certificado no tenía un solo `R`: eran sondas de
+    // reiteración que no medían reiteración —el mismo `incorrect_kc_label` que
+    // W4 encontró en `kc03-transf`—. `R` solo es forzosa cuando la conclusión de
+    // la subprueba **es** una fórmula accesible entera.
+    const kc03 = sondasDelBanco.filter(
+      (s) => s.targetKcId === 'KC03' && MEASUREMENT_RESERVES.includes(s.reserve),
+    );
+    expect(kc03.length).toBe(4);
+    for (const sonda of kc03) {
+      expect(sonda.ruleIdsInCertificate, `${sonda.itemId} no reitera`).toContain('R');
+    }
   });
 });
 
 describe('fidelidad de las reglas que nombran las pistas (D-67, G4)', () => {
-  it('FIJA EL DEFECTO DE HOY: 10 reactivos de KC16 mandan a ¬E donde va DNE', () => {
-    // `¬E` es «φ, ¬φ ⊢ ⊥» y no saca `A` de `¬¬A`: la pista enseñaba una
-    // aplicación falsa de la regla. La causa era una tabla que asignaba a la
-    // negación una sola regla de eliminación sin mirar si era simple o doble;
-    // está corregida en `premiseEntryRule()` y en el generador, y **el banco no
-    // se ha regenerado**, por eso sigue en 10.
+  it('ninguna pista nombra una regla que no corresponde a su enunciado', () => {
+    // **Afirmaba el defecto y ahora afirma su ausencia.** Hasta el banco del
+    // 2026-08-22 esta lista tenía los diez `kc16-*#2`: la pista mandaba a `¬E`
+    // desde `¬¬A`, y `¬E` es «φ, ¬φ ⊢ ⊥», que no saca `A` de `¬¬A`. No revelaba
+    // de más: enseñaba una aplicación falsa de la regla, que es peor, y el libro
+    // cerrado no tenía código para eso.
     //
     // La comprobación usa `hintNamesForeignRule()`, que es el mismo código que
     // la guarda: una prueba que reimplementara el criterio no probaría que el
-    // criterio aplicado sea ése. Se sustituye por `toEqual([])` al regenerar.
+    // criterio aplicado sea ése. Desde D-68 la guarda corre además **dentro** de
+    // `assertHintSet()`, así que un banco con este defecto ya no se puede
+    // publicar: los reactivos caerían con `hint_policy_violation`.
     const malas: string[] = [];
     for (const item of publicados) {
       const esperado = expectedHintRules(item.statement);
@@ -373,18 +422,7 @@ describe('fidelidad de las reglas que nombran las pistas (D-67, G4)', () => {
         }
       }
     }
-    expect(malas.sort()).toEqual([
-      'kc16-diag#2',
-      'kc16-guia#2',
-      'kc16-indep#2',
-      'kc16-recup#2',
-      'kc16-repos#2',
-      'kc16-retention-1#2',
-      'kc16-retention-2#2',
-      'kc16-transf#2',
-      'kc16-transfer_measurement-1#2',
-      'kc16-transfer_measurement-2#2',
-    ]);
+    expect(malas.sort()).toEqual([]);
   });
 
   it('esa comprobación no pasa por vacío: el resto del banco sí nombra la regla correcta', () => {
@@ -413,6 +451,13 @@ const superficieDe = (item: ReactivoPublicado) => ({
   premises: item.statement.premises,
   goal: item.statement.goal,
 });
+/** Las cuatro reservas de medición, para filtrar el banco entero. */
+const MEASUREMENT_RESERVES: readonly string[] = [
+  'probes_baseline',
+  'probes_intervention',
+  'retention',
+  'TRANSFER_MEASUREMENT',
+];
 const ENSENANZA_NO_TRANSFERENCIA = [
   'diagnostic',
   'guided_practice',
@@ -433,52 +478,62 @@ describe('control de superficie de §5.11 (D-67, G3)', () => {
     .filter((i) => ENSENANZA_NO_TRANSFERENCIA.includes(i.bankFunction))
     .map(superficieDe);
 
-  it('FIJA EL DEFECTO DE HOY: 30 sondas de transferencia repiten las premisas practicadas', () => {
-    // §5.11 exige que una actividad de transferencia aplique el KC «en una forma
-    // superficial **suficientemente distinta de las prácticas inmediatas**». Estas
-    // treinta llevan las mismas premisas con las mismas letras y solo envuelven la
-    // meta: la plantilla `sonda-conj_meta`. Se invierte al regenerar.
+  it('ninguna sonda de transferencia repite las premisas practicadas', () => {
+    // **Afirmaba el defecto y ahora afirma su ausencia.** Hasta el banco del
+    // 2026-08-22 eran treinta `TRANSFER_MEASUREMENT` con las mismas premisas y
+    // las mismas letras que un reactivo ya practicado, porque `sonda-conj_meta`
+    // envolvía la **meta** y dejaba las premisas intactas. §5.11 exige de
+    // transferencia «una forma superficial suficientemente distinta de las
+    // prácticas inmediatas».
     const hallazgos = surfaceControlViolations(sondas, ensenanza);
-    expect(new Set(hallazgos.map((h) => h.itemId)).size).toBe(30);
-    expect(new Set(hallazgos.map((h) => h.reserve))).toEqual(new Set(['TRANSFER_MEASUREMENT']));
+    expect(hallazgos).toEqual([]);
   });
 
-  it('censa el solapamiento que NO declara violación, en vez de callarlo', () => {
+  it('el censo dice que el solapamiento desapareció, no solo que no hay violación', () => {
     // Fuera de transferencia ninguna autoridad fija un umbral de superficie, así
-    // que compartir premisas se cuenta y no se rechaza. El número importa: es lo
-    // que el propietario necesita para decidir si hace falta ese umbral, y es lo
-    // que impide que el control parezca sano sobre un banco que no lo es.
+    // que compartir premisas se cuenta y no se rechaza. Por eso el censo es la
+    // medida que importa: antes decía `premises_literal: 55` y
+    // `premises_renaming: 99` en `probes_intervention` y `premises_literal: 30`
+    // en `retention`; ahora **toda** sonda del banco es superficialmente
+    // distinta de la enseñanza de su KC.
     const censo = surfaceOverlapCensus(sondas, ensenanza);
-    expect(censo.probes_baseline).toMatchObject({ distinct: 224, premises_literal: 0 });
-    expect(censo.probes_intervention).toMatchObject({ premises_literal: 55, premises_renaming: 99 });
-    expect(censo.retention).toMatchObject({ premises_literal: 30, distinct: 4 });
-    // Y ninguna sonda del banco es el reactivo de enseñanza renombrado entero:
-    // esa regla sí vale para toda reserva, y hoy se cumple.
+    expect(censo.probes_baseline).toEqual({
+      statement_renaming: 0,
+      premises_literal: 0,
+      premises_renaming: 0,
+      distinct: 238,
+    });
+    expect(censo.probes_intervention).toEqual({
+      statement_renaming: 0,
+      premises_literal: 0,
+      premises_renaming: 0,
+      distinct: 238,
+    });
+    expect(censo.retention).toMatchObject({ premises_literal: 0, distinct: 36 });
+    expect(censo.TRANSFER_MEASUREMENT).toMatchObject({ premises_literal: 0, distinct: 36 });
     for (const fila of Object.values(censo)) expect(fila.statement_renaming).toBe(0);
   });
 
-  it('la envoltura de premisa sí cambia la superficie, y por eso `probes_baseline` está limpia', () => {
-    // Contraste útil para el rediseño: `sonda-conj_premisa` entierra la premisa
-    // en una conjunción y el alumno deja de leer lo mismo. Las otras tres
-    // plantillas envuelven la **meta** y dejan las premisas intactas.
-    expect(surfaceOverlapCensus(sondas, ensenanza).probes_baseline?.distinct).toBe(224);
+  it('el censo del informe es el que produjo W3, no uno recalculado aquí', () => {
+    // Si la prueba recalculara el censo y no lo contrastara con el publicado, un
+    // informe que dejara de escribirlo —o que escribiera otro— pasaría sin que
+    // nadie lo viera, y el censo es justamente lo que demuestra que el control
+    // operó durante la corrida y no solo en esta prueba.
+    expect(corrida.surfaceCensus).toEqual(surfaceOverlapCensus(sondas, ensenanza));
   });
 });
 
 describe('la calibración con la que se midió el banco (D-66)', () => {
-  it('FIJA EL DEFECTO DE HOY: el banco se midió con cal-09-v1 y la vigente es cal-09-v2', () => {
-    // Al aplicar el encadenamiento hacia atrás del buscador (D-66) la
-    // calibración se re-congeló, y **el banco no se ha regenerado**: sus
-    // `complexityIndex` están en la escala vieja.
+  it('el banco está medido con la calibración vigente, y lo declara', () => {
+    // **Afirmaba el defecto y ahora afirma su ausencia.** Hasta el banco del
+    // 2026-08-22 eran 561 de 571 índices en la escala retirada `cal-09-v1`: la
+    // re-congelación de D-66 los dejó obsoletos y el informe no registraba con
+    // qué calibración se había medido, así que un banco viejo y uno nuevo eran
+    // indistinguibles.
     //
-    // Lo que esta prueba impide es que eso pase inadvertido. El informe de W3 no
-    // registraba con qué calibración se midió —el runner ya lo escribe, pero
-    // este artefacto es anterior—, así que un banco viejo y uno nuevo eran
-    // indistinguibles. Es el mismo agujero que se cerró en W4 exigiendo que la
-    // muestra fuera de esta corrida de W3.
-    //
-    // Se sustituye por la contraria —índices que coinciden y `complexityCalibration`
-    // declarando `cal-09-v2`— cuando se regenere.
+    // Ahora se comprueban las dos cosas a la vez —el índice recomputado coincide
+    // **y** el informe declara la versión—, porque cada una sin la otra se puede
+    // satisfacer sin ser cierta.
     const desactualizados = publicados.filter((item) => {
       const almacenado = (item as unknown as { complexityIndex: number }).complexityIndex;
       const recomputado = complexityIndex(
@@ -488,7 +543,12 @@ describe('la calibración con la que se midió el banco (D-66)', () => {
       return Math.abs(almacenado - recomputado) > 1e-6;
     });
     expect(CAL09_FROZEN_MANIFEST.version).toBe('cal-09-v2');
-    expect(desactualizados).toHaveLength(561);
+    expect(desactualizados).toEqual([]);
+    expect(corrida.complexityCalibration).toMatchObject({
+      parameterId: 'CAL-09',
+      version: 'cal-09-v2',
+      sampleHash: CAL09_FROZEN_MANIFEST.sampleHash,
+    });
   });
 
   it('pero ningún reactivo cambia de estrato, así que las aceptaciones de W3 sobreviven', () => {
@@ -503,5 +563,41 @@ describe('la calibración con la que se midió el banco (D-66)', () => {
       return classifyComplexity(i.complexity, CAL09_FROZEN_MANIFEST) !== i.measuredComplexityTier;
     });
     expect(cambianDeEstrato).toEqual([]);
+  });
+});
+
+describe('los artefactos de W4 frente al banco vigente (D-68)', () => {
+  const muestraW4 = leerJsonConCabecera<{
+    readonly generatedAt: string;
+    readonly population: readonly { readonly artifactId: string }[];
+  }>('audits/w4-preaudit-sample.yaml');
+
+  it('FIJA EL DESAJUSTE DE HOY: la muestra de W4 es del banco anterior', () => {
+    // El rediseño de las plantillas de sonda (D-68) regeneró W3, y la muestra de
+    // auditoría previa se sacó del banco de 571 reactivos del 2026-08-22. Los
+    // juicios de defecto que hay sobre ella son trabajo humano y **no se
+    // reciclan**: la auditoría se repite sobre el banco nuevo, en su turno del
+    // orden de trabajo —después de la selección A/B/C—.
+    //
+    // Lo que esta prueba impide es que ese desajuste pase inadvertido. Sin ella,
+    // `w4-preaudit-sample.yaml` seguiría describiendo una población que ya no
+    // existe y nada lo diría; es el mismo agujero que D-66 cerró exigiendo que
+    // el banco registrara su calibración.
+    //
+    // **Se sustituye por la contraria —`toEqual([])` y poblaciones iguales—
+    // cuando se vuelva a correr W4.**
+    const vivos = new Set(publicados.map((i) => i.candidateId));
+    const desaparecidos = muestraW4.population
+      .map((x) => x.artifactId)
+      .filter((id) => !vivos.has(id));
+    expect(desaparecidos.length).toBe(14);
+    expect(muestraW4.population.length).not.toBe(publicados.length);
+  });
+
+  it('esa comprobación no pasa por vacío: la muestra existe y tiene población', () => {
+    // Un artefacto ausente o vacío daría cero desaparecidos y se leería como
+    // muestra al día.
+    expect(muestraW4.population.length).toBeGreaterThan(500);
+    expect(publicados.length).toBeGreaterThan(500);
   });
 });

@@ -81,22 +81,57 @@ const MACROS = [
  * que se declare. Sin la marca, el filtro los rechazaría —con razón— como
  * triviales por accidente.
  *
- * Regla de declaración de la complejidad objetivo, **fijada antes de medir** y
- * aplicada igual a todas las formas:
+ * ── Regla de declaración de la complejidad objetivo (v2, D-68) ─────────────
  *
- *   `baja`  — una sola aplicación de regla sobre las premisas, sin subprueba;
- *   `media` — dos o tres aplicaciones, **o** exactamente una subprueba;
- *   `alta`  — más de una subprueba, o más de tres aplicaciones.
+ * Se fija **antes de medir**, se aplica igual a todas las formas y se deriva
+ * del **manifiesto CAL-09 congelado** —que es dato público del proyecto—, no de
+ * lo que midieron estos reactivos. Reetiquetar un reactivo con lo que midió
+ * CAL-09 convertiría el objetivo en un espejo de la medida; corregir la *regla*
+ * cuando la escala cambia es lo contrario, y ya se hizo una vez.
  *
- * La primera corrida declaraba un objetivo por KC, no por forma, y **60 de 108
- * reactivos salieron con `complexity_target_mismatch` — todos medidos por
- * encima de lo declarado, ninguno por debajo**. Esa asimetría es lo que dice
- * que lo equivocado era la regla y no los reactivos uno a uno: la banda `baja`
- * de `cal-09-v1` ([0, 14.004]) es mucho más estrecha que «uno o dos pasos».
- * La regla se corrige **como regla** y se vuelve a correr; los desajustes que
- * queden se rechazan y se cuentan. Reetiquetar cada reactivo con lo que midió
- * CAL-09 convertiría el objetivo en un espejo de la medida, que es exactamente
- * lo que el conjunto dorado prohíbe.
+ * **Por qué cambia.** `cal-09-v2` (D-66) pondera doce rasgos. Los cinco de más
+ * peso son `proofLength` (52), `connectivesInStatement` (49), `costExplored`
+ * (49), `workUnitsLog2` (46) y `structuralDistance` (39). **Tres de esos cinco
+ * dependen de la búsqueda**, que Rol C no ejecuta: por eso la declaración es
+ * aproximada por construcción y por eso existe `complexity_target_mismatch`.
+ * La regla v1 contaba sólo aplicaciones de regla e ignoraba el enunciado, que
+ * pesa casi tanto como la longitud de la prueba; con la escala v2 fallaba en
+ * bloque.
+ *
+ * Sean `k` las aplicaciones de regla previstas (sin `PR` ni `AS`), `s` las
+ * subpruebas, `d` la profundidad máxima de subprueba, `c` los conectivos del
+ * enunciado —cada `¬` cuenta; `⊥` no, que es el átomo distinguido— y `n` el
+ * número de premisas.
+ *
+ *   `alta`  — `d ≥ 2`; o `k ≥ 3` y `c ≥ 3` (haya subprueba o no); o la
+ *             derivación prevista usa `IP` o `X` con `c ≥ 2`.
+ *   `baja`  — `k = 1`, `s = 0` y `c + n ≤ 4`.
+ *   `media` — el resto.
+ *
+ * El mecanismo detrás de cada cláusula:
+ *
+ * - Con `k = 1` los cinco rasgos de proceso valen su mínimo y el índice no
+ *   llega a la banda `alta`; lo que decide `baja` frente a `media` es el tamaño
+ *   del enunciado más el número de premisas.
+ * - Cualquier subprueba pone `proofLength ≥ 3`, `distinctRuleCount ≥ 2`,
+ *   `subproofCount ≥ 1` y la descarga a 1: el suelo del índice sube a ~21, que
+ *   es `media`. **Pero el suelo no basta para llegar a `alta`.** Con `k = 2`
+ *   —una subprueba cuyo interior es sólo `R`— la prueba está en su longitud
+ *   mínima, y `proofLength` es el rasgo de más peso (52 de 349): el enunciado
+ *   solo no la levanta. Lo destapó `A ⊢ (B∧C)→A`, que con tres conectivos midió
+ *   `media`. Por eso la cláusula de `alta` pide `k ≥ 3` y no «hay subprueba».
+ * - `IP` y `X` hacen que el buscador explore alternativas: suben `costExplored`
+ *   y `workUnitsLog2`, que juntos pesan 95 de 349.
+ *
+ * **Dos zonas de borde que las plantillas no usan**, porque ahí decide la
+ * distancia estructural o el coste explorado, que son de la búsqueda:
+ *
+ *   · `k = 1`, `s = 0`, `c + n = 5` — cae en `baja` o `media` según el caso;
+ *   · `s = 1` con `c ≤ 2` y sin `IP` — cae en `media` o `alta` según el caso.
+ *
+ * Evitarlas no es maquillar la medida: es elegir contenido cuya declaración sea
+ * decidible a priori. Lo que sigue prohibido es cambiar la etiqueta de un
+ * reactivo para que cuadre con lo que se midió.
  */
 const PLANTILLAS = {
   KC01: { base: [['(p∧q)∧r'], 'p∧(q∧r)', 'alta'], transfer: [['p∧(q∧r)'], '(r∧q)∧p', 'alta'] },
@@ -117,7 +152,10 @@ const PLANTILLAS = {
   // Base y transferencia rehechas: las anteriores coincidían con ejercicios del
   // propio libro (corpus-ej-04 y corpus-ej-09), y el control de duplicación las
   // rechazó. No es un falso positivo: reproducían el ejercicio del corpus.
-  KC09: { base: [['(p→q)∧(q→r)'], 'p→r', 'alta'], transfer: [['p→q'], '(p∧r)→q', 'media'] },
+  // `transfer` pasa de `media` a `alta` por la regla v2: es una subprueba con
+  // tres conectivos. No es un reetiquetado del reactivo —la forma no cambia—,
+  // sino la regla nueva aplicada a la forma de siempre.
+  KC09: { base: [['(p→q)∧(q→r)'], 'p→r', 'alta'], transfer: [['p→q'], '(p∧r)→q', 'alta'] },
   KC10: {
     base: [['p', '¬p'], '⊥', 'baja'],
     transfer: [['p∧q', '¬q'], '⊥', 'media'],
@@ -135,14 +173,17 @@ const PLANTILLAS = {
   // duplicación; con `∨E` arreglado (D-56) el control la vio.
   KC13: { base: [['p∨q', 'p→r', 'q→r'], 'r', 'alta'], transfer: [['(p∨q)∧r'], '(p∧r)∨(q∧r)', 'alta'] },
   // Base rehecha: la anterior era el ejercicio corpus-ej-10 del libro.
-  KC14: { base: [['p', 'q'], 'p↔q', 'alta'], transfer: [['p→q', 'q→p'], 'p↔q', 'alta'] },
+  // `base` baja de `alta` a `media`: dos subpruebas **hermanas** (`d = 1`) con
+  // un solo conectivo. La profundidad, no la cantidad, es lo que dispara `alta`.
+  KC14: { base: [['p', 'q'], 'p↔q', 'media'], transfer: [['p→q', 'q→p'], 'p↔q', 'alta'] },
   KC15: { base: [['p↔q', 'p'], 'q', 'baja'], transfer: [['p↔q', 'q'], 'p', 'baja'] },
   KC16: { base: [['¬¬p'], 'p', 'baja'], transfer: [['¬¬(p∧q)'], 'q', 'media'] },
   KC17: { base: [['¬p→q', '¬p→¬q'], 'p', 'alta'], transfer: [['¬p→p'], 'p', 'alta'] },
   // Transferencia rehecha: `(p∧q)→r, p ⊢ q→r` es indemostrable para el buscador
   // de hoy, y no por presupuesto: no encadena `→E` sintetizando un antecedente
   // compuesto. Queda registrado como hueco del buscador, no como plantilla mala.
-  KC18: { base: [['p→q', 'q→r', 'p'], 'r∧q', 'media'], transfer: [['(p→q)∧p'], 'q∨r', 'alta'] },
+  // `base` sube a `alta`: tres aplicaciones encadenadas con tres conectivos.
+  KC18: { base: [['p→q', 'q→r', 'p'], 'r∧q', 'alta'], transfer: [['(p→q)∧p'], 'q∨r', 'alta'] },
 };
 
 /**
@@ -182,73 +223,246 @@ const CARPETA = {
 };
 
 /**
- * Envolturas de las sondas: el **núcleo del KC embebido en cuatro superficies
- * distintas**. No son el reactivo de enseñanza con otros nombres —renombrar
- * átomos no crea forma nueva (§7.8)— sino el mismo KC alcanzado por una ruta de
- * prueba distinta, que es lo que §5.11 pide para medir sin reutilizar.
+ * Plantillas de sonda, una por reserva de medición y por KC (**D-68**).
  *
- * Hay exactamente cuatro porque hay cuatro reservas de medición y
- * `collisionProhibited()` **prohíbe la colisión entre dos reservas de medición
- * distintas**: dos sondas de reservas distintas no pueden ser isomorfas. Dentro
- * de una misma reserva sí pueden serlo —son una familia, formas paralelas del
- * mismo problema, que es justo lo que una serie SCED necesita para medir varias
- * veces sin gastar material nuevo cada vez—.
+ * ── Qué sustituyen, y por qué ──────────────────────────────────────────────
+ *
+ * Hasta la corrida del 2026-08-22 las sondas eran cuatro **envolturas** que
+ * rodeaban el núcleo del KC: meter la premisa en una conjunción, condicionar la
+ * meta, disyuntar la meta, conjuntar la meta. Tenía dos defectos con la misma
+ * causa, y los dos los midieron guardas escritas después:
+ *
+ * 1. **La envoltura importa la regla de otro KC** (D-65). `cond_meta` mete `→I`
+ *    (KC09), `conj_premisa` mete `∧E` (KC05) y `disy_meta` mete `∨I` (KC07).
+ *    Setenta sondas exigían así una regla que su fase todavía no había
+ *    enseñado: un fallo del alumno ya no distinguía el KC medido de la regla
+ *    ajena, y la sonda dejaba de medir lo que decía medir.
+ * 2. **Envolver la meta deja las premisas intactas** (D-67). Treinta sondas de
+ *    `TRANSFER_MEASUREMENT` llevaban las mismas fórmulas con las mismas letras
+ *    que un reactivo ya practicado, y §5.11 exige de transferencia «una forma
+ *    superficial suficientemente distinta de las prácticas inmediatas».
+ *
+ * ── Los tres ejes que las sustituyen ───────────────────────────────────────
+ *
+ * En vez de rodear el núcleo, se **varía el núcleo mismo** por tres ejes que no
+ * importan ninguna regla ajena, así que resuelven a la vez la clausura de
+ * reglas y el control de superficie:
+ *
+ *   · **estructura de los operandos** — la regla objetivo se aplica sobre
+ *     fórmulas compuestas en vez de sobre letras;
+ *   · **multiplicidad de la regla objetivo** — se aplica dos o tres veces
+ *     encadenadas en vez de una;
+ *   · **dirección u operando elegido** — se elige el otro conyunto, el otro
+ *     disyunto o el otro sentido del bicondicional.
+ *
+ * Cada forma se sitúa además fuera de las dos zonas de borde de la regla de
+ * complejidad de arriba, y su enunciado es superficialmente distinto de los de
+ * enseñanza de su KC —lo comprueba `assertSurfaceControl()` dentro de W3—.
+ *
+ * ── KC03 no tiene sonda de línea base ni de intervención ───────────────────
+ *
+ * Y **no es un olvido**: es un imposible que conviene dejar escrito. La regla de
+ * KC03 es la reiteración `R`, que sólo sirve dentro de una subprueba, y toda
+ * regla que abre una subprueba —`→I`, `¬I`, `↔I`, `∨E`, `IP`— ocupa una
+ * posición **posterior** en la secuencia de enseñanza congelada. El horizonte
+ * de `probes_baseline` y `probes_intervention` es «hasta el KC medido
+ * inclusive», así que la única regla disponible es `R`, y con `R` sola toda
+ * derivación termina citando una premisa: `goal_trivial`.
+ *
+ * Consecuencia, declarada y no tapada: KC03 se mide en `retention` y en
+ * `TRANSFER_MEASUREMENT`, que no tienen techo de reglas, y **no** en las dos
+ * fases primarias del SCED. El informe de la corrida lo registra en
+ * `probeReservesNotGenerated`. Si eso resultara inaceptable para el diseño
+ * experimental, lo que hay que revisar es si KC03 puede ser KC objetivo de
+ * A/B/C (`T-H5-12`), no la guarda.
  */
-const ENVOLTURAS = {
-  // Añade una eliminación por delante: la premisa llega dentro de una conjunción.
-  conj_premisa: (premises, goal, w) => [[`(${premises[0]})∧${w}`, ...premises.slice(1)], goal],
-  // Añade una subprueba: la meta pasa a ser condicional.
-  cond_meta: (premises, goal, w) => [premises, `${w}→(${goal})`],
-  // Añade una introducción de disyunción sobre la meta.
-  disy_meta: (premises, goal, w) => [premises, `(${goal})∨${w}`],
-  // Añade una introducción de conjunción: hay que conservar además una premisa.
-  conj_meta: (premises, goal) => [premises, `(${goal})∧(${premises[0]})`],
+const SONDAS = {
+  KC01: {
+    probes_baseline: [['(p∧q)∧(r∧s)'], 'q∧r', 'alta'],
+    probes_intervention: [['p∧(q∧(r∧s))'], '(p∧q)∧s', 'alta'],
+    retention: [['(p∧q)∧r', 's'], '(r∧s)∧q', 'alta'],
+    TRANSFER_MEASUREMENT: [['p∧q', 'r∧s'], '(p∧r)∧(q∧s)', 'alta'],
+  },
+  KC02: {
+    // `p→q, q→r ⊢ p→r` era el silogismo hipotético, y está en el libro: el
+    // control de duplicación lo rechazó. La forma de ahora descarga un supuesto
+    // **compuesto** que no se usa, que es lectura de subprueba pura.
+    probes_baseline: [['p'], '(q∧r)→p', 'media'],
+    probes_intervention: [['(p∧q)∧r'], 's→(q∧p)', 'alta'],
+    retention: [['p'], 'q→(r→p)', 'alta'],
+    TRANSFER_MEASUREMENT: [['p→(q∧r)'], 'p→r', 'alta'],
+  },
+  // Sin `probes_baseline` ni `probes_intervention`: ver arriba.
+  //
+  // Y las dos que quedan **fuerzan la reiteración**, que no es un detalle de
+  // estilo. Las primeras que se escribieron aquí —`p→q, r ⊢ p→(q∧r)` y
+  // `p∧q, r ⊢ s→(p∧r)`— construían la meta de la subprueba con `∧I` y su
+  // certificado no contenía un solo `R`: eran sondas de KC03 que no medían
+  // reiteración, exactamente el defecto `incorrect_kc_label` que W4 encontró en
+  // `kc03-transf`. `R` sólo es forzosa cuando la conclusión de la subprueba
+  // **es** una fórmula accesible entera; ése es el eje que varían las dos, por
+  // cuál de las líneas accesibles hay que reiterar.
+  KC03: {
+    retention: [['p→q', 'r'], 's→(p→q)', 'media'],
+    TRANSFER_MEASUREMENT: [['p∧q', 'r'], '(r∧s)→(p∧q)', 'media'],
+  },
+  KC04: {
+    probes_baseline: [['¬p', 'q∨r'], '(q∨r)∧¬p', 'media'],
+    probes_intervention: [['p→q', 'r∨s'], '(p→q)∧(r∨s)', 'media'],
+    retention: [['p→q', 'r∨s'], '((p→q)∧(r∨s))∧(r∨s)', 'media'],
+    TRANSFER_MEASUREMENT: [['p∨q', 'r', 's'], '((p∨q)∧r)∧s', 'media'],
+  },
+  KC05: {
+    probes_baseline: [['p∧(q∧r)'], 'q∧r', 'baja'],
+    probes_intervention: [['(p→q)∧r'], 'p→q', 'baja'],
+    retention: [['p∧(q∧r)'], 'q∧p', 'alta'],
+    TRANSFER_MEASUREMENT: [['(p∧q)∧(r∧s)'], 'p∧s', 'alta'],
+  },
+  KC06: {
+    probes_baseline: [['(p∧q)→(r∨s)', 'p∧q'], 'r∨s', 'media'],
+    probes_intervention: [['(p→q)→(r∧s)', 'p→q'], 'r∧s', 'media'],
+    retention: [['p→q', 'q→r', 'r→s', 'p'], 's', 'alta'],
+    TRANSFER_MEASUREMENT: [['p→q', 'q→(r∧s)', 'p'], 'r∧s', 'media'],
+  },
+  KC07: {
+    probes_baseline: [['p→q', 'r∧s'], '(r∧s)∨(p→q)', 'media'],
+    probes_intervention: [['¬p∧q'], '¬p∨(r↔s)', 'media'],
+    retention: [['p→q', 'r'], '((p→q)∨s)∨r', 'media'],
+    TRANSFER_MEASUREMENT: [['p∧(q∧r)'], '(q∨s)∧p', 'alta'],
+  },
+  KC08: {
+    probes_baseline: [['p∧q'], '(r∨s)→p', 'alta'],
+    probes_intervention: [['p→q', 'p'], '(r∧s)→q', 'alta'],
+    retention: [['p∧q'], 'r→(s→(p∧r))', 'alta'],
+    TRANSFER_MEASUREMENT: [['p→q', 'q→r'], 'p→(q∧r)', 'alta'],
+  },
+  KC09: {
+    probes_baseline: [['p', 'q→r'], 'q→(r∧p)', 'alta'],
+    // Exportación e importación —`(p∧q)→r ⊢ p→(q→r)` y su recíproca— son
+    // ejercicios del libro y el control de duplicación las rechazó. Se cambia
+    // el eje: en vez de mover el paréntesis, se **encadena** dentro del supuesto.
+    probes_intervention: [['p→q', 'r'], '(r→p)→q', 'alta'],
+    retention: [['p∧q'], 'r→(s→(p∧q))', 'alta'],
+    TRANSFER_MEASUREMENT: [['p→(q→r)', 'q'], 'p→r', 'alta'],
+  },
+  KC10: {
+    probes_baseline: [['p', 'q', '¬q'], '⊥', 'baja'],
+    probes_intervention: [['(p∨q)→r', '¬((p∨q)→r)'], '⊥', 'media'],
+    retention: [['(p∧q)∧r', '¬q'], '⊥', 'alta'],
+    TRANSFER_MEASUREMENT: [['p→q', 'p', '¬q'], '⊥', 'media'],
+  },
+  KC11: {
+    probes_baseline: [['p→q', '¬q'], '¬p', 'alta'],
+    probes_intervention: [['p→(q∨r)', '¬(q∨r)'], '¬p', 'alta'],
+    retention: [['p→q', 'q→r', '¬r'], '¬p', 'alta'],
+    TRANSFER_MEASUREMENT: [['p→q', 'r→¬q', 'r'], '¬p', 'alta'],
+  },
+  KC12: {
+    probes_baseline: [['p→q', 'p', '¬q'], 'r', 'alta'],
+    probes_intervention: [['p∨q', '¬(p∨q)'], 'r∧s', 'alta'],
+    retention: [['p∧q', '¬q'], 'r∧s', 'alta'],
+    TRANSFER_MEASUREMENT: [['p∧¬p', 'q'], 'r∨s', 'alta'],
+  },
+  KC13: {
+    probes_baseline: [['p∨q'], '(q∨r)∨p', 'alta'],
+    // `(p∧q)∨(p∧r) ⊢ p` es el ejercicio corpus-ej-05 del libro. Se conserva el
+    // eje —operandos compuestos en las dos ramas— cambiando qué se extrae.
+    probes_intervention: [['(p∧q)∨(r∧q)'], 'q∨s', 'alta'],
+    retention: [['p∨q', 'p→r', 'q→r', 'r→s'], 's', 'alta'],
+    TRANSFER_MEASUREMENT: [['p∨(q∧r)'], 'p∨q', 'alta'],
+  },
+  KC14: {
+    probes_baseline: [['(p∨r)→q', 'q→(p∨r)'], 'q↔(p∨r)', 'alta'],
+    probes_intervention: [['(p∧r)→q', 'q→(p∧r)'], '(p∧r)↔q', 'alta'],
+    retention: [['p', 'q', 'r'], '(p↔q)∧(q↔r)', 'alta'],
+    TRANSFER_MEASUREMENT: [['p↔(q∧r)'], '(q∧r)↔p', 'alta'],
+  },
+  KC15: {
+    probes_baseline: [['(p∨s)↔(q∧r)', 'p∨s'], 'q∧r', 'media'],
+    probes_intervention: [['(p∨q)↔(r→s)', 'p∨q'], 'r→s', 'media'],
+    retention: [['p↔q', 'q↔r', 'p'], 'r', 'media'],
+    TRANSFER_MEASUREMENT: [['p↔q', 'p∧r'], 'q∧r', 'alta'],
+  },
+  KC16: {
+    probes_baseline: [['¬¬p', 'q'], 'p∧q', 'media'],
+    probes_intervention: [['¬¬(p→(q∧r))'], 'p→(q∧r)', 'media'],
+    retention: [['¬¬p', '¬¬q'], 'p∧q', 'alta'],
+    TRANSFER_MEASUREMENT: [['¬¬(p∨q)', '¬p'], 'q', 'alta'],
+  },
+  KC17: {
+    probes_baseline: [['¬p→q', '¬q'], 'p', 'alta'],
+    probes_intervention: [['¬(p∧q)→(p∧q)'], 'p∧q', 'alta'],
+    retention: [['¬p→(q∧¬q)'], 'p', 'alta'],
+    TRANSFER_MEASUREMENT: [['¬p→q', '¬p→¬q', 'r'], 'p∧r', 'alta'],
+  },
+  KC18: {
+    probes_baseline: [['p→(q→r)', 'p∧q'], 'r', 'alta'],
+    probes_intervention: [['(p∧q)→r', 'p', 'q'], 'r∨s', 'alta'],
+    retention: [['p→q', 'q→r', 'r→s', 'p'], 's∧q', 'alta'],
+    TRANSFER_MEASUREMENT: [['(p→q)∧(q→r)', 'p'], 'r∧p', 'alta'],
+  },
 };
 
 /**
- * Reserva de medición ← envoltura, y cuántas variantes de átomos por reserva.
- * Las primarias (`probes_baseline` y `probes_intervention`) llevan seis cada
- * una porque el calendario nominal pide 57 por conjunto y con reserva 69: con
- * 18 KC salen 216 primarias, por encima de las 207 de los tres conjuntos.
+ * Cuántas variantes de átomos por reserva de medición.
+ *
+ * Las primarias llevan catorce cada una porque el calendario nominal pide 57
+ * sondas por conjunto y con la reserva del 20 % son 69: con 18 KC salen 216
+ * primarias por reserva, por encima de las 207 de los tres conjuntos.
+ *
+ * Dentro de **una misma** reserva las variantes son isomorfas entre sí y eso no
+ * está prohibido (§7.7: sólo lo está entre reservas distintas cuando una es de
+ * medición). Son una familia —§7.8 dice con todas sus letras que renombrar
+ * átomos no crea familia nueva—, y una serie SCED mide el mismo KC muchas veces:
+ * formas paralelas del mismo problema es justo lo que hace falta para no
+ * reutilizar material entre oportunidades. Lo que **no** se repite son las
+ * cuádruplas de átomos: dos sondas con los mismos átomos y la misma estructura
+ * serían el mismo reactivo con otro id, y el conteo por id no lo distinguiría.
  */
-const SONDAS = [
-  { reserva: 'probes_baseline', envoltura: 'conj_premisa', variantes: 14 },
-  { reserva: 'probes_intervention', envoltura: 'cond_meta', variantes: 14 },
-  { reserva: 'retention', envoltura: 'disy_meta', variantes: 2 },
-  { reserva: 'TRANSFER_MEASUREMENT', envoltura: 'conj_meta', variantes: 2 },
-];
+const VARIANTES_POR_RESERVA = {
+  probes_baseline: 14,
+  probes_intervention: 14,
+  retention: 2,
+  TRANSFER_MEASUREMENT: 2,
+};
 
-/** Ternas de átomos para las variantes de sonda, más la letra de la envoltura. */
+/**
+ * Cuádruplas de átomos para las variantes de sonda.
+ *
+ * Cuatro y no tres porque el eje de estructura de los operandos necesita un
+ * cuarto hueco (`(p→q)∧(r∨s)`). Se evitan `I` y `X`: `X` es el id de una regla
+ * del cálculo y leer «X» como átomo en una traza es una confusión gratuita.
+ */
 const ATOMOS_SONDA = [
-  [['A', 'B', 'C'], 'W'],
-  [['D', 'E', 'F'], 'Y'],
-  [['G', 'H', 'J'], 'Z'],
-  [['K', 'L', 'M'], 'W'],
-  [['N', 'O', 'S'], 'Y'],
-  [['T', 'U', 'V'], 'Z'],
-  [['P', 'Q', 'R'], 'W'],
-  [['B', 'C', 'D'], 'Y'],
-  [['E', 'F', 'G'], 'Z'],
-  [['H', 'J', 'K'], 'W'],
-  [['L', 'M', 'N'], 'Y'],
-  [['O', 'P', 'Q'], 'Z'],
-  [['R', 'S', 'T'], 'W'],
-  [['U', 'V', 'A'], 'Y'],
+  ['A', 'B', 'C', 'D'],
+  ['E', 'F', 'G', 'H'],
+  ['J', 'K', 'L', 'M'],
+  ['N', 'O', 'P', 'Q'],
+  ['R', 'S', 'T', 'U'],
+  ['V', 'W', 'Y', 'Z'],
+  ['A', 'C', 'E', 'G'],
+  ['B', 'D', 'F', 'H'],
+  ['J', 'L', 'N', 'P'],
+  ['K', 'M', 'O', 'Q'],
+  ['R', 'T', 'V', 'Y'],
+  ['S', 'U', 'W', 'Z'],
+  ['A', 'D', 'G', 'K'],
+  ['B', 'E', 'H', 'L'],
 ];
 
 /**
- * Ocho formas paralelas por reserva primaria, no una sola. Dentro de **una
- * misma** reserva la colisión no está prohibida (§7.7: solo lo está entre
- * reservas distintas cuando una es de medición), y una serie SCED mide el mismo
- * KC muchas veces: formas paralelas del mismo problema es exactamente lo que
- * hace falta para no reutilizar material entre oportunidades. Lo que **no** se
- * repite son las ternas de átomos: dos sondas con los mismos átomos y la misma
- * estructura serían el mismo reactivo con otro id, y eso el conteo por id no lo
- * distinguiría.
+ * Sustituye los huecos `p`, `q`, `r`, `s` por átomos concretos.
+ *
+ * Las formas de enseñanza sólo usan tres huecos y llegan aquí con ternas; el
+ * cuarto se deja sin sustituir en vez de rellenarse con una letra por defecto:
+ * un `s` de más en una plantilla de enseñanza sería un error de la plantilla y
+ * un valor por defecto lo convertiría en un reactivo silenciosamente distinto.
+ * Sin átomo, `logic-core` no analiza la fórmula y el candidato cae con
+ * `syntax_not_in_authorized_calculus`, que es lo que debe pasar.
  */
-
-function sustituir(formula, [p, q, r]) {
-  return formula.split('p').join(p).split('q').join(q).split('r').join(r);
+function sustituir(formula, [p, q, r, s]) {
+  const conTres = formula.split('p').join(p).split('q').join(q).split('r').join(r);
+  return s === undefined ? conTres : conTres.split('s').join(s);
 }
 
 /* ── Rol D: pistas derivadas del reactivo ───────────────────────────────────
@@ -620,6 +834,14 @@ async function main() {
   const candidates = [];
   const hintSets = [];
   const critiques = [];
+  /**
+   * Reservas de medición que un KC **no puede** tener, con su motivo.
+   *
+   * Se acumula y se publica en el informe. Una ausencia que no se cuenta se lee
+   * como cobertura completa, y aquí la ausencia es la conclusión: ver la nota de
+   * KC03 en `SONDAS`.
+   */
+  const reservasNoGeneradas = [];
 
   for (const [kcId, plantilla] of Object.entries(PLANTILLAS)) {
     const anclas = anclasPorKc.get(kcId) ?? [];
@@ -694,32 +916,49 @@ async function main() {
       });
     }
 
-    // Sondas: el núcleo del KC en cuatro superficies distintas, una por reserva
-    // de medición. La complejidad objetivo **sube un escalón** respecto de la
-    // forma base porque cada envoltura añade pasos: declararla igual sería
-    // declarar como equivalente algo que se sabe más largo.
-    const [premisasNucleo, metaNucleo, objetivoNucleo] = plantilla.base;
-    const SUBE = { baja: 'media', media: 'alta', alta: 'alta' };
-    for (const sonda of SONDAS) {
-      if (sonda.variantes > ATOMOS_SONDA.length) {
+    // Sondas: el núcleo del KC variado por los tres ejes de D-68, una forma por
+    // reserva de medición. Ya no se envuelve nada, así que no se importa
+    // ninguna regla ajena y la complejidad objetivo se declara por forma con la
+    // regla de arriba, no subiendo un escalón respecto de la base.
+    const formasDeSonda = SONDAS[kcId];
+    if (formasDeSonda === undefined) {
+      throw new Error(
+        `${kcId} no declara ninguna plantilla de sonda. Un KC sin sondas se quedaría fuera de la ` +
+          `medición sin que nadie lo declarara, que es justo lo que KC03 registra a propósito.`,
+      );
+    }
+    for (const [reserva, cuantas] of Object.entries(VARIANTES_POR_RESERVA)) {
+      const forma = formasDeSonda[reserva];
+      if (forma === undefined) {
+        // KC03: imposible, no olvidado. Se cuenta y se publica en el informe.
+        reservasNoGeneradas.push({
+          kcId,
+          reserve: reserva,
+          reason:
+            'La regla de KC03 es la reiteración `R`, que solo opera dentro de una subprueba, y ' +
+            'toda regla que abre una subprueba se enseña después de KC03 en la secuencia ' +
+            'congelada. Con el horizonte «hasta el KC medido inclusive» la única regla ' +
+            'disponible es `R`, y con `R` sola la meta es siempre una premisa: `goal_trivial`.',
+        });
+        continue;
+      }
+      if (cuantas > ATOMOS_SONDA.length) {
         throw new Error(
-          `${sonda.reserva} pide ${sonda.variantes} variantes y solo hay ${ATOMOS_SONDA.length} ` +
-            `ternas de átomos: la repetición produciría el mismo reactivo con otro id, y el ` +
-            `conteo por id no lo distinguiría.`,
+          `${reserva} pide ${cuantas} variantes y solo hay ${ATOMOS_SONDA.length} cuádruplas de ` +
+            `átomos: la repetición produciría el mismo reactivo con otro id, y el conteo por id ` +
+            `no lo distinguiría.`,
         );
       }
-      for (let i = 0; i < sonda.variantes; i += 1) {
-        const [atomos, w] = ATOMOS_SONDA[i];
-        const nucleoPremisas = premisasNucleo.map((x) => sustituir(x, atomos));
-        const nucleoMeta = sustituir(metaNucleo, atomos);
-        const [premises, goal] = ENVOLTURAS[sonda.envoltura](nucleoPremisas, nucleoMeta, w);
+      const [premisasForma, metaForma, objetivo] = forma;
+      for (let i = 0; i < cuantas; i += 1) {
+        const atomos = ATOMOS_SONDA[i];
         agregar({
-          candidateId: `${kcId.toLowerCase()}-${sonda.reserva.toLowerCase()}-${i + 1}`,
-          templateId: `plt-${kcId.toLowerCase()}-sonda-${sonda.envoltura}`,
-          premises,
-          goal,
-          reserva: sonda.reserva,
-          objetivo: SUBE[objetivoNucleo],
+          candidateId: `${kcId.toLowerCase()}-${reserva.toLowerCase()}-${i + 1}`,
+          templateId: `plt-${kcId.toLowerCase()}-sonda-${reserva.toLowerCase()}`,
+          premises: premisasForma.map((x) => sustituir(x, atomos)),
+          goal: sustituir(metaForma, atomos),
+          reserva,
+          objetivo,
         });
       }
     }
@@ -740,6 +979,12 @@ async function main() {
     corpusExercises,
     hintSets,
     critiques,
+    // Las guardas de banco (D-65, D-67) se comprueban contra el orden congelado
+    // por Rol B, no contra el mapa de KC: las aristas del mapa dicen qué depende
+    // de qué, no en qué orden se enseña, y lo que decide si una regla está
+    // disponible es la posición en la secuencia.
+    teachingSequence: leerJsonConCabecera(join(CONTENIDO, 'objectives/objectives.yaml'))
+      .teachingSequence,
   });
 
   const aceptados = resultado.items.filter((i) => i.accepted);
@@ -845,6 +1090,13 @@ async function main() {
       rejected: rechazados.length,
       rejectionsByCode: Object.fromEntries([...porCodigo.entries()].map(([c, ids]) => [c, ids])),
       criticIndependence: independencia,
+      // Salida de las guardas de banco. Se publica **siempre**, también cuando
+      // no hay violaciones: un control que no dice lo que vio no demuestra
+      // haber operado, y sobre un banco sin sondas devolvería cero y parecería
+      // sano (§5.11).
+      surfaceCensus: resultado.surfaceCensus,
+      probesExemptFromRuleClosure: resultado.probesExemptFromRuleClosure,
+      probeReservesNotGenerated: reservasNoGeneradas,
       coverageGaps: huecos,
       coverageFloors: Object.fromEntries(
         Object.entries(COVERAGE_PARAMETERS).map(([k, v]) => [k, { id: v.parameterId, value: v.value }]),

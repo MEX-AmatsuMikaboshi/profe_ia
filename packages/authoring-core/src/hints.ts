@@ -80,9 +80,27 @@ export interface HintSet {
 export interface HintCheckContext {
   /** Certificado re-verificado del reactivo. */
   readonly solution: CanonicalProof;
-  /** Enunciado: premisas y meta. Lo que ya está aquí no es fuga. */
-  readonly statementFormulas: readonly string[];
+  /**
+   * Enunciado **separado en premisas y meta**, no como una lista plana.
+   *
+   * La comprobación de fuga solo necesita el conjunto de fórmulas visibles, y
+   * con una lista bastaba. La de **fidelidad** (D-67) necesita saber cuál es
+   * cuál: la regla que *abre* una premisa y la que *construye* la meta no son la
+   * misma, y esa distinción es justamente el defecto de KC16 —`¬E` donde va
+   * `DNE`—. Separarlo en el tipo es lo que impide que la comprobación de
+   * fidelidad quede como un extra opcional que se olvida de llamar.
+   */
+  readonly statement: {
+    readonly premises: readonly string[];
+    readonly goal: string;
+  };
 }
+
+/** Fórmulas visibles del enunciado. Lo que ya está aquí no es fuga. */
+const formulasDelEnunciado = (context: HintCheckContext): readonly string[] => [
+  ...context.statement.premises,
+  context.statement.goal,
+];
 
 const sinEspacios = (s: string): string => s.replace(/\s+/gu, '');
 
@@ -110,7 +128,7 @@ function subformulasImpresas(f: Formula, acc: Set<string>): void {
  */
 export function undisclosedSolutionFormulas(context: HintCheckContext): readonly string[] {
   const visibles = new Set<string>();
-  for (const f of context.statementFormulas) subformulasImpresas(parse(f), visibles);
+  for (const f of formulasDelEnunciado(context)) subformulasImpresas(parse(f), visibles);
 
   const salida: string[] = [];
   for (const linea of context.solution.lines) {
@@ -130,7 +148,7 @@ export function undisclosedSolutionFormulas(context: HintCheckContext): readonly
  * el proyecto evita.
  */
 export function assertHintSet(set: HintSet, context: HintCheckContext): void {
-  if (context.solution.lines.length === 0 || context.statementFormulas.length === 0) {
+  if (context.solution.lines.length === 0 || context.statement.goal.trim() === '') {
     throw new HintPolicyError(
       `${set.itemId}: se pidió comprobar las pistas sin solución o sin enunciado. Con cualquiera de ` +
         `los dos vacío, la lista de pasos ocultos sale vacía y **la comprobación de fuga pasa por ` +
@@ -146,6 +164,10 @@ export function assertHintSet(set: HintSet, context: HintCheckContext): void {
   }
 
   const noReveladas = undisclosedSolutionFormulas(context);
+  // Las reglas que este enunciado permite nombrar. Se calculan una vez y **desde
+  // el enunciado**, no desde el certificado: Rol D no ve la solución, y el nivel
+  // 3 puede nombrar con verdad alternativas que el certificado no usó.
+  const reglasEsperadas = expectedHintRules(context.statement);
   const nivelesVistos = new Set<HintLevel>();
 
   for (const pista of set.hints) {
@@ -211,6 +233,24 @@ export function assertHintSet(set: HintSet, context: HintCheckContext): void {
         `${set.itemId}: la pista de nivel ${pista.level} contiene «${filtrada}», que es un paso de ` +
           `la solución ausente del enunciado. «Una pista nunca puede transformarse silenciosamente ` +
           `en solución» (§8.6).`,
+      );
+    }
+
+    // Fidelidad de la regla nombrada (D-67, G4). Una pista que manda a `¬E`
+    // desde `¬¬A` no revela de más: **enseña una aplicación falsa de la regla**,
+    // que es peor. El libro cerrado tenía código para la pista que resuelve de
+    // más y ninguno para la que dirige mal; éste es ese punto de fallo.
+    const ajenas = hintNamesForeignRule(pista.text, reglasEsperadas);
+    if (ajenas.length > 0) {
+      const detalle = ajenas
+        .map((a) => `«${a.named}» como regla de ${a.clause === 'introduction' ? 'introducción' : 'eliminación'}`)
+        .join(', ');
+      throw new HintPolicyError(
+        `${set.itemId}: la pista de nivel ${pista.level} nombra ${detalle}, que no es la que ` +
+          `corresponde a este enunciado. Esperadas: introducción ` +
+          `${reglasEsperadas.goalIntroduction ?? '—'}, eliminación ` +
+          `${reglasEsperadas.premiseEntries.join('/') || '—'}. Dirigir al alumno a una regla que ` +
+          `ahí no aplica no es ayudar de menos: es enseñar la regla mal.`,
       );
     }
 

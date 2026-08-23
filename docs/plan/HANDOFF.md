@@ -1,6 +1,101 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la decimoquinta sesión (2026-08-22, noche)
+> ## EMPIEZA AQUÍ — cierre de la decimosexta sesión (2026-08-23)
+>
+> **Sesión del rediseño de las plantillas de sonda.** Se ejecutaron los pasos 1, 2 y 3 del plan de
+> corrección que dejó la sesión anterior: plantillas nuevas, guardas enchufadas al pipeline y **W3
+> regenerado**. Es **D-68** en `PLAN_STATUS.md`.
+>
+> ### Lo que cambió, en una línea cada cosa
+>
+> | | Antes | Ahora |
+> |---|---|---|
+> | Sondas que exigen una regla no enseñada (G1) | 70 | **0** |
+> | Sondas de transferencia que repiten premisas (G3) | 30 | **0** |
+> | Censo de superficie fuera de transferencia | 55 literales + 99 renombradas + 30 | **`distinct` en las cuatro reservas, 548 de 548** |
+> | Pistas que mandan a la regla equivocada (G4) | 10 | **0** |
+> | Índices en escala retirada | 561 | **0**, y el banco declara `cal-09-v2` |
+> | Guardas | funciones que nadie llamaba desde W3 | **puertas de `runW3Generation()`, con controles positivos** |
+> | Banco | 571 aceptados de 684 | **656 de 656, 0 rechazados** |
+> | Pruebas unitarias | 1714 | **1853** |
+>
+> **Las cuatro pruebas que fijaban el defecto están invertidas.** Eso es lo que demuestra que la
+> regeneración arregló lo que dice arreglar: si hubieran pasado sin haber pasado antes por el 70 y el
+> 30, no probarían nada.
+>
+> ### ⚠ Lo primero, y sigue igual: CI está caída y necesita al propietario
+>
+> La avería de Actions **no se ha resuelto**: cuatro corridas seguidas fallaron en uno a tres segundos
+> con cero pasos ejecutados en los diez jobs, que es la firma que D-58 documentó —«con `steps: []`,
+> el fallo no está en el código»—. El propietario lo resolvió entonces en la cuenta de GitHub.
+> Mientras siga así, **D-66, D-67 y D-68 quedan `HECHAS`, no `VERIFICADAS`**. Cuando Actions arranque
+> basta relanzar la corrida del último commit y observarla; no hay nada que tocar.
+>
+> ### El rediseño, lo justo para entenderlo sin releer el código
+>
+> Las cuatro envolturas rodeaban el núcleo del KC y por eso importaban la regla de otro KC y dejaban
+> las premisas intactas. Ahora **se varía el núcleo mismo** por tres ejes que no importan nada ajeno:
+> estructura de los operandos, multiplicidad de la regla objetivo, y dirección u operando elegido.
+> Una forma por reserva y por KC, en `SONDAS` dentro de `scripts/content/w3-generate-run.mjs`.
+>
+> **Las guardas ya no se miden contra el banco: lo cierran.** `runW3Generation()` exige
+> `teachingSequence` —obligatoria a propósito— y **aborta** si la clausura de reglas o el control de
+> superficie fallan. Aborta y no rechaza reactivo a reactivo porque lo que falla no es un candidato
+> sino una plantilla, y rechazar sus catorce variantes publicaría un banco al que le faltan reservas
+> enteras sin que nadie lo declarara. G4 va dentro de `assertHintSet()`, ahí sí como rechazo.
+>
+> ### Tres cosas que conviene no volver a derivar
+>
+> 1. **La regla de declaración del estrato se reescribió sobre `cal-09-v2`, y es aproximada por
+>    construcción.** De los doce rasgos del índice, tres de los cinco de más peso —`costExplored`,
+>    `workUnitsLog2`, `structuralDistance`— dependen de la búsqueda, que Rol C no ejecuta. Por eso
+>    existe `complexity_target_mismatch` y por eso la regla **declara dos zonas de borde que las
+>    plantillas no usan**. Elegir contenido cuya declaración sea decidible a priori es legítimo;
+>    cambiar la etiqueta de un reactivo para que cuadre con lo medido sigue prohibido.
+> 2. **KC03 no puede tener sondas de línea base ni de intervención, y no es un olvido.** `R` sólo
+>    opera dentro de una subprueba y toda regla que abre una subprueba se enseña después; con el
+>    horizonte «hasta el KC medido inclusive» la única regla disponible es `R`, y con `R` sola la meta
+>    es siempre una premisa. **No se debilitó la guarda**: no se generan, se cuentan, y el informe las
+>    publica en `probeReservesNotGenerated`. KC03 se mide en `retention` y `TRANSFER_MEASUREMENT`. Si
+>    eso estorba al diseño experimental, lo que hay que decidir es si KC03 puede ser KC objetivo de
+>    A/B/C (`T-H5-12`) — **es una pregunta para el propietario, no para la guarda**.
+> 3. **Cuatro formas de sonda coincidían con ejercicios del libro** —silogismo hipotético,
+>    exportación, importación y `corpus-ej-05`— y el control de duplicación las rechazó. No son falsos
+>    positivos: el alumno pudo verlas resueltas. Se rehicieron.
+>
+> ### Lo que quedó desalineado, y está fijado por prueba
+>
+> **Los artefactos de W4 son del banco anterior de 571.** Muestra, informe y paquete del segundo
+> auditor. **No se reciclan**: los juicios de defecto son trabajo humano y la auditoría se repite
+> sobre el banco nuevo, en su turno. Hay una prueba nueva que afirma el desajuste —14 artefactos de
+> la población ya no existen— y que se invierte cuando W4 se vuelva a correr.
+>
+> ### Orden exacto para retomar
+>
+> 1. **Paso 5 de W2: la selección A/B/C** (`scripts/content/w2-experimental-sets-run.mjs`). Aquí es
+>    donde toca decidir si KC03 puede ser KC objetivo, sabiendo que no tiene sondas primarias.
+> 2. **`T-H5-12`**, selección de conjuntos.
+> 3. **W4 sobre el banco nuevo**: preauditoría, lectura humana por muestra del paso 19, y aplicación.
+> 4. Parte A **realmente ciega**, de familia que no sea candidata de BENCH-01.
+> 5. Sólo entonces, decidir W5.
+>
+> ### Lo que es del propietario y no lo sustituye ningún modelo
+>
+> - **Resolver la avería de Actions** en la cuenta.
+> - La **lectura humana por muestra** del paso 19 —por muestra: §I.132 descarta expresamente el
+>   reactivo por reactivo—, ahora sobre el banco de 656.
+> - Encargar la **Parte A ciega** a una familia que no sea candidata de BENCH-01.
+> - **Decidir si KC03 entra como KC objetivo de A/B/C** sin sondas primarias.
+>
+> ### Verificación de esta sesión
+>
+> **1853 pruebas unitarias en verde** (1714 al abrir) más las **131 contra PostgreSQL 17 real**. Lint,
+> typecheck, build, depcruise con sus dos controles positivos, separación de modos, sesión seca,
+> adversarial, conjunto dorado —regenerado con diff vacío—, PBT, pureza del verificador, pasarela,
+> grants, SBOM, drift y las 159 de hardening: todo verde en local. **`ci:logic:mutation` no se corrió
+> aquí** —sólo corre en `main`, y son 8–9 minutos—; `logic-core` no se tocó en esta sesión.
+
+> ## Cierre de la decimoquinta sesión (2026-08-22, noche) — **superado por el de arriba**
 >
 > **Sesión de auditar el intento de Codex y ejecutar el plan de corrección que salió de ahí.** Se
 > cerraron **D-65, D-66 y D-67** y se adjudicó el desacuerdo que D-64 dejó abierto. **No se regeneró

@@ -41,10 +41,27 @@ import {
   W3InputError,
 } from './errors.js';
 import { assertCritique, critiqueRiskFlags, type CritiqueCriterion, type ItemCritique } from './critique.js';
+import {
+  assertProbeRuleClosure,
+  probesExemptFromRuleClosure,
+  type ProbeRuleClosureInput,
+} from './probe-rule-closure.js';
+import {
+  assertSurfaceControl,
+  surfaceOverlapCensus,
+  type SurfaceItem,
+  type SurfaceOverlap,
+} from './surface-control.js';
 import { familyComponentsOf, FamilyRegistry } from './family.js';
 import { assertHintSet, undisclosedSolutionFormulas, type HintSet } from './hints.js';
 import { KC_IDS, type KcId } from './kc-map.js';
-import { collisionProhibited, effectiveReserve, RESERVES, type Reserve } from './reserves.js';
+import {
+  collisionProhibited,
+  effectiveReserve,
+  isMeasurementReserve,
+  RESERVES,
+  type Reserve,
+} from './reserves.js';
 
 /**
  * W3 — autoría automática (T-H5-05 [CRITICAL] ← Maestro §12 «W3», P-I §7.4–§7.7
@@ -447,6 +464,20 @@ export interface W3Input {
    * regenera. Sin él, cada corrida empezaría de cero y reasignar sería gratis.
    */
   readonly familyRegistry?: FamilyRegistry;
+  /**
+   * Secuencia de enseñanza congelada por Rol B. **Obligatoria**, y ése es el
+   * punto (D-68).
+   *
+   * Las guardas de clausura de reglas (D-65) y de superficie (D-67) existían
+   * como funciones sueltas que nadie llamaba desde W3, así que un banco podía
+   * publicarse con setenta sondas que exigían una regla no enseñada sin que el
+   * pipeline se enterara. Enchufarlas aquí es lo que las convierte en guardas;
+   * hacerlas opcionales las devolvería a ser un extra que se olvida.
+   *
+   * Entra como parámetro y no se lee de disco porque es un artefacto de
+   * contenido y este paquete no lee contenido.
+   */
+  readonly teachingSequence: readonly KcId[];
 }
 
 export interface W3Outcome {
@@ -454,6 +485,23 @@ export interface W3Outcome {
   readonly privateSolutions: readonly PrivateSolution[];
   readonly variantId: string;
   readonly authorizedCalculusVersion: typeof AUTHORIZED_CALCULUS_VERSION;
+  /**
+   * Censo de solapamiento de superficie por reserva de medición, **incluido el
+   * que no es violación**.
+   *
+   * Se devuelve siempre. §5.11 exige que los controles de superficie *operen*, y
+   * un control que no cuenta lo que ve no demuestra haber operado: sobre un
+   * banco sin sondas devolvería cero violaciones y parecería sano. Fuera de
+   * transferencia ninguna autoridad fija un umbral, así que ahí el número es el
+   * dato con el que el propietario puede decidir si hace falta uno.
+   */
+  readonly surfaceCensus: Readonly<Record<string, Readonly<Record<SurfaceOverlap, number>>>>;
+  /**
+   * Sondas que la clausura de reglas **no puede juzgar**: las de los KC que no
+   * enseñan ninguna regla. Se devuelven enumeradas y no contadas aparte porque
+   * un recorte que no se ve se lee como cobertura completa.
+   */
+  readonly probesExemptFromRuleClosure: readonly string[];
 }
 
 const proofOf = (certificate: FoundProof, goal: string): CanonicalProof => ({
@@ -524,6 +572,22 @@ export function runW3Generation(input: W3Input): W3Outcome {
   const privateSolutions: PrivateSolution[] = [];
   /** Aceptados hasta ahora: la comparación de duplicados es contra ellos. */
   const aceptados: AcceptedItemShape[] = [];
+  /**
+   * Lo que las guardas de banco necesitan de cada reactivo aceptado.
+   *
+   * Se acumula dentro del bucle porque ahí están a la vez el candidato y su
+   * certificado, y se juzga **después**, cuando el banco está completo: tanto la
+   * clausura de reglas como el control de superficie son propiedades del banco
+   * entero, no de un candidato aislado.
+   */
+  const paraGuardas: {
+    itemId: string;
+    reserve: Reserve;
+    targetKcId: KcId;
+    premises: readonly string[];
+    goal: string;
+    ruleIdsInCertificate: readonly string[];
+  }[] = [];
 
   const porEnunciadoDelCorpus = new Map<string, string>();
   for (const ejercicio of input.corpusExercises) {
@@ -676,7 +740,7 @@ export function runW3Generation(input: W3Input): W3Outcome {
     // 7. Pistas (Rol D) y no revelación en el enunciado (P-I §7.5, §9.6).
     const noReveladas = undisclosedSolutionFormulas({
       solution: canonico,
-      statementFormulas: [...candidato.statement.premises, candidato.statement.goal],
+      statement: candidato.statement,
     });
     const sinEspacios = candidato.promptText.replace(/\s+/gu, '');
     const filtrada = noReveladas.find((formula) => sinEspacios.includes(formula));
@@ -693,7 +757,7 @@ export function runW3Generation(input: W3Input): W3Outcome {
       try {
         assertHintSet(conjuntoDePistas, {
           solution: canonico,
-          statementFormulas: [...candidato.statement.premises, candidato.statement.goal],
+          statement: candidato.statement,
         });
       } catch (error) {
         if (!(error instanceof HintPolicyError)) throw error;
@@ -754,6 +818,14 @@ export function runW3Generation(input: W3Input): W3Outcome {
     );
 
     if (aceptado) {
+      paraGuardas.push({
+        itemId: candidato.candidateId,
+        reserve: reservaEfectiva,
+        targetKcId: candidato.targetKcs[0] as KcId,
+        premises: candidato.statement.premises,
+        goal: candidato.statement.goal,
+        ruleIdsInCertificate: resultado.proof.lines.map((l) => l.rule),
+      });
       aceptados.push({
         candidateId: candidato.candidateId,
         statement: enunciadoCanonico,
@@ -773,11 +845,48 @@ export function runW3Generation(input: W3Input): W3Outcome {
     }
   }
 
+  /**
+   * Guardas de banco (D-65, D-67), sobre el banco **ya aceptado**.
+   *
+   * **Lanzan, no rechazan reactivo a reactivo**, y la diferencia importa. Lo que
+   * detectan no es un candidato malo sino una **plantilla** mala: cuando una
+   * sonda exige una regla que su fase no ha enseñado, lo exigen las catorce
+   * variantes de esa plantilla, y rechazarlas una a una publicaría un banco al
+   * que le faltan reservas enteras sin que nadie declarara por qué. Un W3 que
+   * aborta obliga a corregir la plantilla, que es donde está el defecto.
+   *
+   * Las justificaciones de línea salen del certificado y **no** de
+   * `FoundProof.rulesUsed`: la reiteración se inserta al linealizar y no aparece
+   * en ese campo, así que preguntarle concluiría que ninguna sonda usa `R`.
+   */
+  const sondas: readonly ProbeRuleClosureInput[] = paraGuardas.map((x) => ({
+    itemId: x.itemId,
+    reserve: x.reserve,
+    targetKcId: x.targetKcId,
+    ruleIdsInCertificate: x.ruleIdsInCertificate,
+  }));
+  assertProbeRuleClosure(sondas, input.teachingSequence);
+
+  const superficie = (x: (typeof paraGuardas)[number]): SurfaceItem => ({
+    itemId: x.itemId,
+    reserve: x.reserve,
+    targetKcId: x.targetKcId,
+    premises: x.premises,
+    goal: x.goal,
+  });
+  const sondasDeSuperficie = paraGuardas.filter((x) => isMeasurementReserve(x.reserve)).map(superficie);
+  const ensenanza = paraGuardas.filter((x) => !isMeasurementReserve(x.reserve)).map(superficie);
+  assertSurfaceControl(sondasDeSuperficie, ensenanza);
+
   return Object.freeze({
     items: Object.freeze(items),
     privateSolutions: Object.freeze(privateSolutions),
     variantId: variante.id,
     authorizedCalculusVersion: AUTHORIZED_CALCULUS_VERSION,
+    surfaceCensus: surfaceOverlapCensus(sondasDeSuperficie, ensenanza),
+    probesExemptFromRuleClosure: Object.freeze(
+      probesExemptFromRuleClosure(sondas).map((p) => p.itemId),
+    ),
   });
 }
 

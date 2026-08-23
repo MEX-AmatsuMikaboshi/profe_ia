@@ -33,7 +33,7 @@ function contexto(): HintCheckContext {
   if (resultado.status !== 'proof_found') throw new Error('fixture inválido');
   return {
     solution: { lines: resultado.proof.lines, goal: META },
-    statementFormulas: [...PREMISAS, META],
+    statement: { premises: PREMISAS, goal: META },
   };
 }
 
@@ -78,7 +78,7 @@ describe('niveles de pista (T-H5-05 ← P-I §8.6)', () => {
       /pasa por vacío/u,
     );
     expect(() =>
-      assertHintSet(conjunto([pista()]), { ...ctx, statementFormulas: [] }),
+      assertHintSet(conjunto([pista()]), { ...ctx, statement: { premises: [], goal: '' } }),
     ).toThrow(HintPolicyError);
   });
 

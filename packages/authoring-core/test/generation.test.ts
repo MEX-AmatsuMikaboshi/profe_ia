@@ -21,9 +21,12 @@ import {
   FamilyAssignmentError,
   FamilyRegistry,
   findDuplicateAmong,
+  KC_IDS,
   PipelineOrderNotFrozenError,
+  ProbeRuleClosureError,
   resolveValidityVariant,
   runW3Generation,
+  SurfaceControlError,
   W3_REJECTION_CODES,
   W3InputError,
   type CorpusExercise,
@@ -80,6 +83,9 @@ function entrada(overrides: Partial<W3Input> = {}): W3Input {
     corpusExercises: [],
     hintSets: [],
     critiques: [],
+    // Secuencia completa: `probeRuleClosureViolations()` rechaza una parcial,
+    // porque daría por buenas las sondas de los KC que le faltan.
+    teachingSequence: KC_IDS,
     ...overrides,
   };
 }
@@ -666,5 +672,150 @@ describe('re-verificación del certificado (paso 4)', () => {
     );
     if (r.status !== 'proof_found') throw new Error('fixture inválido');
     expect(() => assertCertificateReverified(r.proof, 'A∧B')).not.toThrow();
+  });
+});
+
+/**
+ * Controles positivos de las guardas de banco enchufadas en D-68.
+ *
+ * Sin ellos, que `runW3Generation()` dejara de llamar a `assertProbeRuleClosure`
+ * o a `assertSurfaceControl` no rompería ninguna prueba: el banco publicado hoy
+ * no las viola, así que todas seguirían en verde sobre una función que ya no
+ * comprueba nada. Es el mismo motivo por el que la suite negativa de privilegios
+ * lleva controles positivos y por el que existe
+ * `verify-depcruise-catches.mjs`: una guarda que no se ve fallar no consta.
+ */
+describe('las guardas de banco corren dentro de W3 (D-68)', () => {
+  /** Sonda de KC05 —posición 5— cuyo certificado necesita `→I`, de KC09. */
+  const sondaConReglaTardía = candidato({
+    candidateId: 'sonda-tardía',
+    generatorTemplateId: 'tpl-sonda',
+    statement: { premises: ['A∧B'], goal: 'C→A' },
+    targetKcs: ['KC05'],
+    bankFunction: 'probes_intervention',
+    targetComplexity: 'media',
+  });
+
+  it('aborta cuando una sonda exige una regla que su fase no ha enseñado', () => {
+    // Aborta y **no** rechaza el reactivo: lo que falla no es el candidato sino
+    // la plantilla, y rechazarlos uno a uno publicaría un banco al que le faltan
+    // reservas enteras sin que nadie declarara por qué.
+    expect(() => runW3Generation(entrada({ candidates: [sondaConReglaTardía] }))).toThrow(
+      ProbeRuleClosureError,
+    );
+  });
+
+  it('y la misma sonda pasa cuando su KC objetivo ya tiene enseñada esa regla', () => {
+    // Control del control: si abortara siempre, la prueba de arriba no diría
+    // nada sobre la clausura. `→I` la enseña KC09, así que una sonda de KC09
+    // —o posterior— puede usarla.
+    const salida = runW3Generation(
+      entrada({ candidates: [{ ...sondaConReglaTardía, targetKcs: ['KC09'] }] }),
+    );
+    expect(salida.items[0]?.accepted).toBe(true);
+  });
+
+  it('aborta cuando una sonda repite las premisas de un reactivo de enseñanza de su KC', () => {
+    // §5.11 exige de transferencia «una forma superficial suficientemente
+    // distinta de las prácticas inmediatas». Mismas fórmulas, mismas letras.
+    const ensenanza = candidato({
+      candidateId: 'ens-001',
+      statement: { premises: ['A∧B'], goal: 'A' },
+      targetKcs: ['KC05'],
+      bankFunction: 'independent_practice',
+      targetComplexity: 'baja',
+    });
+    const sonda = candidato({
+      candidateId: 'sonda-001',
+      generatorTemplateId: 'tpl-sonda',
+      statement: { premises: ['A∧B'], goal: 'B' },
+      targetKcs: ['KC05'],
+      bankFunction: 'TRANSFER_MEASUREMENT',
+      targetComplexity: 'baja',
+    });
+    expect(() => runW3Generation(entrada({ candidates: [ensenanza, sonda] }))).toThrow(
+      SurfaceControlError,
+    );
+  });
+
+  it('el censo de superficie sale siempre, también sin una sola violación', () => {
+    // Un control que no cuenta lo que ve no demuestra haber operado: sobre un
+    // banco sin sondas devolvería cero violaciones y parecería sano.
+    const salida = runW3Generation(entrada());
+    expect(salida.surfaceCensus).toEqual({});
+    expect(salida.probesExemptFromRuleClosure).toEqual([]);
+  });
+
+  it('rechaza el reactivo cuya pista manda a una regla que ahí no aplica', () => {
+    // G4 dentro de `assertHintSet()`. Aquí sí es un rechazo y no un aborto: la
+    // pista es de **este** reactivo, y regenerarla es lo que P-II §5.4 prevé.
+    // `¬E` es «φ, ¬φ ⊢ ⊥» y no saca `A` de `¬¬A`: ahí va `DNE`.
+    const conPistaMala = candidato({
+      candidateId: 'it-dne',
+      statement: { premises: ['¬¬A'], goal: 'A' },
+      targetKcs: ['KC16'],
+      targetComplexity: 'baja',
+    });
+    const salida = runW3Generation(
+      entrada({
+        candidates: [conPistaMala],
+        hintSets: [
+          {
+            itemId: 'it-dne',
+            hints: [
+              {
+                level: 2,
+                text: 'Mira el conectivo principal de la premisa: la regla que lo elimina es ¬E.',
+                anchors: ['frag-001'],
+                proposedMasteryDisqualifying: true,
+                masteryFacts: {
+                  level: 2,
+                  levelOneReminderOnly: false,
+                  selectsRuleOrNextStep: true,
+                  containsDecisiveContent: false,
+                },
+              },
+            ],
+          },
+        ],
+      }),
+    );
+    expect(salida.items[0]?.accepted).toBe(false);
+    expect(salida.items[0]?.rejections.map((r) => r.code)).toContain('hint_policy_violation');
+  });
+
+  it('y acepta la misma pista cuando nombra la regla que sí corresponde', () => {
+    const salida = runW3Generation(
+      entrada({
+        candidates: [
+          candidato({
+            candidateId: 'it-dne',
+            statement: { premises: ['¬¬A'], goal: 'A' },
+            targetKcs: ['KC16'],
+            targetComplexity: 'baja',
+          }),
+        ],
+        hintSets: [
+          {
+            itemId: 'it-dne',
+            hints: [
+              {
+                level: 2,
+                text: 'Mira el conectivo principal de la premisa: la regla que lo elimina es DNE.',
+                anchors: ['frag-001'],
+                proposedMasteryDisqualifying: true,
+                masteryFacts: {
+                  level: 2,
+                  levelOneReminderOnly: false,
+                  selectsRuleOrNextStep: true,
+                  containsDecisiveContent: false,
+                },
+              },
+            ],
+          },
+        ],
+      }),
+    );
+    expect(salida.items[0]?.rejections.map((r) => r.code)).not.toContain('hint_policy_violation');
   });
 });
