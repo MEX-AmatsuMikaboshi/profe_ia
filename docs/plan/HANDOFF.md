@@ -76,21 +76,37 @@
 > método de pago, o hacer el repositorio público (los repos públicos no consumen cuota). **Mientras
 > siga así, D-69, D-70 y D-71 quedan `HECHAS`, no `VERIFICADAS`.**
 >
-> ### Lo que falta para correr BENCH-01, medido y no estimado (D-72)
+> ### BENCH-01 ya se puede correr: no queda bloqueo de código (D-72, D-73)
 >
-> `pnpm run bench:preparacion <runId> [candidatos]` lo responde **sin gastar nada**. Hoy dice:
+> `pnpm run bench:preparacion <runId> [candidatos]` lo responde **sin gastar nada**. Con
+> `claude-sonnet-5` dice hoy:
 >
 > ```text
 > ok    conjunto_material_ejecutable            200 casos, pisos cubiertos, ids únicos
 > ok    fragmentos_para_el_gate_de_anclas       los 80 casos apuntan a bloques con fragmentos
 > ok    activos_para_el_gate_de_recuperacion    toda caída tiene su explicación congelada
-> FALLA refresco_documental_vigente             caducado, y claude-sonnet-5 no está en él
+> ok    refresco_documental_vigente             refresco del 2026-08-23
 > aviso paquete_de_contenido_congelado          mide pero no corona (W5 no ha corrido)
+>
+> SE PUEDE CORRER.
 > ```
 >
-> **Tres de las cuatro comprobaciones bloqueantes pasan.** La que falla es documental: el refresco del
-> 2026-08-18 tiene 434 702 s medidos y la ventana admite 432 000. Y el candidato que §3.4 recomienda,
-> `claude-sonnet-5`, **no aparece en ese refresco**: elegirlo exige refrescar, no editar el binding.
+> **Las cuatro comprobaciones bloqueantes pasan.** Lo que queda antes de coronar es humano y de
+> firma, no de código.
+>
+> #### Y en el camino apareció un defecto que conviene no repetir (D-73)
+>
+> El refresco del 2026-08-18 hasheó **los bytes del HTML** de la documentación, y ese hash **no es
+> reproducible**: `platform.claude.com` sirve un `nonce` de CSP distinto en cada respuesta. Tres
+> descargas seguidas, sin que la documentación cambiara, dieron tres hashes distintos. **Nadie lo
+> notó porque nadie volvió a descargar.** Un auditor que lo hiciera no podría distinguir «cambió la
+> documentación» de «cambió el nonce», que es justo lo que la huella existe para distinguir.
+>
+> Normalizar el nonce **no bastó** —cambia también el orden de los chunks RSC—, y seguir añadiendo
+> reglas habría dado un hash de «lo que el filtro dejó pasar»: peor, porque parece reproducible. La
+> huella se toma ahora del contenido en markdown (`…​.md`), que es estable y es lo que §8.1 quiere
+> fijar. `scripts/model/refresh-sources.mjs` descarga **dos veces** y se niega a emitir huella si
+> difieren: no supone la reproducibilidad, la comprueba.
 >
 > ### Orden exacto para retomar
 >
@@ -98,14 +114,16 @@
 > 2. **Lectura humana por muestra del paso 19** sobre el banco de 656 —el paquete ciego de 36 está
 >    regenerado— y **revisión humana de los 200 casos** (D-41). Las dos son condición previa a
 >    coronar y las dos son del propietario.
-> 3. **Rehacer el refresco documental**: el del 2026-08-18 caducó el 2026-08-23 a las 07:39 UTC.
->    Rehacerlo es gratis y `assertRefreshAuthorizesBenchmark` lo rechaza caducado.
-> 4. **Decidir a quién se mide.** `claude-sonnet-5` entra directo (§3.4). Para el segundo proveedor
->    hay que producir la huella de comportamiento sobre el set canario, que es lo único que desbloquea
->    BENCH-02.
+> 3. ~~Rehacer el refresco documental~~ — **hecho** (D-73). Vigente hasta el 2026-08-28 a las
+>    08:33 UTC; pasada esa fecha,
+>    `node scripts/model/refresh-sources.mjs <urls>` produce las huellas nuevas.
+> 4. **Decidir a quién se mide.** El refresco cubre `claude-sonnet-5` y `claude-haiku-4-5-20251001`;
+>    el segundo está para comparar, no para coronar (se retira no antes de octubre). Para un **segundo
+>    proveedor** hay que producir la huella de comportamiento sobre el set canario, que es lo único
+>    que desbloquea BENCH-02.
 > 5. **Correr BENCH-01** —el gasto está autorizado, USD 3.64— con `observeGates()`. Antes,
->    `pnpm run bench:preparacion` para confirmar que ya no falta nada; sale con 1 mientras falte.
->    **No corona**: el paquete no está congelado y el código lo impide.
+>    `pnpm run bench:preparacion`, que hoy dice `SE PUEDE CORRER`. **No corona**: el paquete no está
+>    congelado y el código lo impide.
 > 6. **W5**, que es lo único que convierte esa medición en dictamen. Exige clave Ed25519, auditoría
 >    aprobada y la sección `proveedores_modelos_y_politicas_tts_stt_vision`, que depende del ganador:
 >    **ahí hay una circularidad que el propietario tendrá que romper declarando el orden**.
@@ -2134,7 +2152,7 @@ Lo que queda, con los números delante:
 | Banco de reactivos incompleto | **Cerrado**: 656 candidatos, 656 aceptados, sondas incluidas (D-68) |
 | W4 (auditoría) | **Corrido sobre el banco de 656** (D-69). Falta la **lectura humana por muestra** del paso 19 |
 | Dos gates de BENCH-01 no computables | **Cerrado** (D-70, D-71): los seis se computan contra el corpus real |
-| BENCH-01 sin correr | El gasto está autorizado y el código está. **Medido con `bench:preparacion` (D-72): lo único que falla es el refresco documental** —caducado, y sin `claude-sonnet-5`—. Aparte, la revisión humana de los 200 casos sigue siendo condición previa a coronar |
+| BENCH-01 sin correr | **Sin bloqueo de código** (D-72, D-73): `bench:preparacion` dice `SE PUEDE CORRER`. Falta ejecutarlo, y la revisión humana de los 200 casos sigue siendo condición previa a **coronar** |
 | W5 (freeze) | Sin ejecutar. **Es lo único que convierte la medición en dictamen**, y exige clave, auditoría aprobada y una sección que depende del ganador |
 | F8 · bucle de clase en vivo | 2 de 7 tareas |
 | F9–F16 | **39 tareas del plan sin empezar** — ahí viven voz, pizarrón, medición y `LOCAL_SELF_USE` |
