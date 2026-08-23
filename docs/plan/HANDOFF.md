@@ -1,6 +1,120 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la decimosexta sesión (2026-08-23)
+> ## EMPIEZA AQUÍ — cierre de la decimoséptima sesión (2026-08-23)
+>
+> **Sesión de cerrar el bloqueo real de BENCH-01.** Se hicieron tres cosas y la tercera es la que
+> importa: se re-corrieron sobre el banco de 656 los cuatro artefactos que describían el banco
+> anterior (**D-69**), y **los dos gates de P-III §6.2 que D-45 declaró no computables ya se
+> computan** (**D-70** y **D-71**).
+>
+> ### Lo que cambió, en una línea cada cosa
+>
+> | | Antes | Ahora |
+> |---|---|---|
+> | Selección A/B/C y W4 | describían el banco de 571 | **el de 656**; el orden no cambia, encabeza `sel-por-conectivo` |
+> | ¿KC03 puede ser KC objetivo? | «pregunta para el propietario» | **resuelta por medida**: su conjunto trae 112 sondas primarias y el piso es 57 |
+> | Informe de W4 | publicaba una carencia de KC09 que ya no existía | observaciones **derivadas** de `w3-run.yaml` |
+> | `deterministic_degraded_recovery` | no computable, sin activos congelados | **computable**: 493 activos del corpus real |
+> | `factual_segments_with_resolvable_anchors` | no computable, sin fragmentos | **computable**: 18 KC con fragmentos y salida anclada |
+> | Corona de BENCH-01 | nada lo impedía salvo la buena voluntad | `scoreCandidate()` **exige paquete congelado** |
+> | Pruebas unitarias | 1853 | **1890** |
+>
+> ### El titular: §3.5 ya no describe el estado
+>
+> §3.5 de este documento decía que dos gates «exigen artefactos que `content/` no tiene» y que por eso
+> **«sin corpus, BENCH-01 no puede coronar a nadie. No es que salga peor: es que no sale.»** Eso ya no
+> es cierto, y conviene entender por qué en dos mitades distintas:
+>
+> - **El de recuperación degradada era, en efecto, falta de corpus** (D-70). W0–W4 corrieron, así que
+>   se escribió el cargador: `tools/bench/src/corpus.ts` produce 18 fragmentos con texto de los 77
+>   —los 59 restantes son secciones estructurales, **contadas y no publicadas vacías**—, los dieciocho
+>   KC con fragmentos, **493 activos congelados** y las dos plantillas de retroalimentación.
+> - **El de anclas no era falta de corpus: era falta de formato** (D-71). Los fragmentos ya estaban;
+>   lo que no había era **qué** anclar, porque las instrucciones pedían prosa plana. Ahora piden
+>   `AnchoredSegment` del contrato, que es el formato que la sesión va a usar de todas formas.
+>
+> **Y con eso el bloqueo deja de ser de código.** Lo que falta para correr BENCH-01 es humano y de
+> decisión; lo que falta para **coronar** es W5.
+>
+> ### Cuatro cosas que conviene no volver a derivar
+>
+> 1. **Medir no es coronar, y ahora son dos funciones.** `observeGates()` computa los seis gates sin
+>    dictamen —es la «corrida parcial declarada» que §3.5 planteaba como opción (B)— y
+>    `scoreCandidate()` exige además `assertPackageMayCrownWinner()`. El paquete real declara
+>    `frozen: false` porque `freeze-manifest.json` sigue siendo el marcador de F0. **Hay prueba de que
+>    los seis gates en verde no producen ganador sobre ese paquete**, y es el contrapunto obligado del
+>    fixture congelado de `scoring.test.ts`: un fixture congelado sin ese contrapunto sería un permiso
+>    escondido.
+> 2. **`ejemplo` no se puede derivar y no se fabricó.** Un ejemplo trabajado es una derivación
+>    resuelta, las derivaciones viven en `solutions-private/` y el invariante I-2 impide que
+>    `model-gateway` las alcance. Está declarado en `assetKindsNotDerivable` con su motivo. Si algún
+>    día hace falta, la pregunta es de arquitectura, no de contenido.
+> 3. **KC03 sí puede ser KC objetivo de A/B/C, y no hizo falta decidirlo.** Las tres particiones lo
+>    ponen en el conjunto A; A trae 112 sondas primarias frente a 140 —las 28 que KC03 no genera— y el
+>    piso del calendario congelado es 57. `assertProbeInventoryCoverage()` lo acepta sin tocar nada, y
+>    el desnivel es idéntico en las tres, así que no mueve el orden. **No faltaba una decisión
+>    normativa: faltaba el número.**
+> 4. **Dos casos de reformulación preguntan por reglas prohibidas** —`m-refr-23` conmutatividad,
+>    `m-refr-24` DS— y las secciones del libro que las documentan **W1 las dejó sin KC a propósito**
+>    («anclarlas enseñaría lo que el verificador rechaza»). Se anclan al bloque de la regla autorizada
+>    que las sustituye: `KC04` y `KC13`. Está razonado en D-71; si alguien no está de acuerdo, lo que
+>    hay que cambiar es el bloque, no la guarda.
+>
+> ### ⚠ CI sigue caída, y sigue siendo del propietario
+>
+> **Van siete corridas seguidas** con la firma de D-58: los diez jobs a cero pasos en dos segundos.
+> La de esta sesión es `32622145656` sobre `85dae3c`, y las de los commits siguientes.
+>
+> **Lo comprobado desde aquí, para no repetirlo:** `actions/permissions` devuelve
+> `{"enabled":true,"allowed_actions":"all"}`; el repositorio no está `archived` ni `disabled`; el
+> dueño es una cuenta **de usuario** y el repositorio es **privado**, así que las corridas consumen la
+> cuota de minutos. El endpoint de facturación (`users/.../settings/billing/actions`) responde 404
+> porque el token no tiene el scope `user` —`gh auth refresh -h github.com -s user` lo pediría—.
+>
+> **Con eso, la hipótesis que queda es una sola:** minutos de Actions agotados o límite de gasto en
+> cero en la cuenta. Las salidas son del propietario y hay tres: esperar al corte de ciclo, añadir
+> método de pago, o hacer el repositorio público (los repos públicos no consumen cuota). **Mientras
+> siga así, D-69, D-70 y D-71 quedan `HECHAS`, no `VERIFICADAS`.**
+>
+> ### Orden exacto para retomar
+>
+> 1. **Resolver Actions** y observar la corrida del último commit. No hay nada que tocar en el código.
+> 2. **Lectura humana por muestra del paso 19** sobre el banco de 656 —el paquete ciego de 36 está
+>    regenerado— y **revisión humana de los 200 casos** (D-41). Las dos son condición previa a
+>    coronar y las dos son del propietario.
+> 3. **Rehacer el refresco documental**: el del 2026-08-18 caducó el 2026-08-23 a las 07:39 UTC.
+>    Rehacerlo es gratis y `assertRefreshAuthorizesBenchmark` lo rechaza caducado.
+> 4. **Decidir a quién se mide.** `claude-sonnet-5` entra directo (§3.4). Para el segundo proveedor
+>    hay que producir la huella de comportamiento sobre el set canario, que es lo único que desbloquea
+>    BENCH-02.
+> 5. **Correr BENCH-01** —el gasto está autorizado, USD 3.64— con `observeGates()`. **No corona**: el
+>    paquete no está congelado y el código lo impide.
+> 6. **W5**, que es lo único que convierte esa medición en dictamen. Exige clave Ed25519, auditoría
+>    aprobada y la sección `proveedores_modelos_y_politicas_tts_stt_vision`, que depende del ganador:
+>    **ahí hay una circularidad que el propietario tendrá que romper declarando el orden**.
+> 7. Con ganador, F8 (`T-H7-01`) y de ahí en adelante.
+>
+> ### Lo que es del propietario y no lo sustituye ningún modelo
+>
+> - **Resolver la avería de Actions** en la cuenta.
+> - La **lectura humana por muestra** del paso 19, sobre el banco de 656.
+> - La **revisión humana de los 200 casos** de BENCH-01 (D-41).
+> - Encargar la **Parte A ciega** a una familia que no sea candidata de BENCH-01.
+> - **Romper la circularidad de W5** —el freeze pide proveedores y el ganador pide freeze— declarando
+>   qué se congela primero.
+>
+> ### Verificación de esta sesión
+>
+> **1890 pruebas unitarias en verde** (1853 al abrir) más las **131 contra PostgreSQL 17 real**. Lint,
+> typecheck, build, depcruise con sus dos controles positivos, el control positivo del typecheck de
+> pruebas, separación de modos, sesión seca, adversarial, conjunto dorado, PBT, pureza del verificador,
+> pasarela, grants, SBOM, drift y las 159 de hardening: todo verde en local. **`ci:logic:mutation` no
+> se corrió aquí** —sólo corre en `main`—; `logic-core` no se tocó.
+>
+> **Commits:** `85dae3c` (D-69), `8afcf0d` (D-70), `024e71d` (D-71). En contenido, `7460f74`, subido
+> antes que el monorepo como exige §8.
+
+> ## Cierre de la decimosexta sesión (2026-08-23) — **superado por el de arriba**
 >
 > **Sesión del rediseño de las plantillas de sonda.** Se ejecutaron los pasos 1, 2 y 3 del plan de
 > corrección que dejó la sesión anterior: plantillas nuevas, guardas enchufadas al pipeline y **W3
@@ -1830,7 +1944,17 @@ fechado**. Conviene decir con precisión qué habilita eso y qué no.
 > OpenAI sin identidad fijada, o se produce la huella, o BENCH-02 sigue bloqueada. No hay tercera
 > vía dentro de estos dos proveedores: es la única pieza que la desbloquea.
 
-## 3.5 El bloqueo real de BENCH-01: dos gates no se pueden medir sin corpus
+## 3.5 El bloqueo real de BENCH-01 — **RESUELTO el 2026-08-23 (D-70, D-71)**
+
+> **Este apartado describe un estado que ya no existe y se conserva porque explica cómo se llegó
+> aquí.** Los dos gates que declaraba no computables **se computan desde D-70 y D-71**: el de
+> recuperación degradada contra 493 activos congelados del corpus real, y el de anclas contra los
+> fragmentos de los dieciocho KC, con la salida material pasada a `AnchoredSegment`. Lo que sigue
+> siendo cierto es la última frase del apartado —que una corrida parcial **hay que declararla**—, y
+> ahora está en el código: `observeGates()` mide sin dictaminar y `scoreCandidate()` exige paquete
+> congelado. Léelo como historia, no como estado.
+
+## 3.5 (histórico) El bloqueo real de BENCH-01: dos gates no se pueden medir sin corpus
 
 Apareció al escribir la capa de cómputo, no antes, y **es mayor que los cuatro puntos del piloto
 juntos**. Conviene leerlo entero antes de planificar la corrida.
@@ -1984,22 +2108,25 @@ inventa:
 | Clase real (fin de F8) | Lo mismo, conducido por el modelo ganador | **68 %** |
 | `LOCAL_SELF_USE` (F11) | El propietario lo usa de principio a fin, con voz y pizarrón | **52 %** |
 
-**Actualizado el 2026-08-22.** Las dos cosas que este apartado daba por pendientes ya no lo están:
-el gasto está autorizado (D-40) y **W0–W3 corrieron sobre fuentes reales** (D-48, D-51, D-52, D-55).
-Lo que bloquea hoy es otra cosa, y conviene decirlo con los números delante:
+**Actualizado el 2026-08-23.** Cuatro de los seis bloqueos que este apartado listaba se han cerrado.
+Lo que queda, con los números delante:
 
 | Bloqueo | Estado |
 |---|---|
-| `∨E` ausente en `proof-search` | **Nuevo, 2026-08-22 (D-55).** Sin él, KC13 no puede tener reactivos y el paquete no cubre sus pisos |
-| Banco de reactivos incompleto | 91 aceptados; 4 KC bajo el piso y **las 57–69 sondas sin autorar** |
-| W4 (auditoría) y W5 (freeze) | Sin ejecutar. Sin freeze, dos de los seis gates de BENCH-01 no se pueden medir |
-| BENCH-01 sin dictamen | Depende del freeze. Sin ganador, F8 no avanza |
+| `∨E` ausente en `proof-search` | **Cerrado** (D-55 y siguientes): KC13 tiene reactivos y no hay huecos de cobertura |
+| Banco de reactivos incompleto | **Cerrado**: 656 candidatos, 656 aceptados, sondas incluidas (D-68) |
+| W4 (auditoría) | **Corrido sobre el banco de 656** (D-69). Falta la **lectura humana por muestra** del paso 19 |
+| Dos gates de BENCH-01 no computables | **Cerrado** (D-70, D-71): los seis se computan contra el corpus real |
+| BENCH-01 sin correr | El gasto está autorizado y el código está. Faltan: revisión humana de los 200 casos, refresco documental rehecho y elección de candidatos |
+| W5 (freeze) | Sin ejecutar. **Es lo único que convierte la medición en dictamen**, y exige clave, auditoría aprobada y una sección que depende del ganador |
 | F8 · bucle de clase en vivo | 2 de 7 tareas |
 | F9–F16 | **39 tareas del plan sin empezar** — ahí viven voz, pizarrón, medición y `LOCAL_SELF_USE` |
 
 Contando el plan entero: **133 tareas `T-*`, de las que quedan unas 45** (7 abiertas en las fases en
 curso y 38–39 sin empezar). La cadena crítica para una clase real es
-`∨E → banco completo → W4 → W5 → BENCH-01 → F8`, y **ninguno de esos pasos se puede saltar**.
+`banco → W4 → lectura humana → W5 → BENCH-01 → F8`, y **ninguno de esos pasos se puede saltar**.
+Lo que cambió el 2026-08-23 es que **ya no hay código bloqueando esa cadena**: los tres pasos que
+faltan antes de F8 son revisión humana, una decisión de orden y una firma.
 
 ---
 

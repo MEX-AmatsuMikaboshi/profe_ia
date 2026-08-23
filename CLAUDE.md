@@ -197,28 +197,42 @@ Son reales y cuestan una hora cada una si no se conocen (`docs/env/windows.md`).
 ## 6. Estado actual (2026-08-23)
 
 F0/H0, F1/H1 y F2/H2 completas. **F3/H3 con sus 5 tareas y el criterio técnico cubierto**: los tres
-checks de infraestructura (`ci:infra:hardening`, `ci:infra:compose-up`, `ci:infra:otel`) están en CI
-y verdes en `main`; el gate espera sólo Infisical y firmas. F4/H4 con 10 de 12 más `T-H4-10` en curso
-—el gasto de la corrida material **ya está autorizado** (USD 3.64, D-40); los 200 casos están
-escritos y falta **leerlos**, que es revisión humana: ver `docs/plan/HANDOFF.md` §3.3—. F5/H4.5 con
-8 de 8 y F6/H5 con 17 de 17. **`content/` ya no son placeholders**: W0–W4 corridos sobre el corpus
-real. Las cuatro guardas de D-65 a D-67 encontraron defectos con causa común en las plantillas de
-sonda, y **D-68 las rediseñó y regeneró W3**: las sondas ya no envuelven el núcleo del KC sino que lo
-varían por tres ejes que no importan ninguna regla ajena. **Banco vigente: 656 candidatos, 656
-aceptados, 0 rechazados**, con clausura de reglas y control de superficie en cero y las guardas
-**enchufadas a `runW3Generation()`** —abortan la corrida, con controles positivos que lo demuestran—.
-**Lo que sigue desalineado son los artefactos de W4**, sacados del banco anterior de 571: se rehacen
-en su turno, y hay prueba que fija el desajuste. El orden de trabajo está en `docs/plan/HANDOFF.md`.
-F7/H6 con 14 de 14 y el AC cubierto. **F8/H7 con 2 de 7**: `T-H7-02` (validador de
-anclaje) y `T-H7-03` (no revelación y suite adversarial), que eran **las dos únicas construibles sin
-proveedor**. Las cuatro restantes viven dentro del bucle W7 y exigen el ganador de BENCH-01, así que
-**F8 no avanza escribiendo código**. F9–F16 no empezadas.
+checks de infraestructura están en CI; el gate espera sólo Infisical y firmas. F5/H4.5 con 8 de 8,
+F7/H6 con 14 de 14 y el AC cubierto.
 
-**1984 pruebas en verde: 1853 unitarias + 131 contra PostgreSQL 17 real.** Mutation testing sobre
-`logic-core` en verde (Stryker muta sólo ese paquete: las pruebas de otros no mueven ese número).
+**F6/H5 — el contenido ya está.** W0–W4 corrieron sobre el corpus real. **Banco vigente: 656
+candidatos, 656 aceptados, 0 rechazados**, sin huecos de cobertura, con las guardas de clausura de
+reglas y control de superficie **enchufadas a `runW3Generation()`** —abortan la corrida, con
+controles positivos—. La selección A/B/C y los tres artefactos de W4 se re-corrieron sobre ese banco
+(D-69): W4 es censo de 656 en 178 estratos y **no bloquea**. Lo que falta de F6 es humano: la
+**lectura humana por muestra del paso 19**, la **Parte A ciega** de otra familia de modelo, y **W5**
+(clave Ed25519, auditoría aprobada, firma).
+
+**F4/H4 — BENCH-01 ya puede medir los seis gates (D-70, D-71).** Era el bloqueo declarado en §3.5 del
+handoff: dos de los seis gates de P-III §6.2 no se podían computar. Ya se computan.
+`tools/bench/src/corpus.ts` carga el paquete real —18 fragmentos con texto, los 18 KC con
+fragmentos, 493 activos congelados— y la salida material pasó a `AnchoredSegment`, que es el contrato
+que la sesión usará. **Medir no es coronar**: `observeGates()` computa sin dictamen y
+`scoreCandidate()` exige `frozen: true`, que hoy es `false` porque W5 no ha corrido. Lo que falta
+para **correr** es humano (revisión de los 200 casos, refresco documental, elección de candidatos);
+lo que falta para **coronar** es W5.
+
+**F8/H7 con 2 de 7**: `T-H7-02` (validador de anclaje) y `T-H7-03` (no revelación y suite
+adversarial). Las cuatro restantes viven dentro del bucle W7 y exigen el ganador de BENCH-01.
+F9–F16 no empezadas.
+
+**1890 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
+`logic-core` en verde.
+
+**⚠ CI está caída y es de la cuenta, no del código.** Van siete corridas seguidas con la firma de
+D-58: los diez jobs a cero pasos en dos segundos. Comprobado que Actions está `enabled` con
+`allowed_actions: all` y que el repositorio no está `archived` ni `disabled`. Queda la facturación
+—repositorio privado en cuenta de usuario, así que consume cuota de minutos— y eso necesita al
+propietario. **Mientras siga así, nada nuevo pasa de `HECHA` a `VERIFICADA`.**
 
 **El estado tarea por tarea, con evidencia, está en `docs/plan/PLAN_STATUS.md`, y por dónde seguir en
-`docs/plan/HANDOFF.md` §3.1 y §3.3.** Este apartado se queda rancio entre sesiones; esos dos no.
+`docs/plan/HANDOFF.md`, cabecera «EMPIEZA AQUÍ».** Este apartado se queda rancio entre sesiones; esos
+dos no.
 
 **Remoto del monorepo:** <https://github.com/MEX-AmatsuMikaboshi/profe_ia.git> (`origin/main`).
 **Al terminar una tarea `T-*`, se sube**: un commit por tarea, con `PLAN_STATUS.md` actualizado en el
