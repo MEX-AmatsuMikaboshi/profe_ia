@@ -21,6 +21,7 @@ import { MATERIAL_CASE_SET } from './material-cases.js';
 import { assessMaterialReadiness, formatReadiness } from './readiness.js';
 import { PILOT_CASE_SET, PILOT_INSTRUCTIONS } from './pilot-cases.js';
 import { REFRESH_2026_08_18, REFRESH_WINDOW_5D } from './refresh-2026-08-18.js';
+import { REFRESH_2026_08_23 } from './refresh-2026-08-23.js';
 import { runBenchmark, type Candidate, type RunPlan } from './run.js';
 
 /**
@@ -115,7 +116,7 @@ function preparacion(): number {
     console.error('uso: node dist/bin.js preparacion <runId> [candidatoA,candidatoB]');
     return 2;
   }
-  const candidateIds = (process.argv[4] ?? 'claude-haiku-4-5-20251001')
+  const candidateIds = (process.argv[4] ?? 'claude-sonnet-5')
     .split(',')
     .map((c) => c.trim())
     .filter((c) => c !== '');
@@ -125,7 +126,10 @@ function preparacion(): number {
     assessedAt: new Date().toISOString(),
     caseSet: MATERIAL_CASE_SET,
     contentPackage: loadContentPackage(join(REPO, 'content', 'unidad-deduccion-natural')),
-    refreshRecord: REFRESH_2026_08_18,
+    // El vigente. El del 2026-08-18 caducó y además no cubre a
+    // `claude-sonnet-5`; se conserva en el repositorio porque es la evidencia
+    // del piloto, no porque siga autorizando nada.
+    refreshRecord: REFRESH_2026_08_23,
     refreshWindow: REFRESH_WINDOW_5D,
     candidateIds,
   });

@@ -100,3 +100,4 @@ export {
   REFRESH_2026_08_18,
   REFRESH_WINDOW_5D,
 } from './refresh-2026-08-18.js';
+export { REFRESH_2026_08_23 } from './refresh-2026-08-23.js';

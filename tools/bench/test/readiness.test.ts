@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import {
   MATERIAL_CASE_SET,
   REFRESH_2026_08_18,
+  REFRESH_2026_08_23,
   REFRESH_WINDOW_5D,
   assessMaterialReadiness,
   formatReadiness,
@@ -72,10 +73,11 @@ const entrada = (extra: Partial<Parameters<typeof assessMaterialReadiness>[0]> =
   });
 
 describe('lo que hoy impide correr BENCH-01', () => {
-  it('con el refresco real, lo único que falla es el refresco', () => {
-    // **Este es el resultado que importa de toda la sesión.** Tres de las cuatro
-    // comprobaciones bloqueantes pasan contra el conjunto material y el corpus
-    // reales; la que falla es documental y su arreglo no es código.
+  it('con el refresco de agosto, lo único que falla es el refresco', () => {
+    // Fija el estado que **motivó** rehacer el refresco: contra el conjunto
+    // material y el corpus reales, tres de las cuatro comprobaciones pasaban y
+    // la que fallaba era documental. El bloque de más abajo comprueba que con el
+    // refresco del 2026-08-23 ya no falla ninguna.
     const r = entrada({ refreshRecord: REFRESH_2026_08_18 });
     expect(r.readyToRun).toBe(false);
     expect(r.blockingReasons.length).toBe(1);
@@ -194,5 +196,47 @@ describe('el informe dice lo que hay que hacer', () => {
     const texto = formatReadiness(entrada());
     expect(texto).toContain('SE PUEDE CORRER.');
     expect(texto).toContain('El dictamen NO está autorizado');
+  });
+});
+
+describe('con el refresco del 2026-08-23, BENCH-01 se puede correr (D-73)', () => {
+  const conRefrescoVigente = (candidateIds: readonly string[]) =>
+    assessMaterialReadiness({
+      runId: 'bench-01-material',
+      // Dentro de la ventana de 5 días desde el refresco del 2026-08-23.
+      assessedAt: '2026-08-23T09:00:00.000Z',
+      caseSet: MATERIAL_CASE_SET,
+      contentPackage: PAQUETE,
+      refreshRecord: REFRESH_2026_08_23,
+      refreshWindow: REFRESH_WINDOW_5D,
+      candidateIds,
+    });
+
+  it('las cuatro comprobaciones bloqueantes pasan con claude-sonnet-5', () => {
+    // **Éste es el resultado que cierra la cadena de código.** Lo que queda
+    // antes de coronar es humano: la lectura por muestra del paso 19, la
+    // revisión de los 200 casos y W5.
+    const r = conRefrescoVigente(['claude-sonnet-5']);
+    expect(r.blockingReasons).toEqual([]);
+    expect(r.readyToRun).toBe(true);
+  });
+
+  it('y sigue sin autorizar el dictamen', () => {
+    expect(conRefrescoVigente(['claude-sonnet-5']).readyToCrown).toBe(false);
+  });
+
+  it('el refresco anterior, con el mismo instante, no deja correr', () => {
+    // Control positivo: sin esto, «se puede correr» podría venir de que la
+    // comprobación dejó de mirar el refresco.
+    const r = assessMaterialReadiness({
+      runId: 'bench-01-material',
+      assessedAt: '2026-08-23T09:00:00.000Z',
+      caseSet: MATERIAL_CASE_SET,
+      contentPackage: PAQUETE,
+      refreshRecord: REFRESH_2026_08_18,
+      refreshWindow: REFRESH_WINDOW_5D,
+      candidateIds: ['claude-sonnet-5'],
+    });
+    expect(r.readyToRun).toBe(false);
   });
 });

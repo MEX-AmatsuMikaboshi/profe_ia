@@ -1625,4 +1625,49 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   vacío. Y una prueba fija que **el aviso de paquete sin congelar no entra en `blockingReasons`**, que
   es la confusión que este módulo existe para no cometer.
   **1903 pruebas unitarias en verde** (1890 antes) más las 131 contra PostgreSQL 17 real.
+- **D-73 — Refresco documental rehecho, y un defecto de la huella que nadie había notado
+  (2026-08-23).** Con esto **la corrida material de BENCH-01 deja de tener bloqueos de código**:
+  `bench:preparacion` pasa las cuatro comprobaciones bloqueantes.
+  **1. El defecto, que es lo primero.** El refresco del 2026-08-18 registró `contentSha256` de **los
+  bytes de la página de documentación**. Comprobado el 2026-08-23: **ese hash no es reproducible**.
+  `platform.claude.com` sirve una aplicación Next.js con un `nonce` de CSP distinto en cada respuesta
+  y un flujo RSC que no serializa los mismos identificadores dos veces. **Tres descargas seguidas de
+  la misma URL, sin que la documentación cambiara, dieron tres hashes distintos.** Un auditor que
+  volviera a descargar vería otro número y **no podría distinguir «la documentación cambió» de «el
+  nonce cambió»**, que es exactamente lo que la huella existe para distinguir. Nadie lo notó porque
+  **nadie volvió a descargar**: la huella se escribió una vez y jamás se comparó.
+  **2. Se intentó normalizar y se descartó, y el descarte importa.** Quitar el `nonce` en sus dos
+  formas —atributo HTML y campo escapado dentro del payload RSC— **no bastó**: cambia también el orden
+  de los identificadores de chunk. Seguir añadiendo reglas hasta que el hash dejara de moverse habría
+  producido un hash de «lo que el filtro dejó pasar», que es **peor que no tener hash porque parece
+  reproducible**.
+  **3. Lo que sí es estable es el contenido documental.** El sitio lo sirve en `text/markdown` bajo la
+  misma ruta con sufijo `.md`: 13 415 caracteres para las deprecaciones, hash idéntico en tres
+  descargas. Y es además lo que §8.1 quiere fijar —la afirmación del proveedor, no el vehículo—.
+  **4. La reproducibilidad se comprueba, no se supone.**
+  `scripts/model/refresh-sources.mjs` descarga cada fuente **dos veces** y **se niega a emitir huella
+  si difieren**, y rechaza además un `content-type` que no sea markdown. Si algún día un proveedor
+  sirve contenido inestable, esto falla y lo dice en vez de grabar un número sin significado. Es el
+  mismo criterio que los controles positivos de arquitectura: la comprobación tiene que poder fallar.
+  **5. `claude-sonnet-5` entra, y la duda de §8.1 la resuelve el proveedor por escrito.** «Each Claude
+  model ID identifies a pinned version of the model», y el formato sin fecha de la generación 4.6 en
+  adelante «is also a pinned snapshot, not an evergreen pointer». **No hace falta huella de
+  comportamiento**: el id es el snapshot. Estado «Active», retiro tentativo «Not sooner than June 30,
+  2027», con 60 días de aviso mínimo comprometidos.
+  **6. `claude-haiku-4-5-20251001` se conserva con su reserva escrita en el propio registro**: retiro
+  tentativo «Not sooner than October 15, 2026». Está **para poder compararlo, no para coronarlo**;
+  incluirlo en el refresco no lo elige.
+  **7. OpenAI sigue fuera y BENCH-02 sigue bloqueado.** Sus ids no publican snapshot fechado y OpenAI
+  **no declara** que un id sin fecha sea una versión fijada —a diferencia de Anthropic, que sí lo
+  dice—. Sin esa declaración §8.1 exige huella de comportamiento, y esa huella no existe.
+  **Controles positivos:** una prueba exige que **toda fuente del registro apunte a `.md`**, y otra
+  comprueba que el registro **anterior sí apuntaba a HTML** —sin ella la regla podría estar pasando
+  por casualidad en vez de arreglando algo—; el refresco caduca a los seis días y la ventana no se
+  amplía para que quepa; un candidato ausente del registro no se mide; y `bench:preparacion` con el
+  refresco de agosto **sigue fallando**, que es lo que demuestra que el verde de hoy viene del
+  refresco nuevo y no de que la comprobación dejara de mirar.
+  **Estado resultante de `bench:preparacion bench-01-material claude-sonnet-5`: `SE PUEDE CORRER`.**
+  Lo que queda antes de coronar es humano: lectura por muestra del paso 19, revisión de los 200 casos
+  (D-41) y W5.
+  **1918 pruebas unitarias en verde** (1903 antes) más las 131 contra PostgreSQL 17 real.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.
