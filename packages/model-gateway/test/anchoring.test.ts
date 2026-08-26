@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CanaryRegistry } from '@profesor-ia/security-policy';
+import { fragmentHandle } from '@profesor-ia/contracts';
 import {
   AUTHORIZED_RULE_IDS,
   CONNECTIVE_ALIASES,
@@ -280,5 +281,70 @@ describe('correspondencia con el cálculo congelado de logic-core', () => {
     for (const regla of CALCULO.forbiddenRuleIds) {
       expect(AUTHORIZED_RULE_IDS as readonly string[]).not.toContain(regla);
     }
+  });
+});
+
+describe('anclaje por mango corto (D-77)', () => {
+  const MANGO_F1 = fragmentHandle('f1');
+
+  it('resuelve un ancla citada por mango', () => {
+    const v = validateAnchoredOutput(
+      salida([
+        { text: 'De A y de B se sigue A∧B.', anchors: [MANGO_F1], function: 'explanation' },
+      ]),
+      entrada(),
+    );
+    expect(razones(v)).toEqual([]);
+    expect(v.outcome).toBe('accepted');
+    if (v.outcome !== 'accepted') return;
+    expect(v.standings[0]).toEqual({ kind: 'anchored', resolvedAnchors: [MANGO_F1] });
+  });
+
+  it('sigue resolviendo el identificador canónico: lo ya emitido no se invalida', () => {
+    const v = validateAnchoredOutput(
+      salida([{ text: 'De A y de B se sigue A∧B.', anchors: ['f1'], function: 'explanation' }]),
+      entrada(),
+    );
+    expect(razones(v)).toEqual([]);
+  });
+
+  it('el mango exime del rechazo por símbolo, igual que el canónico', () => {
+    // El texto de respaldo se toma del fragmento resuelto, así que citar por
+    // mango tiene que dar exactamente el mismo respaldo. Si el mango resolviera
+    // «a medias», MT dejaría de estar exenta y esto lo detecta.
+    const v = validateAnchoredOutput(
+      salida([
+        {
+          text: 'En este cálculo no se admite MT como regla derivada.',
+          anchors: [fragmentHandle('f2')],
+          function: 'explanation',
+        },
+      ]),
+      entrada(),
+    );
+    expect(razones(v)).toEqual([]);
+  });
+
+  it('un mango de otro bloque no resuelve: el bloque sigue mandando (P-I §9.4)', () => {
+    const v = validateAnchoredOutput(
+      salida([
+        { text: 'Algo del otro bloque.', anchors: [fragmentHandle('ajeno')], function: 'explanation' },
+      ]),
+      entrada(),
+    );
+    expect(razones(v)).toEqual(['anchor_inexistente']);
+  });
+
+  it('un mango acortado no resuelve — que es el modo de fallo que D-77 quiere', () => {
+    // `claude-haiku-4-5` acortaba el identificador y producía anclas
+    // inexistentes. Con el mango, acortar sigue fallando; la diferencia es que
+    // ya no hay nada que invite a hacerlo.
+    const v = validateAnchoredOutput(
+      salida([
+        { text: 'De A y de B se sigue A∧B.', anchors: [MANGO_F1.slice(0, 6)], function: 'explanation' },
+      ]),
+      entrada(),
+    );
+    expect(razones(v)).toEqual(['anchor_inexistente']);
   });
 });

@@ -35,6 +35,8 @@
     "ci:canary": "vitest run --project unit packages/security-policy/test/canary.test.ts packages/model-gateway/test/session-context.test.ts",
     "ci:cost:ledger": "vitest run --project unit packages/model-gateway/test/cost.test.ts packages/model-gateway/test/budget.test.ts",
     "logic:golden:generate": "node scripts/logic/generate-golden.mjs",
+    "content:mangos": "node scripts/content/fragment-handles.mjs",
+    "ci:content:mangos": "node scripts/content/fragment-handles.mjs --check",
     "ci:db:testcontainers": "vitest run --project db",
     "ci:db:negative": "vitest run --project db",
     "db:grants": "node scripts/db/generate-grants.mjs",

@@ -199,6 +199,11 @@ jobs:
         run: pnpm run ci:logic:pbt
       - name: ci:logic:no-net
         run: pnpm run ci:logic:no-net
+      # La tabla de mangos es derivada del corpus (D-77): si el corpus cambia y
+      # nadie la regenera, un informe de BENCH-01 lleno de `F-…` deja de ser
+      # auditable. Va en este job porque necesita el submódulo de contenido.
+      - name: ci:content:mangos
+        run: pnpm run ci:build && pnpm run ci:content:mangos
       # El conjunto dorado es reproducible por semilla: regenerarlo no debe
       # cambiar nada. Un diff aquí significa que el generador o el cálculo cambió.
       #

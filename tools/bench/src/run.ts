@@ -1,3 +1,4 @@
+import { fragmentHandle } from '@profesor-ia/contracts';
 import type { CostEvent, ModelBinding, PricingManifest } from '@profesor-ia/contracts';
 import {
   FrozenAssetMissingError,
@@ -385,10 +386,14 @@ function componerEntrada(caso: BenchCase, deps: RunDependencies): string {
         'él. `assertAnchorFragmentsAvailable()` debería haberlo parado antes de correr.',
     );
   }
+  // Se presenta el **mango** y no el identificador canónico (D-77). El canónico
+  // son ~105 caracteres con espacio, paréntesis, dos `@`, dos `#` y una barra:
+  // copiar eso literalmente en cada ancla es lo que hundió el gate en la corrida
+  // del 2026-08-23. El validador sigue aceptando los dos.
   return [
     `Bloque autorizado: ${bloque}`,
-    'Fragmentos autorizados (ancla por fragmentId exacto):',
-    ...fragmentos.map((f) => `- ${f.fragmentId}: ${f.text}`),
+    'Fragmentos autorizados (ancla copiando el mango exacto de la izquierda):',
+    ...fragmentos.map((f) => `- ${fragmentHandle(f.fragmentId)}: ${f.text}`),
     '',
     `Alumno: ${caso.input}`,
   ].join('\n');

@@ -1809,4 +1809,54 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   entonces un refresco documental— o que el propietario **congele un set canario y defina qué es su
   huella de comportamiento** (`T-H4-02`), sabiendo que un hash sobre salidas de un modelo no
   determinista no es estable y que esa definición es una decisión de diseño.
+- **D-77 — El ancla se cita por mango corto, no por `fragmentId` (2026-08-26).** El gate
+  `factual_segments_with_resolvable_anchors` es el que hoy decide BENCH-01, y su peor resultado
+  —15.4 % de `claude-haiku-4-5`, contra un piso de 95 %— **no era de capacidad**: el candidato
+  **acortaba el identificador** y producía 136 anclas inexistentes (D-75).
+  **1. El defecto era del identificador, no del candidato.** El prompt pedía copiar literalmente
+  `forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#truth-functional-logic`
+  — **107.4 caracteres de media**, con espacio, paréntesis, dos `@`, dos `#` y una barra: seis clases
+  de carácter que invitan al error, en cada ancla de cada segmento de cada petición.
+  **2. No hay norma que lo exija.** P-II §8.4 fija `anchors: string[]` y pide que las anclas
+  **resuelvan**; del formato de la cadena no dice nada. El id largo es `fragmentId()` (D-17), que se
+  eligió para la **proveniencia**, y el ancla lo reutilizaba por inercia.
+  **3. El mango: `F-` más ocho dígitos hexadecimales**, derivado por SHA-256 del identificador
+  canónico. **Diez caracteres contra 107.4, un 90.7 % menos.** Es derivado y no correlativo por la
+  misma razón que D-17: un contador cambia al reordenar o insertar una sección.
+  **4. Opaco a propósito, y eso es la característica.** Un mango legible —`F-truth-functional-logic`—
+  volvería a tener estructura visible, y la estructura visible es justo lo que un modelo «acorta».
+  Ocho dígitos hexadecimales no tienen nada que recortar: o se copian o no resuelven. Un mango mal
+  transcrito cae en `anchor_inexistente` en vez de resolver por accidente a otro fragmento, que es el
+  modo de fallo que de verdad hay que evitar.
+  **5. El canónico sigue resolviendo.** El validador acepta los dos nombres del mismo objeto, porque
+  el canónico es el que llevan `anchors.yaml`, el registro de auditoría y las corridas de BENCH-01 ya
+  escritas: retirarlo invalidaría anclaje correcto ya emitido. `buildFragmentHandleTable()` comprueba
+  que la correspondencia es **inyectiva** y **falla cerrado** ante colisión — un mango ambiguo haría
+  resolver un ancla al fragmento equivocado, y una atribución falsa que *pasa* el validador vacía I-7.
+  **6. El control positivo busca una colisión de verdad.** Con 8 dígitos el cumpleaños la encuentra en
+  ~2^16 pruebas —733 ms—, así que se busca en vez de simularla; recorre enteros en orden, de modo que
+  el par hallado es el mismo en cada corrida. Va con su control negativo: 656 ids sanos no lanzan, sin
+  el cual una guarda que lanzara siempre pasaría por buena.
+  **7. Tabla de correspondencia publicada.** `analysis/reports/fragment-handles.json`, generada por
+  `pnpm run content:mangos` y comprobada por `pnpm run ci:content:mangos`, que **detecta deriva
+  sembrada**. Un informe lleno de `F-…` no es auditable sin ella. Es derivada: el diff debe ser vacío,
+  como el del conjunto dorado.
+  **Lo que esto no hace:** no re-corre BENCH-01 ni mueve ningún gate por sí solo. Cambia el prompt,
+  así que §8.5 exige **volver a congelar y re-evaluar**; los ítems ya mirados dejan de valer.
+- **D-78 — La avería de CI llevaba nueve corridas diciendo su causa, y nadie la leyó
+  (2026-08-26).** D-58 dedujo la firma —diez jobs a cero pasos en segundos— y de ahí se pasó a
+  hipótesis de cuenta, que se intentaron confirmar por el endpoint de facturación; ese endpoint
+  devuelve 404 por falta del scope `user`, y ahí se paró la investigación **ocho sesiones seguidas**.
+  **El mensaje estaba en otro endpoint, sin scope especial:**
+  `repos/{owner}/{repo}/check-runs/{job_id}/annotations` devuelve, literal: «The job was not started
+  because recent account payments have failed or your spending limit needs to be increased. Please
+  check the 'Billing & plans' section in your settings». `actions/runs/{id}/timing` lo corrobora con
+  `total_ms: 0` en los diez jobs: no arrancó ninguno y no se consumió cuota.
+  **La lección, que no es sobre facturación:** cuando un check falla sin salida propia, la anotación
+  del check-run es la primera puerta, no la última. Se buscó la causa por deducción y por el endpoint
+  que requería un permiso que no había, teniendo un endpoint accesible que la decía en prosa.
+  **Sigue siendo del propietario.** Añadir método de pago **no basta**: en cuentas personales el
+  límite de gasto de Actions nace en cero, y la segunda mitad del mensaje es exactamente eso. Se
+  comprobó el 2026-08-26 relanzando la corrida `33012708333` (intento 2) con el método de pago ya
+  puesto: **misma anotación, palabra por palabra**.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

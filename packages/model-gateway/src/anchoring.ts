@@ -1,4 +1,9 @@
-import { AnchoredOutput, type AnchorRejectionReason } from '@profesor-ia/contracts';
+import {
+  AnchoredOutput,
+  buildFragmentHandleTable,
+  fragmentHandle,
+  type AnchorRejectionReason,
+} from '@profesor-ia/contracts';
 
 import { CanaryHitError } from './errors.js';
 import type { AuthorizedFragment, CanaryDetector } from './session-context.js';
@@ -239,11 +244,24 @@ export function validateAnchoredOutput(
 
   // El bloque manda: un fragmento de otro bloque no es anclaje válido aquí, por
   // la misma razón por la que el filtro de egreso no deja entrar uno (P-I §9.4).
-  const delBloque = new Map(
-    input.authorizedFragments
-      .filter((f) => f.blockId === input.blockId)
-      .map((f) => [f.fragmentId, f] as const),
-  );
+  //
+  // Cada fragmento entra **dos veces**: por su identificador canónico y por su
+  // mango corto (D-77). No es laxitud, son dos nombres del mismo objeto: el
+  // mango se deriva del canónico y `buildFragmentHandleTable()` comprueba que la
+  // correspondencia es inyectiva, así que ninguna cadena puede resolver a dos
+  // fragmentos. Se admiten los dos porque el mango es la forma que se le enseña
+  // al modelo desde D-77, y el canónico es el que llevan los artefactos ya
+  // emitidos —`anchors.yaml`, el registro de auditoría, las corridas de
+  // BENCH-01 anteriores—: retirarlo invalidaría anclaje correcto ya escrito.
+  const delBloque = new Map<string, AuthorizedFragment>();
+  const enBloque = input.authorizedFragments.filter((f) => f.blockId === input.blockId);
+  // Falla cerrado si dos fragmentos del bloque comparten mango, antes de
+  // resolver nada.
+  buildFragmentHandleTable(enBloque.map((f) => f.fragmentId));
+  for (const fragmento of enBloque) {
+    delBloque.set(fragmento.fragmentId, fragmento);
+    delBloque.set(fragmentHandle(fragmento.fragmentId), fragmento);
+  }
 
   const standings: SegmentStanding[] = [];
   const auditoria: UnanchoredSegmentRecord[] = [];

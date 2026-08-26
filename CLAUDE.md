@@ -73,6 +73,7 @@ pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && 
 | `pnpm run dev:docker` | **Arranca Docker Desktop.** A mano no arranca: ver trampa 6. También `dev:docker:clean/stop` |
 | `pnpm run dev:env` → `dev:up` → `dev:seed` | Levantar el entorno local (`infra/runbooks/local.md`); además `dev:down/status/logs/backup/restore` |
 | `pnpm run logic:golden:generate` | Regenera el conjunto dorado; **el diff debe ser vacío** |
+| `pnpm run content:mangos` / `ci:content:mangos` | Tabla de correspondencia mango → `fragmentId` (D-77) / comprueba que sigue correspondiendo al corpus |
 | `pnpm run contracts:json-schema` | Emite los JSON Schema desde `packages/contracts` |
 
 ### Una sola prueba
@@ -197,7 +198,7 @@ Son reales y cuestan una hora cada una si no se conocen (`docs/env/windows.md`).
    `%LOCALAPPDATA%\Docker\run` **y** `%LOCALAPPDATA%\docker-secrets-engine` —los dos, limpiar uno
    sólo mueve el fallo al otro— antes de lanzarlo. Desde el icono seguirá fallando (D-31).
 
-## 6. Estado actual (2026-08-23)
+## 6. Estado actual (2026-08-26)
 
 F0/H0, F1/H1 y F2/H2 completas. **F3/H3 con sus 5 tareas y el criterio técnico cubierto**: los tres
 checks de infraestructura están en CI; el gate espera sólo Infisical y firmas. F5/H4.5 con 8 de 8,
@@ -239,18 +240,35 @@ credenciales.
 adversarial). Las cuatro restantes viven dentro del bucle W7; ya tienen binding ganador con el que
 empezar `T-H7-01`. F9–F16 no empezadas.
 
-**1826 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
+**1842 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
 `logic-core` en verde. **Aviso:** los conteos de sesiones anteriores («1890», «1918 unitarias») no son
-comparables — parecen haber sumado los proyectos `unit` y `db` bajo la misma etiqueta. Medido hoy,
-`--project unit` da 1826 y `--project db` da 131.
+comparables — parecen haber sumado los proyectos `unit` y `db` bajo la misma etiqueta. Medido el 2026-08-26,
+`--project unit` da 1842 y `--project db` da 131.
 
-**⚠ CI está caída y es de la cuenta, no del código.** Van **ocho** corridas seguidas con la firma de
-D-58: los diez jobs a cero pasos en dos a cinco segundos —la última, `32673608669` sobre `6368af3`—.
-**La corrida aparece unos segundos como `queued` antes de fallar**, así que verla encolada no
-significa que haya arrancado. Comprobado que Actions está `enabled` con
-`allowed_actions: all` y que el repositorio no está `archived` ni `disabled`. Queda la facturación
-—repositorio privado en cuenta de usuario, así que consume cuota de minutos— y eso necesita al
-propietario. **Mientras siga así, nada nuevo pasa de `HECHA` a `VERIFICADA`.**
+**⚠ CI sigue caída, y desde el 2026-08-26 se sabe exactamente por qué (D-78).** La anotación del
+check-run lo dice en prosa, y **no necesita scope especial**:
+
+```bash
+gh api repos/MEX-AmatsuMikaboshi/profe_ia/check-runs/<job_id>/annotations --jq '.[].message'
+```
+
+«The job was not started because recent account payments have failed or your spending limit needs to
+be increased.» `actions/runs/<id>/timing` lo corrobora: `total_ms: 0` en los diez jobs. **Ocho
+sesiones se dedujo la causa chocando con el 404 del endpoint de facturación teniendo éste al lado.**
+Regla que deja: cuando un check falla sin salida propia, la anotación del check-run es la **primera**
+puerta.
+
+El propietario puso método de pago el 2026-08-26 y **no bastó**: el relanzamiento dio la misma
+anotación. Falta la segunda mitad — en cuentas personales el límite de gasto de Actions nace en
+**cero**. Está en *Settings → Billing and licensing → Budgets and alerts*. **Mientras siga así, nada
+nuevo pasa de `HECHA` a `VERIFICADA`.**
+
+**Las anclas se citan por mango corto desde D-77 (2026-08-26).** `F-` más ocho dígitos hexadecimales
+derivados por SHA-256 del `fragmentId` canónico: **10 caracteres contra 107.4**. El validador de
+anclaje acepta **los dos**, y la tabla se publica en `analysis/reports/fragment-handles.json`
+(`pnpm run content:mangos`, comprobada por `pnpm run ci:content:mangos`). El id canónico sigue siendo
+el de proveniencia; el mango es proyección de presentación. Esto **no** re-corre BENCH-01: cambia el
+prompt, y §8.5 exige recongelar y re-evaluar.
 
 **El estado tarea por tarea, con evidencia, está en `docs/plan/PLAN_STATUS.md`, y por dónde seguir en
 `docs/plan/HANDOFF.md`, cabecera «EMPIEZA AQUÍ».** Este apartado se queda rancio entre sesiones; esos

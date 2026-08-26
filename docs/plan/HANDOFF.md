@@ -1,6 +1,98 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — cierre de la decimoctava sesión (2026-08-23)
+> ## EMPIEZA AQUÍ — decimonovena sesión (2026-08-26)
+>
+> ### 1. La avería de CI llevaba nueve corridas diciendo su causa (D-78)
+>
+> **El mensaje estaba disponible todo el tiempo, en un endpoint que no pide scope especial:**
+>
+> ```bash
+> gh api repos/MEX-AmatsuMikaboshi/profe_ia/check-runs/<job_id>/annotations --jq '.[].message'
+> ```
+>
+> Devuelve, literal: «The job was not started because recent account payments have failed or your
+> spending limit needs to be increased.» Y `actions/runs/<id>/timing` lo corrobora con `total_ms: 0`
+> en los diez jobs. Ocho sesiones se fueron deduciendo la causa y chocando con el 404 del endpoint de
+> facturación —que sí necesita el scope `user`— teniendo éste al lado.
+>
+> **La lección no es sobre facturación:** cuando un check falla sin salida propia, la anotación del
+> check-run es la **primera** puerta, no la última.
+>
+> **Estado al cerrar:** el propietario puso método de pago el 2026-08-26. **No bastó.** Se relanzó
+> `33012708333` (intento 2, 21:09 UTC) y dio la **misma anotación palabra por palabra**. Falta la
+> segunda mitad del mensaje: en cuentas personales el límite de gasto de Actions nace en **cero** y
+> añadir tarjeta no lo sube. Está en *Settings → Billing and licensing → **Budgets and alerts***
+> (antes «Spending limit»): hay que crear un presupuesto para Actions mayor que cero. **Hasta que eso
+> ocurra, nada pasa de `HECHA` a `VERIFICADA`, D-77 incluida.**
+>
+> ### 2. Hecho: el ancla se cita por mango corto (D-77)
+>
+> Era el **paso 2** del orden de la sesión anterior, y la palanca de mayor rendimiento sobre el gate
+> que hoy decide BENCH-01.
+>
+> | | Antes | Ahora |
+> |---|---|---|
+> | Lo que el modelo copia | `forallx-yyc/…#truth-functional-logic` | `F-0d14fb12` |
+> | Longitud media | **107.4 caracteres** | **10** |
+> | Clases de carácter que invitan al error | espacio, `(`, `)`, `@`, `#`, `/` | ninguna |
+> | Resuelve el id canónico | sí | **sí, sigue resolviendo** |
+>
+> **Lo que hay que entender antes de tocarlo:**
+>
+> 1. **P-II §8.4 no exige el id largo.** Fija `anchors: string[]` y pide que las anclas *resuelvan*;
+>    del formato no dice nada. El id largo es `fragmentId()` (D-17), elegido para **proveniencia**, y
+>    el ancla lo reutilizaba por inercia. Esto no contradice a ninguna autoridad superior.
+> 2. **El mango es derivado, no correlativo** — SHA-256 del canónico, ocho dígitos hex. Por la misma
+>    razón que D-17: un contador cambia al reordenar o insertar una sección.
+> 3. **Es opaco a propósito.** Un mango legible volvería a tener estructura visible, que es justo lo
+>    que un modelo «acorta». Ocho dígitos hex no tienen nada que recortar.
+> 4. **El canónico sigue aceptándose**, porque lo llevan `anchors.yaml`, el registro de auditoría y
+>    las corridas anteriores. Retirarlo invalidaría anclaje correcto ya emitido.
+> 5. **La tabla se publica** en `analysis/reports/fragment-handles.json` (`pnpm run content:mangos`,
+>    comprobada por `pnpm run ci:content:mangos`, que detecta deriva sembrada). Un informe lleno de
+>    `F-…` no es auditable sin ella.
+>
+> **Esto no re-corre BENCH-01 ni mueve ningún gate por sí solo.** Cambia el prompt, y §8.5 exige
+> volver a congelar y re-evaluar: los ítems ya mirados dejan de valer.
+>
+> ### 3. Verificación de esta sesión
+>
+> **1842 pruebas unitarias en verde** (1826 al abrir, +16) más las **131 contra PostgreSQL 17 real**,
+> que corrieron en local con Docker arriba. Lint, typecheck (41/41), build (25/25), depcruise con sus
+> dos controles positivos (482 módulos, 1110 dependencias, cero violaciones), el control positivo del
+> typecheck de pruebas, separación de modos, sesión seca, adversarial, conjunto dorado, PBT, pureza
+> del verificador, pasarela, grants, SBOM, drift, las 159 de hardening y la tabla de mangos: todo
+> verde. `ci:logic:mutation` no se corrió —sólo corre en `main`—; `logic-core` no se tocó.
+>
+> ### 4. Orden para retomar
+>
+> 1. **Subir el límite de gasto de Actions** y observar la corrida. Es lo único que separa a D-74…D-78
+>    de `VERIFICADA`, y no hay nada que tocar en el código.
+> 2. **Instrucción explícita de que la negativa también va en el esquema** — los 3 fallos
+>    estructurales de `claude-sonnet-5` son negativas escritas en prosa antes del JSON. Era el paso 3
+>    y sigue pendiente. §8.5 autoriza iterar prompts en desarrollo y exige recongelar.
+> 3. **Re-correr BENCH-01** con el mango ya puesto y esa instrucción:
+>    `pnpm run bench:material <runId> <cands> <reps> <maxTokens>`. Con 3 repeticiones se cubre además
+>    la **estabilidad de §8.5**, que la corrida de una repetición no midió. Coste estimado: ~MXN 145
+>    contra un umbral de 700.
+> 4. **`T-H7-01`** con el binding ganador.
+> 5. **W5** cuando el propietario rompa su circularidad.
+>
+> ### 5. Lo que sigue siendo del propietario
+>
+> - **El límite de gasto de Actions** (arriba).
+> - La **revisión humana de los 200 casos** de BENCH-01 (D-41).
+> - La **auditoría de calidad pedagógica en muestra ciega** de §6.2.
+> - La **lectura humana por muestra** del paso 19, sobre el banco de 656.
+> - La **Parte A ciega** a una familia que no sea candidata de BENCH-01.
+> - **Romper la circularidad de W5.**
+> - El **set canario** si se quiere a OpenAI dentro de BENCH-01 (`T-H4-02`).
+>
+> ### 6. Defecto conocido y no arreglado
+>
+> `pnpm run plan:status` sigue roto: apunta a `scripts/plan/check-status.mjs`, que no existe.
+
+> ## Cierre de la decimoctava sesión (2026-08-23) — **superado por el de arriba**
 >
 > **BENCH-01 corrió.** Los 200 casos materiales contra los dos candidatos autorizados, los seis gates
 > computados, y un ganador. También corrió la medición exploratoria de OpenAI que el propietario

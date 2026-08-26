@@ -12,6 +12,7 @@ export * from './pedagogical-decision.js';
 export * from './probe.js';
 export * from './probe-interruption.js';
 export * from './anchored-segment.js';
+export * from './fragment-handle.js';
 export * from './model-binding.js';
 export * from './cost.js';
 export * from './incident.js';

@@ -1,0 +1,101 @@
+{
+  "generadoPor": "scripts/content/fragment-handles.mjs",
+  "decision": "D-77",
+  "assetVersion": "w1-corpus-v1+w3@2026-08-23T03:33:57.153Z",
+  "corpusVersion": "w1-corpus-v1",
+  "total": 18,
+  "longitudCanonicaMedia": 107.4,
+  "longitudDelMango": 10,
+  "entradas": [
+    {
+      "handle": "F-0d14fb12",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs",
+      "blockId": "KC08"
+    },
+    {
+      "handle": "F-11b592d3",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#double-negation-elimination",
+      "blockId": "KC16"
+    },
+    {
+      "handle": "F-31ac5762",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-very-idea-of-natural-deduction",
+      "blockId": "KC02"
+    },
+    {
+      "handle": "F-39b7fa5b",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#atomic-sentences",
+      "blockId": "KC01"
+    },
+    {
+      "handle": "F-4a4e55f2",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-forward-from-what-we-have",
+      "blockId": "KC18"
+    },
+    {
+      "handle": "F-5ca02f0b",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction",
+      "blockId": "KC05"
+    },
+    {
+      "handle": "F-5f114a5f",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#bracketing-conventions",
+      "blockId": "KC01"
+    },
+    {
+      "handle": "F-601e8cac",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-forward-from-ered",
+      "blockId": "KC18"
+    },
+    {
+      "handle": "F-66e2b0eb",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof",
+      "blockId": "KC02"
+    },
+    {
+      "handle": "F-68d54ab6",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#proceed-indirectly",
+      "blockId": "KC17"
+    },
+    {
+      "handle": "F-838f7ed7",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration",
+      "blockId": "KC03"
+    },
+    {
+      "handle": "F-91cd3a41",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation",
+      "blockId": "KC12"
+    },
+    {
+      "handle": "F-a5f45a06",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#sentences",
+      "blockId": "KC01"
+    },
+    {
+      "handle": "F-abe30b51",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional",
+      "blockId": "KC09"
+    },
+    {
+      "handle": "F-c804016e",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional",
+      "blockId": "KC15"
+    },
+    {
+      "handle": "F-d3fe3322",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction",
+      "blockId": "KC13"
+    },
+    {
+      "handle": "F-e7015178",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-backward-from-what-we-want",
+      "blockId": "KC18"
+    },
+    {
+      "handle": "F-e7301999",
+      "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#constructing-proofs",
+      "blockId": "KC18"
+    }
+  ]
+}

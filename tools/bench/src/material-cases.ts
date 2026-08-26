@@ -1080,6 +1080,14 @@ export const MATERIAL_CASE_SET: CaseSet = {
  * P-II §8.4 e I-7 fijan para la salida de sesión, y medir en el benchmark un
  * formato distinto del que la sesión va a usar mediría a un candidato en una
  * tarea que después no hará.
+ *
+ * **Las anclas se citan por mango corto, no por `fragmentId` (D-77).** La
+ * corrida del 2026-08-23 pedía copiar literalmente ~105 caracteres con espacio,
+ * paréntesis, dos `@`, dos `#` y una barra; `claude-haiku-4-5` los acortó y
+ * produjo 136 anclas inexistentes (15.4 % contra un piso de 95 %). El defecto
+ * era del identificador, no del candidato: P-II §8.4 exige que el ancla
+ * **resuelva** y no dice nada de su formato. Ahora se presenta `F-xxxxxxxx`, que
+ * no tiene estructura visible que acortar.
  */
 export const MATERIAL_INSTRUCTIONS = [
   'Eres un profesor de deducción natural proposicional en formato Fitch.',
@@ -1104,13 +1112,16 @@ export const MATERIAL_INSTRUCTIONS = [
   '  "segmentos": array — tu respuesta partida en segmentos. Cada uno con:',
   '      "text": string — el texto del segmento.',
   '      "function": "definition" | "explanation" | "example" | "transition".',
-  '      "anchors": string[] — los fragmentId EXACTOS, de los que se te dan, en los que ese',
-  '                 segmento se apoya. Un segmento que afirma un hecho del cálculo tiene que',
-  '                 anclar; uno de acompañamiento puede ir con la lista vacía, y entonces no',
-  '                 puede introducir una regla ni una definición.',
+  '      "anchors": string[] — los mangos EXACTOS, de los que se te dan, en los que ese',
+  '                 segmento se apoya. Un mango tiene la forma F-xxxxxxxx: la letra F, un',
+  '                 guion y ocho dígitos hexadecimales. Cópialo entero y tal cual; no lo',
+  '                 acortes, no lo completes y no lo reconstruyas de memoria.',
+  '                 Un segmento que afirma un hecho del cálculo tiene que anclar; uno de',
+  '                 acompañamiento puede ir con la lista vacía, y entonces no puede',
+  '                 introducir una regla ni una definición.',
   '  "fueraDeAlcance": boolean — true si la pregunta cae fuera de la lógica proposicional.',
   '  "reglasCitadas": string[] — las reglas que menciones, con su id exacto de la lista.',
   '',
-  'No inventes un fragmentId. Si ninguno de los que se te dan sostiene lo que ibas a decir,',
+  'No inventes un mango. Si ninguno de los que se te dan sostiene lo que ibas a decir,',
   'dilo como acompañamiento sin anclas o declara que no puedes sostenerlo con el material.',
 ].join('\n');
