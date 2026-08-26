@@ -239,10 +239,10 @@ credenciales.
 adversarial). Las cuatro restantes viven dentro del bucle W7; ya tienen binding ganador con el que
 empezar `T-H7-01`. F9–F16 no empezadas.
 
-**1824 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
+**1826 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
 `logic-core` en verde. **Aviso:** los conteos de sesiones anteriores («1890», «1918 unitarias») no son
 comparables — parecen haber sumado los proyectos `unit` y `db` bajo la misma etiqueta. Medido hoy,
-`--project unit` da 1824 y `--project db` da 131.
+`--project unit` da 1826 y `--project db` da 131.
 
 **⚠ CI está caída y es de la cuenta, no del código.** Van **ocho** corridas seguidas con la firma de
 D-58: los diez jobs a cero pasos en dos a cinco segundos —la última, `32673608669` sobre `6368af3`—.

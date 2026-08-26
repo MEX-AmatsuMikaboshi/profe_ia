@@ -118,15 +118,15 @@
 >
 > ### Verificación de esta sesión
 >
-> **1824 pruebas unitarias en verde** (1786 al abrir) más las **131 contra PostgreSQL 17 real**. Lint,
+> **1826 pruebas unitarias en verde** (1786 al abrir) más las **131 contra PostgreSQL 17 real**. Lint,
 > typecheck, build, depcruise con sus dos controles positivos, el control positivo del typecheck de
 > pruebas, separación de modos, sesión seca, adversarial, conjunto dorado, PBT, pureza del verificador,
 > pasarela, grants, SBOM, drift y las 159 de hardening: todo verde en local. **`ci:logic:mutation` no
 > se corrió aquí** —sólo corre en `main`—; `logic-core` no se tocó.
 >
 > **Aviso sobre los conteos de pruebas de sesiones anteriores:** el «1918 pruebas unitarias» de D-73 y
-> el «1890» del cierre anterior no son comparables con este 1824. Medido hoy, `--project unit` da
-> **1824** y `--project db` da **131**; los números antiguos parecen haber sumado los dos proyectos
+> el «1890» del cierre anterior no son comparables con este 1826. Medido hoy, `--project unit` da
+> **1826** y `--project db` da **131**; los números antiguos parecen haber sumado los dos proyectos
 > bajo la etiqueta «unitarias». No se corrigen hacia atrás; se avisa para que nadie lea una caída
 > donde hubo un aumento de 38.
 >
