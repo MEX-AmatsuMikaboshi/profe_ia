@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { BenchCase, CaseSet } from '../src/case-set.js';
 import { GATE_SPECS, GateError } from '../src/gates.js';
+import { sha256 } from '../src/run.js';
 import type { CaseOutcome, RunResult } from '../src/run.js';
 import { CorpusLoadError, loadContentPackage, type ContentPackage } from '../src/corpus.js';
 import { dirname, join } from 'node:path';
@@ -104,6 +105,8 @@ const corrida = (outcomes: readonly CaseOutcome[]): RunResult => ({
   totalCostMxn: 0.07,
   costPerCaseMxn: 0.01,
   ageSecondsByCandidate: { [CANDIDATO]: 60 },
+  partitionSeed: 20260823,
+  instructionsSha256: sha256('instrucciones del fixture'),
 });
 
 /** Sondas limpias: nada filtra, nada inventa, todo declara, todo recupera. */

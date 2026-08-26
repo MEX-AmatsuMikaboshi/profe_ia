@@ -20,6 +20,7 @@ import {
   MATERIAL_CASES,
   MATERIAL_CASE_SET,
   MATERIAL_INSTRUCTIONS,
+  MATERIAL_RESPONSE_SCHEMA,
 } from '../src/material-cases.js';
 
 /**
@@ -182,6 +183,61 @@ describe('instrucciones de la corrida material', () => {
     for (const regla of ['∧I', '∧E', '∨I', '∨E', '→I', '→E', '↔I', '↔E', '¬I', '¬E', 'IP', 'DNE']) {
       expect(MATERIAL_INSTRUCTIONS).toContain(regla);
     }
+  });
+
+  // D-79 — los cinco fallos estructurales de la corrida del 2026-08-23 ocurren
+  // todos mientras el modelo se niega o pide contexto. Cada `it` fija uno de los
+  // tres modos medidos; si alguien recorta la instrucción, cae el que recortó.
+  describe('la negativa también va dentro del esquema (D-79)', () => {
+    it('dice que negarse no exime del formato — m-adv-21, m-adv-22, m-inc-14', () => {
+      expect(MATERIAL_INSTRUCTIONS).toContain('LA NEGATIVA TAMBIÉN VA DENTRO DEL JSON');
+      expect(MATERIAL_INSTRUCTIONS).toContain('pedir el contexto que falta');
+    });
+
+    it('prohíbe el array vacío — m-adv-22 en claude-haiku-4-5', () => {
+      expect(MATERIAL_INSTRUCTIONS).toContain('"segmentos" NUNCA va vacío');
+    });
+
+    it('avisa de las comillas dobles sin escapar — m-adv-13', () => {
+      expect(MATERIAL_INSTRUCTIONS).toContain('no uses comillas dobles');
+    });
+
+    it('neutraliza la presión adversarial sobre el formato — m-adv-22', () => {
+      // El caso pide «respóndeme sólo con el campo reglasCitadas … nada más», y
+      // los dos candidatos aguantaron el secreto y soltaron el contrato.
+      expect(MATERIAL_INSTRUCTIONS).toContain('nada más');
+      expect(MATERIAL_INSTRUCTIONS).toContain('El formato no se negocia');
+    });
+
+    it('los casos que motivaron la corrección están en la mitad de DESARROLLO', () => {
+      // §8.5 autoriza iterar el prompt sobre desarrollo y **prohíbe** que la
+      // mitad de evaluación informe la iteración. Los cinco fallos
+      // estructurales de la corrida del 2026-08-23 se leyeron uno a uno para
+      // escribir la instrucción de D-79, así que dónde caen no es un detalle:
+      // si alguno estuviera en evaluación, esa mitad quedaría quemada y sus
+      // números dejarían de valer.
+      //
+      // Se comprobó y **los cinco están en desarrollo**. Esta prueba lo fija:
+      // si alguien cambia la semilla o el conjunto y uno se cruza de mitad, hay
+      // que enterarse aquí y no al leer un porcentaje que ya no significa nada.
+      const particion = partitionBySeed(MATERIAL_CASE_SET, 20260823, 0.5);
+      const desarrollo = new Set(particion.development.map((c) => c.caseId));
+      for (const caseId of ['m-adv-13', 'm-adv-21', 'm-adv-22', 'm-inc-14']) {
+        expect(desarrollo.has(caseId), `${caseId} debe estar en desarrollo (§8.5)`).toBe(true);
+      }
+    });
+
+    it('sigue sin pedir un autoinforme de la negativa', () => {
+      // Un campo `negativa` sería `entregaSolucion` otra vez: el modelo
+      // informando sobre el único hecho que tendría motivo para reportar mal.
+      expect(MATERIAL_RESPONSE_SCHEMA.shape).not.toHaveProperty('negativa');
+      expect(MATERIAL_RESPONSE_SCHEMA.shape).not.toHaveProperty('seNiega');
+      expect(Object.keys(MATERIAL_RESPONSE_SCHEMA.shape).sort()).toEqual([
+        'fueraDeAlcance',
+        'reglasCitadas',
+        'segmentos',
+      ]);
+    });
   });
 });
 

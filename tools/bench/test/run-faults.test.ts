@@ -13,7 +13,7 @@ import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 import { partitionBySeed, type BenchCase, type CaseSet, type InjectedFault } from '../src/case-set.js';
-import { BenchRunError, runBenchmark, type Candidate, type RunPlan } from '../src/run.js';
+import { BenchRunError, runBenchmark, sha256, type Candidate, type RunPlan } from '../src/run.js';
 
 /**
  * Caída simulada en el runner de BENCH-01 (T-H4-10 ← P-III §6.1).
@@ -176,12 +176,18 @@ const REFRESH_WINDOW = {
   provenance: 'ventana de 24 h fijada por el propietario el 2026-08-18',
 };
 
+/** Instrucciones del fixture. Una sola copia: el plan las hashea y las deps las envían,
+ * y `assertInstructionsDigestMatches()` comprueba que son la misma (D-80). */
+const INSTRUCCIONES = 'instrucciones de sesión';
+
 const PLAN: RunPlan = {
   runId: 'bench-01-caidas',
   purpose: 'pilot',
   repetitions: 1,
   frozenAt: FROZEN_AT,
   startedAt: STARTED_AT,
+  partitionSeed: 20260818,
+  instructionsSha256: sha256(INSTRUCCIONES),
 };
 
 /**
@@ -212,7 +218,7 @@ function dependencias() {
     refreshWindow: REFRESH_WINDOW,
     schema: z.object({ ok: z.boolean() }),
     codeFence: 'reject' as const,
-    instructions: 'instrucciones de sesión',
+    instructions: INSTRUCCIONES,
     degraded: PERFIL_DEGRADADO,
     degradedAssetVersion: VERSION_DE_ACTIVOS,
   };

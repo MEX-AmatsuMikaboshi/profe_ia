@@ -58,7 +58,8 @@
     "web:tokens": "node scripts/web/generate-tokens-css.mjs",
     "ci:web:tokens": "node scripts/web/generate-tokens-css.mjs --check",
     "contracts:json-schema": "pnpm --filter @profesor-ia/contracts run emit:json-schema",
-    "plan:status": "node scripts/plan/check-status.mjs"
+    "plan:status": "node scripts/plan/check-status.mjs",
+    "ci:plan:status": "node scripts/plan/check-status.mjs && node scripts/plan/verify-check-status-catches.mjs"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

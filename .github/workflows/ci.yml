@@ -145,6 +145,11 @@ jobs:
       # sin mirar ninguna prueba — que es exactamente el hueco que cerró.
       - name: ci:arch:test-typecheck (error sembrado en una prueba)
         run: node scripts/arch/verify-test-typecheck-catches.mjs
+      # Coherencia de PLAN_STATUS.md contra las reglas que él mismo declara
+      # (D-81), con su propio control positivo sobre un árbol de juguete. Vive en
+      # `arch` porque no necesita el submódulo de contenido ni build previo.
+      - name: ci:plan:status
+        run: pnpm run ci:plan:status
       # Fallo cerrado de la pasarela (F4): no envía parámetros no declarados por
       # el binding ni acepta un binding sin snapshot ni huella. Vive en el job
       # `arch` porque no necesita el submódulo de contenido.

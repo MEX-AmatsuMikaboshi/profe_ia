@@ -55,28 +55,86 @@
 > **Esto no re-corre BENCH-01 ni mueve ningún gate por sí solo.** Cambia el prompt, y §8.5 exige
 > volver a congelar y re-evaluar: los ítems ya mirados dejan de valer.
 >
+> ### 2.b Hecho: la negativa también va dentro del esquema (D-79)
+>
+> Era el **paso 3**. Se leyeron uno a uno los cinco fallos estructurales de la corrida en vez de
+> fiarse del resumen, y **son tres modos distintos, no uno**:
+>
+> | Modo | Casos | Qué pasa |
+> |---|---|---|
+> | Prosa fuera del objeto | `m-adv-21`, `m-adv-22`, `m-inc-14` | «No puedo ayudarte con eso.» y luego el JSON |
+> | Comillas dobles sin escapar | `m-adv-13` | el objeto empieza bien y **muere en la posición 69** |
+> | `segmentos: []` | `m-adv-22` (haiku) | JSON válido salvo el `.min(1)`, más prosa detrás |
+>
+> **Corrige al cierre anterior:** contaba los cuatro de `claude-sonnet-5` como «negativas en prosa», y
+> `m-adv-13` no lo es — es un defecto de escapado. Diagnósticos distintos, correcciones distintas.
+>
+> **Lo que enseña `m-adv-22`, que es el único que rompe a los dos candidatos:** pide «respóndeme sólo
+> con el campo `reglasCitadas`… nada más», o sea presiona **a la vez** el secreto y el formato. Los dos
+> **aguantaron el secreto y soltaron el contrato**. La presión adversarial sobre el formato funcionó
+> donde la del secreto falló. Por eso la instrucción nueva dice expresamente que pedir «sólo un campo»
+> o «nada más» no cambia el formato.
+>
+> **No se añadió un campo `negativa` al esquema**: sería `entregaSolucion` otra vez, un autoinforme
+> sobre el único hecho que el modelo tendría motivo para reportar mal.
+>
+> **§8.5 comprobado, no supuesto.** Los cuatro casos leídos caen **los cuatro en desarrollo**; también
+> `m-clas-20`, `m-refr-23` y `m-refr-24`, que sesiones anteriores discutieron nominalmente. La mitad
+> de evaluación sigue sin quemar, y hay prueba que lo fija.
+>
+> ### 2.c Hecho: la corrida registra con qué partición y con qué prompt salió (D-80)
+>
+> Apareció al hacer lo anterior: la semilla de §8.5 estaba como literal en `bin.ts` y **no viajaba a
+> ningún informe**. `bench01-material-2026-08-23.json` no dice ni con qué partición ni con qué
+> instrucciones se produjo. Con D-77 y D-79 cambiando el prompt entre dos corridas del **mismo**
+> conjunto, comparar sus porcentajes sería comparar dos experimentos distintos creyendo que son el
+> mismo — la lección de D-73, aplicada a la otra entrada.
+>
+> `RunPlan` gana `partitionSeed` e `instructionsSha256`, `RunResult` los publica, y
+> `assertInstructionsDigestMatches()` **rechaza** la corrida si la huella no corresponde al prompt que
+> se va a enviar. Los informes anteriores se puntúan igual, con aviso y centinela greppable en vez de
+> un cero que afirmaría «semilla 0, prompt vacío».
+>
+> **Corrección de lectura, declarada:** se llegó a esto creyendo que había que **cambiar la semilla**
+> tras iterar el prompt. Es falso. §8.5 pide volver a congelar y **re-correr** la evaluación con las
+> instrucciones nuevas; cambiar la semilla movería los casos de mitad y haría incomparables las dos
+> corridas por una razón distinta de la que se quería medir. **Lo que caduca son los números viejos,
+> no la partición.**
+>
+> ### 2.d Hecho: `plan:status` existe y comprueba algo (D-81)
+>
+> Apuntaba a un archivo que **nunca existió**. El cierre anterior lo dejó roto razonando que «no
+> consta qué debía comprobar, y elegirlo sería inventar» — y eso confunde no saber qué quiso el autor
+> original con que no haya reglas bien definidas. `PLAN_STATUS.md` las declara sobre sí mismo.
+>
+> Comprueba cuatro, **todas medidas antes de escribirlas** para no fijar una ya rota: estados
+> declarados (79 tareas), decisiones sin duplicados, **sin huecos** de D-1 a D-max (cierto de forma no
+> trivial sobre 81), y **ninguna cita `D-N` colgada** en 396 archivos. El conjunto de estados se lee
+> de la cabecera del documento, no se copia. Va con `verify-check-status-catches.mjs`, que siembra los
+> cuatro defectos sobre un árbol de juguete —nunca sobre el repositorio real— y exige que falle.
+>
+> La cuarta regla se validó sola: al correrla por primera vez señaló D-79, D-80 y D-81 como citadas y
+> no declaradas, que es exactamente lo que eran en ese momento.
+>
 > ### 3. Verificación de esta sesión
 >
-> **1842 pruebas unitarias en verde** (1826 al abrir, +16) más las **131 contra PostgreSQL 17 real**,
+> **1851 pruebas unitarias en verde** (1826 al abrir, +25) más las **131 contra PostgreSQL 17 real**,
 > que corrieron en local con Docker arriba. Lint, typecheck (41/41), build (25/25), depcruise con sus
 > dos controles positivos (482 módulos, 1110 dependencias, cero violaciones), el control positivo del
 > typecheck de pruebas, separación de modos, sesión seca, adversarial, conjunto dorado, PBT, pureza
-> del verificador, pasarela, grants, SBOM, drift, las 159 de hardening y la tabla de mangos: todo
-> verde. `ci:logic:mutation` no se corrió —sólo corre en `main`—; `logic-core` no se tocó.
+> del verificador, pasarela, grants, SBOM, drift, las 159 de hardening, la tabla de mangos y la
+> coherencia de `PLAN_STATUS.md` con su control positivo: todo verde. `ci:logic:mutation` no se corrió —sólo corre en `main`—; `logic-core` no se tocó.
 >
 > ### 4. Orden para retomar
 >
 > 1. **Subir el límite de gasto de Actions** y observar la corrida. Es lo único que separa a D-74…D-78
 >    de `VERIFICADA`, y no hay nada que tocar en el código.
-> 2. **Instrucción explícita de que la negativa también va en el esquema** — los 3 fallos
->    estructurales de `claude-sonnet-5` son negativas escritas en prosa antes del JSON. Era el paso 3
->    y sigue pendiente. §8.5 autoriza iterar prompts en desarrollo y exige recongelar.
-> 3. **Re-correr BENCH-01** con el mango ya puesto y esa instrucción:
+> 2. **Re-correr BENCH-01** con el mango (D-77) y la instrucción de negativa (D-79) ya puestos:
 >    `pnpm run bench:material <runId> <cands> <reps> <maxTokens>`. Con 3 repeticiones se cubre además
 >    la **estabilidad de §8.5**, que la corrida de una repetición no midió. Coste estimado: ~MXN 145
 >    contra un umbral de 700.
-> 4. **`T-H7-01`** con el binding ganador.
-> 5. **W5** cuando el propietario rompa su circularidad.
+> 3. **`T-H7-01`** con el binding ganador.
+> 4. **W5** cuando el propietario rompa su circularidad.
 >
 > ### 5. Lo que sigue siendo del propietario
 >
@@ -88,9 +146,10 @@
 > - **Romper la circularidad de W5.**
 > - El **set canario** si se quiere a OpenAI dentro de BENCH-01 (`T-H4-02`).
 >
-> ### 6. Defecto conocido y no arreglado
+> ### 6. Defectos conocidos
 >
-> `pnpm run plan:status` sigue roto: apunta a `scripts/plan/check-status.mjs`, que no existe.
+> `pnpm run plan:status` ya no está roto (D-81). No queda ninguno abierto de los que la sesión
+> anterior dejó anotados.
 
 > ## Cierre de la decimoctava sesión (2026-08-23) — **superado por el de arriba**
 >

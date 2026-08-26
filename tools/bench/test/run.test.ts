@@ -13,7 +13,7 @@ import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 import { partitionBySeed, type BenchCase, type CaseSet } from '../src/case-set.js';
-import { BenchRunError, runBenchmark, type Candidate, type RunPlan } from '../src/run.js';
+import { BenchRunError, runBenchmark, sha256, type Candidate, type RunPlan } from '../src/run.js';
 
 /**
  * Runner de BENCH-01 (T-H4-10).
@@ -144,12 +144,18 @@ const REFRESH_WINDOW = {
   provenance: 'ventana de 24 h fijada por el propietario el 2026-08-18',
 };
 
+/** Instrucciones del fixture. Una sola copia: el plan las hashea y las deps las envían,
+ * y `assertInstructionsDigestMatches()` comprueba que son la misma (D-80). */
+const INSTRUCCIONES = 'instrucciones de sesión';
+
 const PLAN: RunPlan = {
   runId: 'bench-01-piloto',
   purpose: 'pilot',
   repetitions: 1,
   frozenAt: FROZEN_AT,
   startedAt: STARTED_AT,
+  partitionSeed: 20260818,
+  instructionsSha256: sha256(INSTRUCCIONES),
 };
 
 function dependencias(overrides: { alertThresholdMxn?: number } = {}) {
@@ -165,7 +171,7 @@ function dependencias(overrides: { alertThresholdMxn?: number } = {}) {
     refreshWindow: REFRESH_WINDOW,
     schema: z.object({ ok: z.boolean() }),
     codeFence: 'reject' as const,
-    instructions: 'instrucciones de sesión',
+    instructions: INSTRUCCIONES,
   };
 }
 
@@ -182,6 +188,39 @@ describe('plan congelado', () => {
         dependencias(),
       ),
     ).rejects.toThrow(BenchRunError);
+  });
+
+  // D-80 — la proveniencia de la corrida: con qué partición y con qué prompt.
+  it('rechaza un plan cuya huella no corresponde a las instrucciones enviadas', async () => {
+    // Control positivo. Sin esto el campo sería decorativo: dos copias del
+    // mismo hecho, y la que se queda vieja es siempre la copia.
+    const { candidate } = candidato([respuesta('{"ok":true}', USO)]);
+    await expect(
+      runBenchmark(
+        { ...PLAN, instructionsSha256: sha256('otro prompt distinto') },
+        particion(),
+        [candidate],
+        dependencias(),
+      ),
+    ).rejects.toThrow(BenchRunError);
+  });
+
+  it('rechaza una semilla de partición que no es entera', async () => {
+    const { candidate } = candidato([respuesta('{"ok":true}', USO)]);
+    await expect(
+      runBenchmark({ ...PLAN, partitionSeed: 1.5 }, particion(), [candidate], dependencias()),
+    ).rejects.toThrow(BenchRunError);
+  });
+
+  it('el informe lleva la semilla y la huella con las que se corrió', async () => {
+    // Control negativo del anterior: la guarda tiene que dejar pasar el plan
+    // correcto, y el resultado tiene que **publicar** lo que se comprobó. Un
+    // informe sin proveniencia no es reproducible ni comparable (D-80).
+    const { candidate } = candidato([respuesta('{"ok":true}', USO)]);
+    const resultado = await runBenchmark(PLAN, particion(), [candidate], dependencias());
+    expect(resultado.partitionSeed).toBe(PLAN.partitionSeed);
+    expect(resultado.instructionsSha256).toBe(sha256(INSTRUCCIONES));
+    expect(resultado.instructionsSha256).toMatch(/^[0-9a-f]{64}$/);
   });
 
   it('rechaza repeticiones no enteras o menores que uno', async () => {

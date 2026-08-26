@@ -31,7 +31,7 @@ import {
 } from '../src/material-cases.js';
 import { REFRESH_2026_08_23 } from '../src/refresh-2026-08-23.js';
 import { REFRESH_WINDOW_5D } from '../src/refresh-2026-08-18.js';
-import { runBenchmark, type Candidate, type RunPlan } from '../src/run.js';
+import { runBenchmark, sha256, type Candidate, type RunPlan } from '../src/run.js';
 import { degradedRecoveryProbe, observeGates } from '../src/scoring.js';
 
 /**
@@ -169,6 +169,8 @@ describe('la corrida material completa, con transporte inyectado', () => {
     repetitions: 1,
     frozenAt: '2026-08-23T00:00:00.000Z',
     startedAt: REFRESH_2026_08_23.refreshedAt,
+    partitionSeed: 20260823,
+    instructionsSha256: sha256(MATERIAL_INSTRUCTIONS),
   };
 
   it('recorre los 200 casos y anota cada resultado en cuanto termina', async () => {

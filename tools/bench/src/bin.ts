@@ -25,6 +25,21 @@ import {
 import { z } from 'zod';
 
 import { partitionBySeed } from './case-set.js';
+
+/**
+ * Semillas de la partición desarrollo/evaluación de §8.5 (D-80).
+ *
+ * Estaban como literales en el cuerpo de cada subcomando y **no viajaban a
+ * ningún informe**: dos corridas con particiones distintas producían artefactos
+ * indistinguibles, y reproducir una exigía leer el código de la versión con la
+ * que se corrió. Ahora se nombran aquí, entran en el plan y salen en el informe.
+ *
+ * Son la fecha en que se declaró cada conjunto, no un número bonito: elegirlas
+ * después de ver resultados sería elegir qué mitad cuenta como evaluación.
+ */
+const SEMILLA_PARTICION_MATERIAL = 20260823;
+const SEMILLA_PARTICION_EXPLORACION = 20260823;
+const SEMILLA_PARTICION_PILOTO = 20260818;
 import { anchoredSegmentsProbe, loadContentPackage } from './corpus.js';
 import { outOfScopeProbe, ruleInventionProbe, solutionLeakProbe } from './evidence.js';
 import { EXPLORATION_CASE_SET } from './exploration.js';
@@ -43,7 +58,7 @@ import {
   REFRESH_OPENAI_2026_08_23,
 } from './refresh-openai-2026-08-23.js';
 import { degradedRecoveryProbe, observeGates, type GateEvidence } from './scoring.js';
-import { runBenchmark, type Candidate, type CaseOutcome, type RunPlan } from './run.js';
+import { runBenchmark, sha256, type Candidate, type CaseOutcome, type RunPlan } from './run.js';
 
 /**
  * Corrida piloto de BENCH-01 (T-H4-10).
@@ -328,12 +343,20 @@ async function material(): Promise<number> {
     repetitions,
     frozenAt,
     startedAt: new Date().toISOString(),
+    partitionSeed: SEMILLA_PARTICION_MATERIAL,
+    instructionsSha256: sha256(MATERIAL_INSTRUCTIONS),
   };
 
   // La partición desarrollo/evaluación es de §8.5 y va por semilla. La semilla
   // es del plan y se declara aquí: elegirla después de ver resultados sería
   // elegir qué mitad cuenta como evaluación.
-  const particion = partitionBySeed(MATERIAL_CASE_SET, 20260823, 0.5);
+  //
+  // **No cambia al iterar el prompt** (D-80). §8.5 pide volver a congelar y
+  // **re-correr** la evaluación con las instrucciones nuevas; cambiar además la
+  // semilla movería los casos de mitad y haría incomparables las dos corridas
+  // por una razón distinta de la que se quería medir. Lo que caduca son los
+  // números viejos, no la partición.
+  const particion = partitionBySeed(MATERIAL_CASE_SET, SEMILLA_PARTICION_MATERIAL, 0.5);
 
   console.log(
     `corriendo BENCH-01 material — ${String(MATERIAL_CASE_SET.cases.length)} casos × ` +
@@ -519,6 +542,8 @@ async function exploratorio(): Promise<number> {
     repetitions: 1,
     frozenAt,
     startedAt: new Date().toISOString(),
+    partitionSeed: SEMILLA_PARTICION_EXPLORACION,
+    instructionsSha256: sha256(MATERIAL_INSTRUCTIONS),
   };
 
   console.log(`EXPLORATORIA — ${candidateId}, ${String(EXPLORATION_CASE_SET.cases.length)} casos`);
@@ -528,7 +553,7 @@ async function exploratorio(): Promise<number> {
   let hechos = 0;
   const resultado = await runBenchmark(
     plan,
-    partitionBySeed(EXPLORATION_CASE_SET, 20260823, 0.5),
+    partitionBySeed(EXPLORATION_CASE_SET, SEMILLA_PARTICION_EXPLORACION, 0.5),
     [candidato],
     {
       ledger,
@@ -659,12 +684,35 @@ function puntuar(): number {
     readonly totalCostMxn: number;
     readonly costPerCaseMxn: number;
     readonly ageSecondsByCandidate: Readonly<Record<string, number>>;
+    // Opcionales al **leer** porque los informes anteriores a D-80 no los
+    // traen. No lo son al escribir: `RunResult` los exige.
+    readonly partitionSeed?: number;
+    readonly instructionsSha256?: string;
   };
   try {
     resultado = JSON.parse(readFileSync(origen, 'utf8')) as typeof resultado;
   } catch (error) {
     console.error(`no se pudo leer ${origen}: ${error instanceof Error ? error.message : ''}`);
     return 2;
+  }
+
+  // Proveniencia del informe leído (D-80). Un informe anterior a D-80 no la
+  // trae, y **no se fabrica**: se marca como desconocida con un centinela
+  // greppable. Poner un cero o una cadena vacía diría «semilla 0, prompt
+  // vacío», que es una afirmación falsa disfrazada de valor por omisión —
+  // exactamente lo que `pendingCatalog()` existe para no hacer.
+  const PROVENIENCIA_LEIDA = {
+    partitionSeed: resultado.partitionSeed ?? -1,
+    instructionsSha256:
+      resultado.instructionsSha256 ?? 'desconocida:informe-anterior-a-D-80',
+  } as const;
+  if (resultado.partitionSeed === undefined || resultado.instructionsSha256 === undefined) {
+    console.warn(
+      `aviso: ${origen} es anterior a D-80 y no registra ni la semilla de partición ni la ` +
+        'huella de las instrucciones. Se puntúa igual —los resultados son hechos y no ' +
+        'cambian—, pero sus números no son comparables con los de otra corrida sin ' +
+        'comprobar a mano con qué prompt salieron.',
+    );
   }
 
   const caseSet = clase === 'material' ? MATERIAL_CASE_SET : EXPLORATION_CASE_SET;
@@ -692,7 +740,7 @@ function puntuar(): number {
       );
     }
     const gates = observeGates(candidateId, {
-      runResult: resultado,
+      runResult: { ...resultado, ...PROVENIENCIA_LEIDA },
       caseSet,
       repetitions,
       evidence,
@@ -807,9 +855,11 @@ async function main(): Promise<number> {
     // tiene fase de evaluación que mirar.
     frozenAt: ahora,
     startedAt: ahora,
+    partitionSeed: SEMILLA_PARTICION_PILOTO,
+    instructionsSha256: sha256(PILOT_INSTRUCTIONS),
   };
 
-  const particion = partitionBySeed(PILOT_CASE_SET, 20260818, 0.5);
+  const particion = partitionBySeed(PILOT_CASE_SET, SEMILLA_PARTICION_PILOTO, 0.5);
 
   const resultado = await runBenchmark(plan, particion, candidatos, {
     ledger,

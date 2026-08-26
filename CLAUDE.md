@@ -47,7 +47,8 @@ pnpm run ci:lint && pnpm run ci:typecheck && pnpm run ci:unit && pnpm run ci:bui
 Verificación completa de que todo sigue en pie (~1 min sin Docker):
 
 ```bash
-pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && pnpm run ci:mode-separation && pnpm run ci:e2e:dry-session && pnpm run ci:adversarial:session && pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net && pnpm run db:grants:check && pnpm run ci:db:negative && pnpm run ci:supply:sbom && pnpm run ci:supply:drift && pnpm run ci:infra:hardening
+pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && pnpm run ci:mode-separation && pnpm run ci:e2e:dry-session && pnpm run ci:adversarial:session && pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net && pnpm run db:grants:check && pnpm run ci:db:negative && pnpm run ci:supply:sbom && pnpm run ci:supply:drift && pnpm run ci:infra:hardening &&
+pnpm run ci:content:mangos && pnpm run ci:plan:status
 ```
 
 | Comando | Qué hace |
@@ -74,6 +75,7 @@ pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && 
 | `pnpm run dev:env` → `dev:up` → `dev:seed` | Levantar el entorno local (`infra/runbooks/local.md`); además `dev:down/status/logs/backup/restore` |
 | `pnpm run logic:golden:generate` | Regenera el conjunto dorado; **el diff debe ser vacío** |
 | `pnpm run content:mangos` / `ci:content:mangos` | Tabla de correspondencia mango → `fragmentId` (D-77) / comprueba que sigue correspondiendo al corpus |
+| `pnpm run plan:status` / `ci:plan:status` | Coherencia de `PLAN_STATUS.md`: estados declarados, decisiones sin huecos ni duplicados, ninguna cita `D-N` colgada (D-81) |
 | `pnpm run contracts:json-schema` | Emite los JSON Schema desde `packages/contracts` |
 
 ### Una sola prueba
@@ -240,10 +242,10 @@ credenciales.
 adversarial). Las cuatro restantes viven dentro del bucle W7; ya tienen binding ganador con el que
 empezar `T-H7-01`. F9–F16 no empezadas.
 
-**1842 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
+**1851 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
 `logic-core` en verde. **Aviso:** los conteos de sesiones anteriores («1890», «1918 unitarias») no son
 comparables — parecen haber sumado los proyectos `unit` y `db` bajo la misma etiqueta. Medido el 2026-08-26,
-`--project unit` da 1842 y `--project db` da 131.
+`--project unit` da 1851 y `--project db` da 131.
 
 **⚠ CI sigue caída, y desde el 2026-08-26 se sabe exactamente por qué (D-78).** La anotación del
 check-run lo dice en prosa, y **no necesita scope especial**:

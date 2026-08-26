@@ -27,6 +27,7 @@ import {
   loadContentPackage,
 } from '../src/corpus.js';
 import { degradedRecoveryProbe, observeGates } from '../src/scoring.js';
+import { sha256 } from '../src/run.js';
 import type { CaseOutcome } from '../src/run.js';
 
 /**
@@ -445,6 +446,8 @@ describe('los seis gates se computan de punta a punta con las sondas reales (D-7
         totalCostMxn: 0.06,
         costPerCaseMxn: 0.01,
         ageSecondsByCandidate: { 'claude-sonnet-5': 60 },
+        partitionSeed: 20260823,
+        instructionsSha256: sha256('instrucciones del fixture'),
       },
       caseSet: CONJUNTO,
       repetitions: 1,

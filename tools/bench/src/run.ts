@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 import { fragmentHandle } from '@profesor-ia/contracts';
 import type { CostEvent, ModelBinding, PricingManifest } from '@profesor-ia/contracts';
 import {
@@ -93,6 +95,25 @@ export interface RunPlan {
   readonly repetitions: number;
   readonly frozenAt: string;
   readonly startedAt: string;
+  /**
+   * Semilla de la partición desarrollo/evaluación de §8.5 (D-80).
+   *
+   * Se declara en el plan y viaja al informe. Antes vivía como literal en
+   * `bin.ts` y **no se registraba en ninguna parte**: dos corridas con
+   * particiones distintas producían informes indistinguibles, y reproducir una
+   * exigía leer el código de la versión con la que se corrió.
+   */
+  readonly partitionSeed: number;
+  /**
+   * SHA-256 de las instrucciones de sistema con las que se corrió (D-80).
+   *
+   * Es la respuesta a «¿con qué prompt salió este número?». D-77 y D-79
+   * cambiaron el prompt entre dos corridas del mismo conjunto: sin esta huella,
+   * comparar sus porcentajes sería comparar dos experimentos distintos creyendo
+   * que son el mismo. Es la misma lección de D-73 sobre el refresco documental,
+   * aplicada a la otra entrada de la corrida.
+   */
+  readonly instructionsSha256: string;
 }
 
 export interface RunDependencies {
@@ -252,6 +273,9 @@ export interface RunResult {
   /** Lo que el piloto existe para responder. */
   readonly costPerCaseMxn: number;
   readonly ageSecondsByCandidate: Readonly<Record<string, number>>;
+  /** Proveniencia de la corrida (D-80): con qué partición y con qué prompt. */
+  readonly partitionSeed: number;
+  readonly instructionsSha256: string;
 }
 
 function assertPlanFrozenBeforeStart(plan: RunPlan): void {
@@ -274,6 +298,37 @@ function assertPlanFrozenBeforeStart(plan: RunPlan): void {
       `Repeticiones inválidas (${String(plan.repetitions)}): debe ser un entero ≥ 1.`,
     );
   }
+  if (!Number.isInteger(plan.partitionSeed)) {
+    throw new BenchRunError(
+      `Semilla de partición inválida (${String(plan.partitionSeed)}): debe ser un entero. La ` +
+        'partición de §8.5 no puede depender de un valor que nadie declaró.',
+    );
+  }
+}
+
+/**
+ * La huella del plan tiene que ser la de las instrucciones que de verdad se
+ * envían (D-80).
+ *
+ * Sin esta comprobación el campo sería decorativo: dos copias del mismo hecho, y
+ * la que se queda vieja es siempre la copia. Un informe que declara una huella
+ * que no corresponde a su prompt es peor que uno sin huella, porque invita a
+ * comparar dos experimentos distintos creyendo que son el mismo.
+ */
+function assertInstructionsDigestMatches(plan: RunPlan, instructions: string): void {
+  const real = sha256(instructions);
+  if (real !== plan.instructionsSha256) {
+    throw new BenchRunError(
+      `El plan ${plan.runId} declara instructionsSha256=${plan.instructionsSha256} y las ` +
+        `instrucciones que se van a enviar hashean ${real}. Una huella que no corresponde a su ` +
+        'prompt hace incomparables dos corridas sin avisar.',
+    );
+  }
+}
+
+/** SHA-256 en hexadecimal, el mismo patrón que el resto del repositorio. */
+export function sha256(value: string): string {
+  return createHash('sha256').update(value, 'utf8').digest('hex');
 }
 
 function usageOrFail(
@@ -565,6 +620,7 @@ export async function runBenchmark(
   deps: RunDependencies,
 ): Promise<RunResult> {
   assertPlanFrozenBeforeStart(plan);
+  assertInstructionsDigestMatches(plan, deps.instructions);
 
   if (plan.purpose !== partition.purpose) {
     throw new BenchRunError(
@@ -677,6 +733,8 @@ export async function runBenchmark(
     totalCostMxn,
     costPerCaseMxn: outcomes.length === 0 ? 0 : totalCostMxn / outcomes.length,
     ageSecondsByCandidate: autorizacion.ageSecondsByCandidate,
+    partitionSeed: plan.partitionSeed,
+    instructionsSha256: plan.instructionsSha256,
   };
 }
 
