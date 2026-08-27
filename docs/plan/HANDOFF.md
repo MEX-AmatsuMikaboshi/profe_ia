@@ -116,6 +116,34 @@
 > La cuarta regla se validó sola: al correrla por primera vez señaló D-79, D-80 y D-81 como citadas y
 > no declaradas, que es exactamente lo que eran en ese momento.
 >
+> ### 2.e Hecho: `T-H7-01` estaba bloqueada por un hecho falso, y Perfil C sí estaba definido
+>
+> La fila decía `BLOQUEADA … Exige el ganador de BENCH-01 (T-H4-10 material, **sin autorizar**)`. El
+> gasto se autorizó el **2026-08-19** y la corrida corrió el **2026-08-23**. La fila llevaba tres días
+> afirmando lo contrario, y era lo único que la mantenía bloqueada. Ahora es `PENDIENTE`.
+>
+> Que el ganador sea **provisional** no impide construir el bucle W7 sobre él: es el binding sobre el
+> que se construye, y coronarlo es de W5.
+>
+> **`perfil C` no era una laguna normativa, era una búsqueda que nadie hizo.** `Plan.md` §F8 lo cita
+> para `ci:e2e:live-session` sin definirlo, y no aparece en `Plan.md` ni en el índice del Maestro —
+> pero **sí** está en el Maestro **§15.5** y en la tabla de decisiones tecnológicas: *tier económico
+> del proveedor ganador de sesión, para CI, clasificación barata, pruebas secas y desarrollo sin datos
+> reales; nunca condición principal del piloto real*. Con el ganador provisional, eso es
+> **`claude-haiku-4-5-20251001`**. No hacía falta abrir un `BLOCKED_BY_SPEC`.
+>
+> **Dos hechos más, comprobados, que condicionan `T-H7-01`:**
+>
+> 1. **`ci:e2e:live-session` no existe.** Es el AC del gate H7 según `Plan.md` §F8. Su antecedente es
+>    `packages/session-engine/test/dry-session-e2e.test.ts` (1058 líneas, 33 propiedades).
+> 2. **El cargador de corpus es del benchmark y no alcanza a la ruta de sesión.** `loadContentPackage()`
+>    vive en `tools/bench/src/corpus.ts`, y ni `apps/api` ni `packages/session-engine` dependen de
+>    `@profesor-ia/bench` — comprobado en sus `package.json`. P-II §3.1 prohíbe crear paquetes nuevos,
+>    así que el paso 3 de W7 («recuperador entrega fragmentos autorizados») necesita hogar en un
+>    paquete existente. **`@profesor-ia/content-schema` es hoy un esqueleto de F0 sin lógica** y se
+>    declara «Contrato del paquete de contenido»: es el candidato natural, pero es una decisión de
+>    diseño que hay que razonar, no dar por hecha.
+>
 > ### 3. Verificación de esta sesión
 >
 > **1851 pruebas unitarias en verde** (1826 al abrir, +25) más las **131 contra PostgreSQL 17 real**,
@@ -133,7 +161,8 @@
 >    `pnpm run bench:material <runId> <cands> <reps> <maxTokens>`. Con 3 repeticiones se cubre además
 >    la **estabilidad de §8.5**, que la corrida de una repetición no midió. Coste estimado: ~MXN 145
 >    contra un umbral de 700.
-> 3. **`T-H7-01`** con el binding ganador.
+> 3. **`T-H7-01`** con el binding ganador — ya desbloqueada; ver 2.e para lo que hay que resolver
+>    antes de escribir código: el hogar del recuperador de fragmentos y el AC que no existe.
 > 4. **W5** cuando el propietario rompa su circularidad.
 >
 > ### 5. Lo que sigue siendo del propietario
