@@ -1,6 +1,63 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — decimonovena sesión (2026-08-26)
+> ## EMPIEZA AQUÍ — CI VIVA (2026-08-29)
+>
+> **Se acabó.** Diez sesiones de CI muerta, y el 2026-08-29 arrancó. Dos causas encadenadas, y la
+> primera **no era la que este documento decía**.
+>
+> ### 1. El presupuesto no estaba en cero: estaba agotado
+>
+> D-78 y esta cabecera afirmaban que «en cuentas personales el límite de gasto nace en cero». Se miró
+> la pantalla y **había presupuesto de Actions: USD 2.00, con USD 2.00 gastados — al 100 %, con «Stop
+> usage: Yes»**. No faltaba crearlo; faltaba **subirlo**. Se subió a **USD 5** con el tope y las
+> alertas activos.
+>
+> Regla que deja: el mensaje del check-run dice «payments have failed **or** your spending limit needs
+> to be increased», y las dos mitades se parecen lo bastante como para adivinar mal. **Mirar la
+> pantalla habría costado dos minutos en la sesión 11.**
+>
+> ### 2. Y detrás había un fallo real que la avería tapaba
+>
+> Con los jobs arrancando por fin, tres fallaron en `actions/checkout@v5`:
+>
+> ```
+> fatal: remote error: upload-pack: not our ref 7460f74ba79abb5ad480ee088b5299fc5199c205
+> ```
+>
+> **No era `CONTENT_TOKEN`** —existe desde el 2026-08-16 y funciona—. Era el gitlink apuntando a un
+> commit **que nunca se subió al remoto de contenido**: `git branch -r --contains HEAD` devolvía
+> vacío, y `origin/main` del submódulo iba dos commits atrás (D-68 y D-69, el banco de 656).
+>
+> Es **exactamente** el fallo que §8 de este documento advierte —«se sube primero el contenido y
+> después el monorepo»—, cometido en la sesión 16 y **oculto durante trece días** porque la avería de
+> facturación impedía llegar al checkout. Se corrigió empujando el submódulo.
+>
+> **Lección:** una avería que impide correr **esconde** los fallos que vendrían después. Al reparar
+> una, hay que contar con encontrar otra detrás, no dar la suite por buena.
+>
+> ### 3. Instrucción del propietario: **agrupar los pushes**
+>
+> Con el presupuesto en USD 5 y «Stop usage» activo, cada push gasta ~USD 0.30–0.50 en una corrida de
+> diez jobs. El propietario pidió **dejar de subir una vez por tarea** y acumular hasta que haya
+> bastante.
+>
+> **Es una desviación declarada de §8, no un olvido.** Los commits siguen siendo por tarea, con su id
+> `T-*` y `PLAN_STATUS.md` en el mismo commit — eso es disciplina de evidencia y no cambia. Lo que se
+> agrupa es el `git push`. Encaja además con que dos pushes seguidos cancelan la corrida del primero.
+>
+> ### 4. El README ya no miente
+>
+> Decía «F0 / H0 en curso» con el proyecto en F8/H7. Reescrito con la jerarquía de autoridad primero,
+> los puntos de entrada, el estado real por fase y un diagrama de arquitectura con los invariantes
+> prohibidos dibujados. Comprobado renderizado en GitHub. Se rellenó también el «About» del
+> repositorio, que estaba vacío.
+>
+> ### 5. Lo que sigue
+>
+> Lo de la cabecera de abajo, sin cambios, salvo que **el punto 1 ya está hecho**: queda re-correr
+> BENCH-01 con D-77/D-79 puestos, y `T-H7-01`, que es construir el bucle W7 y no integrarlo (§2.g).
+
+> ## Cierre de la decimonovena sesión (2026-08-26) — **superado por el de arriba**
 >
 > ### 1. La avería de CI llevaba nueve corridas diciendo su causa (D-78)
 >
