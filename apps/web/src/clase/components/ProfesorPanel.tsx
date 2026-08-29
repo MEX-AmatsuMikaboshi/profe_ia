@@ -41,8 +41,9 @@ export function ProfesorPanel({ port, blockId, structuredError }: ProfesorPanelP
     // arriba (`CLASE_COPY.transcript.title`), y dos secciones con el mismo
     // encabezado dejan al lector sin saber cuál es cuál — y a un lector de
     // pantalla anunciando dos regiones idénticas.
-    <section data-testid="profesor" aria-label="Pregunta al Profesor IA">
-      <h2>Pregúntale al Profesor IA</h2>
+    <section className="card" data-testid="profesor" aria-label="Pregunta al Profesor IA">
+      <p className="card-kicker">Profesor IA</p>
+      <h2 className="card-title">Pregúntale sobre este bloque</h2>
 
       {structuredError === null ? null : (
         <p data-testid="profesor-contexto-error">
@@ -55,8 +56,11 @@ export function ProfesorPanel({ port, blockId, structuredError }: ProfesorPanelP
         </p>
       )}
 
-      <label htmlFor="profesor-pregunta">¿Qué quieres preguntarle?</label>
+      <label className="field" htmlFor="profesor-pregunta">
+        ¿Qué quieres preguntarle?
+      </label>
       <textarea
+        className="input"
         id="profesor-pregunta"
         data-testid="profesor-pregunta"
         value={pregunta}
@@ -64,6 +68,7 @@ export function ProfesorPanel({ port, blockId, structuredError }: ProfesorPanelP
         onChange={(e) => setPregunta(e.target.value)}
       />
       <button
+        className="btn btn-primary"
         type="button"
         data-testid="profesor-preguntar"
         disabled={state.kind === 'preguntando' || pregunta.trim() === ''}
@@ -120,10 +125,20 @@ function TurnBody({ state }: { readonly state: TurnState }) {
               >
                 <p>{segmento.text}</p>
                 <p data-testid="segmento-situacion">
-                  {standingLabel(segmento.standing)}
+                  <span
+                    className={
+                      segmento.standing === 'anchored' ? 'tag tag-accent' : 'tag tag-outline'
+                    }
+                  >
+                    {standingLabel(segmento.standing)}
+                  </span>
                   {segmento.anchors.length === 0
-                    ? ''
-                    : ` — cita ${segmento.anchors.join(', ')}`}
+                    ? null
+                    : segmento.anchors.map((a) => (
+                        <span className="tag tag-neutral" key={a}>
+                          {a}
+                        </span>
+                      ))}
                 </p>
               </li>
             ))}
@@ -131,19 +146,19 @@ function TurnBody({ state }: { readonly state: TurnState }) {
 
           {/* P-I §8.5. Se dice siempre, no sólo cuando es falso: un aviso que
               aparece a veces se lee como excepción, y esto es una propiedad. */}
-          <p data-testid="profesor-fundamenta" data-value={String(state.turn.canGroundEvaluation)}>
+          <p className="text-muted" data-testid="profesor-fundamenta" data-value={String(state.turn.canGroundEvaluation)}>
             {state.turn.canGroundEvaluation
               ? 'Toda la respuesta está anclada, así que puede fundamentar una calificación.'
               : 'Parte de la respuesta no está anclada, así que no puede fundamentar una calificación.'}
           </p>
 
-          <p data-testid="profesor-regla">
+          <p className="text-muted" data-testid="profesor-regla">
             Regla de política aplicada: <code>{state.turn.policyRuleId}</code>
           </p>
 
           {/* UIUX §2: los datos de desarrollo se declaran en pantalla. */}
           {state.turn.packagePurpose === 'test_fixture' ? (
-            <p data-testid="profesor-paquete-dev">
+            <p className="text-muted" data-testid="profesor-paquete-dev">
               Paquete de desarrollo, no congelado: W5 no ha corrido. No es evidencia experimental.
             </p>
           ) : null}

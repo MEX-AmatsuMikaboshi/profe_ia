@@ -39,8 +39,15 @@ export const DRY_SESSION_PACKAGE_IS_SYNTHETIC = true;
  * que existe en `content/`, y el turno del profesor falla con
  * `BLOQUE_SIN_FRAGMENTOS` si no tuviera material. Es la única costura entre la
  * sesión seca de desarrollo y el corpus de verdad.
+ *
+ * **KC04 y no KC06**, que es el que el catálogo sintético nombra: la actividad
+ * abierta es «deriva A a partir de A∧B», y en el corpus real KC04 es el bloque
+ * que trae ∧E y ∧I mientras que KC06 trae →E y →I. Con KC06 el profesor se
+ * negaba —correctamente— a explicar la conjunción, porque su material no la
+ * cubre. Que la negativa fuera correcta no la hacía útil: el bloque estaba mal
+ * elegido, no el profesor.
  */
-export const DRY_SESSION_BLOCK_ID = 'KC06' as const;
+export const DRY_SESSION_BLOCK_ID = 'KC04' as const;
 
 const T0 = '2026-01-01T10:00:00.000Z';
 const T1 = '2026-01-01T10:00:05.000Z';

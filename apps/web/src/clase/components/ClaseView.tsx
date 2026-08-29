@@ -57,8 +57,8 @@ function SaveIndicator({ state }: { readonly state: SaveState }) {
 function ProbeNotice() {
   // UI-CORR-02: los cuatro puntos son obligatorios, no una selección.
   return (
-    <section data-testid="aviso-sonda" aria-label={CLASE_COPY.probe.title}>
-      <h2>{CLASE_COPY.probe.title}</h2>
+    <section className="card" data-testid="aviso-sonda" aria-label={CLASE_COPY.probe.title}>
+      <h2 className="card-title">{CLASE_COPY.probe.title}</h2>
       <ul>
         <li>{CLASE_COPY.probe.hintsDisabled}</li>
         <li>{CLASE_COPY.probe.feedbackSuppressed}</li>
@@ -167,10 +167,14 @@ export function ClaseView({
   professor,
 }: ClaseViewProps) {
   return (
-    <main data-testid="clase" data-mode={viewModel.pedagogicalMode}>
+    <main
+      className="clase-shell"
+      data-testid="clase"
+      data-mode={viewModel.pedagogicalMode}
+    >
       {/* UIUX §2: los datos ilustrativos se declaran; no se dejan pasar por reales. */}
       {syntheticPackage ? (
-        <p data-testid="paquete-sintetico">
+        <p className="tag tag-outline" data-testid="paquete-sintetico">
           Sesión seca con paquete sintético de desarrollo. No es evidencia experimental.
         </p>
       ) : null}
@@ -185,14 +189,14 @@ export function ClaseView({
       {viewModel.activity === null ? (
         <p data-testid="sin-actividad">No hay actividad abierta.</p>
       ) : (
-        <section data-testid="actividad" aria-label="Actividad">
+        <section className="card" data-testid="actividad" aria-label="Actividad">
           <p>{viewModel.activity.statement}</p>
         </section>
       )}
 
       {viewModel.rubric === null ? null : (
-        <section data-testid="rubrica" aria-label={CLASE_COPY.rubric.title}>
-          <h2>{CLASE_COPY.rubric.title}</h2>
+        <section className="card" data-testid="rubrica" aria-label={CLASE_COPY.rubric.title}>
+          <h2 className="card-title">{CLASE_COPY.rubric.title}</h2>
           <ul>
             {viewModel.rubric.criteria.map((criterion) => (
               <li key={criterion.criterionId}>{criterion.text}</li>
@@ -202,8 +206,8 @@ export function ClaseView({
       )}
 
       {/* El Profesor IA es interlocutor visible, no la superficie dominante. */}
-      <section data-testid="conversacion" aria-label={CLASE_COPY.transcript.title}>
-        <h2>{CLASE_COPY.transcript.title}</h2>
+      <section className="card" data-testid="conversacion" aria-label={CLASE_COPY.transcript.title}>
+        <h2 className="card-title">{CLASE_COPY.transcript.title}</h2>
         <ol>
           {viewModel.transcript.map((entry) => (
             <li
@@ -226,10 +230,10 @@ export function ClaseView({
       <LocalReviewPanel review={localReview} />
       <VerdictPanel submission={submission} />
 
-      <section aria-label="Controles de sesión">
+      <section className="card" aria-label="Controles de sesión">
         <HintControls hints={viewModel.hints} />
 
-        <button type="button" data-testid="pausa" disabled={!viewModel.pause.available}>
+        <button className="btn" type="button" data-testid="pausa" disabled={!viewModel.pause.available}>
           {viewModel.pause.paused ? CLASE_COPY.pause.resumed : CLASE_COPY.pause.action}
         </button>
         <p data-testid="pausa-consecuencia" data-consequence={viewModel.pause.consequence}>
@@ -239,12 +243,12 @@ export function ClaseView({
         </p>
 
         {/* UI-CORR-04: apelación y retirada, con acceso inequívoco. */}
-        <button type="button" data-testid="apelacion">
+        <button className="btn btn-ghost" type="button" data-testid="apelacion">
           {CLASE_COPY.appeal.action}
         </button>
         <p data-testid="apelacion-efecto">{CLASE_COPY.appeal.effect}</p>
 
-        <button type="button" data-testid="retirada">
+        <button className="btn btn-ghost" type="button" data-testid="retirada">
           {CLASE_COPY.withdrawal.action}
         </button>
         <p data-testid="retirada-efecto">{CLASE_COPY.withdrawal.effect}</p>

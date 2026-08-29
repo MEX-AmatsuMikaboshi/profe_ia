@@ -8,6 +8,8 @@ import '@fontsource/archivo/400.css';
 import '@fontsource/archivo/600.css';
 import '@fontsource/archivo/800.css';
 import './tokens.generated.css';
+// Disposición de la vista de Clase. No redefine tokens: sólo coloca.
+import './globals-clase.css';
 
 export const metadata = {
   title: 'Profesor IA',
