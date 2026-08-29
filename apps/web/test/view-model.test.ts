@@ -212,3 +212,21 @@ describe('modelo de vista de Clase (T-H6-13)', () => {
     expect(vm.saveState).toEqual({ kind: 'error', code: 'IO', detail: 'disco lleno' });
   });
 });
+
+describe('la sesión seca y el corpus real nombran el mismo bloque (T-H7-01)', () => {
+  it('el catálogo sintético usa el bloque que el profesor va a consultar', async () => {
+    const { DRY_SESSION_BLOCK_ID, DRY_SESSION_CATALOG, DRY_SESSION_ACTIVITY } = await import(
+      '../src/clase/dry-session'
+    );
+
+    // El catálogo decía `KC06` para un contenido sobre eliminación de la
+    // conjunción, y en el corpus real ∧E y ∧I son de KC04. La incoherencia no
+    // se veía mientras el catálogo era el único que nombraba bloques: un
+    // identificador sin nada al otro lado no puede estar mal. Aparece al
+    // enchufar el corpus, que es lo que hace `T-H7-01`.
+    for (const entrada of DRY_SESSION_CATALOG.entries) {
+      expect(entrada.kcId).toBe(DRY_SESSION_BLOCK_ID);
+    }
+    expect(DRY_SESSION_ACTIVITY.kcId).toBe(DRY_SESSION_BLOCK_ID);
+  });
+});

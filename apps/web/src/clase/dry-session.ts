@@ -40,12 +40,16 @@ export const DRY_SESSION_PACKAGE_IS_SYNTHETIC = true;
  * `BLOQUE_SIN_FRAGMENTOS` si no tuviera material. Es la única costura entre la
  * sesión seca de desarrollo y el corpus de verdad.
  *
- * **KC04 y no KC06**, que es el que el catálogo sintético nombra: la actividad
- * abierta es «deriva A a partir de A∧B», y en el corpus real KC04 es el bloque
- * que trae ∧E y ∧I mientras que KC06 trae →E y →I. Con KC06 el profesor se
- * negaba —correctamente— a explicar la conjunción, porque su material no la
- * cubre. Que la negativa fuera correcta no la hacía útil: el bloque estaba mal
- * elegido, no el profesor.
+ * **KC04, y el catálogo sintético de arriba se alineó con él.** Decía `KC06`
+ * para un contenido que habla de eliminación de la conjunción, y en el corpus
+ * real ∧E y ∧I son de KC04 mientras KC06 trae →E y →I. Con esa etiqueta el
+ * profesor se negaba —correctamente— a explicar la conjunción, porque el
+ * material de KC06 no la cubre. Que la negativa fuera correcta no la hacía
+ * útil: el bloque estaba mal etiquetado, no el profesor.
+ *
+ * La incoherencia no se veía mientras el catálogo era el único que nombraba
+ * bloques. Aparece al enchufar el corpus real, que es lo que hace `T-H7-01`:
+ * un identificador sin nada al otro lado no puede estar mal.
  */
 export const DRY_SESSION_BLOCK_ID = 'KC04' as const;
 
@@ -63,7 +67,7 @@ export const DRY_SESSION_CATALOG: ScriptedCatalog = {
     {
       contentId: 'c-explicacion-kc06',
       kind: 'explanation',
-      kcId: 'KC06',
+      kcId: 'KC04',
       selectorKey: 'apertura',
       text:
         'Vamos a trabajar la eliminación de la conjunción. De una conjunción puedes concluir ' +
@@ -73,7 +77,7 @@ export const DRY_SESSION_CATALOG: ScriptedCatalog = {
     {
       contentId: 'c-practica-kc06',
       kind: 'practice_statement',
-      kcId: 'KC06',
+      kcId: 'KC04',
       selectorKey: 'practica-1',
       text: 'Deriva A a partir de la premisa A∧B.',
       anchors: ['fr-kc06-001'],
@@ -83,7 +87,7 @@ export const DRY_SESSION_CATALOG: ScriptedCatalog = {
 
 export const DRY_SESSION_ACTIVITY: ClaseActivity = {
   activityId: 'act-kc06-1',
-  kcId: 'KC06',
+  kcId: 'KC04',
   statement: 'Deriva A a partir de la premisa A∧B.',
   scorable: true,
   rubric: {
@@ -137,8 +141,8 @@ export function drySessionSnapshot(): SessionSnapshot {
 export function drySessionTranscript(): readonly ClaseTranscriptEntry[] {
   const controller = new SessionScriptModeController(DRY_SESSION_CATALOG);
   const requests = [
-    { kind: 'explanation', kcId: 'KC06', selectorKey: 'apertura' },
-    { kind: 'practice_statement', kcId: 'KC06', selectorKey: 'practica-1' },
+    { kind: 'explanation', kcId: 'KC04', selectorKey: 'apertura' },
+    { kind: 'practice_statement', kcId: 'KC04', selectorKey: 'practica-1' },
   ] as const;
 
   return requests.map((request, index) => {
