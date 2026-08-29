@@ -247,23 +247,30 @@ empezar `T-H7-01`. F9–F16 no empezadas.
 comparables — parecen haber sumado los proyectos `unit` y `db` bajo la misma etiqueta. Medido el 2026-08-26,
 `--project unit` da 1851 y `--project db` da 131.
 
-**⚠ CI sigue caída, y desde el 2026-08-26 se sabe exactamente por qué (D-78).** La anotación del
-check-run lo dice en prosa, y **no necesita scope especial**:
+**✅ CI VIVA desde el 2026-08-29, tras diez sesiones muerta.** Dos causas encadenadas, y conviene
+saber las dos porque ninguna era la que este archivo decía.
+
+**1. El presupuesto no estaba en cero: estaba agotado.** Había uno de Actions de **USD 2.00 con USD
+2.00 gastados**, al 100 % y con «Stop usage». No faltaba crearlo, faltaba subirlo — ahora USD 5. El
+mensaje del check-run dice «payments have failed **or** your spending limit needs to be increased», y
+las dos mitades se parecen lo bastante como para adivinar mal once sesiones. **Mirar la pantalla
+habría costado dos minutos.** La anotación sigue siendo la primera puerta cuando un check falla sin
+salida propia:
 
 ```bash
 gh api repos/MEX-AmatsuMikaboshi/profe_ia/check-runs/<job_id>/annotations --jq '.[].message'
 ```
 
-«The job was not started because recent account payments have failed or your spending limit needs to
-be increased.» `actions/runs/<id>/timing` lo corrobora: `total_ms: 0` en los diez jobs. **Ocho
-sesiones se dedujo la causa chocando con el 404 del endpoint de facturación teniendo éste al lado.**
-Regla que deja: cuando un check falla sin salida propia, la anotación del check-run es la **primera**
-puerta.
+**2. Detrás había un fallo real que la avería tapaba.** Con los jobs arrancando, tres fallaron en
+`checkout` con `upload-pack: not our ref`. **No era `CONTENT_TOKEN`**: era el gitlink apuntando a un
+commit que **nunca se subió al remoto de contenido** (D-68 y D-69, el banco de 656). Es el fallo que
+§8 del handoff advierte —primero el submódulo, después el monorepo—, cometido en la sesión 16 y
+oculto trece días. **Lección: una avería que impide correr esconde los fallos que vendrían detrás.**
 
-El propietario puso método de pago el 2026-08-26 y **no bastó**: el relanzamiento dio la misma
-anotación. Falta la segunda mitad — en cuentas personales el límite de gasto de Actions nace en
-**cero**. Está en *Settings → Billing and licensing → Budgets and alerts*. **Mientras siga así, nada
-nuevo pasa de `HECHA` a `VERIFICADA`.**
+**El presupuesto es de USD 5 con tope: los pushes se agrupan.** El propietario pidió el 2026-08-29
+dejar de subir una vez por tarea y acumular. Los **commits** siguen siendo por tarea, con su id `T-*`
+y `PLAN_STATUS.md` en el mismo commit; lo que se agrupa es el `git push`. Es desviación declarada de
+§8, no olvido.
 
 **Las anclas se citan por mango corto desde D-77 (2026-08-26).** `F-` más ocho dígitos hexadecimales
 derivados por SHA-256 del `fragmentId` canónico: **10 caracteres contra 107.4**. El validador de

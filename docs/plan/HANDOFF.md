@@ -52,10 +52,32 @@
 > prohibidos dibujados. Comprobado renderizado en GitHub. Se rellenó también el «About» del
 > repositorio, que estaba vacío.
 >
-> ### 5. Lo que sigue
+> ### 5. Los diez jobs en verde — primera vez en el proyecto
 >
-> Lo de la cabecera de abajo, sin cambios, salvo que **el punto 1 ya está hecho**: queda re-correr
-> BENCH-01 con D-77/D-79 puestos, y `T-H7-01`, que es construir el bucle W7 y no integrarlo (§2.g).
+> Corrida **`33274426761` sobre `f9351e2`**, observada job por job:
+>
+> ```
+> success  ci:lint · ci:typecheck · ci:unit · ci:build
+> success  ci:arch:depcruise            success  ci:db:testcontainers · ci:db:negative
+> success  ci:logic:golden · :pbt · :no-net   success  ci:logic:mutation
+> success  ci:mode-separation · ci:e2e:dry-session
+> success  ci:adversarial:session       success  ci:infra:otel
+> success  ci:infra:hardening · ci:infra:compose-up
+> success  ci:supply:sbom · ci:supply:drift
+> ```
+>
+> **Lo que esto desbloquea, y lo que NO se hizo aquí.** `VERIFICADA` exige el check en verde en `main`
+> observado, y ya lo está. Se promovió **`T-H0-04`**, que es la tarea que D-82 tocó. **Las demás no**,
+> y a propósito: hay ~50 tareas en `HECHA` esperando exactamente esto, y promoverlas en bloque sería
+> firmar sin mirar. **La primera tarea de la próxima sesión es esa pasada de promoción**, tarea por
+> tarea, comprobando que la evidencia de cada una está de verdad cubierta por esta corrida.
+>
+> ### 6. Lo que sigue
+>
+> 1. **La pasada de promoción `HECHA` → `VERIFICADA`** (arriba).
+> 2. **Re-correr BENCH-01** con D-77 y D-79 puestos, 3 repeticiones, ~MXN 145. La semilla no cambia.
+> 3. **`T-H7-01`**, que es **construir** el bucle W7 y no integrarlo (§2.g de la cabecera de abajo).
+> 4. **W5** cuando el propietario rompa su circularidad.
 
 > ## Cierre de la decimonovena sesión (2026-08-26) — **superado por el de arriba**
 >
