@@ -179,6 +179,15 @@ export function strategyExecution(strategy: PedagogicalStrategy): StrategyExecut
 export function sessionOperations(): readonly ModelOperation[] {
   const vistas = new Set<ModelOperation>();
   for (const ejecucion of Object.values(EJECUCIONES)) vistas.add(ejecucion.operation);
+  // La reformulación tampoco sale de `EJECUCIONES`: la produce
+  // `rephrasedExecution()` cuando la política repite estrategia sobre el mismo
+  // KC (T-H7-05). **Faltaba aquí**, y el efecto era silencioso de la peor
+  // manera: la pasarela rechazaba la operación no autorizada, el puerto lanzaba
+  // y el turno caía a **modo degradado** — o sea que una segunda pasada
+  // perfectamente sana se registraba como caída de proveedor. Lo destapó
+  // `ci:e2e:live-session` corriendo de verdad; ninguna prueba con puerto
+  // inyectado podía verlo, porque el puerto falso no comprueba autorizaciones.
+  vistas.add('rephrase_explanation');
   // Las dos de clasificación no salen de una estrategia: las usa el motor para
   // encuadrar la duda y el error del alumno dentro de sus enums (T-H7-04).
   vistas.add('classify_student_error');

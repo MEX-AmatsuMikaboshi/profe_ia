@@ -61,7 +61,8 @@
     "plan:status": "node scripts/plan/check-status.mjs",
     "ci:plan:status": "node scripts/plan/check-status.mjs && node scripts/plan/verify-check-status-catches.mjs",
     "demo": "node scripts/session/demo.mjs",
-    "demo:turno": "node scripts/session/live-turn.mjs"
+    "demo:turno": "node scripts/session/live-turn.mjs",
+    "ci:e2e:live-session": "node scripts/session/live-session.mjs"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

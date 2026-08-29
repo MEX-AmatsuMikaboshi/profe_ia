@@ -1,0 +1,45 @@
+{
+  "profile": "C",
+  "modelId": "claude-haiku-4-5-20251001",
+  "blockId": "KC04",
+  "maxOutputTokens": 1200,
+  "packageFrozen": false,
+  "acts": [
+    {
+      "act": "apertura",
+      "outcome": "delivered",
+      "policyRuleId": "pattern.new_procedural.explain",
+      "operation": "explain_block",
+      "strategy": "direct_explanation"
+    },
+    {
+      "act": "repeticion",
+      "outcome": "delivered",
+      "policyRuleId": "pattern.new_procedural.explain",
+      "operation": "rephrase_explanation",
+      "strategy": "direct_explanation"
+    },
+    {
+      "act": "tras_veredicto",
+      "outcome": "delivered",
+      "policyRuleId": "pattern.new_procedural.explain",
+      "operation": "explain_block",
+      "strategy": "direct_explanation"
+    },
+    {
+      "act": "actividad_puntuable",
+      "outcome": "delivered",
+      "policyRuleId": "pattern.new_procedural.explain",
+      "operation": "explain_block",
+      "strategy": "direct_explanation"
+    },
+    {
+      "act": "caida_de_proveedor",
+      "outcome": "degraded",
+      "policyRuleId": "pattern.new_procedural.explain",
+      "operation": "explain_block",
+      "strategy": "direct_explanation"
+    }
+  ],
+  "failures": []
+}

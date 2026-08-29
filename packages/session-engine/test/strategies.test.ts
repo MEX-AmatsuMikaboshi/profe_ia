@@ -59,6 +59,16 @@ describe('estrategias — la operación es la unidad que la pasarela autoriza', 
     expect(ops).toContain('classify_question_scope');
   });
 
+  it('la reformulación está autorizada: si no, una segunda pasada degradaría', async () => {
+    // `rephrase_explanation` no sale de `EJECUCIONES`, la produce
+    // `rephrasedExecution()`. Faltaba en la lista y la pasarela la rechazaba:
+    // el turno caía a modo degradado y una segunda pasada sana se registraba
+    // como caída de proveedor. Lo destapó `ci:e2e:live-session`; ninguna prueba
+    // con puerto inyectado podía verlo, porque el puerto falso no comprueba
+    // autorizaciones.
+    expect(sessionOperations()).toContain('rephrase_explanation');
+  });
+
   it('toda operación usada está en el enum cerrado del contrato', async () => {
     const { ModelOperation } = await import('@profesor-ia/contracts');
     for (const op of sessionOperations()) {

@@ -184,7 +184,7 @@ docente**, que necesita el binding ganador: no se alcanza escribiendo código.
 | F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS y gate H4.5 decidido (D-50): `corpus_autorizado` el 2026-08-19.** El propietario firmó la propuesta tal cual tras revisión asistida (snapshot re-verificado, licencia reconfirmada, 13 claims cotejados); corpus autorizado = forallx-yyc TFL únicamente; modal fuera (condicionado a permiso documentado de Trueman); OCW excluido (NC/SA aplazada). Decisión en `research/corpus-decision.yaml`. La ejecución en `authoring-worker` (jobs + BD) sigue pendiente |
 | F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 17 de 17 tareas con mecanismo implementado; **W1 ejecutado sobre el corpus real el 2026-08-20 (D-51): 77 fragmentos materializados en `source/`, `solutions/` reubicadas en `solutions-private/`, `kc/map.yaml` escrito con guarda de deriva; `T-H5-01` y `T-H5-03` VERIFICADAS (corrida `32424646954`, diez jobs en verde); **W2 ejecutado el 2026-08-21 (D-52): 43 elementos, 30 claims y 4 decisiones en `extracted/` y `provenance/`, cobertura KC 18/18**; **Rol B ejecutado el 2026-08-21 (D-53): secuencia, 18 objetivos observables y política pedagógica en `objectives/`, `pedagogy/` y `session-templates/`**; gate H5 abierto por freeze/auditoría y CAL-NLI materiales ausentes |
 | F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas VERIFICADAS y AC del gate cubierto y observado** (CI `32164277686`). Sólo faltan las firmas del acta |
-| F8 | H7 · Profesor IA de sesión | EN_CURSO | **7 de 7 tareas con mecanismo; 3 VERIFICADAS y 4 HECHAS.** `T-H7-01` (bucle W7), `T-H7-02` (anclaje) y `T-H7-03` (no revelación) VERIFICADAS; `T-H7-04` (estrategias), `T-H7-05` (adaptación), `T-H7-06` (degradado en vivo) y `T-H7-07` (texto+Fitch) HECHAS el 2026-08-29. **El gate H7 sigue abierto**: su AC pide `ci:e2e:live-session` —sesión completa con Perfil C y sin rescate docente—, que no existe |
+| F8 | H7 · Profesor IA de sesión | EN_CURSO | **7 de 7 tareas y el AC del gate cubierto.** `T-H7-01`, `T-H7-02` y `T-H7-03` VERIFICADAS; `T-H7-04`…`T-H7-07` HECHAS el 2026-08-29. **`ci:e2e:live-session` existe y pasa**: cinco actos con Perfil C (`claude-haiku-4-5-20251001`), los cuatro entregados y la caída degradando, con las siete comprobaciones del AC en verde —incluida «sin rescate docente», que se comprueba porque **no existe el campo** por el que se usaría, no porque no se usara—. **No corre en cada push**: gasta contra proveedor real, así que se trata como `bench:material` y su evidencia es la corrida. Informe en `analysis/reports/live-session.json`. **Falta el acta firmada** `docs/gates/H7.md`, que es del propietario |
 | F9–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
 
 ## Entorno de ejecución (verificado 2026-08-14)
@@ -1968,6 +1968,36 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   siembra incluían una que no funcionaba en absoluto. «La regla existe» y «la regla detecta» son
   afirmaciones distintas, y el repositorio ya lo sabía —lo dice de la suite negativa de privilegios y
   del conjunto dorado—. Faltaba aplicarlo aquí.
+- **D-84 — El AC del gate H7 destapó que una operación no estaba autorizada, y ninguna prueba con
+  puerto inyectado podía verlo (2026-08-29).** `T-H7-04`…`T-H7-07` y `ci:e2e:live-session`.
+  **Las estrategias se ejecutan de verdad.** El bucle de `T-H7-01` mandaba siempre las mismas
+  instrucciones y `explain_block` dijera lo que dijera la política: diez estrategias decididas y
+  ninguna ejecutada. Cada una lleva ahora su directiva —el acto pedagógico— y su operación del enum
+  cerrado, que es la unidad que la pasarela **autoriza**. El modelo sigue sin decidir la estrategia
+  (I-1); esto traduce a texto una elección ya tomada. La cobertura se comprueba **contra el enum del
+  contrato**: una lista a mano se quedaría vieja en silencio.
+  **La repetición reformula** (`T-H7-05`). La política es determinista, así que repetir un turno
+  fallido repetiría el acto que falló. Misma estrategia sobre el mismo KC ⇒ `rephrase_explanation`
+  con directiva de cambiar la representación. **No cambia la estrategia, ni el nivel de ayuda, ni la
+  elegibilidad**: eso sería adaptarse por fuera de la política.
+  **La caída del proveedor ya no rompe la clase** (`T-H7-06`, CRITICAL). Se continúa con el activo
+  congelado del bloque y se declara: causa, `freezeVersion`, el error real y `alteredCondition: true`
+  (P-II §8.6). Es rama propia y no un `delivered` con otro texto. **Sin fuente congelada la caída
+  propaga**, y hay prueba: un valor por omisión haría continuar la clase sobre nada.
+  **El hallazgo, y es el que vale.** `ci:e2e:live-session` corrió y el acto de repetición salió
+  `degraded`. La causa: `sessionOperations()` **no incluía `rephrase_explanation`**, porque esa
+  operación no sale de la tabla de estrategias sino de `rephrasedExecution()`. La pasarela la
+  rechazaba, el puerto lanzaba, y el turno caía a modo degradado — o sea que **una segunda pasada
+  perfectamente sana se registraba como caída de proveedor**.
+  **Ninguna prueba con puerto inyectado podía verlo**, porque un puerto falso no comprueba
+  autorizaciones. Es el complemento exacto de D-82: allí una regla existía y no detectaba; aquí una
+  autorización faltaba y sólo se notaba contra el proveedor real.
+  **Y la primera versión del check pasó en verde con el defecto puesto**, porque miraba la operación
+  y no el `outcome`. Acertar por el motivo equivocado es indistinguible de acertar hasta que alguien
+  mira. Corregidos los dos: la operación se autoriza y el check exige entrega.
+  **`ci:e2e:live-session` no corre en cada push.** Gasta contra proveedor real, así que se trata como
+  `bench:material`. Y **no pasa por vacío**: sin credencial sale con código 2 y lo dice, porque un
+  check verde por no haber podido correr afirmaría el AC de un gate sin comprobarlo.
 - **D-83 — El bucle W7 existe y corre en vivo; el cálculo entra por un subpath sin veredicto
   (2026-08-29).** `T-H7-01`. El mapeo de §2.g del handoff era exacto: **todas las piezas existían y
   ninguna llamaba a otra**, y en particular `validateAnchoredOutput()` (`T-H7-02`) y
