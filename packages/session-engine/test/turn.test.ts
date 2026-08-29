@@ -160,9 +160,9 @@ function turnInput(overrides: Partial<SessionTurnInput> = {}): SessionTurnInput 
     selectedHint: null,
     candidateHint: null,
     scorableActivity: null,
-    operation: 'explain_block',
     instructions: 'Explica el bloque citando los fragmentos autorizados.',
     deliversFeedback: false,
+    previousTurn: null,
     ...overrides,
   };
 }
@@ -489,5 +489,162 @@ describe('runTeachingTurn — el reintento se cuenta y no rescata', () => {
 
     expect(result.outcome).toBe('suppressed');
     expect(llamadas).toHaveLength(0);
+  });
+});
+
+describe('runTeachingTurn — adaptación dentro de límites (T-H7-05)', () => {
+  it('repetir estrategia sobre el mismo KC reformula, sin cambiar estrategia ni ayuda', async () => {
+    const { deps, llamadas } = arnes();
+    const primero = await runTeachingTurn(deps, turnInput());
+    expect(primero.outcome).toBe('delivered');
+    if (primero.outcome !== 'delivered') return;
+    const estrategia = primero.policyOutcome.kind === 'decision'
+      ? primero.policyOutcome.decision.strategy
+      : null;
+    const ayuda = primero.policyOutcome.kind === 'decision'
+      ? primero.policyOutcome.decision.assistanceLevel
+      : null;
+
+    const segundo = await runTeachingTurn(
+      deps,
+      turnInput({ previousTurn: { strategy: estrategia ?? '', kcId: 'KC04' } }),
+    );
+
+    expect(segundo.outcome).toBe('delivered');
+    if (segundo.outcome !== 'delivered') return;
+
+    // La operación cambia: la reformulación entra por su propia puerta, así que
+    // el binding puede autorizarla aparte y la evidencia distingue la segunda
+    // pasada de la primera.
+    expect(llamadas[0]?.operation).toBe('explain_block');
+    expect(llamadas[1]?.operation).toBe('rephrase_explanation');
+    expect(llamadas[1]?.instructions).toMatch(/SEGUNDA PASADA/u);
+
+    // **Lo que NO cambia**, que es el límite de T-H7-05: ni la estrategia ni el
+    // nivel de ayuda. Adaptarse fuera de eso sería el modelo decidiendo.
+    if (segundo.policyOutcome.kind !== 'decision') return;
+    expect(segundo.policyOutcome.decision.strategy).toBe(estrategia);
+    expect(segundo.policyOutcome.decision.assistanceLevel).toBe(ayuda);
+    expect(segundo.audit.execution?.strategy).toBe(estrategia);
+  });
+
+  it('otro KC con la misma estrategia NO es segunda pasada', async () => {
+    const { deps, llamadas } = arnes();
+    await runTeachingTurn(
+      deps,
+      turnInput({ previousTurn: { strategy: 'direct_explanation', kcId: 'KC09' } }),
+    );
+    // La explicación de otro KC no ha fallado aquí: reformular sería tratar como
+    // repetido lo que el alumno no ha visto.
+    expect(llamadas[0]?.operation).toBe('explain_block');
+  });
+
+  it('la autoafirmación del alumno no puede volverlo elegible para dominio', async () => {
+    const { deps } = arnes();
+    // P-II §7.2: la elegibilidad la fija `domain_engine`. Un contexto que la
+    // atribuyera al modelo tiene que ser rechazado por la política, no
+    // interpretado por el turno.
+    await expect(
+      runTeachingTurn(
+        deps,
+        turnInput({
+          decisionContext: decisionContext({
+            masteryEligibility: {
+              authority: 'model' as never,
+              eligible: true,
+              reasonCode: 'EL_ALUMNO_DIJO_QUE_YA_ENTENDIO',
+            },
+          }),
+        }),
+      ),
+    ).rejects.toThrow();
+  });
+});
+
+describe('runTeachingTurn — modo degradado en vivo (T-H7-06)', () => {
+  const CAIDA = async (): Promise<never> => {
+    throw new Error('ECONNREFUSED api.anthropic.com');
+  };
+
+  const CONGELADO = () => ({
+    text: 'De A∧B se deriva A, y de A∧B se deriva B.',
+    freezeVersion: 'corpus-v1+w3@2026-08-23',
+  });
+
+  it('sin fuente congelada la caída PROPAGA: no se inventa continuidad', async () => {
+    const { deps } = arnes();
+    // Es el contrapunto obligado de la prueba siguiente. Un valor por omisión
+    // haría que la sesión continuara sobre nada y nadie lo notaría.
+    await expect(
+      runTeachingTurn({ ...deps, model: CAIDA }, turnInput()),
+    ).rejects.toThrow(/ECONNREFUSED/u);
+  });
+
+  it('con fuente congelada la sesión continúa y lo declara', async () => {
+    const { deps } = arnes();
+    const result = await runTeachingTurn(
+      { ...deps, model: CAIDA, degraded: CONGELADO },
+      turnInput(),
+    );
+
+    expect(result.outcome).toBe('degraded');
+    if (result.outcome !== 'degraded') return;
+    expect(result.cause).toBe('provider_unavailable');
+    expect(result.segments[0]?.text).toContain('A∧B');
+    // Trazable: de qué freeze salió el texto.
+    expect(result.freezeVersion).toBe('corpus-v1+w3@2026-08-23');
+    // P-II §8.6: continuar con contenido congelado altera la condición.
+    expect(result.alteredCondition).toBe(true);
+    // Y el error real no se pierde: sin él, «degradado» no diría por qué.
+    expect(result.providerError).toContain('ECONNREFUSED');
+  });
+
+  it('el contenido congelado NO se marca como anclado', async () => {
+    const { deps } = arnes();
+    const result = await runTeachingTurn(
+      { ...deps, model: CAIDA, degraded: CONGELADO },
+      turnInput(),
+    );
+    if (result.outcome !== 'degraded') throw new Error('se esperaba degradado');
+    // No pasó por `validateAnchoredOutput` porque no vino del modelo. Decir que
+    // sí lo hizo firmaría una comprobación que no ocurrió.
+    expect(result.segments[0]?.standing.kind).not.toBe('anchored');
+  });
+
+  it('una caída del proveedor NO consume los reintentos de anclaje', async () => {
+    const { deps } = arnes();
+    let llamadas = 0;
+    const result = await runTeachingTurn(
+      {
+        ...deps,
+        anchoringRetries: 3,
+        degraded: CONGELADO,
+        model: async () => {
+          llamadas += 1;
+          throw new Error('ECONNREFUSED');
+        },
+      },
+      turnInput(),
+    );
+
+    expect(result.outcome).toBe('degraded');
+    // Una sola llamada. El reintento es para el **anclaje**, que puede salir
+    // bien a la segunda; una caída no se arregla repitiendo de inmediato, y
+    // repetirla cobraría dos veces una petición que quizá llegó.
+    expect(llamadas).toBe(1);
+  });
+
+  it('la degradación es determinista: mismo fallo, mismo resultado', async () => {
+    // El gate de BENCH-01 exige 100 % de recuperación determinista; aquí se
+    // comprueba en el bucle real y no sólo en el arnés del benchmark.
+    const corridas = await Promise.all(
+      [1, 2, 3].map(async () => {
+        const { deps } = arnes();
+        return runTeachingTurn({ ...deps, model: CAIDA, degraded: CONGELADO }, turnInput());
+      }),
+    );
+    const textos = corridas.map((r) => (r.outcome === 'degraded' ? r.segments[0]?.text : 'x'));
+    expect(new Set(textos).size).toBe(1);
+    expect(corridas.every((r) => r.outcome === 'degraded')).toBe(true);
   });
 });

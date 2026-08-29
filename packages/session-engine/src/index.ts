@@ -7,3 +7,4 @@ export * from './evidence.js';
 export * from './script-mode.js';
 export * from './turn.js';
 export * from './teaching-prompt.js';
+export * from './strategies.js';

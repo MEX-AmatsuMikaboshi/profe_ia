@@ -3,6 +3,7 @@ import { withSpan, type Tracer } from '@profesor-ia/observability';
 import { buildFragmentHandleTable, fragmentHandle } from '@profesor-ia/contracts';
 import { loadContentPackage, type ContentPackage } from '@profesor-ia/content-schema';
 import {
+  DegradedProfile,
   ModelGateway,
   anthropicAdapter,
   envCredentialResolver,
@@ -17,7 +18,9 @@ import {
   SESSION_AUTHORIZED_CALCULUS,
   TEACHING_TURN_INSTRUCTIONS,
   gatewayTurnPort,
+  sessionOperations,
   runTeachingTurn,
+  type DegradedSource,
   type SessionTurnResult,
   type TurnModelPort,
 } from '@profesor-ia/session-engine';
@@ -99,6 +102,8 @@ export type TurnResponse =
         readonly policyRuleId: string;
         /** Que el paquete no es material se dice en la respuesta (UIUX §2). */
         readonly packagePurpose: typeof TURN_PACKAGE_PURPOSE;
+        /** Presente sólo cuando el turno salió del corpus y no del modelo. */
+        readonly degraded?: { readonly cause: string; readonly freezeVersion: string };
       };
     }
   | {
@@ -126,6 +131,8 @@ export interface TurnRuntime {
   readonly modelFor: (handles: ReadonlyMap<string, string>) => TurnModelPort;
   /** Reintentos ante rechazo de anclaje. Viaja al orquestador y se cuenta. */
   readonly anchoringRetries: number;
+  /** Contenido congelado para cuando el proveedor cae (T-H7-06). */
+  readonly degraded: DegradedSource;
   readonly tracer: Tracer;
 }
 
@@ -174,6 +181,13 @@ export function buildTurnRuntime(options: BuildTurnRuntimeOptions): TurnRuntime 
     policyHash: policy.compiled.policyHash,
   });
 
+  // El perfil degradado se arma del paquete ya cargado: los 61 activos de
+  // explicación traen uno por bloque, con la clave del bloque.
+  const degradedProfile = new DegradedProfile({
+    assets: contentPackage.frozenAssets,
+    feedbackTemplates: contentPackage.feedbackTemplates,
+  });
+
   const gateway = new ModelGateway({
     profile: 'SESION',
     registrations: [
@@ -205,7 +219,11 @@ export function buildTurnRuntime(options: BuildTurnRuntimeOptions): TurnRuntime 
           },
           verifiedAt: new Date().toISOString(),
         },
-        operations: ['explain_block', 'rephrase_explanation', 'classify_student_error'],
+        // Todas las que las estrategias de T-H7-04 pueden necesitar. Un
+        // binding que no autorizara la operación de una estrategia haría
+        // fallar el turno justo cuando la política la eligiera, o sea rara
+        // vez y en producción.
+        operations: sessionOperations(),
       },
     ],
     credentialResolver: envCredentialResolver('anthropic', options.env),
@@ -221,6 +239,14 @@ export function buildTurnRuntime(options: BuildTurnRuntimeOptions): TurnRuntime 
     modelFor: (fragmentHandles) =>
       gatewayTurnPort({ gateway, fragmentHandles, maxOutputTokens }),
     anchoringRetries: options.anchoringRetries ?? 1,
+    // T-H7-06. `DegradedProfile.asset()` **lanza** si no hay activo para el
+    // bloque, y así se queda: un texto de relleno haría pasar por «el núcleo
+    // respondió» algo que no estaba, y entonces el perfil dejaría de servir
+    // para aislar si el fallo vino del modelo o del núcleo (P-II §8.6).
+    degraded: (blockId) => {
+      const activo = degradedProfile.asset('explicacion', blockId);
+      return { text: activo.text, freezeVersion: activo.freezeVersion };
+    },
     tracer: options.tracer,
   };
 }
@@ -271,6 +297,7 @@ export async function handleTurnRequest(
             model: runtime.modelFor(handles),
             calculus: SESSION_AUTHORIZED_CALCULUS,
             canaryDetector: () => [],
+            degraded: runtime.degraded,
             // Un reintento. BENCH-01 midió 84.2 % de anclas resolubles en
             // `claude-sonnet-5`, así que un fallo de anclaje aislado es
             // esperable y una segunda pasada sobre el mismo contexto suele
@@ -318,9 +345,12 @@ export async function handleTurnRequest(
             selectedHint: null,
             candidateHint: null,
             scorableActivity: null,
-            operation: 'explain_block',
             instructions: TEACHING_TURN_INSTRUCTIONS,
             deliversFeedback: false,
+            // T-H7-05. Hoy siempre `null`: el turno anterior vive en la
+            // proyección de sesión y esta ruta todavía no la monta. Cablearlo a
+            // un valor inventado haría reformular turnos que no se repitieron.
+            previousTurn: null,
           },
         );
       } catch (err) {
@@ -342,12 +372,16 @@ export async function handleTurnRequest(
         // Cuántas llamadas costó. Va al span porque es coste y comportamiento
         // del proveedor, no contenido: la prosa del profesor se queda fuera
         // (P-II §9.3).
-        ...(result.outcome === 'suppressed' || result.outcome === 'blocked_by_non_revelation'
-          ? {}
-          : { 'turn.attempts': result.attempts }),
+        ...(result.outcome === 'rejected_by_anchoring' || result.outcome === 'delivered'
+          ? { 'turn.attempts': result.attempts }
+          : {}),
+        ...(result.outcome === 'degraded' ? { 'turn.degraded_cause': result.cause } : {}),
       });
 
-      if (result.outcome !== 'delivered') {
+      // El turno degradado **se entrega**: la sesión continúa (T-H7-06). Va con
+      // 200 porque el alumno recibe contenido, y con `outcome: 'degraded'` para
+      // que la vista pueda decir que salió del corpus y no del modelo.
+      if (result.outcome !== 'delivered' && result.outcome !== 'degraded') {
         return {
           status: 422,
           body: {
@@ -358,16 +392,40 @@ export async function handleTurnRequest(
         };
       }
 
+      const segments = result.segments.map((s) => ({
+        text: s.text,
+        standing: s.standing.kind,
+        anchors: s.standing.kind === 'anchored' ? s.standing.resolvedAnchors : [],
+      }));
+
+      if (result.outcome === 'degraded') {
+        return {
+          status: 200,
+          body: {
+            outcome: result.outcome,
+            stoppedAt: result.stoppedAt,
+            segments,
+            // No pasó por el validador de anclaje, así que no puede sostener
+            // una calificación; y no gastó ninguna llamada útil.
+            canGroundEvaluation: false,
+            attempts: 0,
+            policyRuleId: result.audit.policyRuleId,
+            packagePurpose: TURN_PACKAGE_PURPOSE,
+            degraded: { cause: result.cause, freezeVersion: result.freezeVersion },
+          },
+        };
+      }
+
       return {
         status: 200,
         body: {
           outcome: result.outcome,
           stoppedAt: result.stoppedAt,
-          segments: result.segments.map((s) => ({
-            text: s.text,
-            standing: s.standing.kind,
-            anchors: s.standing.kind === 'anchored' ? s.standing.resolvedAnchors : [],
-          })),
+          segments,
+          // Un turno degradado no puede fundamentar calificación: no pasó por
+          // el validador de anclaje. Y costó cero llamadas útiles.
+          // Un turno degradado no puede fundamentar calificación —no pasó por
+          // el validador— y no gastó ninguna llamada útil.
           canGroundEvaluation: result.canGroundEvaluation,
           attempts: result.attempts,
           policyRuleId: result.audit.policyRuleId,
@@ -378,8 +436,17 @@ export async function handleTurnRequest(
   );
 }
 
-/** Cada salida no entregada tiene su código. No se colapsan en uno genérico. */
-function codeFor(result: Exclude<SessionTurnResult, { outcome: 'delivered' }>): string {
+/** Las ramas que **no** llegan al alumno. `delivered` y `degraded` sí llegan. */
+type NoEntregado = Exclude<SessionTurnResult, { outcome: 'delivered' | 'degraded' }>;
+
+/**
+ * Cada salida no entregada tiene su código. No se colapsan en uno genérico.
+ *
+ * `degraded` queda fuera del tipo porque **sí se entrega**: la sesión continúa
+ * con contenido congelado (T-H7-06). Que el compilador lo exija es la razón por
+ * la que este `switch` no se queda viejo cuando la unión crece.
+ */
+function codeFor(result: NoEntregado): string {
   switch (result.outcome) {
     case 'suppressed':
       return 'TURNO_SUPRIMIDO_POR_POLITICA';
@@ -390,7 +457,7 @@ function codeFor(result: Exclude<SessionTurnResult, { outcome: 'delivered' }>): 
   }
 }
 
-function detailFor(result: Exclude<SessionTurnResult, { outcome: 'delivered' }>): string {
+function detailFor(result: NoEntregado): string {
   switch (result.outcome) {
     case 'suppressed':
       return `la política suprimió el turno con la regla ${result.audit.policyRuleId}`;

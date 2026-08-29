@@ -115,6 +115,15 @@ function TurnBody({ state }: { readonly state: TurnState }) {
     case 'turno':
       return (
         <div data-testid="profesor-turno">
+          {/* T-H7-06: la sesión continúa sin proveedor, y se dice. Callarlo
+              haría pasar el corpus por respuesta del profesor. */}
+          {state.turn.degraded === undefined ? null : (
+            <p className="tag tag-outline" data-testid="profesor-degradado">
+              Sin conexión con el proveedor. Esto sale del material congelado del curso
+              ({state.turn.degraded.freezeVersion}), no del Profesor IA.
+            </p>
+          )}
+
           <ol data-testid="profesor-segmentos">
             {state.turn.segments.map((segmento, i) => (
               <li

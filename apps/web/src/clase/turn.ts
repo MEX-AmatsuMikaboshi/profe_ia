@@ -33,6 +33,12 @@ export interface ProfessorTurn {
   readonly attempts: number;
   readonly policyRuleId: string;
   readonly packagePurpose: string;
+  /**
+   * Presente sólo cuando el turno salió del **corpus congelado** y no del
+   * modelo (T-H7-06). Es un campo aparte y no un `standing` más porque el
+   * alumno tiene que poder saber que el profesor está operando sin proveedor.
+   */
+  readonly degraded?: { readonly cause: string; readonly freezeVersion: string };
 }
 
 export interface TurnFailure {

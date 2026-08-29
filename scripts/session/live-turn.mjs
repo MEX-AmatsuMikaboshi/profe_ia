@@ -35,6 +35,7 @@ import {
   TEACHING_TURN_INSTRUCTIONS,
   gatewayTurnPort,
   runTeachingTurn,
+  sessionOperations,
 } from '../../packages/session-engine/dist/index.js';
 import {
   AUTHORIZED_CALCULUS_VERSION,
@@ -148,7 +149,7 @@ async function main() {
   const gateway = new ModelGateway({
     profile: 'SESION',
     registrations: [
-      { binding, operations: ['explain_block', 'rephrase_explanation', 'classify_student_error'] },
+      { binding, operations: sessionOperations() },
     ],
     credentialResolver: envCredentialResolver('anthropic', env),
     adapters: [anthropicAdapter],
@@ -204,7 +205,6 @@ async function main() {
       selectedHint: null,
       candidateHint: null,
       scorableActivity: null,
-      operation: 'explain_block',
       instructions: TEACHING_TURN_INSTRUCTIONS,
       deliversFeedback: false,
     },

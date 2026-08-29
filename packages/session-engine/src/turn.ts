@@ -9,6 +9,11 @@ import {
 } from '@profesor-ia/pedagogy-policy';
 
 import {
+  rephrasedExecution,
+  strategyExecution,
+  type StrategyExecution,
+} from './strategies.js';
+import {
   buildSessionContext,
   validateAnchoredOutput,
   type AnchorRejection,
@@ -131,6 +136,23 @@ export interface TurnModelRequest {
  */
 export type TurnModelPort = (request: TurnModelRequest) => Promise<unknown>;
 
+/**
+ * Fuente de contenido **congelado** para el modo degradado (T-H7-06 ← P-II §8.6).
+ *
+ * Es un puerto y no `DegradedProfile` directamente para que el turno se pruebe
+ * sin montar el paquete entero, y porque lo único que necesita del perfil es
+ * esto: el texto autorizado del bloque y de qué freeze sale.
+ *
+ * **Lanza si no lo tiene.** No devuelve `null` ni una cadena vacía: un texto de
+ * relleno haría pasar por «el núcleo respondió» algo que no estaba, y el perfil
+ * degradado existe justamente para aislar si el fallo viene del modelo o del
+ * núcleo.
+ */
+export type DegradedSource = (blockId: string) => {
+  readonly text: string;
+  readonly freezeVersion: string;
+};
+
 export interface SessionTurnDependencies {
   readonly policy: DeterministicPedagogyPolicy;
   readonly retrieveFragments: FragmentRetriever;
@@ -163,6 +185,15 @@ export interface SessionTurnDependencies {
    * sugerencia.
    */
   readonly anchoringRetries?: number;
+  /**
+   * Contenido congelado para cuando el proveedor cae (T-H7-06).
+   *
+   * **Opcional a propósito, y su ausencia no se disfraza:** sin fuente
+   * degradada una caída del proveedor **propaga el error**. Inventar aquí un
+   * texto por omisión sería exactamente la degradación silenciosa que P-II §8.6
+   * prohíbe, y dejaría la clase continuando sobre nada.
+   */
+  readonly degraded?: DegradedSource;
 }
 
 export interface SessionTurnInput {
@@ -190,10 +221,29 @@ export interface SessionTurnInput {
     readonly isProbe: boolean;
     readonly attemptClosed: boolean;
   } | null;
-  readonly operation: string;
+  /**
+   * Instrucciones **base**: formato, anclaje y negativa dentro del esquema. El
+   * acto pedagógico NO viene de aquí: sale de la estrategia que la política
+   * eligió (T-H7-04), y se le añade a esto. Si el llamador pudiera fijar el
+   * acto, estaría decidiendo pedagogía desde fuera de la política.
+   */
   readonly instructions: string;
   /** ¿Este turno pretende entregar retroalimentación al alumno? (P-I §9.6). */
   readonly deliversFeedback: boolean;
+  /**
+   * El turno anterior, para el cambio de representación de T-H7-05.
+   *
+   * Si la política vuelve a elegir la **misma** estrategia sobre el **mismo**
+   * KC, repetirla al pie de la letra sería repetir lo que ya falló. Se
+   * reformula: cambia la representación, no la estrategia ni el nivel de ayuda.
+   *
+   * `null` en el turno de apertura. Lo aporta el llamador porque vive en la
+   * proyección de sesión, igual que `decisionContext`.
+   */
+  readonly previousTurn: {
+    readonly strategy: string;
+    readonly kcId: string;
+  } | null;
 }
 
 /** Lo que se registra del turno, pase lo que pase. Es el paso 9. */
@@ -205,6 +255,12 @@ export interface TurnAuditTrail {
   readonly blockId: string;
   readonly fragmentIds: readonly string[];
   readonly egressFilter: EgressFilterReceipt;
+  /**
+   * La estrategia que se **ejecutó** y con qué operación. Va aparte de
+   * `policyRuleId` a propósito: la regla dice qué se decidió y esto qué se
+   * hizo, y sólo teniendo los dos se puede comprobar que coinciden.
+   */
+  readonly execution: StrategyExecution | null;
 }
 
 export type SessionTurnResult =
@@ -230,6 +286,30 @@ export type SessionTurnResult =
       readonly rejections: readonly AnchorRejection[];
       /** Los rechazos del **último** intento; `attempts` dice cuántos hubo. */
       readonly attempts: number;
+      readonly policyOutcome: PedagogyPolicyOutcome;
+      readonly audit: TurnAuditTrail;
+    }
+  /**
+   * El proveedor cayó y la sesión **continúa con contenido congelado**
+   * (T-H7-06). Es una rama propia y no un `delivered` con otro texto: quien lea
+   * la evidencia tiene que poder distinguir lo que dijo el modelo de lo que
+   * dijo el corpus, y en modo experimento esto altera la condición.
+   */
+  | {
+      readonly outcome: 'degraded';
+      readonly stoppedAt: 'alumno';
+      readonly segments: readonly { readonly text: string; readonly standing: SegmentStanding }[];
+      readonly cause: 'provider_unavailable';
+      /** De qué freeze sale el texto. Sin esto no sería trazable. */
+      readonly freezeVersion: string;
+      readonly providerError: string;
+      /**
+       * P-II §8.6: continuar con contenido congelado **altera la condición** de
+       * una corrida experimental. Se declara aquí para que quien registre la
+       * evidencia emita la desviación; el turno no decide si la corrida es
+       * material, sólo dice que esto pasó.
+       */
+      readonly alteredCondition: true;
       readonly policyOutcome: PedagogyPolicyOutcome;
       readonly audit: TurnAuditTrail;
     }
@@ -283,9 +363,27 @@ export async function runTeachingTurn(
         reachedStep: 'politica',
         fragmentIds: [],
         egressFilter: NO_EGRESS_YET,
+        // No hubo estrategia que ejecutar: la política suprimió el turno.
+        execution: null,
       },
     };
   }
+
+  // ── Paso 3 (antes): traducir la estrategia decidida a su ejecución ────────
+  // Va antes de tocar el corpus porque una estrategia sin ejecución declarada
+  // es un fallo de configuración, no un turno a medias: mejor lanzar aquí que
+  // recuperar fragmentos y gastar una llamada para descubrirlo después.
+  // Misma estrategia sobre el mismo KC que el turno anterior ⇒ segunda pasada.
+  // La estrategia y el nivel de ayuda **no cambian** —eso sería adaptarse por
+  // fuera de la política—; cambia la representación (P-I §5.10, T-H7-05).
+  const esSegundaPasada =
+    input.previousTurn !== null &&
+    input.previousTurn.strategy === policyOutcome.decision.strategy &&
+    input.previousTurn.kcId === input.decisionContext.kcId;
+
+  const execution = esSegundaPasada
+    ? rephrasedExecution(policyOutcome.decision.strategy)
+    : strategyExecution(policyOutcome.decision.strategy);
 
   // ── Paso 3: fragmentos autorizados ────────────────────────────────────────
   const fragments = deps.retrieveFragments(input.blockId);
@@ -328,6 +426,7 @@ export async function runTeachingTurn(
     reachedStep: 'modelo',
     fragmentIds,
     egressFilter,
+    execution,
   };
 
   // ── Paso 5a: no revelación, ANTES del proveedor (P-I §9.6) ────────────────
@@ -363,11 +462,43 @@ export async function runTeachingTurn(
 
   while (attempts < intentosMaximos) {
     attempts += 1;
-    const raw = await deps.model({
-      operation: input.operation,
-      instructions: input.instructions,
-      context,
-    });
+    let raw: unknown;
+    try {
+      raw = await deps.model({
+      operation: execution.operation,
+      // Base + acto. En este orden: el contrato de formato manda, y la
+      // directiva de estrategia no puede reescribirlo.
+      instructions: `${input.instructions}
+
+${execution.directive}`,
+        context,
+      });
+    } catch (err) {
+      // ── T-H7-06: el proveedor cayó ────────────────────────────────────────
+      // No se reintenta: el reintento de arriba es para el **anclaje**, que es
+      // un fallo del contenido y puede salir bien a la segunda. Una caída del
+      // proveedor no se arregla repitiendo de inmediato, y repetirla cobraría
+      // dos veces una petición que quizá llegó.
+      const degradada = deps.degraded;
+      if (degradada === undefined) throw err;
+
+      const congelado = degradada(input.blockId);
+      return {
+        outcome: 'degraded',
+        stoppedAt: 'alumno',
+        // El texto congelado sale del corpus del bloque, así que está anclado
+        // por construcción — pero **no** se marca `anchored`: no pasó por el
+        // validador porque no vino del modelo, y decir que sí lo hizo sería
+        // firmar una comprobación que no ocurrió.
+        segments: [{ text: congelado.text, standing: { kind: 'non_factual_accompaniment' } }],
+        cause: 'provider_unavailable',
+        freezeVersion: congelado.freezeVersion,
+        providerError: String(err),
+        alteredCondition: true,
+        policyOutcome,
+        audit: { ...audit, reachedStep: 'alumno' },
+      };
+    }
 
     // ── Paso 5b: validador de anclaje, DESPUÉS (P-II §8.4, I-7) ─────────────
     verdict = validateAnchoredOutput(
