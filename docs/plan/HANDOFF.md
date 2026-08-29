@@ -177,25 +177,92 @@
 > faltaba aplicarlo aquí. **Conviene mirar con la misma lupa cualquier otra guarda sin control
 > positivo.**
 >
+> ### 2.g El mapa de W7: `T-H7-01` no es «integrar el binding», es **construir el bucle**
+>
+> Se mapearon los nueve pasos de W7 con nueve lectores independientes. **Coinciden todos**, y el
+> resultado cambia lo que `T-H7-01` significa.
+>
+> **Todas las piezas existen, bien probadas, y ninguna llama a otra. No hay orquestador en ningún
+> sitio.**
+>
+> | Pieza | Estado | Llamadores fuera de pruebas |
+> |---|---|---|
+> | `DeterministicPedagogyPolicy.decide()` | 22 reglas congeladas | **ninguno** |
+> | `buildSessionContext()` | construida | **ninguno** |
+> | `validateAnchoredOutput()` (`T-H7-02`) | VERIFICADA | 1, y es el arnés de BENCH-01 |
+> | `checkNonRevelation()` (`T-H7-03`) | VERIFICADA | **ninguno** |
+> | `EvidenceLedger` | construida | **ninguno** |
+> | `loadContentPackage()` | construida | sólo `tools/bench` |
+>
+> **Las dos tareas VERIFICADAS de H7 nunca se han llamado juntas**: no hay un solo archivo que
+> importe ambas.
+>
+> **El grafo de dependencias lo confirma.** `apps/api` depende de contracts, logic-core,
+> observability y security-policy — **no** de `session-engine`, `model-gateway` ni `pedagogy-policy`.
+> Y `session-engine` **no** depende de `model-gateway`. Hoy no podría llamar al validador de anclaje
+> ni queriendo.
+>
+> **Buena noticia arquitectónica, comprobada:** `session-engine → model-gateway` **no lo prohíbe
+> ninguna regla**, y el comentario de I-1 lo respalda —«el motor decide; sólo `model-gateway` habla
+> con proveedores»—. Además `model-gateway` **no declara ningún SDK de proveedor**: usa HTTP propio.
+> Así que el orquestador puede vivir en `session-engine` añadiendo esa dependencia.
+>
+> **Los cinco huecos que bloquean a más pasos**, por orden de arrastre:
+>
+> 1. **No hay orquestador.** Nadie encadena los nueve pasos. `apps/api` responde `NO_IMPLEMENTADO` a
+>    todo salvo `/health` y el spool de veredictos (D-11).
+> 2. **No hay recuperador de fragmentos para producción.** `loadContentPackage()` vive en
+>    `tools/bench`. P-II §3.1 prohíbe paquetes nuevos, y `content-schema` —el hogar natural— es un
+>    esqueleto de F0 de cuatro líneas. Además: `docker-compose.yml` monta el corpus **sólo** en
+>    `authoring-worker`; el servicio `api` no lo tiene.
+> 3. **No hay constructor de `PedagogyDecisionContext`.** Las ocho banderas de observación no tienen
+>    quien las derive del estado de sesión, y `patternPosition` **no existe** en la proyección: sin
+>    ese cursor, las doce reglas de nivel 4 no pueden dispararse.
+> 4. **No hay elección de bloque.** `currentBlock` es un campo que alguien escribe a mano; en la
+>    única «apertura de bloque» del repo es un literal dentro de una prueba. No hay catálogo, ni
+>    criterio, ni derivación de `objectiveId` → `goal`, que `buildSessionContext()` exige.
+> 5. **Nadie escribe evidencia en tiempo de ejecución.** `EVIDENCE_EVENT_INSERT_SQL` sólo se invoca
+>    en pruebas. De los nueve pasos, **sólo el 8 tiene emisor**.
+>
+> **Dos bloqueos que no son de código y hay que saber:** la política material exige `expectedHash` de
+> un paquete congelado —y W5 no ha corrido—, y **CAL-10/CAL-WHEEL sigue pendiente**, así que toda
+> evaluación material de `wheel_spinning` lanza `CALIBRATION_REQUIRED`.
+>
+> **Lo que sí se puede construir sin gastar un peso:** el orquestador entero contra una pasarela
+> inyectada, exactamente como hace `dry-session-e2e.test.ts`. `ci:e2e:live-session` —el AC del gate
+> H7— es lo único que necesita proveedor, y su Perfil C está resuelto (§2.e).
+>
 > ### 3. Verificación de esta sesión
 >
 > **1851 pruebas unitarias en verde** (1826 al abrir, +25) más las **131 contra PostgreSQL 17 real**,
 > que corrieron en local con Docker arriba. Lint, typecheck (41/41), build (25/25), depcruise con sus
-> dos controles positivos (482 módulos, 1110 dependencias, cero violaciones), el control positivo del
+> **trece** controles positivos —eran ocho al abrir (D-82)— sobre 499 módulos y 1232 dependencias sin
+> una sola violación, el control positivo del
 > typecheck de pruebas, separación de modos, sesión seca, adversarial, conjunto dorado, PBT, pureza
 > del verificador, pasarela, grants, SBOM, drift, las 159 de hardening, la tabla de mangos y la
 > coherencia de `PLAN_STATUS.md` con su control positivo: todo verde. `ci:logic:mutation` no se corrió —sólo corre en `main`—; `logic-core` no se tocó.
 >
 > ### 4. Orden para retomar
 >
-> 1. **Subir el límite de gasto de Actions** y observar la corrida. Es lo único que separa a D-74…D-78
->    de `VERIFICADA`, y no hay nada que tocar en el código.
+> 1. **Subir el límite de gasto de Actions** y observar la corrida. Es lo único que separa a
+>    **D-74…D-82** de `VERIFICADA`, y no hay nada que tocar en el código.
 > 2. **Re-correr BENCH-01** con el mango (D-77) y la instrucción de negativa (D-79) ya puestos:
 >    `pnpm run bench:material <runId> <cands> <reps> <maxTokens>`. Con 3 repeticiones se cubre además
->    la **estabilidad de §8.5**, que la corrida de una repetición no midió. Coste estimado: ~MXN 145
->    contra un umbral de 700.
-> 3. **`T-H7-01`** con el binding ganador — ya desbloqueada; ver 2.e para lo que hay que resolver
->    antes de escribir código: el hogar del recuperador de fragmentos y el AC que no existe.
+>    la **estabilidad de §8.5**, que la corrida de una repetición no midió. Coste estimado ~MXN 145
+>    contra un umbral de 700. **La semilla no cambia** (D-80): §8.5 pide re-correr, no re-particionar.
+> 3. **`T-H7-01`, sabiendo ya que es construir el bucle y no integrarlo** (§2.g). Orden sugerido, de
+>    menos a más dependencias:
+>    1. El **recuperador de fragmentos** en `content-schema`, con `tools/bench/src/corpus.ts`
+>       delegando en él en vez de duplicarlo. Reproduce `textoPorFragmento()` byte a byte o el mismo
+>       `fragmentId` daría texto distinto en sesión y en benchmark.
+>    2. El **constructor de `PedagogyDecisionContext`** desde `SessionStructuredState`, y con él
+>       `patternPosition`, que hoy no existe en la proyección.
+>    3. La **elección de bloque** y la derivación `objectiveId → goal`.
+>    4. El **orquestador de turno** en `session-engine` —que puede depender de `model-gateway`, §2.g—
+>       encadenando los nueve pasos, con la puerta de §9.6 **antes** de llamar al proveedor y el
+>       validador de anclaje **después**. Hoy nada fija ese orden.
+>    5. Los **emisores de evidencia** de los pasos 2, 3, 4, 5 y 7, que no existen.
+>    6. `ci:e2e:live-session` con Perfil C. Es lo único que necesita proveedor.
 > 4. **W5** cuando el propietario rompa su circularidad.
 >
 > ### 5. Lo que sigue siendo del propietario
