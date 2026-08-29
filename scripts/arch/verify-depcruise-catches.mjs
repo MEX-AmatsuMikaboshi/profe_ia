@@ -9,7 +9,7 @@
  * equivocada.
  */
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 const ROOT = process.cwd();
@@ -97,6 +97,29 @@ export const probe = verify;
     rule: 'verificacion-sin-telemetria-de-red',
     code: `import { startTelemetry } from '@profesor-ia/observability';\nexport const probe = startTelemetry;\n`,
   },
+  {
+    // I-2 / DEC-PRIVILEGE-001. Hasta D-82 esta regla no tenia sonda: la que
+    // separa la pasarela de las soluciones nunca se habia visto disparar. La
+    // ruta no existe en disco a proposito —`solutions-private` no se monta en el
+    // contenedor de la pasarela— y no hace falta que exista: la regla mira el
+    // especificador.
+    file: 'packages/model-gateway/src/__arch_probe_soluciones__.ts',
+    rule: 'i2-gateway-sin-soluciones',
+    code: `export { solucion } from '../../../content/unidad-deduccion-natural/solutions-private/x.js';`,
+  },
+  {
+    // I-4: aislamiento medicion/ensenanza. Tampoco tenia sonda.
+    file: 'packages/authoring-core/src/__arch_probe_sondas__.ts',
+    rule: 'i4-autoria-sin-sondas',
+    code: `import { PACKAGE_NAME } from '@profesor-ia/measurement-worker';`,
+  },
+  {
+    // I-3 con un modulo del nucleo, que es el caso que la regla si cubria.
+    file: 'apps/verifier/src/__arch_probe_red__.ts',
+    rule: 'i3-verifier-sin-red',
+    code: `import { request } from 'node:https';
+export const probe = request;`,
+  },
 ];
 
 /**
@@ -128,6 +151,67 @@ const ALLOWED_PROBES = [
     code: `import { currentTraceId } from '@profesor-ia/observability';\nexport const probe = currentTraceId;\n`,
   },
 ];
+
+/**
+ * Sondas que necesitan un paquete de npm **instalado y declarado** (D-82).
+ *
+ * I-1 y la mitad de npm de I-3 no se pueden sembrar con un import a secas: sin
+ * el paquete en `node_modules` la importacion no resuelve y quien salta es
+ * `sin-dependencias-no-resueltas`, que es otra regla con otro mensaje. Para
+ * comprobar que I-1 detecta **lo suyo** hay que reproducir el caso real, que es
+ * el unico que ocurriria de verdad: alguien anade el SDK al `package.json` del
+ * paquete y lo importa.
+ *
+ * Asi se descubrio que I-1 no podia disparar nunca (D-82).
+ */
+const NPM_PROBES = [
+  {
+    file: 'packages/session-engine/src/__arch_probe_sdk__.ts',
+    rule: 'i1-session-engine-sin-sdk-de-proveedor',
+    pkg: '@anthropic-ai/sdk',
+    manifest: 'packages/session-engine/package.json',
+    code: `import Anthropic from '@anthropic-ai/sdk';`,
+  },
+  {
+    file: 'apps/verifier/src/__arch_probe_http_npm__.ts',
+    rule: 'i3-verifier-sin-red',
+    pkg: 'axios',
+    manifest: 'apps/verifier/package.json',
+    code: `import axios from 'axios';`,
+  },
+];
+
+/**
+ * Instala un paquete de mentira y lo declara. Devuelve la funcion que deshace
+ * las dos cosas; el llamador la invoca en `finally` para que una interrupcion a
+ * mitad no deje ni el `node_modules` ni el `package.json` tocados.
+ */
+function seedNpmPackage(pkg, manifestPath) {
+  const pkgDir = join(ROOT, 'node_modules', ...pkg.split('/'));
+  const scopeDir = pkg.includes('/') ? join(ROOT, 'node_modules', pkg.split('/')[0]) : pkgDir;
+  const manifestAbs = join(ROOT, manifestPath);
+  const original = readFileSync(manifestAbs, 'utf8');
+
+  mkdirSync(pkgDir, { recursive: true });
+  writeFileSync(
+    join(pkgDir, 'package.json'),
+    `${JSON.stringify({ name: pkg, version: '0.0.0-arch-probe', main: 'index.js' }, null, 2)}
+`,
+    'utf8',
+  );
+  writeFileSync(join(pkgDir, 'index.js'), 'module.exports = {};', 'utf8');
+
+  const manifest = JSON.parse(original);
+  manifest.dependencies = { ...manifest.dependencies, [pkg]: '0.0.0-arch-probe' };
+  writeFileSync(manifestAbs, `${JSON.stringify(manifest, null, 2)}
+`, 'utf8');
+
+  return () => {
+    writeFileSync(manifestAbs, original, 'utf8');
+    rmSync(scopeDir, { recursive: true, force: true });
+  };
+}
+
 
 // Se invoca el entrypoint JS con el propio Node: lanzar un `.cmd` con
 // execFile falla en Windows (EINVAL) desde Node 20.
@@ -162,6 +246,31 @@ for (const probe of PROBES) {
     }
   } finally {
     rmSync(abs, { force: true });
+  }
+}
+
+for (const probe of NPM_PROBES) {
+  const abs = join(ROOT, probe.file);
+  let undo = () => {};
+  try {
+    undo = seedNpmPackage(probe.pkg, probe.manifest);
+    mkdirSync(dirname(abs), { recursive: true });
+    writeFileSync(abs, probe.code, 'utf8');
+    // Alcance completo y no sólo el directorio de la sonda: el destino vive en
+    // `node_modules`, en la raíz del repositorio.
+    const { failed, output } = depcruise(['apps', 'packages', 'tools']);
+    if (!failed || !output.includes(probe.rule)) {
+      console.error(
+        `FALLO: la regla "${probe.rule}" no detectó ${probe.pkg} importado desde ${probe.file}, ` +
+          `con el paquete instalado y declarado. Es el defecto que D-82 corrigió:\n${output}`,
+      );
+      failures += 1;
+    } else {
+      console.log(`ok: "${probe.rule}" detecta el paquete npm sembrado (${probe.pkg})`);
+    }
+  } finally {
+    rmSync(abs, { force: true });
+    undo();
   }
 }
 

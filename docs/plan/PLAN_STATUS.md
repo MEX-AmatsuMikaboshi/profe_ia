@@ -1931,4 +1931,41 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   D-80 y D-81 como citadas y no declaradas, que es exactamente lo que eran en ese momento. Una
   referencia colgada es lo que pasa cuando alguien cita una decisión que pensaba escribir y no
   escribió.
+- **D-82 — I-1 no podía disparar nunca, y nadie lo sabía porque no tenía control positivo
+  (2026-08-26).** Al preparar `T-H7-01` —que crea justamente la costura `session-engine` →
+  `model-gateway`— se comprobó qué reglas de `.dependency-cruiser.cjs` tienen siembra en
+  `verify-depcruise-catches.mjs`. Cubría **seis**, y **ninguna era I-1, I-2, I-3 ni I-4**: las cuatro
+  que CLAUDE.md §3 presenta como «invariantes cuya violación es una implementación inválida».
+  **El hallazgo.** Se sembró `import Anthropic from '@anthropic-ai/sdk'` en `session-engine` **con el
+  paquete instalado y declarado en su `package.json`**, que es el único caso que ocurriría de verdad.
+  Resultado: **cero violaciones sobre 483 módulos**. La regla más importante del repositorio llevaba
+  desde F0 sin poder detectar nada.
+  **Son dos defectos que se componen, y los dos se comprobaron por separado.**
+  **1. `exclude` borraba `node_modules` del grafo.** Y el propio archivo ya explicaba por qué eso es
+  fatal —lo escribió D-25 para `/dist/`, doce líneas más abajo—: «`exclude` no solo deja de recorrer
+  un módulo: lo borra del grafo, **también como destino de dependencia**». Toda regla cuyo `to` fuera
+  un paquete de npm se quedaba sin destino que vigilar. `doNotFollow` es lo que impide **recorrer** el
+  interior, y sigue puesto: los paquetes entran como hojas, no como subárboles.
+  **2. Los patrones estaban anclados contra la ruta equivocada.** `PROVIDER_SDKS` empezaba por `^`, y
+  la ruta que da dependency-cruiser es la **resuelta**: `node_modules/@anthropic-ai/sdk/index.js`, que
+  no empieza por `@anthropic-ai/`. Se comprobó leyendo el JSON del grafo:
+  `resolved = node_modules/@anthropic-ai/sdk/index.js`, `dependencyTypes = ["npm","import"]` — o sea
+  el **tipo sí casaba** y la ruta no. `HTTP_CLIENTS` tenía el mismo defecto por el otro extremo:
+  terminaba en `$`, así que casaba `https` —módulo del núcleo, cuya ruta resuelta es el nombre
+  pelado— y **no** `node_modules/axios/index.js`. **I-3 detectaba `node:*` y dejaba pasar cualquier
+  cliente HTTP de npm**, que es justamente el que alguien instalaría.
+  **Por qué el árbol seguía rojo aunque I-1 estuviera muerta, y por qué eso no salva nada.** Sin el
+  paquete instalado la importación no resuelve y salta `sin-dependencias-no-resueltas`. Es otra regla,
+  con otro mensaje, que no nombra el invariante y que **desaparece en cuanto alguien instala el SDK**
+  —que es exactamente lo que haría quien quisiera usarlo—.
+  **La corrección, verificada en los dos sentidos.** Con `node_modules` en el grafo y los patrones
+  aceptando la ruta resuelta, I-1 e I-3 detectan su siembra y **el árbol limpio sigue verde** (499
+  módulos, 1232 dependencias, cero violaciones). Se añaden **cinco** sondas: I-2, I-4 e I-3 por módulo
+  del núcleo, más I-1 e I-3 por paquete npm. Estas dos últimas necesitan maquinaria propia
+  —`seedNpmPackage()` instala un paquete de mentira y lo declara, y devuelve su deshacer, que corre en
+  `finally` para que una interrupción no deje tocado ni `node_modules` ni el `package.json`—.
+  **La lección, que no es sobre depcruise.** Las seis reglas con siembra funcionaban; las cuatro sin
+  siembra incluían una que no funcionaba en absoluto. «La regla existe» y «la regla detecta» son
+  afirmaciones distintas, y el repositorio ya lo sabía —lo dice de la suite negativa de privilegios y
+  del conjunto dorado—. Faltaba aplicarlo aquí.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

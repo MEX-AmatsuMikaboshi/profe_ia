@@ -8,9 +8,21 @@
  * con o sin build previo.
  */
 
-/** SDKs de proveedor de modelo: prohibidos fuera de `model-gateway`. */
+/**
+ * SDKs de proveedor de modelo: prohibidos fuera de `model-gateway`.
+ *
+ * **El prefijo `node_modules/` es obligatorio y no es cosmético (D-82).** Hasta
+ * el 2026-08-28 el patrón estaba anclado con `^` y la regla I-1 **no podía
+ * disparar nunca**: dependency-cruiser da la ruta **resuelta**
+ * —`node_modules/@anthropic-ai/sdk/index.js`—, que no empieza por
+ * `@anthropic-ai/`. Se comprobó sembrando el import con el paquete instalado y
+ * declarado: cero violaciones sobre 483 módulos.
+ *
+ * La alternancia acepta las dos formas: el especificador desnudo, que es lo que
+ * se ve cuando el módulo **no** resuelve, y la ruta resuelta.
+ */
 const PROVIDER_SDKS =
-  '^(@anthropic-ai/|openai(/|$)|@google/(generative-ai|genai)|@mistralai/|cohere-ai|@aws-sdk/client-bedrock|@azure/openai|replicate|groq-sdk|@deepgram/|elevenlabs)';
+  '(^|/)(node_modules/)?(@anthropic-ai/|openai(/|$)|@google/(generative-ai|genai)|@mistralai/|cohere-ai|@aws-sdk/client-bedrock|@azure/openai|replicate|groq-sdk|@deepgram/|elevenlabs)';
 
 /** Módulos de soluciones y reservas reservadas (I-2, I-4). */
 const SOLUTIONS_AND_RESERVES =
@@ -21,8 +33,17 @@ const MEASUREMENT_AND_PROBES =
 
 const VERIFICATION_PATH = '(^packages/logic-core|@profesor-ia/logic-core|^apps/verifier)';
 
+/**
+ * Clientes HTTP y sockets prohibidos en la ruta de verificación (I-3).
+ *
+ * Mismo defecto que `PROVIDER_SDKS` y por el otro extremo (D-82): terminaba en
+ * `$`, así que casaba `https` —módulo del núcleo, cuya ruta resuelta es el
+ * nombre pelado— pero **no** `node_modules/axios/index.js`. I-3 detectaba los
+ * módulos `node:*` y dejaba pasar cualquier cliente HTTP de npm, que es
+ * justamente el que alguien instalaría.
+ */
 const HTTP_CLIENTS =
-  '^(axios|node-fetch|undici|got|superagent|ws|socket\\.io|socket\\.io-client|request|cross-fetch|node:http|node:https|node:net|node:tls|node:dgram|http|https|net|tls|dgram)$';
+  '(^|node_modules/)(axios|node-fetch|undici|got|superagent|ws|socket\\.io|socket\\.io-client|request|cross-fetch|node:http|node:https|node:net|node:tls|node:dgram|http|https|net|tls|dgram)(/|$)';
 
 module.exports = {
   forbidden: [
@@ -168,7 +189,14 @@ module.exports = {
     // `.next/` y `next-env.d.ts` sí se excluyen, y no es la misma decisión: son
     // salida y andamiaje que genera `next build`, y **nada los importa**. A
     // diferencia de `dist/`, excluirlos no borra ninguna arista real del grafo.
-    exclude: { path: '(node_modules|\\.next/|next-env\\.d\\.ts$|\\.test\\.tsx?$)' },
+    // `node_modules` **no** se excluye, y es la misma lección que `/dist/` (D-25),
+    // que este mismo bloque explica dos párrafos más abajo: `exclude` borra el
+    // módulo del grafo **también como destino de dependencia**. Con él excluido,
+    // toda regla cuyo `to` sea un paquete de npm —I-1 y la mitad de I-3— no tenía
+    // destino que vigilar y pasaba por vacío. `doNotFollow` sigue impidiendo
+    // **recorrer** el interior de `node_modules`, que es lo que se quería: los
+    // paquetes entran como hojas del grafo, no como subárboles (D-82).
+    exclude: { path: '(\\.next/|next-env\\.d\\.ts$|\\.test\\.tsx?$)' },
     tsPreCompilationDeps: true,
     tsConfig: { fileName: 'tsconfig.base.json' },
     enhancedResolveOptions: {

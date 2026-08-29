@@ -144,6 +144,39 @@
 >    declara «Contrato del paquete de contenido»: es el candidato natural, pero es una decisión de
 >    diseño que hay que razonar, no dar por hecha.
 >
+> ### 2.f ⚠ Hallazgo mayor: I-1 no podía disparar nunca (D-82)
+>
+> Preparando `T-H7-01` —que crea justamente la costura `session-engine` → `model-gateway`— se
+> comprobó qué reglas de `.dependency-cruiser.cjs` tienen siembra. Cubría **seis**, y **ninguna era
+> I-1, I-2, I-3 ni I-4**: las cuatro que CLAUDE.md presenta como los invariantes cuya violación es una
+> implementación inválida.
+>
+> **Se sembró el caso real** —`@anthropic-ai/sdk` importado desde `session-engine`, con el paquete
+> instalado y declarado en su `package.json`— y dio **cero violaciones sobre 483 módulos**.
+>
+> **Dos defectos compuestos, los dos comprobados por separado:**
+>
+> 1. **`exclude` borraba `node_modules` del grafo.** El propio archivo ya explicaba por qué eso es
+>    fatal —D-25 lo escribió para `/dist/`, doce líneas más abajo—: `exclude` borra el módulo
+>    **también como destino de dependencia**. `doNotFollow` sigue impidiendo recorrer el interior.
+> 2. **Los patrones apuntaban a la ruta equivocada.** `PROVIDER_SDKS` empezaba por `^` y la ruta
+>    resuelta es `node_modules/@anthropic-ai/sdk/index.js`. Comprobado en el JSON del grafo: el
+>    `dependencyTypes` **sí** casaba (`["npm","import"]`), la ruta no. `HTTP_CLIENTS` tenía el mismo
+>    defecto por el otro extremo (`$`), así que **I-3 detectaba `node:*` y dejaba pasar `axios`**.
+>
+> **Por qué el árbol seguía rojo y eso no salvaba nada:** sin el paquete instalado salta
+> `sin-dependencias-no-resueltas`, otra regla, con otro mensaje, que **desaparece en cuanto alguien
+> instala el SDK** — que es lo que haría quien quisiera usarlo.
+>
+> **Corregido y verificado en los dos sentidos:** las trece siembras se detectan (antes ocho) y el
+> árbol limpio sigue verde. Se añadieron cinco sondas; dos necesitan `seedNpmPackage()`, que instala
+> un paquete de mentira, lo declara, y deshace las dos cosas en `finally`.
+>
+> **La lección no es sobre depcruise:** «la regla existe» y «la regla detecta» son afirmaciones
+> distintas. El repositorio ya lo sabía de la suite negativa de privilegios y del conjunto dorado;
+> faltaba aplicarlo aquí. **Conviene mirar con la misma lupa cualquier otra guarda sin control
+> positivo.**
+>
 > ### 3. Verificación de esta sesión
 >
 > **1851 pruebas unitarias en verde** (1826 al abrir, +25) más las **131 contra PostgreSQL 17 real**,
