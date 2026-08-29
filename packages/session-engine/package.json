@@ -22,9 +22,11 @@
   "dependencies": {
     "@profesor-ia/contracts": "workspace:*",
     "@profesor-ia/pedagogy-policy": "workspace:*",
+    "@profesor-ia/model-gateway": "workspace:*",
     "@profesor-ia/domain-engine": "workspace:*",
     "@profesor-ia/evidence": "workspace:*",
-    "zod": "^4.1.13"
+    "zod": "^4.1.13",
+    "@profesor-ia/logic-core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.9.3"

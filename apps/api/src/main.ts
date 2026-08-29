@@ -5,15 +5,29 @@ import { dirname } from 'node:path';
 import { currentTraceId, startTelemetry, withSpan } from '@profesor-ia/observability';
 
 import { VERDICT_ROUTE_PATH, handleVerdictRequest } from './clase-verdict-route.js';
+import {
+  TURN_ROUTE_PATH,
+  buildTurnRuntime,
+  handleTurnRequest,
+  type TurnRuntime,
+} from './clase-turn-route.js';
 import { DEFAULT_SPOOL_TIMING, type SpoolPaths, type SpoolTiming } from './verdict-spool.js';
 
 /**
  * Entrypoint de contenedor de `api` (Plan.md T-H3-01).
  *
- * **Solo salud y logs estructurados.** Los endpoints del orquestador son de
- * F7 (`T-H7-*`); adelantarlos aquí sería inventar superficie. Lo que este
- * proceso demuestra hoy es lo que H3 exige: el servicio arranca desde cero,
- * responde a un healthcheck y deja traza estructurada local.
+ * Tres rutas, y el resto sigue en `NO_IMPLEMENTADO` (D-11):
+ *
+ * - `/health` — lo que H3 exige: arranca desde cero, responde y deja traza.
+ * - `POST /clase/verificacion` (T-H6-13) — lleva la derivación al verificador
+ *   aislado por spool y devuelve su veredicto tal cual.
+ * - `POST /clase/turno` (T-H7-01) — ejecuta el bucle W7 y devuelve lo que el
+ *   Profesor IA puede decirle al alumno.
+ *
+ * Las dos últimas cierran el ciclo entre sí: el veredicto de la primera vuelve
+ * como `structuredError` de la segunda. La costura es **de dato**, no de
+ * llamada — la ruta del turno no toca la de verificación, que corre sin red
+ * (I-3).
  */
 
 const SERVICE = 'api';
@@ -92,9 +106,37 @@ function readBody(req: IncomingMessage): Promise<string> {
   });
 }
 
+/**
+ * Runtime del turno de enseñanza (T-H7-01), compuesto **al arrancar**.
+ *
+ * Es `null` cuando falta corpus o credencial, y entonces la ruta responde 503
+ * diciendo por qué. **No se arranca fingiendo que el profesor está disponible**:
+ * un turno que fallara a mitad de una clase es peor que un servicio que declara
+ * al arrancar que no puede darla. El resto del servicio —salud y veredicto—
+ * sigue en pie, porque no dependen del proveedor.
+ */
+let turnRuntime: TurnRuntime | null = null;
+let turnUnavailableReason = 'sin inicializar';
+
+try {
+  turnRuntime = buildTurnRuntime({
+    contentRoot: process.env.CONTENT_ROOT ?? '/content/unidad-deduccion-natural',
+    modelId: process.env.SESSION_MODEL_ID ?? 'claude-sonnet-5',
+    env: process.env,
+    tracer: telemetry.tracer,
+  });
+  log('turn_runtime_ready', {
+    blocks: turnRuntime.contentPackage.authorizedFragmentsByBlock.size,
+    packageFrozen: turnRuntime.contentPackage.frozen,
+  });
+} catch (err) {
+  turnUnavailableReason = String(err);
+  log('turn_runtime_unavailable', { detail: turnUnavailableReason });
+}
+
 const server = createServer((req, res) => {
   if (req.url === '/health') {
-    res.writeHead(200, { 'content-type': 'application/json' });
+    res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify({ service: SERVICE, status: 'ok', startedAt }));
     return;
   }
@@ -130,13 +172,46 @@ const server = createServer((req, res) => {
           : { 'verdict.error_code': response.body.code }),
       });
       log('verdict_request', { status: response.status });
-      res.writeHead(response.status, { 'content-type': 'application/json' });
+      res.writeHead(response.status, { 'content-type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify(response.body));
     });
     return;
   }
 
-  res.writeHead(501, { 'content-type': 'application/json' });
+  // Turno de enseñanza de Clase (T-H7-01). El bucle W7: la política decide, los
+  // fragmentos del bloque se recuperan, el contexto se filtra, §9.6 comprueba
+  // **antes** de llamar al proveedor y el validador de anclaje **después**.
+  if (req.method === 'POST' && req.url === TURN_ROUTE_PATH) {
+    void (async () => {
+      const runtime = turnRuntime;
+      if (runtime === null) {
+        // 503 y la causa. Un 200 con un turno vacío diría que el profesor no
+        // tenía nada que decir, que es distinto de no haber profesor.
+        log('turn_request', { status: 503 });
+        res.writeHead(503, { 'content-type': 'application/json; charset=utf-8' });
+        res.end(
+          JSON.stringify({ code: 'TURNO_NO_DISPONIBLE', detail: turnUnavailableReason }),
+        );
+        return;
+      }
+      let response;
+      try {
+        const raw = await readBody(req);
+        response = await handleTurnRequest(runtime, JSON.parse(raw));
+      } catch (err) {
+        response = {
+          status: 400 as const,
+          body: { code: 'SOLICITUD_INVALIDA' as const, detail: String(err) },
+        };
+      }
+      log('turn_request', { status: response.status });
+      res.writeHead(response.status, { 'content-type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify(response.body));
+    })();
+    return;
+  }
+
+  res.writeHead(501, { 'content-type': 'application/json; charset=utf-8' });
   res.end(JSON.stringify({ code: 'NO_IMPLEMENTADO', service: SERVICE, path: req.url }));
 });
 

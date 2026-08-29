@@ -11,7 +11,7 @@
     "properties": [
       {
         "name": "profesor-ia:lockfile-sha256",
-        "value": "35d235553e559dede61271f8172c9c99fe78122424335ab856b141530e5f15ad"
+        "value": "10ea37d0945cd89024cf55ba58daaece2df680552f3021b5b937dd7104d7d168"
       },
       {
         "name": "profesor-ia:node-version",
@@ -32,6 +32,12 @@
           }
         }
       ]
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/security-policy",
+      "version": "link:packages/security-policy",
+      "purl": "pkg:npm/%40profesor-ia%2Fsecurity-policy@link:packages/security-policy"
     },
     {
       "type": "library",
@@ -71,18 +77,6 @@
           }
         }
       ]
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/security-policy",
-      "version": "link:packages/security-policy",
-      "purl": "pkg:npm/%40profesor-ia%2Fsecurity-policy@link:packages/security-policy"
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/contracts",
-      "version": "link:packages/contracts",
-      "purl": "pkg:npm/%40profesor-ia%2Fcontracts@link:packages/contracts"
     },
     {
       "type": "library",
@@ -876,6 +870,12 @@
     },
     {
       "type": "library",
+      "name": "@profesor-ia/contracts",
+      "version": "link:packages/contracts",
+      "purl": "pkg:npm/%40profesor-ia%2Fcontracts@link:packages/contracts"
+    },
+    {
+      "type": "library",
       "name": "zod",
       "version": "4.4.3",
       "purl": "pkg:npm/zod@4.4.3",
@@ -913,15 +913,21 @@
     },
     {
       "type": "library",
+      "name": "@profesor-ia/domain-engine",
+      "version": "link:packages/domain-engine",
+      "purl": "pkg:npm/%40profesor-ia%2Fdomain-engine@link:packages/domain-engine"
+    },
+    {
+      "type": "library",
       "name": "@profesor-ia/content-schema",
       "version": "link:packages/content-schema",
       "purl": "pkg:npm/%40profesor-ia%2Fcontent-schema@link:packages/content-schema"
     },
     {
       "type": "library",
-      "name": "@profesor-ia/domain-engine",
-      "version": "link:packages/domain-engine",
-      "purl": "pkg:npm/%40profesor-ia%2Fdomain-engine@link:packages/domain-engine"
+      "name": "@profesor-ia/model-gateway",
+      "version": "link:packages/model-gateway",
+      "purl": "pkg:npm/%40profesor-ia%2Fmodel-gateway@link:packages/model-gateway"
     },
     {
       "type": "library",
@@ -2797,6 +2803,12 @@
     },
     {
       "type": "library",
+      "name": "@profesor-ia/content-schema",
+      "version": "link:../../packages/content-schema",
+      "purl": "pkg:npm/%40profesor-ia%2Fcontent-schema@link:../../packages/content-schema"
+    },
+    {
+      "type": "library",
       "name": "@profesor-ia/contracts",
       "version": "link:../../packages/contracts",
       "purl": "pkg:npm/%40profesor-ia%2Fcontracts@link:../../packages/contracts"
@@ -2806,6 +2818,12 @@
       "name": "@profesor-ia/logic-core",
       "version": "link:../../packages/logic-core",
       "purl": "pkg:npm/%40profesor-ia%2Flogic-core@link:../../packages/logic-core"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/model-gateway",
+      "version": "link:../../packages/model-gateway",
+      "purl": "pkg:npm/%40profesor-ia%2Fmodel-gateway@link:../../packages/model-gateway"
     },
     {
       "type": "library",
@@ -2825,6 +2843,30 @@
           }
         }
       ]
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/pedagogy-policy",
+      "version": "link:../../packages/pedagogy-policy",
+      "purl": "pkg:npm/%40profesor-ia%2Fpedagogy-policy@link:../../packages/pedagogy-policy"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/session-engine",
+      "version": "link:../../packages/session-engine",
+      "purl": "pkg:npm/%40profesor-ia%2Fsession-engine@link:../../packages/session-engine"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/domain-engine",
+      "version": "link:../../packages/domain-engine",
+      "purl": "pkg:npm/%40profesor-ia%2Fdomain-engine@link:../../packages/domain-engine"
+    },
+    {
+      "type": "library",
+      "name": "@profesor-ia/evidence",
+      "version": "link:../../packages/evidence",
+      "purl": "pkg:npm/%40profesor-ia%2Fevidence@link:../../packages/evidence"
     },
     {
       "type": "library",
@@ -3463,30 +3505,6 @@
     },
     {
       "type": "library",
-      "name": "@profesor-ia/session-engine",
-      "version": "link:../../packages/session-engine",
-      "purl": "pkg:npm/%40profesor-ia%2Fsession-engine@link:../../packages/session-engine"
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/domain-engine",
-      "version": "link:../../packages/domain-engine",
-      "purl": "pkg:npm/%40profesor-ia%2Fdomain-engine@link:../../packages/domain-engine"
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/evidence",
-      "version": "link:../../packages/evidence",
-      "purl": "pkg:npm/%40profesor-ia%2Fevidence@link:../../packages/evidence"
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/pedagogy-policy",
-      "version": "link:../../packages/pedagogy-policy",
-      "purl": "pkg:npm/%40profesor-ia%2Fpedagogy-policy@link:../../packages/pedagogy-policy"
-    },
-    {
-      "type": "library",
       "name": "@types/react",
       "version": "19.2.18",
       "purl": "pkg:npm/%40types%2Freact@19.2.18",
@@ -3562,6 +3580,12 @@
     },
     {
       "type": "library",
+      "name": "@profesor-ia/model-gateway",
+      "version": "link:../model-gateway",
+      "purl": "pkg:npm/%40profesor-ia%2Fmodel-gateway@link:../model-gateway"
+    },
+    {
+      "type": "library",
       "name": "@profesor-ia/authoring-core",
       "version": "link:../authoring-core",
       "purl": "pkg:npm/%40profesor-ia%2Fauthoring-core@link:../authoring-core"
@@ -3583,12 +3607,6 @@
       "name": "@profesor-ia/pedagogy-policy",
       "version": "link:../pedagogy-policy",
       "purl": "pkg:npm/%40profesor-ia%2Fpedagogy-policy@link:../pedagogy-policy"
-    },
-    {
-      "type": "library",
-      "name": "@profesor-ia/model-gateway",
-      "version": "link:../../packages/model-gateway",
-      "purl": "pkg:npm/%40profesor-ia%2Fmodel-gateway@link:../../packages/model-gateway"
     }
   ]
 }

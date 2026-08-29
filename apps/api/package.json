@@ -26,7 +26,11 @@
     "@profesor-ia/observability": "workspace:*",
     "@profesor-ia/security-policy": "workspace:*",
     "better-auth": "^1.6.29",
-    "pg": "^8.23.0"
+    "pg": "^8.23.0",
+    "@profesor-ia/session-engine": "workspace:*",
+    "@profesor-ia/model-gateway": "workspace:*",
+    "@profesor-ia/pedagogy-policy": "workspace:*",
+    "@profesor-ia/content-schema": "workspace:*"
   },
   "devDependencies": {
     "@simplewebauthn/server": "13.3.2",

@@ -23,7 +23,8 @@
     "@profesor-ia/contracts": "workspace:*",
     "@profesor-ia/logic-core": "workspace:*",
     "@profesor-ia/model-gateway": "workspace:*",
-    "zod": "^4.1.13"
+    "zod": "^4.1.13",
+    "@profesor-ia/content-schema": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.9.3"

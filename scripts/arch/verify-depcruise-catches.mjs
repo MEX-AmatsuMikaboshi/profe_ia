@@ -142,6 +142,17 @@ const ALLOWED_PROBES = [
     code: `import type { ProofInput } from '@profesor-ia/logic-core/syntax';\nexport type Probe = ProofInput;\n`,
   },
   {
+    // T-H7-01: el subpath `/calculus` expone el cálculo congelado como **dato**
+    // —ni `verify()`, ni `applyRule()`, ni `entails()`— para que el orquestador
+    // pueda construir el `AuthorizedCalculus` que el validador de anclaje pide.
+    // Sin este control, nadie sabría si el corte quedó donde se dice.
+    file: 'packages/session-engine/src/__arch_probe_calculus__.ts',
+    rule: 'sin-verificador-fuera-del-verificador',
+    code: `import { AUTHORIZED_CALCULUS_VERSION } from '@profesor-ia/logic-core/calculus';
+export const probe = AUTHORIZED_CALCULUS_VERSION;
+`,
+  },
+  {
     // T-H3-05: la regla prohíbe la telemetría **en la ruta de verificación**, no
     // en todo el repositorio. Sin este control, escribirla de más —prohibirla en
     // `apps/*` entero— dejaría a `apps/api` sin poder instrumentar el canal de
@@ -164,6 +175,16 @@ const ALLOWED_PROBES = [
  *
  * Asi se descubrio que I-1 no podia disparar nunca (D-82).
  */
+// T-H7-01: el subpath `/calculus` NO puede haber abierto la puerta al barrel.
+// Es la comprobación que separa «añadí una salida acotada» de «relajé I-3».
+PROBES.push({
+  file: 'apps/api/src/__arch_probe_barrel__.ts',
+  rule: 'sin-verificador-fuera-del-verificador',
+  code: `import { verify } from '@profesor-ia/logic-core';
+export const probe = verify;
+`,
+});
+
 const NPM_PROBES = [
   {
     file: 'packages/session-engine/src/__arch_probe_sdk__.ts',

@@ -27,6 +27,12 @@ export interface ClaseViewProps {
   readonly children?: ReactNode;
   /** Datos sintéticos de desarrollo (UIUX §2): se declara en pantalla. */
   readonly syntheticPackage: boolean;
+  /**
+   * El panel del Profesor IA (T-H7-01). Entra como nodo, igual que el editor,
+   * para que esta capa siga siendo pura y renderizable sin DOM: el panel habla
+   * con el servidor y esta vista no debe saber cómo.
+   */
+  readonly professor?: ReactNode;
 }
 
 function SaveIndicator({ state }: { readonly state: SaveState }) {
@@ -158,6 +164,7 @@ export function ClaseView({
   submission,
   children,
   syntheticPackage,
+  professor,
 }: ClaseViewProps) {
   return (
     <main data-testid="clase" data-mode={viewModel.pedagogicalMode}>
@@ -209,6 +216,10 @@ export function ClaseView({
           ))}
         </ol>
       </section>
+
+      {/* UIUX §3: interlocutor visible, junto a la conversación y antes del
+          editor, sin volverse la superficie protagonista. */}
+      {professor ?? null}
 
       {viewModel.fitchEditorVisible ? children : null}
 

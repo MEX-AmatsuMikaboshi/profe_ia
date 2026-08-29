@@ -2,7 +2,11 @@
 
 import { useMemo, useState } from 'react';
 
-import { drySessionDocument, drySessionViewInput } from '../dry-session';
+import {
+  DRY_SESSION_BLOCK_ID,
+  drySessionDocument,
+  drySessionViewInput,
+} from '../dry-session';
 import {
   appendLine,
   commitEdit,
@@ -20,9 +24,11 @@ import {
   type FetchLike,
   type SubmissionState,
 } from '../verdict';
+import { createHttpTurnPort } from '../turn';
 import { buildClaseViewModel, type SaveState } from '../view-model';
 import { ClaseView } from './ClaseView';
 import { FitchEditor } from './FitchEditor';
+import { ProfesorPanel } from './ProfesorPanel';
 
 /**
  * Sesión seca de Clase en el cliente (T-H6-13).
@@ -87,12 +93,38 @@ export function ClaseSession() {
     setSubmission(await submitForVerdict(port, submissionId, proof));
   };
 
+  /**
+   * La costura de los pasos 7 → 2 de W7 (T-H7-01): el error que **el
+   * verificador** clasificó entra en el turno siguiente del profesor.
+   *
+   * Se toma el primer error y no todos: `firstInvalidStep` es lo que el
+   * contrato declara como el punto donde la derivación se rompe, y darle al
+   * profesor la lista entera le haría comentar errores que son consecuencia del
+   * primero. No se deriva de la revisión local, que **no es autoritativa**.
+   */
+  const structuredError =
+    submission.kind === 'veredicto' && !submission.verdict.verification.valid
+      ? (() => {
+          const first = submission.verdict.verification.errors[0];
+          return first === undefined
+            ? null
+            : { code: first.code, stepNumber: first.line ?? null };
+        })()
+      : null;
+
   return (
     <ClaseView
       viewModel={viewModel}
       localReview={review}
       submission={submission}
       syntheticPackage
+      professor={
+        <ProfesorPanel
+          port={createHttpTurnPort(browserFetch)}
+          blockId={DRY_SESSION_BLOCK_ID}
+          structuredError={structuredError}
+        />
+      }
     >
       <>
         <FitchEditor

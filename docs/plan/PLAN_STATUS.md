@@ -163,7 +163,7 @@ en que un reactivo consumido reaparece. Detalle en
 
 | Tarea | Prioridad | Estado | Evidencia | Fecha | Notas |
 |---|---|---|---|---|---|
-| T-H7-01 | CRITICAL | PENDIENTE | — | — | El bucle W7 literal (motor→política→fragmentos→modelo→validador→alumno→verificador→ajuste→evidencia). **Desbloqueada el 2026-08-26: la nota anterior decía «material, sin autorizar» y era falsa** — el gasto se autorizó el 2026-08-19 y la corrida material corrió el 2026-08-23, con ganador provisional `claude-sonnet-5` (D-75). Que el ganador sea **provisional** no impide construir el bucle: es el binding sobre el que se construye, y coronarlo formalmente es de W5, no de esta tarea. **Perfil C queda resuelto** (Maestro §15.5 y la tabla de §2484): es el tier económico del proveedor ganador de sesión, o sea `claude-haiku-4-5-20251001` — para CI, pruebas secas y desarrollo sin datos reales; nunca condición principal del piloto. Su prueba de aceptación `ci:e2e:live-session` **no existe todavía**. |
+| T-H7-01 | CRITICAL | HECHA (pendiente de observar su corrida en `main`) | `packages/session-engine/src/turn.ts` + `teaching-prompt.ts`, `packages/content-schema/src/corpus.ts` (movido desde `tools/bench`), `packages/logic-core/src/calculus-only.ts` + subpath `./calculus`, `apps/api/src/clase-turn-route.ts` + `main.ts`, `apps/web/src/clase/turn.ts` + `components/ProfesorPanel.tsx`, `next.config.mjs`, `scripts/session/live-turn.mjs`, 21 pruebas nuevas (12 orquestador, 9 ruta) y una siembra más en `verify-depcruise-catches.mjs` (13 → 14) | 2026-08-29 | **El bucle W7 corre, y en vivo.** Cubre los pasos 1–6 y 9; el 7 y el 8 se quedan fuera a propósito porque el veredicto ya tiene su ruta aislada y **el bucle se cierra por dato**: el veredicto del turno anterior entra como `structuredError` del siguiente. Fija por prueba el orden de las dos puertas —§9.6 **antes** del proveedor, anclaje **después**—, que `Plan.md` §255 nombra junto y nada más fijaba. El cálculo entra por un subpath sin veredicto en vez de relajar I-3, con control positivo en los dos sentidos. Todo detallado en **D-83**. **Falta para cerrar F8**: `ci:e2e:live-session` con Perfil C (el AC del gate), la elección de bloque, y los emisores de evidencia en ejecución. |
 | T-H7-02 | CRITICAL | VERIFICADA | `packages/model-gateway/src/anchoring.ts`, `test/anchoring.test.ts` (21 pruebas), regla depcruise `pasarela-sin-nucleo-logico` con siembra, [`../session/anclaje.md`](../session/anclaje.md) | 2026-08-18 | **El validador local que P-II §8.4 exige, y no necesita proveedor**: recibe una salida candidata y unos fragmentos autorizados, y decide. Las cinco causas son cerradas y no se añadió ninguna; cada rechazo declara en `authority` la autoridad literal, como en `doubt.ts`. **La regla que ordena el diseño sale de I-7** —«sin ancla no introduce reglas»—: un símbolo o una regla ajenos al cálculo se rechazan **salvo que aparezcan en los fragmentos que el segmento ancla**; si el corpus lo dice, lo cita, y si no, lo introduce. Se llegó ahí **refutando el diseño anterior**: el primer detector marcaba cualquier mención de una regla prohibida, y con él el Profesor IA no habría podido decir «la conmutativa no está permitida», que es contenido correcto que el corpus enseña. Y resuelve el problema de fondo: distinguir «mencionar» de «ordenar» sobre prosa es indecidible; **lo decide el ancla**. El respaldo se toma **sólo de las anclas resueltas** y no del bloque entero —con el bloque, un segmento se apoyaría en un fragmento al que no ancló—, comprobado con siembra. **Tres cosas que el cálculo congelado desmintió antes de escribir**: `->`, `&`, `|`, `~`, `!` son alias **autorizados** (`CONNECTIVE_ALIASES`) y el primer diseño los rechazaba; `y`, `o`, `no` están en `REJECTED_CONNECTIVE_ALIASES` pero son palabras españolas y marcarlas habría rechazado casi cualquier frase; `FORBIDDEN_RULES_EXAMPLES` es lista congelada, así que detectarla es transcripción. **P-I §8.5 limita, no rechaza**: sin anclas ⇒ acompañamiento no factual registrado para auditoría; sin anclas **y** función `definition` ⇒ `withheld`, porque presentarlo *sería* introducir una definición sin ancla; y basta un segmento sin anclas para que `canGroundEvaluation` sea `false`, que es el lado que no califica. **Un canario aborta** con `CanaryHitError` como en `buildSessionContext`: es incidente de nivel 3 (§11.3), no una validación fallida. **El cálculo entra por parámetro** (D-39) y la frontera es ejecutable. **Lo que no decide y no finge decidir**: la whitelist cerrada de reglas se hace cumplir donde las reglas se aplican, en `logic-core` sobre una derivación, no sobre prosa. Ninguna salida de modelo real ha cruzado este validador: no hay binding ganador. **Verde en `main`**: corrida `32210920877` sobre `1db2195`, los **nueve jobs** en verde, incluido `ci:logic:mutation`. |
 | T-H7-03 | CRITICAL | VERIFICADA | `packages/pedagogy-policy/src/non-revelation.ts` + `test/non-revelation.test.ts` (14), `packages/model-gateway/test/adversarial-session.test.ts` (13), `MissingEgressFilterError` y `scorableActivityOpen` en `session-context.ts`, job `ci:adversarial:session`, [`../session/no-revelacion.md`](../session/no-revelacion.md) | 2026-08-18 | **El agujero real que cerró:** el detector de canarios era un parámetro **opcional** de `buildSessionContext`, así que no pasarlo apagaba la comprobación sin decirlo, y «sin solución en contexto» quedaba sin comprobar justo donde §9.6 lo exige. **Y hubo segunda vuelta:** al añadir el campo obligatorio las 1639 pruebas **siguieron pasando**, porque los archivos de prueba no se typechequean y `undefined` es falsy — la garantía se apagaba sola. Con la comprobación **en ejecución** cayeron 11 pruebas, que era la señal de que el cambio hacía algo. Deuda confirmada: un tipo no protege a un llamador que nadie compila. **La puerta no recalcula nada: exige la evidencia.** Isomorfismo y «paso decisivo» ya están decididos en autoría con hash (`analogousExampleEvidence.nonIsomorphic`, `facts.containsDecisiveContent`); volver a decidirlos en vivo crearía una segunda autoridad sobre el mismo hecho, y cuando dos discrepan gana la que corre más tarde. Una pista de nivel 4 sin prueba de no isomorfismo no sale **no porque se demuestre que es isomorfa, sino porque nadie demostró que no lo es**: en una actividad puntuable la carga de la prueba va de ese lado. **La cuarta condición se deja acotada en su letra** —«cuando sea una sonda»— y no se extiende a toda actividad puntuable, con prueba de esa frontera; y fuera de una actividad puntuable §9.6 no gobierna, con control positivo que impide escribir la puerta de más. **La defensa contra injection del alumno es estructural**: la whitelist de §8.3 no tiene campo por el que entre texto libre, así que no hay que filtrar lo que no tiene por dónde entrar. Los puntos de §14.4 ya cubiertos en otros checks **no se duplican** y se dice dónde están. **No detecta paráfrasis** y no lo finge: hereda el alcance `literal_not_paraphrase` del banco, y la auditoría humana sigue siendo obligatoria. 27 pruebas, con siembra que comprueba que la puerta puede fallar. Ninguna sesión real ha cruzado estos mecanismos: no hay binding ganador. **Verde en `main`**: corrida `32212740958` sobre `644f08a`, **los diez jobs en verde**, incluido el job propio `ci:adversarial:session` y `ci:logic:mutation`. |
 | T-H7-04 | REQUIRED | PENDIENTE | — | — | Ejecución lingüística de estrategias; vive dentro del bucle de `T-H7-01` |
@@ -184,7 +184,7 @@ docente**, que necesita el binding ganador: no se alcanza escribiendo código.
 | F5 | H4.5 · Investigación de fuentes (W0) | EN_CURSO | **8 de 8 tareas HECHAS y gate H4.5 decidido (D-50): `corpus_autorizado` el 2026-08-19.** El propietario firmó la propuesta tal cual tras revisión asistida (snapshot re-verificado, licencia reconfirmada, 13 claims cotejados); corpus autorizado = forallx-yyc TFL únicamente; modal fuera (condicionado a permiso documentado de Trueman); OCW excluido (NC/SA aplazada). Decisión en `research/corpus-decision.yaml`. La ejecución en `authoring-worker` (jobs + BD) sigue pendiente |
 | F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 17 de 17 tareas con mecanismo implementado; **W1 ejecutado sobre el corpus real el 2026-08-20 (D-51): 77 fragmentos materializados en `source/`, `solutions/` reubicadas en `solutions-private/`, `kc/map.yaml` escrito con guarda de deriva; `T-H5-01` y `T-H5-03` VERIFICADAS (corrida `32424646954`, diez jobs en verde); **W2 ejecutado el 2026-08-21 (D-52): 43 elementos, 30 claims y 4 decisiones en `extracted/` y `provenance/`, cobertura KC 18/18**; **Rol B ejecutado el 2026-08-21 (D-53): secuencia, 18 objetivos observables y política pedagógica en `objectives/`, `pedagogy/` y `session-templates/`**; gate H5 abierto por freeze/auditoría y CAL-NLI materiales ausentes |
 | F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas VERIFICADAS y AC del gate cubierto y observado** (CI `32164277686`). Sólo faltan las firmas del acta |
-| F8 | H7 · Profesor IA de sesión | EN_CURSO | **2 de 7 tareas.** `T-H7-02` (anclaje) y `T-H7-03` (no revelación y suite adversarial) **VERIFICADAS**, las dos sin proveedor. Lo que queda vive en el bucle de `T-H7-01`, que **ya no está bloqueada**: el ganador provisional existe desde D-75. Su AC, `ci:e2e:live-session`, no existe todavía |
+| F8 | H7 · Profesor IA de sesión | EN_CURSO | **3 de 7 tareas.** `T-H7-02` (anclaje) y `T-H7-03` (no revelación) **VERIFICADAS**; `T-H7-01` **HECHA** el 2026-08-29 (D-83): el bucle W7 encadenado y corriendo en vivo contra `claude-sonnet-5`, con las dos anteriores llamadas por fin desde el mismo sitio. Su AC, `ci:e2e:live-session` con Perfil C, sigue sin existir |
 | F9–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
 
 ## Entorno de ejecución (verificado 2026-08-14)
@@ -1968,4 +1968,60 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   siembra incluían una que no funcionaba en absoluto. «La regla existe» y «la regla detecta» son
   afirmaciones distintas, y el repositorio ya lo sabía —lo dice de la suite negativa de privilegios y
   del conjunto dorado—. Faltaba aplicarlo aquí.
+- **D-83 — El bucle W7 existe y corre en vivo; el cálculo entra por un subpath sin veredicto
+  (2026-08-29).** `T-H7-01`. El mapeo de §2.g del handoff era exacto: **todas las piezas existían y
+  ninguna llamaba a otra**, y en particular `validateAnchoredOutput()` (`T-H7-02`) y
+  `checkNonRevelation()` (`T-H7-03`) estaban las dos `VERIFICADA` sin que existiera **un solo archivo
+  que importara ambas**. `packages/session-engine/src/turn.ts` es ese archivo.
+  **El orden de las dos puertas no es el que sugiere la lectura rápida, y ahora está fijado por
+  prueba.** `Plan.md` §255 nombra el paso 5 como «validador/anclaje/no-revelación», junto, lo que
+  invita a ponerlas las dos después del modelo. Es un error y las autoridades lo dicen por separado:
+  P-I §9.6 gobierna **lo que entra en contexto** —«sin solución en contexto», «sin pistas que
+  completen el paso decisivo»— así que `checkNonRevelation()` va **antes** de llamar al proveedor;
+  P-II §8.4 valida **la salida**, que antes de la llamada no existe, así que el anclaje va **después**.
+  La prueba que lo fija no comprueba el veredicto sino que **el proveedor no se llamó**
+  (`llamadas.length === 0`): un orquestador que llamara primero y comprobara después devolvería
+  exactamente el mismo veredicto y habría fugado igual.
+  **Alcance declarado: los pasos 1–6 y 9, no el 7 ni el 8.** El veredicto ya tiene su ruta —`apps/api`
+  → spool → `apps/verifier` sin red (I-3, D-12)— y duplicar aquí esa llamada acercaría `verify()` al
+  paquete que habla con proveedores por la puerta de atrás. **El bucle se cierra por dato, no por
+  llamada**: el veredicto del turno anterior entra como `structuredError` del siguiente, y así el
+  profesor reacciona al error que el verificador clasificó y no a su propia lectura.
+  **El cálculo congelado y el invariante I-3.** `validateAnchoredOutput()` exige un
+  `AuthorizedCalculus`, y `model-gateway` lo pide **por parámetro** a propósito. Al construirlo en
+  `apps/api` saltó `sin-verificador-fuera-del-verificador`, correctamente: la regla prohíbe a
+  `apps/(web|api)` alcanzar `logic-core` fuera de sus subpaths sin veredicto. **No se relajó la
+  regla.** Se añadió un subpath `@profesor-ia/logic-core/calculus` que expone **datos congelados** y
+  ni `verify()`, ni `applyRule()`, ni `entails()`, y `session-engine` lo consume y publica
+  `SESSION_AUTHORIZED_CALCULUS`. Es el mismo corte que `./syntax` hace para el cliente, que además
+  excluye el cálculo diciendo que «pertenece al servidor» — y `apps/api` es el servidor. **Con
+  control positivo en los dos sentidos** (D-82): el subpath nuevo pasa y `apps/api` importando el
+  **barrel** sigue siendo violación. Las siembras pasan de 13 a 14.
+  **El cargador de corpus se movió, no se copió.** `loadContentPackage()` vivía en `tools/bench` y
+  `apps/api` no puede depender de una herramienta de medición; P-II §3.1 prohíbe paquetes nuevos, así
+  que va a `@profesor-ia/content-schema`, que se declara «Contrato del paquete de contenido» y era un
+  esqueleto de F0. `tools/bench` **delega**. Copiarlo habría dado dos `textoPorFragmento()` que, al
+  separarse, devolverían para el mismo `fragmentId` un texto en la sesión y otro en el benchmark: el
+  gate de anclas pasaría a medir algo que la sesión no hace.
+  **Las instrucciones de sesión no son las de BENCH-01, y por eso no lo re-corren.** Derivan de
+  `MATERIAL_INSTRUCTIONS` y conservan lo aprendido allí —mango corto (D-77), la negativa dentro del
+  esquema (D-79), «sólo un campo» no cambia el formato, nada de comillas dobles—, pero piden el
+  `AnchoredOutput` del contrato en vez del `MATERIAL_RESPONSE_SCHEMA` con claves en español. Son dos
+  artefactos con dos ciclos de vida; confundirlos haría creer que una corrida mide lo que la otra hace.
+  **Corre en vivo, y es su propio control positivo.** Las 12 pruebas de `turn.test.ts` usan puerto
+  inyectado y demuestran que el orquestador encadena bien; que **un modelo de verdad responda en el
+  formato que el validador acepta** es otra afirmación y no se sigue de la primera, así que se
+  comprobó: `scripts/session/live-turn.mjs` sobre KC01 devolvió cinco segmentos, tres anclados por
+  mango corto y dos de acompañamiento, con el modelo **negándose a explicar lo que el bloque no
+  cubre** en vez de inventarlo. Eso es I-7 funcionando en producción, no en una prueba.
+  **Dos defectos reales encontrados de paso.** Faltaba `charset=utf-8` en el `content-type` de
+  `apps/api`, que rompía los acentos en el navegador; y **no había ningún puente entre `apps/web` y
+  `apps/api`**, así que `/clase/verificacion` —de `T-H6-13`, `VERIFICADA` desde el 2026-08-17— nunca
+  había podido llegar desde el navegador: la ruta existía en los dos lados sin nada en medio. Se
+  resuelve con un `rewrite` en `next.config.mjs`, que corre en el servidor de Next y no expone
+  `API_ORIGIN` al cliente.
+  **Lo que esta tarea NO hace, y no por olvido.** No monta sesión persistida ni escribe evidencia en
+  base: `EVIDENCE_EVENT_INSERT_SQL` sigue sin llamador en ejecución, y una cadena de hashes a medias
+  que parece completa es peor que no tenerla. No elige bloque —el hueco 4 de W7— ni deriva
+  `objectiveId → goal`. Y `ci:e2e:live-session`, el AC del gate H7 con Perfil C, sigue sin existir.
 - **D-5 — Nombre de `theme.json`.** T-H0-09 lo nombra así; el ZIP trae `_ds_manifest.json` (48 tokens). Se vendoriza con ese contenido bajo el nombre `ds-manifest.json`, con su hash de origen registrado.

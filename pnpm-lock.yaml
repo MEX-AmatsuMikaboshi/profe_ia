@@ -65,18 +65,30 @@ importers:
       '@better-auth/passkey':
         specifier: ^1.6.29
         version: 1.6.29(@better-auth/core@1.6.29(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.8)(kysely@0.29.5)(nanostores@1.4.2))(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(better-auth@1.6.29(@opentelemetry/api@1.9.1)(next@16.3.1(@babel/core@8.0.1)(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(pg@8.23.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@3.2.7(@types/node@24.13.3)(yaml@2.9.0)))(better-call@1.4.0(zod@4.4.3))(nanostores@1.4.2)
+      '@profesor-ia/content-schema':
+        specifier: workspace:*
+        version: link:../../packages/content-schema
       '@profesor-ia/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
       '@profesor-ia/logic-core':
         specifier: workspace:*
         version: link:../../packages/logic-core
+      '@profesor-ia/model-gateway':
+        specifier: workspace:*
+        version: link:../../packages/model-gateway
       '@profesor-ia/observability':
         specifier: workspace:*
         version: link:../../tools/observability
+      '@profesor-ia/pedagogy-policy':
+        specifier: workspace:*
+        version: link:../../packages/pedagogy-policy
       '@profesor-ia/security-policy':
         specifier: workspace:*
         version: link:../../packages/security-policy
+      '@profesor-ia/session-engine':
+        specifier: workspace:*
+        version: link:../../packages/session-engine
       better-auth:
         specifier: ^1.6.29
         version: 1.6.29(@opentelemetry/api@1.9.1)(next@16.3.1(@babel/core@8.0.1)(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(pg@8.23.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@3.2.7(@types/node@24.13.3)(yaml@2.9.0))
@@ -216,6 +228,9 @@ importers:
       '@profesor-ia/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@profesor-ia/model-gateway':
+        specifier: workspace:*
+        version: link:../model-gateway
     devDependencies:
       typescript:
         specifier: 5.9.3
@@ -362,6 +377,12 @@ importers:
       '@profesor-ia/evidence':
         specifier: workspace:*
         version: link:../evidence
+      '@profesor-ia/logic-core':
+        specifier: workspace:*
+        version: link:../logic-core
+      '@profesor-ia/model-gateway':
+        specifier: workspace:*
+        version: link:../model-gateway
       '@profesor-ia/pedagogy-policy':
         specifier: workspace:*
         version: link:../pedagogy-policy
@@ -401,6 +422,9 @@ importers:
 
   tools/bench:
     dependencies:
+      '@profesor-ia/content-schema':
+        specifier: workspace:*
+        version: link:../../packages/content-schema
       '@profesor-ia/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts

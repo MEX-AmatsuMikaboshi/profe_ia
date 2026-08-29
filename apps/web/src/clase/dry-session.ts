@@ -31,6 +31,17 @@ import { F7_SUPPORTED_CAPABILITIES } from './view-model';
 
 export const DRY_SESSION_PACKAGE_IS_SYNTHETIC = true;
 
+/**
+ * Bloque de la sesión (T-H7-01). El bloque es el KC (P-I §9.4, §5.2), y es el
+ * que el Profesor IA usa para pedir sus fragmentos autorizados al corpus real.
+ *
+ * El catálogo de arriba es sintético; **este id no lo es**: nombra un bloque
+ * que existe en `content/`, y el turno del profesor falla con
+ * `BLOQUE_SIN_FRAGMENTOS` si no tuviera material. Es la única costura entre la
+ * sesión seca de desarrollo y el corpus de verdad.
+ */
+export const DRY_SESSION_BLOCK_ID = 'KC06' as const;
+
 const T0 = '2026-01-01T10:00:00.000Z';
 const T1 = '2026-01-01T10:00:05.000Z';
 const T2 = '2026-01-01T10:00:10.000Z';
