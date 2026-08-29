@@ -1,6 +1,106 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — CI VIVA (2026-08-29)
+> ## EMPIEZA AQUÍ — EL PROFESOR IA DA CLASE (2026-08-29)
+>
+> **El bucle W7 corre.** Un alumno abre la vista de Clase, pregunta, y el Profesor IA le responde
+> citando el material del curso por su mango corto. Se ve funcionando con:
+>
+> ```bash
+> pnpm run demo
+> ```
+>
+> y `http://localhost:3010/materias/logica/clase`. Levanta verificador + api + web sin Docker.
+>
+> ### 1. Lo que faltaba no era una pieza: era el archivo que las llamara
+>
+> §2.g del cierre anterior lo mapeó y era exacto. `validateAnchoredOutput()` (`T-H7-02`) y
+> `checkNonRevelation()` (`T-H7-03`) estaban las dos **VERIFICADAS** y **no había un solo archivo que
+> importara ambas**. `packages/session-engine/src/turn.ts` es ese archivo, y con él `T-H7-01` pasa a
+> **HECHA** (D-83).
+>
+> ### 2. El orden de las dos puertas, que ahora está fijado por prueba
+>
+> `Plan.md` §255 nombra el paso 5 como «validador/anclaje/no-revelación», **junto**, y eso invita a
+> ponerlas las dos después del modelo. Es un error, y las autoridades lo dicen por separado:
+>
+> | Puerta | Cuándo | Por qué |
+> |---|---|---|
+> | `checkNonRevelation()` | **antes** del proveedor | P-I §9.6 gobierna lo que **entra** en contexto; comprobarlo después sería comprobarlo cuando la solución ya viajó |
+> | `validateAnchoredOutput()` | **después** | P-II §8.4 valida **la salida**, que antes de la llamada no existe |
+>
+> **La prueba que lo sostiene no mira el veredicto: mira que el proveedor no se llamó**
+> (`llamadas.length === 0`). Un orquestador que llamara primero y comprobara después devolvería
+> exactamente el mismo veredicto y habría fugado igual.
+>
+> ### 3. El alcance es 1–6 y 9, declarado — no el 7 ni el 8
+>
+> El veredicto ya tiene su ruta —`apps/api` → spool → `apps/verifier` sin red (I-3, D-12)— y duplicar
+> esa llamada en el orquestador acercaría `verify()` al paquete que habla con proveedores por la
+> puerta de atrás. **El bucle se cierra por dato, no por llamada:** el veredicto del turno anterior
+> entra como `structuredError` del siguiente.
+>
+> Comprobado de punta a punta: una derivación con `∨E` mal aplicada vuelve como **`E-RULE-ARITY` en la
+> línea 2**, ese código entra en el turno siguiente, y el profesor explica la regla anclando tres
+> segmentos al material —**y pide la línea concreta en vez de resolver el ejercicio**.
+>
+> ### 4. I-3 disparó, y no se relajó la regla
+>
+> `validateAnchoredOutput()` exige un `AuthorizedCalculus`. Al construirlo en `apps/api` saltó
+> `sin-verificador-fuera-del-verificador`, **correctamente**. La salida no fue tocar la regla: se
+> añadió el subpath **`@profesor-ia/logic-core/calculus`**, que expone datos congelados y ni
+> `verify()`, ni `applyRule()`, ni `entails()`, y `session-engine` lo consume y publica
+> `SESSION_AUTHORIZED_CALCULUS`. Es el mismo corte que `./syntax` hace para el cliente.
+>
+> **Con control positivo en los dos sentidos** (la lección de D-82): el subpath nuevo pasa y
+> `apps/api` importando el **barrel** sigue siendo violación. Las siembras van de 13 a **14**.
+>
+> ### 5. Dos defectos reales que la tarea destapó
+>
+> 1. **Faltaba `charset=utf-8`** en las respuestas de `apps/api`: los acentos llegaban rotos al
+>    navegador.
+> 2. **No había ningún puente entre `apps/web` y `apps/api`.** `/clase/verificacion` es de `T-H6-13`,
+>    `VERIFICADA` desde el 2026-08-17, y **nunca pudo llegar desde el navegador**: la ruta existía en
+>    los dos lados y no había `rewrite` en medio. Nadie lo notó porque nadie había abierto la vista
+>    contra una api viva. Es la misma familia de lección que D-82: **«la pieza existe» y «la pieza se
+>    alcanza» son afirmaciones distintas.**
+>
+> ### 6. El cargador de corpus se movió, y por qué importa
+>
+> `loadContentPackage()` vivía en `tools/bench`; `apps/api` no puede depender de una herramienta de
+> medición y P-II §3.1 prohíbe paquetes nuevos, así que va a `@profesor-ia/content-schema` —que se
+> declara «Contrato del paquete de contenido»— y **`tools/bench` delega**. Copiarlo habría dado dos
+> `textoPorFragmento()` que, al separarse, devolverían para el **mismo** `fragmentId` un texto en la
+> sesión y otro en el benchmark: el gate de anclas mediría algo que la sesión no hace.
+>
+> ### 7. Lo que sigue
+>
+> 1. **La pasada de promoción `HECHA` → `VERIFICADA`**, tarea por tarea. Sigue pendiente de la sesión
+>    anterior: hay ~50 esperando y promoverlas en bloque sería firmar sin mirar.
+> 2. **`ci:e2e:live-session` con Perfil C** (`claude-haiku-4-5-20251001`) — es el AC del gate H7 y lo
+>    único de `T-H7-01` que necesita proveedor.
+> 3. **La elección de bloque** (hueco 4 de W7) y la derivación `objectiveId → goal`. Hoy el bloque
+>    llega en la petición y la vista lo trae fijo.
+> 4. **Los emisores de evidencia en ejecución.** `EVIDENCE_EVENT_INSERT_SQL` sigue sin llamador fuera
+>    de pruebas; el paso 9 emite hoy en el `TurnAuditTrail` y en el span, no en `evidence`.
+> 5. **Re-correr BENCH-01** con D-77 y D-79 puestos, 3 repeticiones, ~MXN 145. La semilla no cambia.
+> 6. **W5** cuando el propietario rompa su circularidad.
+>
+> ### 8. Lo que sigue siendo del propietario
+>
+> Sin cambios: revisión humana de los 200 casos (D-41), auditoría en muestra ciega de §6.2, lectura
+> humana por muestra del paso 19, Parte A ciega, romper la circularidad de W5, y el set canario si se
+> quiere a OpenAI dentro de BENCH-01.
+>
+> ### 9. Verificación de esta sesión
+>
+> **1872 pruebas unitarias en verde** (1851 al abrir, +21). Lint, typecheck 41/41, build 25/25,
+> depcruise **520 módulos** sin violaciones con sus **14** controles positivos, separación de modos,
+> sesión seca, adversarial, conjunto dorado, PBT, pureza del verificador, pasarela, grants, SBOM,
+> drift, las 159 de hardening, la tabla de mangos y `plan:status`: todo verde.
+> Las 131 contra PostgreSQL **no se corrieron** en esta sesión: Docker no estaba levantado.
+> **Commits:** `6518963` (el bucle) y `dc1b798` (la demo y el estilo).
+
+> ## Cierre de la vigésima sesión (2026-08-29) — CI VIVA — **superado por el de arriba**
 >
 > **Se acabó.** Diez sesiones de CI muerta, y el 2026-08-29 arrancó. Dos causas encadenadas, y la
 > primera **no era la que este documento decía**.

@@ -143,6 +143,26 @@ export interface SessionTurnDependencies {
    * vacío por omisión apagaría la comprobación sin decirlo.
    */
   readonly canaryDetector?: CanaryDetector;
+  /**
+   * Reintentos ante **rechazo de anclaje**. Cero por omisión.
+   *
+   * `httpTransport` no reintenta a propósito y lo documenta: «reintentar es una
+   * decisión de la corrida, que además debe contarla», porque BENCH-01 mide
+   * «utilizables **tras un reintento**» y ese reintento tiene que ser visible.
+   * Aquí pasa lo mismo, así que el número de intentos viaja en el resultado y
+   * no se esconde.
+   *
+   * **Sólo se reintenta el rechazo de anclaje.** Una supresión de política y un
+   * bloqueo de §9.6 son deterministas sobre la misma entrada: repetirlos daría
+   * el mismo resultado y sólo serviría para gastar dos veces. El anclaje no:
+   * BENCH-01 midió 84.2 % de anclas resolubles en `claude-sonnet-5`, o sea que
+   * una segunda pasada sobre el mismo contexto sí puede salir bien.
+   *
+   * **Un reintento no es un rescate.** Si se agotan, el turno se rechaza igual y
+   * lo dice: rebajar el listón tras N intentos convertiría la garantía en una
+   * sugerencia.
+   */
+  readonly anchoringRetries?: number;
 }
 
 export interface SessionTurnInput {
@@ -208,6 +228,8 @@ export type SessionTurnResult =
       readonly outcome: 'rejected_by_anchoring';
       readonly stoppedAt: 'validador';
       readonly rejections: readonly AnchorRejection[];
+      /** Los rechazos del **último** intento; `attempts` dice cuántos hubo. */
+      readonly attempts: number;
       readonly policyOutcome: PedagogyPolicyOutcome;
       readonly audit: TurnAuditTrail;
     }
@@ -218,6 +240,11 @@ export type SessionTurnResult =
       readonly segments: readonly { readonly text: string; readonly standing: SegmentStanding }[];
       /** P-I §8.5: una salida no anclada no puede fundamentar calificación. */
       readonly canGroundEvaluation: boolean;
+      /** Intentos que costó. `1` es el caso normal; `2` significa que el
+       *  primero se rechazó por anclaje y el segundo pasó. Se publica porque
+       *  un turno que costó dos llamadas y uno que costó una no son el mismo
+       *  hecho, ni para el coste ni para lo que dice del proveedor. */
+      readonly attempts: number;
       readonly policyOutcome: PedagogyPolicyOutcome;
       readonly audit: TurnAuditTrail;
     };
@@ -326,25 +353,39 @@ export async function runTeachingTurn(
     };
   }
 
-  // ── Paso 4 (cont.): el modelo ejecuta lingüísticamente ────────────────────
-  const raw = await deps.model({
-    operation: input.operation,
-    instructions: input.instructions,
-    context,
-  });
+  // ── Pasos 4 y 5b: el modelo ejecuta, el validador comprueba ───────────────
+  // El reintento vive aquí y no en el transporte: `httpTransport` no reintenta
+  // porque no puede saber si la petición llegó, y esta decisión sí sabe qué
+  // falló —el anclaje— y qué cuesta repetirlo.
+  const intentosMaximos = 1 + Math.max(0, deps.anchoringRetries ?? 0);
+  let verdict: ReturnType<typeof validateAnchoredOutput> | undefined;
+  let attempts = 0;
 
-  // ── Paso 5b: validador de anclaje, DESPUÉS (P-II §8.4, I-7) ───────────────
-  const verdict = validateAnchoredOutput(
-    raw,
-    { blockId: input.blockId, authorizedFragments: fragments, calculus: deps.calculus },
-    deps.canaryDetector === undefined ? {} : { canaryDetector: deps.canaryDetector },
-  );
+  while (attempts < intentosMaximos) {
+    attempts += 1;
+    const raw = await deps.model({
+      operation: input.operation,
+      instructions: input.instructions,
+      context,
+    });
 
-  if (verdict.outcome === 'rejected') {
+    // ── Paso 5b: validador de anclaje, DESPUÉS (P-II §8.4, I-7) ─────────────
+    verdict = validateAnchoredOutput(
+      raw,
+      { blockId: input.blockId, authorizedFragments: fragments, calculus: deps.calculus },
+      deps.canaryDetector === undefined ? {} : { canaryDetector: deps.canaryDetector },
+    );
+    if (verdict.outcome === 'accepted') break;
+  }
+
+  // `verdict` está definido: el bucle corre al menos una vez porque
+  // `intentosMaximos` es 1 como mínimo.
+  if (verdict === undefined || verdict.outcome === 'rejected') {
     return {
       outcome: 'rejected_by_anchoring',
       stoppedAt: 'validador',
-      rejections: verdict.rejections,
+      rejections: verdict === undefined ? [] : verdict.rejections,
+      attempts,
       policyOutcome,
       audit: { ...audit, reachedStep: 'validador' },
     };
@@ -366,6 +407,7 @@ export async function runTeachingTurn(
     stoppedAt: 'alumno',
     segments,
     canGroundEvaluation: verdict.canGroundEvaluation,
+    attempts,
     policyOutcome,
     audit: { ...audit, reachedStep: 'alumno' },
   };

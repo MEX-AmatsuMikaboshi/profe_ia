@@ -29,6 +29,8 @@ export interface ProfessorTurn {
   readonly segments: readonly TurnSegment[];
   /** P-I §8.5: una salida no anclada no puede fundamentar calificación. */
   readonly canGroundEvaluation: boolean;
+  /** Llamadas que costó el turno. `2` = la primera falló el anclaje. */
+  readonly attempts: number;
   readonly policyRuleId: string;
   readonly packagePurpose: string;
 }

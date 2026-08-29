@@ -395,3 +395,99 @@ describe('runTeachingTurn — el bucle se cierra por dato', () => {
     });
   });
 });
+
+describe('runTeachingTurn — el reintento se cuenta y no rescata', () => {
+  /** Puerto que falla el anclaje las primeras `n` veces y luego acierta. */
+  function falloAncla(veces: number): { port: () => Promise<unknown>; llamadas: () => number } {
+    let n = 0;
+    return {
+      llamadas: () => n,
+      port: async () => {
+        n += 1;
+        return n <= veces ? salidaAnclada(['F-00000000']) : salidaAnclada();
+      },
+    };
+  }
+
+  it('sin reintentos configurados se llama una vez y se rechaza', async () => {
+    const { deps } = arnes();
+    const fallo = falloAncla(99);
+    const result = await runTeachingTurn(
+      { ...deps, model: fallo.port },
+      turnInput(),
+    );
+
+    expect(result.outcome).toBe('rejected_by_anchoring');
+    if (result.outcome !== 'rejected_by_anchoring') return;
+    expect(result.attempts).toBe(1);
+    expect(fallo.llamadas()).toBe(1);
+  });
+
+  it('con un reintento, un fallo de anclaje aislado se recupera y SE CUENTA', async () => {
+    const { deps } = arnes();
+    const fallo = falloAncla(1);
+    const result = await runTeachingTurn(
+      { ...deps, model: fallo.port, anchoringRetries: 1 },
+      turnInput(),
+    );
+
+    expect(result.outcome).toBe('delivered');
+    if (result.outcome !== 'delivered') return;
+    // Lo que importa: el turno salió, y **dice que costó dos llamadas**. Un
+    // reintento escondido haría creer que el proveedor acertó a la primera.
+    expect(result.attempts).toBe(2);
+    expect(fallo.llamadas()).toBe(2);
+  });
+
+  it('agotar los reintentos rechaza igual: no se rebaja el listón', async () => {
+    const { deps } = arnes();
+    const fallo = falloAncla(99);
+    const result = await runTeachingTurn(
+      { ...deps, model: fallo.port, anchoringRetries: 2 },
+      turnInput(),
+    );
+
+    expect(result.outcome).toBe('rejected_by_anchoring');
+    if (result.outcome !== 'rejected_by_anchoring') return;
+    expect(result.attempts).toBe(3);
+    // Un turno que tras N intentos se entregara «como se pueda» convertiría la
+    // garantía de anclaje en una sugerencia.
+    expect(result.rejections.map((r) => r.reason)).toContain('anchor_inexistente');
+  });
+
+  it('NO se reintenta un bloqueo de §9.6: es determinista y sólo gastaría', async () => {
+    const { deps, llamadas } = arnes();
+    const result = await runTeachingTurn(
+      { ...deps, anchoringRetries: 3 },
+      turnInput({
+        scorableActivity: { activityId: 'act-1', isProbe: false, attemptClosed: false },
+        candidateHint: {
+          hintId: 'h-1',
+          level: 3,
+          containsDecisiveContent: true,
+          nonIsomorphismProven: false,
+          isAnalogousExample: false,
+        },
+        deliversFeedback: true,
+      }),
+    );
+
+    expect(result.outcome).toBe('blocked_by_non_revelation');
+    expect(llamadas).toHaveLength(0);
+  });
+
+  it('NO se reintenta una supresión de política', async () => {
+    const { deps, llamadas } = arnes();
+    const result = await runTeachingTurn(
+      { ...deps, anchoringRetries: 3 },
+      turnInput({
+        decisionContext: decisionContext({
+          observations: { ...decisionContext().observations, securityBlocked: true },
+        }),
+      }),
+    );
+
+    expect(result.outcome).toBe('suppressed');
+    expect(llamadas).toHaveLength(0);
+  });
+});

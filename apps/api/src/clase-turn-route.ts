@@ -94,6 +94,8 @@ export type TurnResponse =
         readonly stoppedAt: string;
         readonly segments: readonly TurnSegmentDto[];
         readonly canGroundEvaluation: boolean;
+        /** Llamadas que costó. `2` significa que la primera falló el anclaje. */
+        readonly attempts: number;
         readonly policyRuleId: string;
         /** Que el paquete no es material se dice en la respuesta (UIUX §2). */
         readonly packagePurpose: typeof TURN_PACKAGE_PURPOSE;
@@ -122,6 +124,8 @@ export interface TurnRuntime {
    * gastar un peso ni depender de que un proveedor conteste.
    */
   readonly modelFor: (handles: ReadonlyMap<string, string>) => TurnModelPort;
+  /** Reintentos ante rechazo de anclaje. Viaja al orquestador y se cuenta. */
+  readonly anchoringRetries: number;
   readonly tracer: Tracer;
 }
 
@@ -132,6 +136,7 @@ export interface BuildTurnRuntimeOptions {
   readonly tracer: Tracer;
   readonly timeoutMs?: number;
   readonly maxOutputTokens?: number;
+  readonly anchoringRetries?: number;
 }
 
 /**
@@ -215,6 +220,7 @@ export function buildTurnRuntime(options: BuildTurnRuntimeOptions): TurnRuntime 
     policy,
     modelFor: (fragmentHandles) =>
       gatewayTurnPort({ gateway, fragmentHandles, maxOutputTokens }),
+    anchoringRetries: options.anchoringRetries ?? 1,
     tracer: options.tracer,
   };
 }
@@ -265,6 +271,12 @@ export async function handleTurnRequest(
             model: runtime.modelFor(handles),
             calculus: SESSION_AUTHORIZED_CALCULUS,
             canaryDetector: () => [],
+            // Un reintento. BENCH-01 midió 84.2 % de anclas resolubles en
+            // `claude-sonnet-5`, así que un fallo de anclaje aislado es
+            // esperable y una segunda pasada sobre el mismo contexto suele
+            // pasar. **No rebaja el listón**: si el segundo también falla, el
+            // turno se rechaza igual, y `attempts` dice lo que costó.
+            anchoringRetries: runtime.anchoringRetries,
           },
           {
             decisionContext: {
@@ -327,6 +339,12 @@ export async function handleTurnRequest(
         'http.status_code': result.outcome === 'delivered' ? 200 : 422,
         'turn.outcome': result.outcome,
         'turn.policy_rule_id': result.audit.policyRuleId,
+        // Cuántas llamadas costó. Va al span porque es coste y comportamiento
+        // del proveedor, no contenido: la prosa del profesor se queda fuera
+        // (P-II §9.3).
+        ...(result.outcome === 'suppressed' || result.outcome === 'blocked_by_non_revelation'
+          ? {}
+          : { 'turn.attempts': result.attempts }),
       });
 
       if (result.outcome !== 'delivered') {
@@ -351,6 +369,7 @@ export async function handleTurnRequest(
             anchors: s.standing.kind === 'anchored' ? s.standing.resolvedAnchors : [],
           })),
           canGroundEvaluation: result.canGroundEvaluation,
+          attempts: result.attempts,
           policyRuleId: result.audit.policyRuleId,
           packagePurpose: TURN_PACKAGE_PURPOSE,
         },

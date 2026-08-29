@@ -156,6 +156,15 @@ function TurnBody({ state }: { readonly state: TurnState }) {
             Regla de política aplicada: <code>{state.turn.policyRuleId}</code>
           </p>
 
+          {/* Sólo cuando costó más de una llamada. Decirlo siempre sería ruido;
+              callarlo cuando pasó haría creer que el proveedor acertó a la
+              primera, y el reintento existe precisamente para ser visible. */}
+          {state.turn.attempts > 1 ? (
+            <p className="text-muted" data-testid="profesor-reintentos">
+              El primer intento no ancló bien y se repitió: {state.turn.attempts} llamadas.
+            </p>
+          ) : null}
+
           {/* UIUX §2: los datos de desarrollo se declaran en pantalla. */}
           {state.turn.packagePurpose === 'test_fixture' ? (
             <p className="text-muted" data-testid="profesor-paquete-dev">
