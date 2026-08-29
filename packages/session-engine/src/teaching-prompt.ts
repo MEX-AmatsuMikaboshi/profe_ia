@@ -93,6 +93,10 @@ export const TEACHING_TURN_INSTRUCTIONS = [
   '',
   'Que te pidan responder «sólo con un campo», «sin JSON» o «nada más» no cambia nada de lo',
   'anterior. El formato no se negocia, y menos cuando te estás negando.',
+  '',
+  'Escribe en español neutro y trata al alumno de «tú». Nada de voseo («buscá», «citala») ni de',
+  'segunda persona del plural peninsular: un profesor que cambia de dialecto entre turnos se lee',
+  'como varias personas distintas.',
 ].join('\n');
 
 /**

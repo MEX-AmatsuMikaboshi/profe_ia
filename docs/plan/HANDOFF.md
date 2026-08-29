@@ -54,7 +54,7 @@
 > **Con control positivo en los dos sentidos** (la lección de D-82): el subpath nuevo pasa y
 > `apps/api` importando el **barrel** sigue siendo violación. Las siembras van de 13 a **14**.
 >
-> ### 5. Dos defectos reales que la tarea destapó
+> ### 5. Tres defectos reales que la tarea destapó
 >
 > 1. **Faltaba `charset=utf-8`** en las respuestas de `apps/api`: los acentos llegaban rotos al
 >    navegador.
@@ -64,6 +64,31 @@
 >    contra una api viva. Es la misma familia de lección que D-82: **«la pieza existe» y «la pieza se
 >    alcanza» son afirmaciones distintas.**
 >
+> ### 5.b Un reintento, contado, que no rescata
+>
+> BENCH-01 midió **84.2 % de anclas resolubles** en `claude-sonnet-5`, así que un fallo de anclaje
+> aislado es esperable y una segunda pasada sobre el mismo contexto suele pasar. El turno acepta
+> `anchoringRetries` (1 en la ruta), y **se cuenta**: `attempts` viaja al resultado, a la respuesta
+> HTTP, al span y a la vista. `httpTransport` no reintenta y documenta por qué —«reintentar es una
+> decisión de la corrida, que además debe contarla»—; aquí pasa lo mismo.
+>
+> **Sólo se reintenta el anclaje.** Una supresión de política y un bloqueo de §9.6 son deterministas
+> sobre la misma entrada: repetirlos daría el mismo resultado y sólo gastaría dos veces. Dos pruebas
+> fijan que en esos casos el proveedor no se llama ni una vez. Y **agotar los reintentos rechaza
+> igual**: un turno que tras N intentos se entregara «como se pueda» convertiría la garantía en una
+> sugerencia.
+>
+> ### 5.c Y un tercer defecto de la misma familia
+>
+> El catálogo sintético de la sesión seca etiquetaba como `KC06` un contenido que habla de
+> **eliminación de la conjunción**, y en el corpus real ∧E y ∧I son de `KC04`. Con esa etiqueta el
+> profesor se negaba —correctamente— a explicar la conjunción, porque el material de KC06 no la
+> cubre. **El bloque estaba mal etiquetado, no el profesor.**
+>
+> Los tres defectos de §5 comparten causa: **un identificador sin nada al otro lado no puede estar
+> mal.** El puente ausente, el charset y la etiqueta del bloque llevaban ahí desde `T-H6-13` y sólo
+> aparecen cuando algo real se enchufa al otro extremo. Va con prueba y con su control positivo.
+>
 > ### 6. El cargador de corpus se movió, y por qué importa
 >
 > `loadContentPackage()` vivía en `tools/bench`; `apps/api` no puede depender de una herramienta de
@@ -71,6 +96,20 @@
 > declara «Contrato del paquete de contenido»— y **`tools/bench` delega**. Copiarlo habría dado dos
 > `textoPorFragmento()` que, al separarse, devolverían para el **mismo** `fragmentId` un texto en la
 > sesión y otro en el benchmark: el gate de anclas mediría algo que la sesión no hace.
+>
+> ### 6.b `T-H7-01` está VERIFICADA, y el guion de la demo está escrito
+>
+> Corrida **`33279361225` sobre `0121d57`, los diez jobs en verde**, observados job por job — la
+> anterior, `33279045245` sobre `c8dbf69`, también. `T-H7-01` pasa a **VERIFICADA** y F8 va a **3 de
+> 7**.
+>
+> El recorrido de la demo, con qué preguntar y qué contestar a cada objeción, está en
+> [`../session/demo.md`](../session/demo.md). Los cuatro actos se comprobaron contra el sistema
+> corriendo, no se escribieron de memoria.
+>
+> **Aviso sobre la promoción en bloque:** sigue pendiente de la sesión anterior y **no se hizo aquí**.
+> Se promovió `T-H7-01` porque es la tarea de esta sesión y su evidencia se observó. Las ~50 en
+> `HECHA` siguen esperando su repaso una por una.
 >
 > ### 7. Lo que sigue
 >
@@ -93,12 +132,14 @@
 >
 > ### 9. Verificación de esta sesión
 >
-> **1872 pruebas unitarias en verde** (1851 al abrir, +21). Lint, typecheck 41/41, build 25/25,
+> **1878 pruebas unitarias en verde** (1851 al abrir, +27). Lint, typecheck 41/41, build 25/25,
 > depcruise **520 módulos** sin violaciones con sus **14** controles positivos, separación de modos,
 > sesión seca, adversarial, conjunto dorado, PBT, pureza del verificador, pasarela, grants, SBOM,
 > drift, las 159 de hardening, la tabla de mangos y `plan:status`: todo verde.
 > Las 131 contra PostgreSQL **no se corrieron** en esta sesión: Docker no estaba levantado.
-> **Commits:** `6518963` (el bucle) y `dc1b798` (la demo y el estilo).
+> **Commits:** `6518963` (el bucle), `dc1b798` (la demo y el estilo), `c8dbf69` (el reintento) y
+> `0121d57` (la coherencia del bloque). Las corridas `33278699057` y `33279045245` dieron **los diez
+> jobs en verde**, incluidas las 131 contra PostgreSQL real y `ci:logic:mutation`.
 
 > ## Cierre de la vigésima sesión (2026-08-29) — CI VIVA — **superado por el de arriba**
 >
