@@ -1,0 +1,63 @@
+/* Disposición de las cuatro vistas de materia (T-CC-05).
+ *
+ * Mismo criterio que `globals-clase.css`: sólo coloca, no redefine ningún token.
+ * Los colores, la tipografía y los espaciados salen de `tokens.generated.css`.
+ */
+.materias-shell {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: var(--space-4, 24px) var(--space-3, 16px) var(--space-6, 48px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 16px);
+}
+
+.materias-shell > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2, 12px);
+}
+
+/* Tamaño de objetivo (WCAG 2.2 SC 2.5.8), igual que en Clase.
+ *
+ * La regla de `globals-clase.css` está limitada a `.clase-shell`, así que estas
+ * vistas no la heredaban: sin esto volverían a salir botones de 21 px, que es
+ * exactamente el defecto que `ci:a11y:baseline` encontró en la vista que ya
+ * dábamos por buena. */
+.materias-shell button,
+.materias-shell a[data-action] {
+  min-block-size: 24px;
+  min-inline-size: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Los dos carriles van en bloques separados y del mismo peso visual: §6.2 pide
+   distinguirlos «sin presentar el modo personalizado como defectuoso», así que
+   ninguno lleva realce ni atenuación respecto del otro. */
+.materias-carriles {
+  display: grid;
+  gap: var(--space-3, 16px);
+}
+
+.materias-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 12px);
+}
+
+/* El estado de cada KC se comunica con texto además de con la posición: UIUX §3
+   prohíbe depender sólo del color o de la disposición. */
+.progreso-kc {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1, 8px);
+  border-block-end: 1px solid var(--color-divider);
+  padding-block: var(--space-1, 8px);
+}

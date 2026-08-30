@@ -175,6 +175,9 @@ importers:
       '@profesor-ia/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@profesor-ia/domain-engine':
+        specifier: workspace:*
+        version: link:../../packages/domain-engine
       '@profesor-ia/logic-core':
         specifier: workspace:*
         version: link:../../packages/logic-core

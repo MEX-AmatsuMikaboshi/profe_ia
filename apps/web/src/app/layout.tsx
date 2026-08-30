@@ -14,6 +14,8 @@ import './tokens.generated.css';
 import './a11y-contrast.css';
 // Disposición de la vista de Clase. No redefine tokens: sólo coloca.
 import './globals-clase.css';
+// Disposición de las cuatro vistas de materia (T-CC-05). Tampoco redefine tokens.
+import './globals-materias.css';
 
 export const metadata = {
   title: 'Profesor IA',
