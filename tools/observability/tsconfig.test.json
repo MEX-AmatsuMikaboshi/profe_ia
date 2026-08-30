@@ -1,0 +1,14 @@
+{
+  // Las pruebas **no** entran en `tsconfig.json`: ese proyecto emite a `dist/`
+  // con `rootDir: src`, y meterlas ahí las publicaría. Sin este segundo proyecto
+  // no se compilan en ningún sitio, que es el agujero de D-85: el paquete se ve
+  // verde porque nadie las mira.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}

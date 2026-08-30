@@ -44,6 +44,8 @@ import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic
  */
 export type { Attributes, Span, Tracer } from '@opentelemetry/api';
 
+export * from './h8-metrics.js';
+
 export const OBSERVABILITY_SCHEMA_VERSION = 'observability-v1' as const;
 
 export type ObservabilityErrorCode =
