@@ -12,7 +12,7 @@ import type {
   ClaseTranscriptEntry,
   ClaseViewInput,
 } from './view-model';
-import { F7_SUPPORTED_CAPABILITIES } from './view-model';
+import { IMPLEMENTED_CAPABILITIES } from './view-model';
 
 /**
  * Sesión seca con **paquete sintético de desarrollo** (T-H6-13; F7 admite
@@ -172,7 +172,7 @@ export function drySessionDocument(): FitchDocument {
 export function drySessionViewInput(): ClaseViewInput {
   return {
     session: drySessionSnapshot().state,
-    capabilities: F7_SUPPORTED_CAPABILITIES,
+    capabilities: IMPLEMENTED_CAPABILITIES,
     transcript: drySessionTranscript(),
     activity: DRY_SESSION_ACTIVITY,
     saveState: { kind: 'guardado', atRevision: 6, at: T2 },

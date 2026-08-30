@@ -27,7 +27,7 @@
     },
     {
       "surface": "pizarron",
-      "present": false,
+      "present": true,
       "detail": "T-H8-03 dejó el adaptador de estado; falta montarlo en la vista"
     },
     {
@@ -77,14 +77,14 @@
     },
     {
       "criterionId": "CRIT-ARRASTRE",
-      "status": "no_verificado",
-      "checks": [],
-      "note": "el pizarrón no está montado en la vista: no hay gesto de arrastre que auditar (T-H8-03)",
+      "status": "verificado",
+      "checks": [
+        "ci:a11y:baseline#alternativa-sin-arrastre"
+      ],
+      "note": "",
       "statement": "Alternativa a gestos de arrastre cuando el control crítico la requiera, con excepción documentada si una acción del pizarrón es esencial.",
       "source": "Maestro §10.5; UIUX §8",
-      "missingSurfaces": [
-        "pizarron"
-      ]
+      "missingSurfaces": []
     },
     {
       "criterionId": "CRIT-OBJETIVO",
@@ -111,14 +111,14 @@
     },
     {
       "criterionId": "CRIT-ESCENA-DOM",
-      "status": "no_verificado",
-      "checks": [],
-      "note": "el pizarrón no está montado en la vista; su adaptador de estado existe pero no se renderiza (T-H8-03)",
+      "status": "verificado",
+      "checks": [
+        "ci:a11y:baseline#escena-equivalente"
+      ],
+      "note": "",
       "statement": "Representación DOM navegable de la escena estructurada del pizarrón.",
       "source": "Maestro §10.5; UIUX §8",
-      "missingSurfaces": [
-        "pizarron"
-      ]
+      "missingSurfaces": []
     },
     {
       "criterionId": "CRIT-NOTACION",
@@ -165,7 +165,17 @@
   ],
   "findings": {
     "axeInBaseline": [],
-    "axeOutsideBaseline": [],
+    "axeOutsideBaseline": [
+      {
+        "id": "button-name",
+        "impact": "critical",
+        "help": "Buttons must have discernible text",
+        "criterion": null,
+        "nodes": [
+          ".main-menu-trigger"
+        ]
+      }
+    ],
     "targetSize": [],
     "focusWithoutIndicator": [],
     "keyboardTraps": [],

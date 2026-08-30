@@ -101,9 +101,12 @@
       "@img/sharp-win32-x64",
       "sharp"
     ],
-    "_overrides_comment": "GHSA-q8mj-m7cp-5q26 (qs <=6.15.1, DoS) llega por @stryker-mutator/core > typed-rest-client. Se resuelve elevando la versión, no documentando una excepción: Plan.md §3 exige que un advisory aplicable sin mitigación bloquee el gate.",
+    "_overrides_comment": "GHSA-q8mj-m7cp-5q26 (qs <=6.15.1, DoS) llega por @stryker-mutator/core > typed-rest-client. Se resuelve elevando la versión, no documentando una excepción: Plan.md §3 exige que un advisory aplicable sin mitigación bloquee el gate. Lo mismo con los nueve advisories que entraron con @excalidraw/excalidraw al montar el pizarrón (T-H8-03), y que son sólo dos paquetes: `nanoid` por dos líneas de versión distintas —la v3 que usa Excalidraw directamente y la v5 que llega por @excalidraw/mermaid-to-excalidraw— y `lodash-es`, que llega por esa misma rama de mermaid (…>@mermaid-js/parser>langium>chevrotain). Se elevan las tres con rango acotado por línea, no con un salto de mayor: `nanoid@<3.3.18` sube dentro de la v3 (`legacy` en npm) porque forzar la v5 a Excalidraw cambiaría de API sin que nadie lo haya comprobado, y ése sería un riesgo nuevo introducido para cerrar uno viejo. Ninguno necesita excepción registrada: los cuatro tienen versión parcheada publicada.",
     "overrides": {
-      "qs": "^6.15.3"
+      "qs": "^6.15.3",
+      "nanoid@<3.3.18": "^3.3.18",
+      "nanoid@>=4.0.0 <5.1.16": "^5.1.16",
+      "lodash-es": "^4.18.0"
     }
   },
   "devDependencies": {

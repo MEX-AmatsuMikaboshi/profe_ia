@@ -92,6 +92,42 @@ export const H8_RECOMMENDED_CAPABILITIES: ClaseCapabilityFlags = Object.freeze({
 });
 
 /**
+ * Lo que hay superficie para atender **hoy**.
+ *
+ * `F7_SUPPORTED_CAPABILITIES` se queda como estaba: es el registro de con qué
+ * cerró F7, y reescribirlo borraría la progresión. Esta constante es la que
+ * gobierna la guarda, y crece cuando crece la pantalla — nunca antes.
+ *
+ * - `whiteboard` — `T-H8-03`: `Pizarron.tsx` monta el lienzo y `board-scene.ts`
+ *   traduce cada trazo a `BoardOperation`, con los tipos no mapeados lanzando.
+ * - `voiceOutput` — `T-H8-02`: `VozProfesor.tsx` reproduce el guion canónico del
+ *   turno, con lo retenido por el filtro fuera y degradación a texto.
+ *
+ * Las otras cuatro **siguen en `false` y siguen lanzando**, cada una por su
+ * motivo y no por descuido:
+ *
+ * - `voiceInput` — falta decidir por dónde va el STT. El audio del alumno es
+ *   dato del sujeto (UI-CORR-08) y el canal decide si sale de la máquina; no es
+ *   una decisión de implementación.
+ * - `visualBoardInterpretation` — `visionThresholds()` lanza hasta que
+ *   CAL-MULTIMODAL se congele. Interpretar el pizarrón con umbrales inventados
+ *   sería justo lo que esa calibración impide.
+ * - `uiAnnotations` — `maxAnnotationAgeMs()` lanza por lo mismo.
+ * - `internalUiCapture` — la política existe (`capture.ts`), el rasterizador no:
+ *   `T-H8-06` deja la librería «por verificar», y elegirla es decisión de
+ *   suministro.
+ */
+export const IMPLEMENTED_CAPABILITIES: ClaseCapabilityFlags = Object.freeze({
+  voiceInput: false,
+  voiceOutput: true,
+  whiteboard: true,
+  visualBoardInterpretation: false,
+  uiAnnotations: false,
+  internalUiCapture: false,
+  externalScreenCapture: false,
+});
+
+/**
  * Una capacidad encendida sin superficie que la atienda **lanza**.
  *
  * `T-H7-07` dice que voz y pizarrón llegan en F10 y que Clase opera texto+Fitch.
@@ -100,14 +136,16 @@ export const H8_RECOMMENDED_CAPABILITIES: ClaseCapabilityFlags = Object.freeze({
  * matriz de autonomía. Este punto de fallo es donde F10 se enchufa.
  */
 export function assertCapabilitiesImplemented(flags: ClaseCapabilityFlags): void {
-  const enabled = (Object.keys(F7_SUPPORTED_CAPABILITIES) as (keyof ClaseCapabilityFlags)[]).filter(
-    (key) => flags[key] && !F7_SUPPORTED_CAPABILITIES[key],
+  const enabled = (Object.keys(IMPLEMENTED_CAPABILITIES) as (keyof ClaseCapabilityFlags)[]).filter(
+    (key) => flags[key] && !IMPLEMENTED_CAPABILITIES[key],
   );
   if (enabled.length > 0) {
     fail(
       'CAPACIDAD_NO_IMPLEMENTADA',
-      `la interfaz de Clase de F7 es texto+Fitch (T-H7-07); no implementa ${enabled.join(', ')}. ` +
-        'Llegan en F10 (T-H8-01…05).',
+      `la interfaz de Clase monta texto, Fitch, pizarrón y voz de salida; no implementa ` +
+        `${enabled.join(', ')}. Cada una espera algo distinto: voiceInput, el canal de STT; ` +
+        'visualBoardInterpretation y uiAnnotations, que CAL-MULTIMODAL se congele; ' +
+        'internalUiCapture, elegir rasterizador (T-H8-06).',
     );
   }
 }
@@ -253,6 +291,12 @@ export interface ClaseViewModel {
   readonly navigationVisible: false;
   /** El editor Fitch se ofrece para actividades formales de lógica. */
   readonly fitchEditorVisible: boolean;
+  /**
+   * El pizarrón se ofrece con `whiteboard` habilitado y actividad abierta
+   * (UIUX §6.5). Las dos condiciones, no una: el flag lo autoriza y la actividad
+   * le da la referencia sin la cual un trazo no es evidencia de nada.
+   */
+  readonly whiteboardVisible: boolean;
 }
 
 /** Actos del guion que son feedback pedagógico y no pueden sonar en medición. */
@@ -388,5 +432,9 @@ export function buildClaseViewModel(input: ClaseViewInput): ClaseViewModel {
     capabilities: input.capabilities,
     navigationVisible: false,
     fitchEditorVisible: input.activity !== null,
+    // UIUX §6.5: «pizarrón cuando `whiteboard` esté habilitado». Y actividad,
+    // porque `BoardElement` exige `activityId`/`kcId`: sin ellos el trazo no se
+    // puede relacionar con nada de la sesión.
+    whiteboardVisible: input.capabilities.whiteboard && input.activity !== null,
   };
 }

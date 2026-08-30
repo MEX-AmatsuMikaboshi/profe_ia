@@ -153,15 +153,47 @@ describe('modelo de vista de Clase (T-H6-13)', () => {
     }
   });
 
-  // ─────────────────────────── T-H7-07 ───────────────────────────
+  // ──────────────────── T-H7-07, movido por T-H8-02/03 ────────────────────
 
-  it('una capacidad multimodal encendida lanza: F7 es texto+Fitch', () => {
-    for (const capacidad of ['voiceInput', 'voiceOutput', 'whiteboard', 'uiAnnotations'] as const) {
+  it('las capacidades sin superficie lanzan; las montadas, no', () => {
+    // Siguen sin superficie, cada una por su motivo: `voiceInput` espera el
+    // canal de STT; `visualBoardInterpretation` y `uiAnnotations`, que
+    // CAL-MULTIMODAL se congele; `internalUiCapture`, elegir rasterizador.
+    for (const capacidad of [
+      'voiceInput',
+      'visualBoardInterpretation',
+      'uiAnnotations',
+      'internalUiCapture',
+    ] as const) {
       expect(() =>
         assertCapabilitiesImplemented({ ...F7_SUPPORTED_CAPABILITIES, [capacidad]: true }),
       ).toThrow(/CAPACIDAD_NO_IMPLEMENTADA/);
     }
+
+    // Éstas sí tienen superficie desde T-H8-02 y T-H8-03. La prueba es el
+    // control positivo del cambio: si volvieran a lanzar, el pizarrón o la voz
+    // habrían desaparecido de la vista sin que nadie lo notase.
+    for (const capacidad of ['whiteboard', 'voiceOutput'] as const) {
+      expect(() =>
+        assertCapabilitiesImplemented({ ...F7_SUPPORTED_CAPABILITIES, [capacidad]: true }),
+      ).not.toThrow();
+    }
+
     expect(() => assertCapabilitiesImplemented(F7_SUPPORTED_CAPABILITIES)).not.toThrow();
+  });
+
+  it('F7_SUPPORTED_CAPABILITIES no se reescribe: es el registro de con qué cerró F7', () => {
+    // Si esto cambiara al montar una superficie nueva, se perdería la
+    // progresión y no habría con qué contrastar lo que la fase de hoy añade.
+    expect(F7_SUPPORTED_CAPABILITIES).toStrictEqual({
+      voiceInput: false,
+      voiceOutput: false,
+      whiteboard: false,
+      visualBoardInterpretation: false,
+      uiAnnotations: false,
+      internalUiCapture: false,
+      externalScreenCapture: false,
+    });
   });
 
   // ─────────────────────── procedencia y rúbrica ───────────────────────
@@ -247,15 +279,50 @@ describe('T-H8-13 — capacidades de la corrida H8', () => {
     });
   });
 
-  it('activarla hoy LANZA: las superficies son de F10', async () => {
+  it('activarla entera SIGUE LANZANDO: faltan cuatro superficies', async () => {
     const { H8_RECOMMENDED_CAPABILITIES, assertCapabilitiesImplemented } = await import(
       '../src/clase/view-model'
     );
-    // Declarar la configuración de H8 no la habilita. Si esto dejara de lanzar
-    // sin que F10 existiera, la corrida creería tener capacidades que nadie
+    // Declarar la configuración de H8 no la habilita. Pizarrón y voz de salida
+    // ya están montados, pero las otras cuatro no: si esto dejara de lanzar sin
+    // que existieran, la corrida creería tener capacidades que nadie
     // implementó, y eso contamina la matriz de autonomía.
     expect(() => assertCapabilitiesImplemented(H8_RECOMMENDED_CAPABILITIES)).toThrow(
       /CAPACIDAD_NO_IMPLEMENTADA/u,
     );
+  });
+
+  it('el mensaje NOMBRA lo que falta y por qué, no sólo que falta', async () => {
+    const { H8_RECOMMENDED_CAPABILITIES, assertCapabilitiesImplemented } = await import(
+      '../src/clase/view-model'
+    );
+    // «No implementado» sin decir qué obliga a leer el código para saber si lo
+    // que falta es trabajo nuestro o una calibración de otro gate.
+    let mensaje = '';
+    try {
+      assertCapabilitiesImplemented(H8_RECOMMENDED_CAPABILITIES);
+    } catch (error) {
+      mensaje = error instanceof Error ? error.message : String(error);
+    }
+    expect(mensaje).toContain('voiceInput');
+    expect(mensaje).toContain('visualBoardInterpretation');
+    expect(mensaje).toContain('uiAnnotations');
+    expect(mensaje).toContain('internalUiCapture');
+    expect(mensaje).toContain('CAL-MULTIMODAL');
+    // Y no nombra las que sí están montadas.
+    expect(mensaje).not.toContain('whiteboard,');
+  });
+
+  it('IMPLEMENTED_CAPABILITIES declara exactamente lo que tiene pantalla', async () => {
+    const { IMPLEMENTED_CAPABILITIES } = await import('../src/clase/view-model');
+    expect(IMPLEMENTED_CAPABILITIES).toStrictEqual({
+      voiceInput: false,
+      voiceOutput: true,
+      whiteboard: true,
+      visualBoardInterpretation: false,
+      uiAnnotations: false,
+      internalUiCapture: false,
+      externalScreenCapture: false,
+    });
   });
 });

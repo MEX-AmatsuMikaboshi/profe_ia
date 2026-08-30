@@ -26,7 +26,7 @@ la tarea cita.
 | Archivo | Qué es |
 |---|---|
 | `docs/plan/HANDOFF.md` | Punto de continuación entre sesiones. **Léelo primero.** |
-| `docs/plan/PLAN_STATUS.md` | Fuente de verdad de avance, tarea por tarea, con evidencia y las decisiones de ingeniería D-1…D-14 |
+| `docs/plan/PLAN_STATUS.md` | Fuente de verdad de avance, tarea por tarea, con evidencia y las decisiones de ingeniería D-1…D-100 |
 | `docs/gates/H*.md` | Actas de gate; un gate sin acta firmada no está cerrado |
 | `docs/blocked-by-spec.md` | Decisiones normativas faltantes (hoy vacío, a propósito) |
 
@@ -39,17 +39,63 @@ has visto el check verde, la tarea es `HECHA`, no `VERIFICADA`.
 Ejecuta **todo desde PowerShell**. En el Bash de Git, `$APPDATA` se expande a una ruta Windows dentro
 de un contexto POSIX y el shim de pnpm resuelve a `C:\Program Files\Git\...\pnpm.cjs`, que no existe.
 
+**El submódulo de contenido es requisito, no accesorio.** `content/unidad-deduccion-natural/` trae el
+cálculo congelado, el corpus y los 413 casos del conjunto dorado: sin él, `ci:unit`, `ci:logic:*` y
+`ci:content:mangos` no pueden correr. Si el árbol se clonó sin `--recurse-submodules`:
+
+```bash
+git submodule update --init --recursive
+```
+
+**`&&` no encadena en esta consola.** PowerShell 5.1 —la única instalada; no hay `pwsh` 7— lo
+rechaza al parsear: «El token '&&' no es un separador de instrucciones válido en esta versión». Dentro
+de `package.json` sí funciona, porque los scripts los corre pnpm en su propio shell; lo que no
+funciona es escribirlo tú en la consola. La forma que corre **y falla cerrado** es un bucle:
+
 ```bash
 pnpm install
-pnpm run ci:lint && pnpm run ci:typecheck && pnpm run ci:unit && pnpm run ci:build
+foreach ($c in @('ci:lint','ci:typecheck','ci:unit','ci:build')) {
+  pnpm run $c; if ($LASTEXITCODE -ne 0) { throw "FALLÓ: $c" }
+}
 ```
 
-Verificación completa de que todo sigue en pie (~1 min sin Docker):
+Los scripts `ci:*` **no llevan límite de concurrencia**, y en esta máquina eso mata `tsc` y `vitest`
+por memoria con un **exit 134** que parece un error de tipos y no lo es. Si pasa, repite con
+`pnpm exec turbo run typecheck --concurrency=2` y `pnpm exec vitest run --project unit --maxWorkers=2`
+— trampa 8.
+
+Verificación de que todo sigue en pie **sin Docker, sin navegador y sin gastar** (~1 min):
 
 ```bash
-pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && pnpm run ci:mode-separation && pnpm run ci:e2e:dry-session && pnpm run ci:e2e:course-creation && pnpm run ci:adversarial:session && pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net && pnpm run db:grants:check && pnpm run ci:db:negative && pnpm run ci:supply:sbom && pnpm run ci:supply:drift && pnpm run ci:infra:hardening &&
-pnpm run ci:content:mangos && pnpm run ci:plan:status
+foreach ($c in @(
+  'ci:arch:depcruise', 'ci:plan:status',
+  'ci:mode-separation', 'ci:e2e:dry-session', 'ci:e2e:course-creation', 'ci:adversarial:session',
+  'ci:logic:golden', 'ci:logic:pbt', 'ci:logic:no-net',
+  'ci:gateway:fail-closed', 'ci:gateway:contracts', 'ci:canary', 'ci:cost:ledger',
+  'ci:coords:pbt', 'ci:annotations:staleness', 'ci:visual:no-verdict',
+  'db:grants:check', 'ci:web:tokens', 'ci:content:mangos',
+  'ci:supply:sbom', 'ci:supply:drift', 'ci:infra:hardening'
+)) { pnpm run $c; if ($LASTEXITCODE -ne 0) { throw "FALLÓ: $c" } }
+
+foreach ($s in @('verify-depcruise-catches', 'verify-test-typecheck-catches')) {
+  node "scripts/arch/$s.mjs"; if ($LASTEXITCODE -ne 0) { throw "FALLÓ: $s" }
+}
 ```
+
+Lo que queda fuera de esa orden pide algo más, y por eso se corre aparte:
+
+| Aparte | Porque necesita |
+|---|---|
+| `ci:db:negative` (alias `ci:db:testcontainers`) | Docker |
+| `ci:infra:compose-up` · `ci:infra:otel` | Docker, y `dev:env` antes |
+| `ci:a11y:baseline` · `ci:a11y:catches` | `ci:build` y el Chromium de Playwright |
+| `ci:logic:mutation` | ~8–9 min, y la trampa 5 |
+| `ci:e2e:live-session` · `demo:turno` · `bench:material` · `bench:exploratorio` | credencial de proveedor: **gastan dinero** |
+| `ci:freeze:drift` | el paquete de contenido congelado (W5 aún sin firmar) |
+
+**Cinco de esos checks no los corre nadie salvo tú**: `ci:web:tokens`, `ci:coords:pbt`,
+`ci:annotations:staleness`, `ci:visual:no-verdict` y `ci:freeze:drift` **no están en el workflow**.
+Existen, pasan, y ningún push los ejercita — así que se pudren en silencio si esta orden no los lleva.
 
 | Comando | Qué hace |
 |---|---|
@@ -63,12 +109,22 @@ pnpm run ci:content:mangos && pnpm run ci:plan:status
 | `pnpm run ci:mode-separation` / `ci:e2e:dry-session` | El AC del gate H6: separación de modos (12 propiedades) y sesión seca E2E reconstruible desde eventos (33) |
 | `pnpm run ci:e2e:course-creation` | El AC de F9: crear-materia → clase sobre una materia sin sistema formal, con el aislamiento comprobado **por consulta cruzada** y sus controles positivos (13) |
 | `pnpm run ci:gateway:fail-closed` | Que la pasarela no envía parámetros no declarados por el binding ni acepta un binding sin snapshot ni huella |
+| `pnpm run ci:gateway:contracts` | Contract tests por adaptador (P-II §8.4): la misma operación conserva sus invariantes aunque cambie el proveedor |
+| `pnpm run ci:canary` | Canarios (P-II §11.3): registro, detección por superficie, bloqueo de corrida y encaje con el filtro de egreso |
+| `pnpm run ci:cost:ledger` | Un cambio de tarifa crea manifiesto nuevo y el costo histórico **no** se reescribe (P-II §9.5) |
+| `pnpm run ci:coords:pbt` / `ci:annotations:staleness` / `ci:visual:no-verdict` | `visual-interaction`: coordenadas por propiedad, caducidad de anotaciones y que ningún score visual emite veredicto (DEC-VISION-001) |
+| `pnpm run ci:a11y:baseline` / `ci:a11y:catches` | Línea base WCAG sobre la Clase **en Chromium de verdad** (T-H8-10) / que cada instrumento detecta un defecto sembrado. jsdom aprobaría por vacío: dos criterios son geométricos |
 | `pnpm run db:grants:check` | Que la migración de `GRANT` corresponde a la matriz vigente |
 | `pnpm run ci:supply:sbom` / `:drift` | SBOM CycloneDX + digest de lockfile / drift y advisories (bloqueante) |
 | `pnpm run ci:infra:hardening` | 159 propiedades sobre la config **resuelta** por Docker |
 | `pnpm run bench:preparacion <runId> [cands]` | Qué falta para la corrida material de BENCH-01. No gasta nada; sale con 1 si aún no se puede correr (D-72) |
 | `pnpm run bench:material <runId> <cands> <reps> <maxTokens> [timeoutMs]` | **La corrida material de BENCH-01. GASTA DINERO de verdad.** Mide los seis gates con `observeGates()` y **no corona**: el paquete sin congelar lo impide (D-74) |
+| `pnpm run bench:exploratorio <runId> <maxTokens> [timeoutMs]` | Medición **declarada como exploratoria** sobre los mismos casos. **Gasta.** Es la vía de D-76: mide sin poder coronar |
+| `pnpm run bench:puntuar <runId> <material\|exploratorio>` | Recomputa los seis gates desde una corrida ya guardada. **No vuelve a preguntar**, así que no gasta |
 | `node scripts/model/refresh-sources.mjs <urls>` | Huellas reproducibles de las fuentes de un refresco documental. Descarga dos veces y falla si difieren (D-73) |
+| `pnpm run demo` | Verificador + api + web en local, sin Docker ni base: el bucle W7 visible de punta a punta. **No escribe evidencia** — no hay dónde |
+| `pnpm run demo:turno [KC] [pregunta]` | Un turno contra el proveedor real. **Gasta centavos**, y lo avisa antes. Control positivo de que un modelo de verdad responde en el formato que el validador de anclaje acepta |
+| `pnpm run ci:e2e:live-session` | AC del gate H7: sesión completa sin rescate docente, perfil C. **Gasta**, y por eso no corre en cada push |
 | `pnpm run ci:adversarial:session` | AC de `T-H7-03`: extracción/injection del alumno (P-II §14.4 de sesión) y la puerta de no revelación de P-I §9.6 |
 | `pnpm run ci:infra:compose-up` | Arranque limpio del stack + verificador por spool + prueba de que `core` no sale a Internet |
 | `pnpm run ci:infra:otel` | AC de `T-H3-05`: los spans llegan al colector, y la derivación del alumno no |
@@ -76,6 +132,9 @@ pnpm run ci:content:mangos && pnpm run ci:plan:status
 | `pnpm run dev:env` → `dev:up` → `dev:seed` | Levantar el entorno local (`infra/runbooks/local.md`); además `dev:down/status/logs/backup/restore` |
 | `pnpm run logic:golden:generate` | Regenera el conjunto dorado; **el diff debe ser vacío** |
 | `pnpm run content:mangos` / `ci:content:mangos` | Tabla de correspondencia mango → `fragmentId` (D-77) / comprueba que sigue correspondiendo al corpus |
+| `pnpm run web:tokens` / `ci:web:tokens` | Deriva la hoja de tokens de `apps/web` desde el CSS vendorizado, **retirando el `@import` remoto de Google Fonts** (P-II §0.3: nada de red en tiempo de render) |
+| `pnpm run ci:freeze:drift` | Que el paquete de contenido corresponde a su `freeze-manifest.json`. Falla cerrado con `FREEZE_DRIFT_BLOQUEADO` |
+| `pnpm --filter @profesor-ia/web run dev` | `next dev`. El `build` **no** es `next build`: pasa por `scripts/web/build.mjs` |
 | `pnpm run plan:status` / `ci:plan:status` | Coherencia de `PLAN_STATUS.md`: estados declarados, decisiones sin huecos ni duplicados, ninguna cita `D-N` colgada (D-81) |
 | `pnpm run contracts:json-schema` | Emite los JSON Schema desde `packages/contracts` |
 
@@ -89,27 +148,87 @@ pnpm exec vitest run --project unit packages/logic-core/test/rules.test.ts -t "�
 (`infra/database/test/**`, con timeouts largos y `fileParallelism: false` porque el estado de la base
 es compartido). Sin `--project`, corren ambos.
 
-### Antes de tocar migraciones o la matriz de permisos
+### Archivos generados: no los edites, regenéralos
 
-`infra/database/migrations/20260815120100_grants.sql` es **generado**. La fuente es
-`packages/security-policy/src/matrix.ts`. El flujo es: editar la matriz → `pnpm run ci:build` (el
-generador lee el paquete compilado) → `pnpm run db:grants` → `pnpm run ci:db:negative`.
+Cuatro artefactos versionados los escribe un script, y cada uno tiene su guarda `--check`. Editarlos
+a mano parece funcionar hasta que el check lo desmiente:
+
+| Archivo | Fuente | Regenerar | Guarda |
+|---|---|---|---|
+| `infra/database/migrations/20260815120100_grants.sql` | `packages/security-policy/src/matrix.ts` | `db:grants` | `db:grants:check` |
+| `apps/web/src/app/tokens.generated.css` | `packages/ui-tokens/vendor/styles.css` | `web:tokens` | `ci:web:tokens` |
+| `analysis/reports/fragment-handles.json` | el corpus del submódulo | `content:mangos` | `ci:content:mangos` |
+| el conjunto dorado (413 casos) | `scripts/logic/generate-golden.mjs` | `logic:golden:generate` | **el diff debe quedar vacío** |
+
+**La matriz de permisos tiene un paso fácil de olvidar**: el generador lee el paquete **compilado**,
+así que el flujo es editar `matrix.ts` → `pnpm run ci:build` → `pnpm run db:grants` →
+`pnpm run ci:db:negative`. Sin el `ci:build` de en medio regeneras la matriz vieja.
+
+`packages/ui-tokens/vendor/` tampoco se edita: está hasheado y su `PROVENANCE.md` lo prohíbe
+expresamente. Lo que se toca es la derivación.
+
+### Los diez jobs de CI, y qué comando es cada uno
+
+`.github/workflows/ci.yml`. Cuando uno se pone rojo, esta tabla ahorra abrirlo:
+
+| Job | Corre | Necesita el submódulo |
+|---|---|---|
+| `base` | `ci:lint` · `ci:typecheck` · `ci:unit` · `ci:build` · `ci:a11y:baseline` · `ci:a11y:catches` | sí |
+| `h6` | `ci:mode-separation` · `ci:e2e:dry-session` · `ci:e2e:course-creation` | sí |
+| `adversarial` | `ci:adversarial:session` | sí |
+| `arch` | `ci:arch:depcruise` + sus dos controles positivos · `ci:plan:status` · `ci:gateway:fail-closed` · `ci:gateway:contracts` · `ci:canary` · `ci:cost:ledger` | **no** — por eso viven aquí |
+| `logic` | `ci:logic:golden` · `:pbt` · `:no-net` · `ci:content:mangos` · conjunto dorado reproducible | sí |
+| `mutation` | `ci:logic:mutation` (sólo en `main`) | sí |
+| `supply` | `ci:supply:drift` · `ci:supply:sbom` | no |
+| `infra-otel` | `ci:infra:otel` | no |
+| `infra` | `ci:infra:hardening` · `ci:infra:compose-up` | sí |
+| `db` | `db:grants:check` · `ci:db:negative` | no |
+
+Los jobs marcados con submódulo dependen de `CONTENT_TOKEN` y hacen `checkout` recursivo: **si un
+gitlink apunta a un commit que no se subió al remoto de contenido, fallan en `checkout` con
+`upload-pack: not our ref`** y el mensaje no menciona el submódulo. Ver §6.
+
+### El pipeline de contenido W0–W5
+
+Trece entradas en `scripts/content/`, todas `node scripts/content/<x>.mjs` sin argumentos, y ninguna
+en `package.json` — así que no aparecen en `pnpm run`. Son las que produjeron el banco vigente y el
+orden en que corren importa:
+
+```
+w0-live-run → w0-apply-decision    │ F5/H4.5 — descubrimiento y decisión del CORPUS_APPROVER
+w1-ingest-run                      │ snapshot autorizado, fragmentación; `solutions/` va a solutions-private (I-2/I-4)
+w2-extract-run → kc-map-write      │ extracción curricular (Rol A) y mapa de KC
+rolb-pedagogy-run                  │ Rol B: objetivos, pedagogía, plantillas de sesión
+w2-experimental-sets-run           │ selección A/B/C
+bench04-run → w3-generate-run      │ congela el orden de validez, y autoría automática sobre él
+w4-preaudit-run → w4-audit-apply   │ muestra de auditoría previa y cómputo del gate
+w4-second-auditor-packet           │ paquete para el segundo auditor independiente
+```
+
+**W5 no tiene script**: es clave Ed25519, auditoría aprobada y firma humana. `ci:freeze:drift`
+comprueba después que el paquete no se movió.
 
 ## 3. Arquitectura
 
-Monolito modular con procesos aislados. `pnpm workspaces` + Turborepo; 23 workspaces bajo `apps/*`,
-`packages/*` y `tools/*`. Las listas de `apps/` y `packages/` son **obligatorias** (P-II §3.1): no se
-crean paquetes nuevos. Por eso el CLI vive en `tools/cli` (D-1) y el índice de complejidad en
-`proof-search` en vez de en un paquete propio (D-10).
+Monolito modular con procesos aislados. `pnpm workspaces` + Turborepo; 25 workspaces bajo `apps/*`
+(6), `packages/*` (16) y `tools/*` (3). Las listas de `apps/` y `packages/` son **obligatorias**
+(P-II §3.1): no se crean paquetes nuevos. Por eso el CLI vive en `tools/cli` (D-1) y el índice de
+complejidad en `proof-search` en vez de en un paquete propio (D-10).
 
 TypeScript 5.9.3 `strict` + `exactOptionalPropertyTypes` + `noUncheckedIndexedAccess` +
 `verbatimModuleSyntax`, ESM `NodeNext`, Node 24. Cada paquete compila con `tsc -p tsconfig.json` a
-`dist/`; `turbo` encadena `build`/`typecheck` con `dependsOn: ["^build"]`.
+`dist/`; `turbo` encadena `build`/`typecheck` con `dependsOn: ["^build"]`. **`ci:typecheck` son dos
+cosas**: `turbo run typecheck` más `tsc -p infra/database/tsconfig.test.json`, que es el único que
+mira las pruebas de la base.
+
+ESLint lleva tres reglas que no son de estilo: `consistent-type-imports` y `no-explicit-any` como
+**error**, y `no-empty` con `allowEmptyCatch: false` — anotada en el config como I-1, porque ninguna
+decisión verificable puede quedar silenciada por un `catch` vacío.
 
 ### Los invariantes son ejecutables, no prosa
 
-`.dependency-cruiser.cjs` tiene 10 reglas `forbidden`; **cada una codifica un invariante I-1…I-9 y su
-violación es una implementación inválida**, no un aviso de estilo:
+`.dependency-cruiser.cjs` tiene 13 reglas `forbidden`, todas `severity: 'error'`; **cada una codifica
+un invariante I-1…I-9 y su violación es una implementación inválida**, no un aviso de estilo:
 
 - **I-1** — `session-engine`, `pedagogy-policy` y `domain-engine` no pueden importar SDKs de
   proveedor de modelo. Solo `model-gateway` habla con proveedores.
@@ -123,7 +242,15 @@ violación es una implementación inválida**, no un aviso de estilo:
   un paquete separado de `logic-core`.
 - **DEC-VISION-001** — ningún score visual autoriza un veredicto formal.
 
-Si añades un import y `ci:arch:depcruise` falla, el import está mal, no la regla.
+Si añades un import y `ci:arch:depcruise` falla, el import está mal, no la regla. El fallo te da el
+**nombre** de la regla, y los nombres son la vía rápida al invariante: `i1-session-engine-sin-sdk-de-proveedor`,
+`i2-gateway-sin-soluciones`, `i3-verifier-sin-red`, `i4-autoria-sin-sondas`,
+`verificacion-sin-canonicalizador-de-isomorfismo`, `visual-sin-veredicto-formal`,
+`web-sin-claves-ni-gateway`, `web-sin-soluciones`, `sin-verificador-fuera-del-verificador`,
+`verificacion-sin-telemetria-de-red`, `pasarela-sin-nucleo-logico`, `no-circular` y
+`sin-dependencias-no-resueltas`. Esta última **no es un invariante**: salta cuando falta `dist/`, así
+que depcruise exige `ci:build` antes (en CI lo hace el job `arch`; en local pasa desapercibido porque
+quedan restos de corridas anteriores).
 
 ### Base de datos
 
@@ -159,9 +286,11 @@ afirma inexistencia.
   **No los «arregles» devolviendo un número**: ese punto de fallo es donde se enchufa el valor
   congelado.
 - **Nada de degradación silenciosa.** Un fallo no se disfraza de resultado benigno. El CLI falla con
-  `NO_IMPLEMENTADO` (exit 3); `api`/`web` responden `NO_IMPLEMENTADO` a todo lo que no sea `/health`
-  hasta que su fase los implemente (D-11). Un worker que dijera «listo» sin pipeline sería éxito
-  simulado.
+  `NO_IMPLEMENTADO` (exit 3), y lo que una fase todavía no implementa responde `NO_IMPLEMENTADO` en
+  vez de fingir (D-11). En `web` eso ya **no** es todo salvo `/health`: Inicio, Mis materias,
+  Detalle, Progreso y Clase existen desde `T-CC-05`, y `no-implementado.tsx` quedó como el destino
+  de `[...ruta]` — lo no construido, no la regla general. Un worker que dijera «listo» sin pipeline
+  sería éxito simulado.
 - **Expectativas a priori.** El generador del conjunto dorado declara qué debe pasar **antes** de
   ejecutar. Nunca grabes la salida observada como «esperado»: eso convierte el conjunto dorado en un
   espejo del bug. Ya evitó dos casos mal especificados.
@@ -171,8 +300,11 @@ afirma inexistencia.
   «inalcanzables» y para cualquier «esto no puede pasar». La del oráculo semántico parecía sólida y
   era falsa.
 - **Desviaciones documentadas.** Cualquier apartamiento del plan va a «Decisiones de ingeniería» de
-  `PLAN_STATUS.md` con su causa (van D-1 a D-14). No tienen autoridad normativa.
-- **Un PR, una tarea `T-*`**, título `T-Hx-nn: …`, y `PLAN_STATUS.md` actualizado en el mismo PR.
+  `PLAN_STATUS.md` con su causa (van D-1 a D-100). No tienen autoridad normativa. `ci:plan:status`
+  comprueba que la numeración no tiene huecos ni duplicados y que ninguna cita `D-N` queda colgada
+  (D-81), así que citar una decisión inexistente rompe el check.
+- **Un commit, una tarea `T-*`**, título `T-Hx-nn: …`, y `PLAN_STATUS.md` actualizado en el mismo
+  commit. **El `push` sí se agrupa** desde el 2026-08-29, por el presupuesto de Actions: ver §6.
 
 ## 5. Trampas de este entorno
 
@@ -216,76 +348,88 @@ Son reales y cuestan una hora cada una si no se conocen (`docs/env/windows.md`).
    `pnpm exec turbo run typecheck --concurrency=2` y
    `pnpm exec vitest run --project unit --maxWorkers=2`; con Docker Desktop levantado, 1. Los
    scripts `ci:*` no lo llevan puesto porque en CI hay memoria de sobra: es una limitación local.
+9. **En PowerShell 5.1, `&&` no existe** — y es la única consola de esta máquina (`pwsh` 7 **no está
+   instalado**). Choca de frente con la trampa 1: §2 manda usar PowerShell, y ahí cualquier orden
+   encadenada con `&&` muere con «El token '&&' no es un separador de instrucciones válido en esta
+   versión». Es **error de parseo**, así que no corre ni el primer comando — no es que falle a mitad.
+   Dentro de `package.json` sí funciona (`ci:typecheck` encadena dos comandos y va bien): esos los
+   ejecuta pnpm en su propio shell, no PowerShell. Usa el bucle `foreach` de §2, que además falla
+   cerrado. **`;` a secas no vale**: sigue adelante tras un fallo, y una batería que continúa tras el
+   primer rojo es degradación silenciosa con otro nombre.
 
-## 6. Estado actual (2026-08-30)
+## 6. Estado y lecciones operativas (2026-08-30)
 
-F0/H0, F1/H1 y F2/H2 completas. **F3/H3 con sus 5 tareas y el criterio técnico cubierto**: los tres
-checks de infraestructura están en CI; el gate espera sólo Infisical y firmas. F5/H4.5 con 8 de 8,
-F7/H6 con 14 de 14 y el AC cubierto.
+**El estado tarea por tarea, con evidencia, está en `docs/plan/PLAN_STATUS.md`; por dónde seguir, en
+`docs/plan/HANDOFF.md`, cabecera «EMPIEZA AQUÍ».** Este apartado se queda rancio entre sesiones y
+esos dos no, así que aquí va sólo el resumen de una línea por fase y, después, lo que **no** está en
+ellos.
 
-**F6/H5 — el contenido ya está.** W0–W4 corrieron sobre el corpus real. **Banco vigente: 656
-candidatos, 656 aceptados, 0 rechazados**, sin huecos de cobertura, con las guardas de clausura de
-reglas y control de superficie **enchufadas a `runW3Generation()`** —abortan la corrida, con
-controles positivos—. La selección A/B/C y los tres artefactos de W4 se re-corrieron sobre ese banco
-(D-69): W4 es censo de 656 en 178 estratos y **no bloquea**. Lo que falta de F6 es humano: la
-**lectura humana por muestra del paso 19**, la **Parte A ciega** de otra familia de modelo, y **W5**
-(clave Ed25519, auditoría aprobada, firma).
+| Fase | Dónde está | Qué falta, y de quién |
+|---|---|---|
+| F0/H0 · F1/H1 · F2/H2 | completas | — |
+| F3/H3 | 5 de 5, criterio técnico cubierto | Infisical y firmas |
+| F4/H4 | BENCH-01 corrió; ganador **provisional** `claude-sonnet-5` | **ningún candidato aprueba los seis gates: la puerta NO está cumplida** |
+| F5/H4.5 | 8 de 8 | — |
+| F6/H5 | 17 de 17; banco de **656 candidatos** sobre corpus real | humano: lectura por muestra, Parte A ciega, y **W5** |
+| F7/H6 | 14 de 14, AC cubierto | acta |
+| F8/H7 | 7 de 7, `ci:e2e:live-session` en verde | acta firmada |
+| F9 | 5 de 5, AC cubierto | nada construible |
+| F10/H8 | 11 de 14; **pizarrón y voz de salida montados** (D-98), a11y 9 de 11 (D-100) | calibración congelada, umbrales de BENCH-03, corrida humana — y las 4 capacidades de abajo |
+| F11 | desbloqueada | `T-LSU-01/02/03`: sólo el propietario |
+| F12–F16 | no empezadas | — |
 
-**F4/H4 — BENCH-01 CORRIÓ, y hay ganador provisional (D-74, D-75, D-76).** Los 200 casos materiales
-contra `claude-sonnet-5` y `claude-haiku-4-5-20251001`, los seis gates computados, MXN 47.91 de gasto
-real. **Ganador provisional: `claude-sonnet-5`** — 4 de 6 gates, no bloqueado, frente a 3 de 6 y
-bloqueado del otro. **Ningún candidato aprueba los seis, así que la puerta de H4 NO está cumplida.**
-Lo que falla no es la seguridad —cero fugas y recuperación degradada limpia en los tres candidatos y
-en los 600 casos— sino la **disciplina de formato**: el gate de anclas (≥95 %) da 84.2 % en
-`claude-sonnet-5` y 15.4 % en `claude-haiku-4-5`. Los diagnósticos son distintos y sólo uno es de
-capacidad: el primero **no ancla lo que afirma** (29 segmentos factuales con `anchors: []`, con 77 de
-80 salidas aceptadas); el segundo **acorta el `fragmentId`** y produce 136 anclas inexistentes.
-**El identificador de ~100 caracteres es defecto nuestro**, y acortarlo es la palanca que más rinde.
-Informe completo en `docs/model/bench-01.md`. Para **coronar formalmente** siguen faltando la revisión
-humana de los 200 casos (D-41), la auditoría en muestra ciega de §6.2, y **W5** —que es lo que
-`assertPackageMayCrownWinner()` espera—.
+Tres cosas de esa tabla no conviene perder, porque explican decisiones que en el código parecen
+arbitrarias:
 
-**OpenAI se midió y no corona (D-76).** El propietario autorizó una **medición exploratoria
-declarada**: `gpt-5.6-luna` sacó **5 de 6 gates a MXN 1.44**, el mejor de los tres. No puede coronar
-porque su identidad no está fijada, y la pinza está **comprobada**: los modelos vigentes de OpenAI no
-publican snapshot fechado ni la documentación declara que un id sin fecha lo sea, y los ids que **sí**
-están fijados por fecha están **deprecados con apagado el 2026-12-11**. Se comprobó además que la API
-**no devuelve un snapshot resuelto** en el campo `model`. `UnpinnedIdentityWaiver` permite medirlo y
-**tres puertas independientes** impiden que corone: conjunto `pilot`, refresco `test_fixture`, y una
-corrida material que **rechaza toda renuncia**. `T-H4-11`/BENCH-02 sigue bloqueada por esto, no por
-credenciales.
+- **Lo que falla en BENCH-01 no es la seguridad, es la disciplina de formato.** Cero fugas y
+  recuperación degradada limpia en los tres candidatos y en los 600 casos; el gate de anclas (≥95 %)
+  da 84.2 % y 15.4 %. **El identificador de ~100 caracteres es defecto nuestro**, y de ahí sale D-77.
+  El informe completo, con los dos diagnósticos separados, está en `docs/model/bench-01.md`.
+- **OpenAI se midió y no puede coronar (D-76).** `gpt-5.6-luna` sacó 5 de 6 gates, el mejor de los
+  tres, pero su identidad no está fijada y **tres puertas independientes** lo impiden. `T-H4-11` está
+  bloqueada por eso, **no por credenciales**.
+- **W5 es lo que `assertPackageMayCrownWinner()` espera.** Mientras no exista, coronar es imposible
+  por construcción, no por olvido.
 
-**F8/H7 cerrada, 7 de 7**, con `ci:e2e:live-session` en verde; falta el acta firmada.
+### Qué monta la vista de Clase, y qué sigue sin montar
 
-**F10/H8 con 11 de 14, y no queda nada construible.** Las tres que faltan son `T-H8-11` (calibración
-congelada), `T-H8-12` (BENCH-03, umbrales preinscritos) y `T-H8-14` (corrida humana). La voz
-—`T-H8-01/02`— está construida: STT, TTS y un **único** lexicón de verbalización que sirve a las dos
-direcciones, con reconstrucción exacta de fórmulas comprobada por propiedad (D-91).
+**Un recuento de tareas no dice qué hay en pantalla.** Hasta el 2026-08-30, F10 figuraba como «11 de
+14, no queda nada construible» mientras `visual-interaction` y `speech-gateway` no los importaba
+**ningún** módulo bajo `apps/`: eran bibliotecas con pruebas y sin consumidor. El recuento contaba
+política. Antes de dar por hecho que una capacidad existe, mira quién la importa.
 
-**F9 completa: 5 de 5 tareas y el AC cubierto.** La política es de D-92 —modelo de cursos,
-aislamiento experimental, autoridad de evaluación por dominio, flujo observable y etiquetado— y la
-superficie llegó el 2026-08-30. **El W0 generalizado es otro recorrido, no `runW0()` con la guarda
-aflojada** (D-93): para una materia sin sistema formal la resolución por mayoría contra
-`authorized-calculus-v1` no está omitida, **no existe**, así que `GeneralizedScope` no tiene
-`formalSystemId` ni `GeneralizedSourceEvaluation` tiene `claims`, y la propuesta es de otro tipo.
-**Las cuatro vistas no calculan ninguno de los tres números que podrían inventar** (D-94): el
-progreso son recuentos y no porcentajes, la retención se declara `retention_not_evaluated` en vez de
-estimarse, y el consumo ausente se dice con palabras y no como `0,00`. **Progreso tiene dos formas**:
-la materia propia devuelve una rama sin campos de dominio, porque «0 dominados de 0» sería una
-afirmación que nadie midió. El AC es `ci:e2e:course-creation` (D-95), que comprueba el aislamiento
-**por consulta cruzada** —el fallo que importa no es la etiqueta que falta sino la consulta que
-devuelve de más— con sus controles positivos. Falta sólo la corrida verde en `main` para promover.
-**F11 ya no está bloqueada por nada nuestro**; sus tres tareas (`T-LSU-01/02/03`) son del
-propietario. F12–F16 no empezadas.
+Hoy la Clase monta **texto, editor Fitch, pizarrón y voz de salida** (D-98). La guarda sigue puesta:
+`assertCapabilitiesImplemented()` en `apps/web/src/clase/view-model.ts` **lanza**
+`CAPACIDAD_NO_IMPLEMENTADA` ante una capacidad encendida sin superficie, y ahora compara contra
+`IMPLEMENTED_CAPABILITIES`. `F7_SUPPORTED_CAPABILITIES` se queda como registro de con qué cerró F7:
+no se reescribe, o se pierde la progresión.
 
-**Corrida de referencia: `33311824991` sobre `95d1f2b`, los diez jobs en verde (2026-08-30), y con
-ella la pasada de promoción `HECHA` → `VERIFICADA`: 81 tareas verificadas, 12 fuera con motivo
-escrito (D-96).** **2223 pruebas unitarias en verde**, con depcruise sobre 593 módulos. Mutation testing sobre
-`logic-core` en verde. **Aviso sobre los conteos:** son de `--project unit`; sumar `unit` y `db` bajo
-la misma etiqueta ya produjo cifras incomparables en sesiones anteriores. La progresión medida es
-1851 (26-08) → 2024 (29-08) → 2089 (voz) → 2160 (política de F9) → 2223 (superficie de F9 y su AC).
-**Las 131 pruebas contra PostgreSQL 17 no se corrieron en local el 2026-08-30**: Docker Desktop
-volvió a caer por la trampa 6 incluso con `pnpm run dev:docker`. Las corre CI en el job `db`.
+Las cuatro que siguen apagadas, **cada una por su motivo**, y el mensaje de error los nombra:
+
+| Capacidad | Qué espera |
+|---|---|
+| `voiceInput` | decidir el canal de STT. El audio del alumno es dato del sujeto (UI-CORR-08) y el canal decide si sale de la máquina: **no es decisión de implementación** |
+| `visualBoardInterpretation` · `uiAnnotations` | que **CAL-MULTIMODAL** se congele; `visionThresholds()` y `maxAnnotationAgeMs()` lanzan |
+| `internalUiCapture` | elegir rasterizador (`T-H8-06` lo dejó «por verificar») |
+
+**Y el orden importa**: `ci:a11y:baseline` no podía verificar el pizarrón mientras no hubiera
+pizarrón, y ese silencio no era un verde. Al montarlo pasó de 4 criterios verificados a 9, y de paso
+destapó un falso positivo suyo (D-100).
+
+### La corrida de referencia, y qué cuentan los conteos
+
+`33311824991` sobre `95d1f2b`, **los diez jobs en verde** (2026-08-30), y con ella la pasada de
+promoción `HECHA` → `VERIFICADA`: 81 tareas verificadas, 12 fuera con motivo escrito (D-96).
+**2223 pruebas unitarias en verde**, depcruise sobre 593 módulos, mutation testing sobre `logic-core`
+en verde.
+
+**Aviso sobre los conteos: son de `--project unit`.** Sumar `unit` y `db` bajo la misma etiqueta ya
+produjo cifras incomparables en sesiones anteriores. La progresión medida es 1851 (26-08) → 2024
+(29-08) → 2089 (voz) → 2160 (política de F9) → 2223 (superficie de F9 y su AC). Las **131 pruebas
+contra PostgreSQL 17** no se corrieron en local el 2026-08-30 —Docker Desktop volvió a caer por la
+trampa 6 incluso con `dev:docker`—; las corre CI en el job `db`.
+
+### CI: la avería de diez sesiones, y sus dos causas
 
 **✅ CI VIVA desde el 2026-08-29, tras diez sesiones muerta.** Dos causas encadenadas, y conviene
 saber las dos porque ninguna era la que este archivo decía.
@@ -307,28 +451,31 @@ commit que **nunca se subió al remoto de contenido** (D-68 y D-69, el banco de 
 §8 del handoff advierte —primero el submódulo, después el monorepo—, cometido en la sesión 16 y
 oculto trece días. **Lección: una avería que impide correr esconde los fallos que vendrían detrás.**
 
-**El presupuesto es de USD 5 con tope: los pushes se agrupan.** El propietario pidió el 2026-08-29
-dejar de subir una vez por tarea y acumular. Los **commits** siguen siendo por tarea, con su id `T-*`
-y `PLAN_STATUS.md` en el mismo commit; lo que se agrupa es el `git push`. Es desviación declarada de
-§8, no olvido.
+### Cómo se sube
 
-**Las anclas se citan por mango corto desde D-77 (2026-08-26).** `F-` más ocho dígitos hexadecimales
-derivados por SHA-256 del `fragmentId` canónico: **10 caracteres contra 107.4**. El validador de
-anclaje acepta **los dos**, y la tabla se publica en `analysis/reports/fragment-handles.json`
-(`pnpm run content:mangos`, comprobada por `pnpm run ci:content:mangos`). El id canónico sigue siendo
-el de proveniencia; el mango es proyección de presentación. Esto **no** re-corre BENCH-01: cambia el
-prompt, y §8.5 exige recongelar y re-evaluar.
+**Remoto del monorepo:** <https://github.com/MEX-AmatsuMikaboshi/profe_ia.git> (`origin/main`). El
+detalle está en `docs/plan/HANDOFF.md` §8.
 
-**El estado tarea por tarea, con evidencia, está en `docs/plan/PLAN_STATUS.md`, y por dónde seguir en
-`docs/plan/HANDOFF.md`, cabecera «EMPIEZA AQUÍ».** Este apartado se queda rancio entre sesiones; esos
-dos no.
+**Un commit por tarea `T-*`**, con su id en el título y `PLAN_STATUS.md` actualizado en el mismo
+commit. **El `push`, en cambio, se agrupa**: el presupuesto de Actions es de USD 5 con tope, y el
+propietario pidió el 2026-08-29 dejar de subir una vez por tarea. Es desviación declarada de §8, no
+olvido — y va en este orden: **primero el submódulo de contenido, después el monorepo**, o los jobs
+con `checkout` recursivo fallan como falló la sesión 16.
 
-**Remoto del monorepo:** <https://github.com/MEX-AmatsuMikaboshi/profe_ia.git> (`origin/main`).
-**Al terminar una tarea `T-*`, se sube**: un commit por tarea, con `PLAN_STATUS.md` actualizado en el
-mismo commit, la batería de verificación en verde y `git push origin main`. No se acumulan tareas
-para subirlas juntas. El detalle está en `docs/plan/HANDOFF.md` §8.
+Dos pushes seguidos **cancelan la corrida del primero** (`concurrency` por `github.ref`, con
+`cancel-in-progress`), y una corrida cancelada no promueve nada a `VERIFICADA`. `ci:logic:mutation`
+además sólo arranca en `main` o en un PR etiquetado `mutation`, así que en una rama sin esa etiqueta
+no lo verás fallar.
+
+**Nunca se versiona `.env`.** Antes de cada commit, `git status --short`: si aparece un `.env`, para.
 
 `content/unidad-deduccion-natural/` es un repositorio independiente con historial propio, registrado
 como gitlink; falta crear su remoto y formalizarlo con `git submodule add` (D-2).
 
-**Nunca se versiona `.env`.** Antes de cada commit, `git status --short`: si aparece un `.env`, para.
+### Las anclas se citan por mango corto (D-77, 2026-08-26)
+
+`F-` más ocho dígitos hexadecimales derivados por SHA-256 del `fragmentId` canónico: **10 caracteres
+contra 107.4**. El validador de anclaje acepta **los dos**, y la tabla se publica en
+`analysis/reports/fragment-handles.json` (`content:mangos`, comprobada por `ci:content:mangos`). El id
+canónico sigue siendo el de proveniencia; el mango es proyección de presentación. Esto **no** re-corre
+BENCH-01: cambia el prompt, y §8.5 exige recongelar y re-evaluar.

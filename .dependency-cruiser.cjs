@@ -201,7 +201,16 @@ module.exports = {
     tsConfig: { fileName: 'tsconfig.base.json' },
     enhancedResolveOptions: {
       exportsFields: ['exports'],
-      conditionNames: ['import', 'require', 'node', 'default', 'types'],
+      // `production` entra con Excalidraw (T-H8-03). Su `exports` declara
+      // `./index.css` **sólo** bajo `development` y `production`, sin `default`,
+      // así que sin esta condición el import del layout no resuelve y salta
+      // `sin-dependencias-no-resueltas` — que es la regla haciendo su trabajo:
+      // avisa de que hay una arista real que el grafo no ve, y un grafo con
+      // agujeros deja reglas vigilando el vacío (D-25, D-82).
+      //
+      // No cambia nada más: para el export principal, `production` apunta al
+      // mismo `dist/prod/index.js` que ya elegía `default`.
+      conditionNames: ['import', 'require', 'node', 'production', 'default', 'types'],
       // `.tsx`/`.jsx` entran con la vista de Clase (T-H6-13). Sin ellos, sus
       // importaciones quedan «no resueltas» y las reglas de `apps/web` no ven
       // el grafo que deben vigilar.

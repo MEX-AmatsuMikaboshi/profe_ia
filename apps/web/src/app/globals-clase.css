@@ -6,12 +6,159 @@
  * tipografía y los espaciados salen todos de `tokens.generated.css`.
  */
 .clase-shell {
-  max-width: 62rem;
+  max-width: 84rem;
   margin: 0 auto;
   padding: var(--space-4, 24px) var(--space-3, 16px) var(--space-6, 48px);
   display: flex;
   flex-direction: column;
   gap: var(--space-3, 16px);
+}
+
+/* UIUX §3: el material manda. La columna ancha lleva actividad, pizarrón,
+   derivación y veredicto; la estrecha acompaña con rúbrica e interlocutor.
+   `minmax(0, …)` en la ancha porque el lienzo del pizarrón no tiene tamaño
+   intrínseco y sin eso desborda la rejilla en vez de encogerse. */
+.clase-cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3, 16px);
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .clase-cuerpo {
+    grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+  }
+
+  /* El acompañamiento sigue visible al desplazarse por una derivación larga:
+     un interlocutor que se va con el scroll deja de serlo. */
+  .clase-lateral {
+    position: sticky;
+    top: var(--space-3, 16px);
+  }
+}
+
+.clase-principal,
+.clase-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 16px);
+  min-width: 0;
+}
+
+/* ── Pizarrón (T-H8-03) ─────────────────────────────────────────────────── */
+
+.clase-pizarron-encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2, 12px);
+}
+
+.clase-pizarron-nota {
+  color: var(--color-text-muted, #555);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Excalidraw se dimensiona con el contenedor y no tiene alto propio: sin una
+   altura declarada el lienzo colapsa a cero y el pizarrón «no aparece». */
+.clase-pizarron-lienzo {
+  height: min(60vh, 32rem);
+  min-height: 20rem;
+  border: 1px solid var(--color-divider, #d4d4d4);
+  border-radius: var(--radius-2, 8px);
+  overflow: hidden;
+}
+
+/* Alternativa sin arrastre (WCAG 2.5.7). Va antes del lienzo en el DOM para que
+   quien navega por teclado la encuentre sin atravesar el canvas. */
+.clase-pizarron-sin-arrastre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1, 8px);
+  margin-block-end: var(--space-2, 12px);
+}
+
+.clase-pizarron-sin-arrastre > p {
+  flex-basis: 100%;
+}
+
+/* Mínimo de objetivo de SC 2.5.8 en nuestros propios controles: si se dejaran
+   al alto natural del texto, entrarían por debajo de 24 px. */
+.clase-pizarron-sin-arrastre :is(button, input) {
+  min-height: 24px;
+}
+
+/* El espejo accesible de la escena: disponible para lector de pantalla, fuera
+   de la vista. No se usa `display: none` ni `visibility: hidden` — las dos lo
+   quitarían también del árbol de accesibilidad, que es justo lo contrario de lo
+   que hace falta. */
+.clase-pizarron-escena {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Accesibilidad de la barra de Excalidraw (T-H8-10) ──────────────────────
+   Sus botones miden 13×13 px, por debajo del mínimo de 24×24 de WCAG 2.2
+   SC 2.5.8, y `ci:a11y:baseline` los encontró en cuanto el pizarrón se montó.
+   Se corrige aquí y no en el paquete: `packages/ui-tokens/vendor/` está hasheado
+   y esto no es un token, es la caja de un control de una librería de terceros.
+   Se agranda el área activa sin tocar el icono, que es lo que SC 2.5.8 pide. */
+.clase-pizarron-lienzo :is(button, .ToolIcon, .ToolIcon__icon, label.ToolIcon) {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+/* `prefers-reduced-motion`: las transiciones de la barra y los diálogos siguen
+   animando, y la línea base contó ocho. La norma no pide congelar la interfaz,
+   pide no moverla cuando quien la usa ha dicho que no. */
+@media (prefers-reduced-motion: reduce) {
+  .clase-pizarron :is(*, *::before, *::after) {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Foco visible dentro del pizarrón. Excalidraw retira el contorno en algunos de
+   sus controles, y un foco invisible deja la navegación por teclado sin punto
+   de referencia: se puede recorrer, pero no se sabe dónde se está. */
+.clase-pizarron :is(button, [tabindex], input, select):focus-visible {
+  outline: 2px solid var(--color-accent, #d93900);
+  outline-offset: 2px;
+}
+
+/* ── Voz del profesor (T-H8-02) ─────────────────────────────────────────── */
+
+.clase-voz {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 8px);
+  margin-block: var(--space-2, 12px);
+  padding-block: var(--space-2, 12px);
+  border-block: 1px solid var(--color-divider, #d4d4d4);
+}
+
+.clase-voz-nota {
+  color: var(--color-text-muted, #555);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* El texto degradado es la explicación entera: se lee, no se ojea. */
+.clase-voz-texto {
+  white-space: pre-wrap;
 }
 
 .clase-shell > header {

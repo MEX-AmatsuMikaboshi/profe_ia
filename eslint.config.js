@@ -50,6 +50,11 @@ export default tseslint.config(
       globals: {
         document: 'readonly',
         getComputedStyle: 'readonly',
+        // `CSS.escape`, para construir un selector con un `id` que puede traer
+        // cualquier cosa dentro (T-H8-10). Concatenar el id a pelo rompería el
+        // selector con un id que llevara comillas o dos puntos — y Excalidraw
+        // los genera aleatorios.
+        CSS: 'readonly',
       },
     },
   },

@@ -171,9 +171,43 @@ export async function midetObjetivos(page) {
   return page.evaluate((minimo) => {
     const sel = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
     const pequenos = [];
+
+    /**
+     * La caja que recibe el puntero, que no siempre es la del elemento.
+     *
+     * SC 2.5.8 mide el **objetivo**: la superficie que hay que acertar con el
+     * dedo. Un `<input type="radio">` dentro de un `<label>` no es ese objetivo
+     * —el label lo es, y activarlo activa el input—, así que medir el input
+     * reporta 13×13 donde el usuario tiene 36×36.
+     *
+     * Se descubrió al montar el pizarrón (T-H8-03): Excalidraw construye así
+     * toda su barra, y el criterio señaló trece objetivos pequeños que en
+     * pantalla no lo son. Un falso positivo aquí es tan malo como un falso
+     * negativo: enseña a ignorar el criterio.
+     *
+     * Sólo se amplía a `label`, y sólo cuando **contiene** al control o lo
+     * referencia con `for`: son los dos casos en que el navegador reenvía el
+     * clic. Cualquier otro envoltorio no recibe el puntero y no cuenta.
+     */
+    const objetivoDe = (el) => {
+      const propia = el.getBoundingClientRect();
+      const esControl = el.tagName === 'INPUT' || el.tagName === 'SELECT';
+      if (!esControl) return propia;
+      const envolvente = el.closest('label');
+      const porFor =
+        el.id === '' ? null : document.querySelector(`label[for="${CSS.escape(el.id)}"]`);
+      const label = envolvente ?? porFor;
+      if (label === null) return propia;
+      const caja = label.getBoundingClientRect();
+      // El label tiene que ser al menos tan grande: si fuera menor, el objetivo
+      // efectivo sigue siendo el control y ampliarlo sería aprobar por vacío.
+      return caja.width >= propia.width && caja.height >= propia.height ? caja : propia;
+    };
+
     for (const el of document.querySelectorAll(sel)) {
-      const caja = el.getBoundingClientRect();
-      if (caja.width === 0 && caja.height === 0) continue; // no renderizado
+      const propia = el.getBoundingClientRect();
+      if (propia.width === 0 && propia.height === 0) continue; // no renderizado
+      const caja = objetivoDe(el);
       if (caja.width < minimo || caja.height < minimo) {
         pequenos.push({
           etiqueta: el.tagName.toLowerCase(),
@@ -410,20 +444,84 @@ async function main() {
         `renderizan como texto plano, sin MathML ni equivalente accesible`,
     );
 
-    // Los tres que dependen de superficies que hoy no existen. El motivo es la
-    // ausencia, no un fallo del instrumento, y se dice con esas palabras.
-    claims.push({
-      criterionId: 'CRIT-ARRASTRE',
-      status: 'no_verificado',
-      checks: [],
-      note: 'el pizarrón no está montado en la vista: no hay gesto de arrastre que auditar (T-H8-03)',
-    });
-    claims.push({
-      criterionId: 'CRIT-ESCENA-DOM',
-      status: 'no_verificado',
-      checks: [],
-      note: 'el pizarrón no está montado en la vista; su adaptador de estado existe pero no se renderiza (T-H8-03)',
-    });
+    // Estos dos dependen del pizarrón, y **se preguntan por él** en vez de
+    // declararse. Estuvieron fijos en `no_verificado` mientras la superficie no
+    // existía; al montarla (T-H8-03) el texto pasó a ser falso —decía «no está
+    // montado» con el pizarrón en pantalla— y un motivo que miente es peor que
+    // un criterio sin verificar, porque nadie vuelve a mirarlo.
+    if (!montada('pizarron')) {
+      claims.push({
+        criterionId: 'CRIT-ARRASTRE',
+        status: 'no_verificado',
+        checks: [],
+        note: 'el pizarrón no está montado en la vista: no hay gesto de arrastre que auditar (T-H8-03)',
+      });
+      claims.push({
+        criterionId: 'CRIT-ESCENA-DOM',
+        status: 'no_verificado',
+        checks: [],
+        note: 'el pizarrón no está montado en la vista; su adaptador de estado existe pero no se renderiza (T-H8-03)',
+      });
+    } else {
+      // WCAG 2.5.7. Excalidraw dibuja arrastrando. Para el trazo a mano alzada
+      // el arrastre **es esencial** y el criterio lo exceptúa; para colocar una
+      // forma, una flecha o un texto no lo es, así que hace falta alternativa de
+      // un solo puntero. Se comprueba que existe y que es alcanzable, no que
+      // esté escrita en alguna parte.
+      const sinArrastre = await page.evaluate(() => {
+        const zona = document.querySelector('[data-testid="pizarron-sin-arrastre"]');
+        if (zona === null) return null;
+        const botones = [...zona.querySelectorAll('button')];
+        return {
+          total: botones.length,
+          conNombre: botones.filter((b) => (b.textContent ?? '').trim() !== '').length,
+          conAyuda: zona.querySelector('[id="pizarron-sin-arrastre-ayuda"]') !== null,
+        };
+      });
+      push(
+        'CRIT-ARRASTRE',
+        sinArrastre !== null &&
+          sinArrastre.total >= 3 &&
+          sinArrastre.total === sinArrastre.conNombre &&
+          sinArrastre.conAyuda,
+        ['ci:a11y:baseline#alternativa-sin-arrastre'],
+        sinArrastre === null
+          ? 'el pizarrón está montado y sólo se puede usar arrastrando: no hay alternativa de un ' +
+            'solo puntero para colocar elementos (WCAG 2.5.7)'
+          : `la alternativa sin arrastre está incompleta: ${String(sinArrastre.total)} controles, ` +
+            `${String(sinArrastre.conNombre)} con nombre accesible, ayuda ${sinArrastre.conAyuda ? 'sí' : 'no'}`,
+      );
+      // El lienzo es `<canvas>`: sus elementos no están en el DOM. Lo que se
+      // audita es el **equivalente accesible** que la aplicación pone al lado, y
+      // que tiene que reflejar la misma escena: una lista vacía con elementos
+      // dibujados sería un equivalente que miente.
+      const escena = await page.evaluate(() => {
+        const lista = document.querySelector('[data-testid="pizarron-escena"]');
+        if (lista === null) return null;
+        return {
+          declarados: Number(lista.getAttribute('data-elementos') ?? '-1'),
+          entradas: lista.querySelectorAll('li').length,
+          etiquetada: (lista.getAttribute('aria-label') ?? '').trim() !== '',
+          enVivo: lista.getAttribute('aria-live') === 'polite',
+        };
+      });
+      const coherente =
+        escena !== null &&
+        escena.etiquetada &&
+        escena.enVivo &&
+        // Con la escena vacía la lista lleva una entrada que lo dice.
+        escena.entradas === Math.max(escena.declarados, 1);
+      push(
+        'CRIT-ESCENA-DOM',
+        coherente,
+        ['ci:a11y:baseline#escena-equivalente'],
+        escena === null
+          ? 'el pizarrón está montado pero no expone equivalente accesible de la escena: un ' +
+            '<canvas> no tiene contenido que un lector de pantalla pueda recorrer'
+          : `el equivalente accesible no corresponde a la escena: declara ${String(escena.declarados)} ` +
+            `elementos y lista ${String(escena.entradas)} entradas`,
+      );
+    }
     claims.push({
       criterionId: 'CRIT-OVERLAY',
       status: 'no_verificado',

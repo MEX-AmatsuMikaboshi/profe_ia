@@ -102,4 +102,73 @@ export const CLASE_COPY = {
   rubric: { title: 'Rúbrica' },
   editor: { title: 'Derivación', export: 'Exportar', undo: 'Deshacer', redo: 'Rehacer' },
   transcript: { title: 'Profesor IA' },
+
+  /** UIUX §6.5: «pizarrón cuando `whiteboard` esté habilitado». */
+  board: {
+    title: 'Pizarrón',
+    loading: 'Cargando el pizarrón…',
+    /**
+     * P-I §8.9 y DEC-VISION-001: el pizarrón es superficie de trabajo, no de
+     * dictamen. Decirlo evita que el alumno lea un trazo aprobado como una
+     * derivación aceptada.
+     */
+    notice:
+      'Lo que dibujes aquí acompaña tu trabajo: no lo califica el verificador. El veredicto sale ' +
+      'de la derivación que envíes.',
+    /** El trazo que el contrato no sabe registrar se dice; no se traga. */
+    unsupported:
+      'Esa herramienta no se está registrando como parte de tu trabajo, así que no quedará en la ' +
+      'evidencia de la sesión:',
+    /**
+     * WCAG 1.1.1 y §10.5: el lienzo es un `<canvas>` y no tiene contenido que un
+     * lector de pantalla pueda recorrer. Esta lista es su equivalente, y se
+     * puede escribir porque `BoardScene` ya guarda qué hay y de quién.
+     */
+    /**
+     * WCAG 2.5.7: alternativa sin arrastre. El trazo a mano alzada queda fuera
+     * porque ahí el arrastre **es** esencial y el criterio lo exceptúa; colocar
+     * una forma o un texto no lo es, y por eso tiene botón.
+     */
+    noDragHelp:
+      'Puedes colocar elementos sin arrastrar: se añaden en el centro de lo que estás viendo y ' +
+      'luego los mueves si quieres.',
+    insert: {
+      rectangle: 'Añadir un rectángulo',
+      ellipse: 'Añadir una elipse',
+      arrow: 'Añadir una flecha',
+      text: 'Añadir el texto',
+      textLabel: '¿Qué texto quieres añadir?',
+    },
+    sceneLabel: 'Lo que hay en el pizarrón',
+    sceneEmpty: 'El pizarrón está vacío.',
+    actorStudent: 'ti',
+    actorProfessor: 'el Profesor IA',
+    /** Los nombres de `BOARD_ELEMENT_KINDS`, en la lengua del alumno. */
+    kinds: {
+      text: 'Un texto',
+      freedraw: 'Un trazo a mano alzada',
+      arrow: 'Una flecha',
+      shape: 'Una forma',
+      image: 'Una imagen',
+    },
+  },
+
+  /** UIUX §6.5: «voz cuando `voiceInput` / `voiceOutput` estén habilitados». */
+  voice: {
+    title: 'Voz del Profesor IA',
+    speak: 'Escuchar la explicación',
+    stop: 'Detener',
+    /** P-I §8.10: la voz va al final; lo retenido por el filtro no suena. */
+    notice: 'Se lee en voz alta la misma explicación que ves escrita.',
+    unavailable: 'Este navegador no ofrece síntesis de voz. La explicación sigue disponible por escrito.',
+    /**
+     * `degradeToText()`: una caída del TTS es presentación, no decisión. El
+     * texto sale íntegro, y se dice que no cambió nada.
+     */
+    degraded:
+      'No se pudo reproducir el audio. La explicación es la misma y no ha cambiado: la tienes ' +
+      'completa por escrito.',
+    /** Un turno íntegramente retenido no produce locución, y se distingue. */
+    nothingToSay: 'No hay nada que reproducir de este turno.',
+  },
 } as const;

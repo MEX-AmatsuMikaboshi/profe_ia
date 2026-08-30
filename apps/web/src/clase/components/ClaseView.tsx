@@ -33,6 +33,11 @@ export interface ClaseViewProps {
    * con el servidor y esta vista no debe saber cómo.
    */
   readonly professor?: ReactNode;
+  /**
+   * El pizarrón (T-H8-03). Nodo, como el editor: monta Excalidraw y toca
+   * `window`, así que esta capa no puede conocerlo sin dejar de ser pura.
+   */
+  readonly board?: ReactNode;
 }
 
 function SaveIndicator({ state }: { readonly state: SaveState }) {
@@ -165,6 +170,7 @@ export function ClaseView({
   children,
   syntheticPackage,
   professor,
+  board,
 }: ClaseViewProps) {
   return (
     <main
@@ -186,49 +192,63 @@ export function ClaseView({
 
       {viewModel.probeNotice === null ? null : <ProbeNotice />}
 
-      {viewModel.activity === null ? (
-        <p data-testid="sin-actividad">No hay actividad abierta.</p>
-      ) : (
-        <section className="card" data-testid="actividad" aria-label="Actividad">
-          <p>{viewModel.activity.statement}</p>
-        </section>
-      )}
+      {/* UIUX §3: el material es la superficie protagonista y ocupa la columna
+          ancha; el Profesor IA acompaña al lado, visible y sin volverse un chat
+          a pantalla completa. En una pantalla estrecha las dos se apilan, y el
+          orden del DOM ya es el de lectura: material, después interlocutor. */}
+      <div className="clase-cuerpo">
+        <div className="clase-principal">
+          {viewModel.activity === null ? (
+            <p data-testid="sin-actividad">No hay actividad abierta.</p>
+          ) : (
+            <section className="card" data-testid="actividad" aria-label="Actividad">
+              <p>{viewModel.activity.statement}</p>
+            </section>
+          )}
 
-      {viewModel.rubric === null ? null : (
-        <section className="card" data-testid="rubrica" aria-label={CLASE_COPY.rubric.title}>
-          <h2 className="card-title">{CLASE_COPY.rubric.title}</h2>
-          <ul>
-            {viewModel.rubric.criteria.map((criterion) => (
-              <li key={criterion.criterionId}>{criterion.text}</li>
-            ))}
-          </ul>
-        </section>
-      )}
+          {viewModel.whiteboardVisible ? board : null}
 
-      {/* El Profesor IA es interlocutor visible, no la superficie dominante. */}
-      <section className="card" data-testid="conversacion" aria-label={CLASE_COPY.transcript.title}>
-        <h2 className="card-title">{CLASE_COPY.transcript.title}</h2>
-        <ol>
-          {viewModel.transcript.map((entry) => (
-            <li
-              key={entry.entryId}
-              data-speaker={entry.speaker}
-              data-provenance={entry.provenance.kind}
-            >
-              {entry.text}
-            </li>
-          ))}
-        </ol>
-      </section>
+          {viewModel.fitchEditorVisible ? children : null}
 
-      {/* UIUX §3: interlocutor visible, junto a la conversación y antes del
-          editor, sin volverse la superficie protagonista. */}
-      {professor ?? null}
+          <LocalReviewPanel review={localReview} />
+          <VerdictPanel submission={submission} />
+        </div>
 
-      {viewModel.fitchEditorVisible ? children : null}
+        <aside className="clase-lateral" aria-label="Acompañamiento">
+          {viewModel.rubric === null ? null : (
+            <section className="card" data-testid="rubrica" aria-label={CLASE_COPY.rubric.title}>
+              <h2 className="card-title">{CLASE_COPY.rubric.title}</h2>
+              <ul>
+                {viewModel.rubric.criteria.map((criterion) => (
+                  <li key={criterion.criterionId}>{criterion.text}</li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-      <LocalReviewPanel review={localReview} />
-      <VerdictPanel submission={submission} />
+          {/* El Profesor IA es interlocutor visible, no la superficie dominante. */}
+          <section
+            className="card"
+            data-testid="conversacion"
+            aria-label={CLASE_COPY.transcript.title}
+          >
+            <h2 className="card-title">{CLASE_COPY.transcript.title}</h2>
+            <ol>
+              {viewModel.transcript.map((entry) => (
+                <li
+                  key={entry.entryId}
+                  data-speaker={entry.speaker}
+                  data-provenance={entry.provenance.kind}
+                >
+                  {entry.text}
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          {professor ?? null}
+        </aside>
+      </div>
 
       <section className="card" aria-label="Controles de sesión">
         <HintControls hints={viewModel.hints} />

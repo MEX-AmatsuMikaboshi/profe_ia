@@ -34,7 +34,7 @@ mal** — y se corrige el inferior, nunca el superior. Ya ha pasado tres veces; 
 | Archivo | Qué es |
 |---|---|
 | [`docs/plan/HANDOFF.md`](docs/plan/HANDOFF.md) | **Empieza aquí.** Punto de continuación entre sesiones |
-| [`docs/plan/PLAN_STATUS.md`](docs/plan/PLAN_STATUS.md) | Fuente de verdad de avance, tarea por tarea, con evidencia y las decisiones de ingeniería D-1…D-82 |
+| [`docs/plan/PLAN_STATUS.md`](docs/plan/PLAN_STATUS.md) | Fuente de verdad de avance, tarea por tarea, con evidencia y las decisiones de ingeniería D-1…D-100 |
 | [`CLAUDE.md`](CLAUDE.md) | Guía operativa: comandos, trampas del entorno, disciplinas |
 | [`docs/gates/`](docs/gates) | Actas de gate. Un gate sin acta firmada no está cerrado |
 | [`docs/blocked-by-spec.md`](docs/blocked-by-spec.md) | Decisiones normativas faltantes. Hoy vacío, a propósito |
@@ -50,24 +50,39 @@ son del propietario.
 
 | Fase | Gate | Estado |
 |---|---|---|
-| F0–F2 | H0 · H1 · H2 | Tareas completas; falta ejecución observada en `main` |
+| F0–F2 | H0 · H1 · H2 | Tareas completas, con corrida verde observada en `main` |
 | F3 | H3 · Entorno local | 5 de 5; criterio técnico cubierto. Falta Infisical y firmas |
 | F4 | H4 · Pasarela de modelo | 11 de 12. **BENCH-01 corrió**: ganador provisional `claude-sonnet-5`, pero **ningún candidato aprueba los seis gates** |
 | F5 | H4.5 · Investigación de fuentes | 8 de 8; corpus autorizado |
 | F6 | H5 · Ingesta y autoría | 17 de 17 mecanismos; banco de **656 candidatos**. Falta W5 (firma) |
 | F7 | H6 · Sesión determinista sin LLM | **14 de 14 verificadas**, AC del gate cubierto |
-| F8 | H7 · Profesor IA de sesión | 2 de 7. Las piezas existen; **falta el orquestador que las una** |
-| F9–F16 | — | No empezadas |
+| F8 | H7 · Profesor IA de sesión | **7 de 7**, `ci:e2e:live-session` en verde. Falta el acta firmada |
+| F9 | Cursos personalizados | 5 de 5, AC cubierto |
+| F10 | H8 · Prueba funcional multimodal | 11 de 14. **Pizarrón y voz de salida montados** el 2026-08-30; línea base de accesibilidad en 9 de 11 criterios |
+| F11–F16 | — | No empezadas |
 
-**1851 pruebas unitarias** y **131 contra PostgreSQL 17 real**, más mutation testing sobre el núcleo
+**2223 pruebas unitarias** y **131 contra PostgreSQL 17 real**, más mutation testing sobre el núcleo
 lógico. El detalle vive en [`PLAN_STATUS.md`](docs/plan/PLAN_STATUS.md); este resumen se queda rancio
 entre sesiones y aquel no.
+
+> **Lo que la app enseña hoy, y lo que no.** La vista de Clase opera **texto, editor Fitch, pizarrón
+> y voz de salida**. Siguen sin montar cuatro capacidades, y **cada una espera algo distinto**:
+> `voiceInput` espera decidir el canal de STT —el audio del alumno es dato del sujeto y el canal
+> decide si sale de la máquina—; `visualBoardInterpretation` y `uiAnnotations` esperan que
+> CAL-MULTIMODAL se congele; `internalUiCapture`, elegir rasterizador. Encender cualquiera de ellas
+> **lanza a propósito** (`assertCapabilitiesImplemented`, `CAPACIDAD_NO_IMPLEMENTADA`): una capacidad
+> declarada activa sin superficie contaminaría la matriz de autonomía de la corrida.
+>
+> Hasta el 2026-08-30 el pizarrón y la voz **tampoco estaban**, y la fase figuraba igualmente como
+> «11 de 14, nada construible»: el recuento contaba política y no pantalla. La comprobación que lo
+> destapó cabe en una línea — **quién importa el paquete** — y vale para cualquier capacidad que este
+> README declare.
 
 ---
 
 ## Arquitectura
 
-Monolito modular con procesos aislados: 23 workspaces bajo `apps/`, `packages/` y `tools/`. Las
+Monolito modular con procesos aislados: 25 workspaces bajo `apps/`, `packages/` y `tools/`. Las
 listas de `apps/` y `packages/` son **obligatorias** (P-II §3.1): no se crean paquetes nuevos.
 
 ```mermaid
@@ -102,7 +117,7 @@ flowchart LR
 
 ### Los invariantes son ejecutables, no prosa
 
-`.dependency-cruiser.cjs` tiene diez reglas `forbidden`. Cada una codifica un invariante I-1…I-9, y
+`.dependency-cruiser.cjs` tiene trece reglas `forbidden`. Cada una codifica un invariante I-1…I-9, y
 **su violación es una implementación inválida**, no un aviso de estilo:
 
 - **I-1** — sólo `model-gateway` habla con proveedores de modelo.
@@ -136,8 +151,14 @@ Sin el submódulo de contenido, `ci:unit` y `ci:logic:golden` no pueden correr: 
 congelado y los 413 casos del conjunto dorado desde ahí.
 
 ```bash
-pnpm install && pnpm run ci:lint && pnpm run ci:typecheck && pnpm run ci:unit && pnpm run ci:build
+pnpm install
+foreach ($c in @('ci:lint','ci:typecheck','ci:unit','ci:build')) {
+  pnpm run $c; if ($LASTEXITCODE -ne 0) { throw "FALLÓ: $c" }
+}
 ```
+
+`&&` **no encadena** aquí: PowerShell 5.1 lo rechaza al parsear. Dentro de `package.json` sí funciona
+—esos los corre pnpm en su propio shell—, pero escrito en la consola no arranca ni el primer comando.
 
 Comprobación completa de que todo sigue en pie (~1 min sin Docker) y la tabla entera de comandos:
 [`CLAUDE.md` §2](CLAUDE.md).

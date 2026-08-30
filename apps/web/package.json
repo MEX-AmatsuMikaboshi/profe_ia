@@ -10,12 +10,15 @@
     "dev": "next dev"
   },
   "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.1",
     "@fontsource/archivo": "^5.3.0",
     "@profesor-ia/contracts": "workspace:*",
     "@profesor-ia/domain-engine": "workspace:*",
     "@profesor-ia/logic-core": "workspace:*",
     "@profesor-ia/session-engine": "workspace:*",
+    "@profesor-ia/speech-gateway": "workspace:*",
     "@profesor-ia/ui-tokens": "workspace:*",
+    "@profesor-ia/visual-interaction": "workspace:*",
     "next": "^16.3.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"

@@ -12,6 +12,11 @@ import './tokens.generated.css';
 // de los tokens y antes de la disposición: corrige roles del sistema de diseño,
 // no la colocación de la vista.
 import './a11y-contrast.css';
+// Estilos propios de Excalidraw (T-H8-03). Van **antes** de la disposición de
+// Clase para que las reglas de `.clase-pizarron-*` puedan colocarlo sin pelear
+// por especificidad, y se importan en la raíz porque el componente entra por
+// `next/dynamic` y su CSS no viajaría con el chunk.
+import '@excalidraw/excalidraw/index.css';
 // Disposición de la vista de Clase. No redefine tokens: sólo coloca.
 import './globals-clase.css';
 // Disposición de las cuatro vistas de materia (T-CC-05). Tampoco redefine tokens.

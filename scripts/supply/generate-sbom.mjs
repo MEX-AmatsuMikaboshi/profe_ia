@@ -54,6 +54,25 @@ const REGISTERED_LICENSE_EXCEPTIONS = new Map([
         'misma obligación sin registrar.',
     },
   ],
+  [
+    'khroma',
+    {
+      license: 'Unknown',
+      task: 'T-H8-03',
+      reason:
+        'La licencia **es MIT** y está en el repositorio del paquete: ' +
+        'node_modules/.pnpm/khroma@2.1.0/node_modules/khroma/license abre con «The MIT License ' +
+        '(MIT), Copyright (c) 2019-present Fabio Spampinato, Andrew Maney». Lo que falta es el ' +
+        'campo `license` en su `package.json`, así que `pnpm licenses list` la resuelve como ' +
+        '`Unknown`: es un hueco de metadatos, no una licencia restrictiva. Se registra como ' +
+        '`Unknown` y no como `MIT` a propósito — la política compara contra lo que el árbol ' +
+        'declara, y escribir `MIT` aquí haría que la excepción dejara de dispararse el día que ' +
+        'el paquete declarase otra cosa. Entra como transitiva de `@excalidraw/excalidraw` ' +
+        '(vía mermaid) al montar el pizarrón de T-H8-03. **Cómo re-verificarlo**: leer ese ' +
+        'archivo `license`; si algún día el paquete declara su licencia en `package.json`, esta ' +
+        'excepción sobra y el check lo dirá solo.',
+    },
+  ],
 ]);
 
 function pnpmJson(args) {

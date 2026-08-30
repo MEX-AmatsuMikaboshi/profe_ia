@@ -1,6 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
+
+import type { BoardOperation } from '@profesor-ia/visual-interaction';
 
 import {
   DRY_SESSION_BLOCK_ID,
@@ -28,6 +30,7 @@ import { createHttpTurnPort } from '../turn';
 import { buildClaseViewModel, type SaveState } from '../view-model';
 import { ClaseView } from './ClaseView';
 import { FitchEditor } from './FitchEditor';
+import { Pizarron } from './Pizarron';
 import { ProfesorPanel } from './ProfesorPanel';
 
 /**
@@ -53,6 +56,21 @@ export function ClaseSession() {
   const [cursorLineId, setCursorLineId] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>(input.saveState);
   const [submission, setSubmission] = useState<SubmissionState>({ kind: 'inactivo' });
+  /**
+   * Las operaciones del pizarrón, en orden.
+   *
+   * Se acumulan aquí y **todavía no se emiten**: los emisores de las cinco
+   * familias de `T-H8-08` piden el canal de evidencia, y la sesión seca no
+   * escribe ledger. Guardarlas en vez de descartarlas conserva el orden
+   * —`replayBoard()` reconstruye la escena desde esta lista, y no al revés—
+   * para cuando el canal exista.
+   *
+   * Va en `ref` y no en `state` porque nada de la vista depende de ellas
+   * todavía: un `state` forzaría un render por trazo para pintar lo mismo. La
+   * señal observable de que el pizarrón produce estado auditable es
+   * `data-revision` del propio pizarrón.
+   */
+  const boardOps = useRef<BoardOperation[]>([]);
 
   const review = useMemo(
     () =>
@@ -118,6 +136,19 @@ export function ClaseSession() {
       localReview={review}
       submission={submission}
       syntheticPackage
+      board={
+        // Sin actividad no se monta: `BoardElement` exige `activityId` y `kcId`,
+        // y el contrato dice que un elemento sin esa referencia «sólo es un
+        // dibujo». Inventar un identificador de relleno para poder pintar el
+        // lienzo metería en la evidencia trazos atados a una actividad que no
+        // existe, que es peor que no tener pizarrón.
+        input.activity === null ? null : (
+          <Pizarron
+            binding={{ activityId: input.activity.activityId, kcId: input.activity.kcId }}
+            onOperations={(operations) => boardOps.current.push(...operations)}
+          />
+        )
+      }
       professor={
         <ProfesorPanel
           port={createHttpTurnPort(browserFetch)}
