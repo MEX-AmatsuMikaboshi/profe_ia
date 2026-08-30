@@ -3,7 +3,101 @@
 > **¿Vienes de otra conversación?** Empieza por [`TRASPASO.md`](TRASPASO.md), que es la versión
 > corta y explica en llano los tres bloqueos que hay que entender antes de decidir nada.
 
-> ## EMPIEZA AQUÍ — F8 CERRADA, F10 EN 6 DE 14 (2026-08-29)
+> ## EMPIEZA AQUÍ — F10 EN 9 DE 14 (2026-08-29)
+>
+> **Lo que quedaba sin proveedor está hecho.** Tres tareas más de F10, y la línea base de
+> accesibilidad encontró defectos reales en la vista que ya dábamos por buena.
+>
+> ```bash
+> pnpm run ci:build && pnpm run ci:a11y:baseline   # la línea base. No gasta nada
+> pnpm run ci:a11y:catches                          # y que el instrumento detecta lo que dice
+> ```
+>
+> ### 1. Las tres tareas
+>
+> | Tarea | Qué dejó |
+> |---|---|
+> | `T-H8-10` | línea base de accesibilidad **ejecutada**: 7 de 11 criterios verificados (D-86) |
+> | `T-H8-06` | captura interna definida **por lo que excluye** (D-87) |
+> | `T-H8-09` | telemetría H8 con latencias separadas y sobre de recursos (D-88) |
+>
+> ### 2. El hallazgo: la vista de Clase tenía tres defectos de accesibilidad
+>
+> Ninguno lo podía ver una prueba sin navegador, porque dos son **geométricos** y jsdom no calcula
+> disposición: habría devuelto «sin problemas» para los dos.
+>
+> 1. **Trece objetivos por debajo de 24×24 px.** Los botones sin clase `.btn` —la paleta de
+>    notación, el historial del editor— salían a 21 px de alto. **Corregido**; axe lo confirmó por
+>    su cuenta con su regla `target-size`.
+> 2. **Las fórmulas se renderizaban como texto plano.** Quien mira la pantalla las lee; quien la
+>    escucha recibe una lista de caracteres. **Corregido con MathML.**
+> 3. **Contraste insuficiente** en `.tag`, `.card-kicker` y los botones fantasma. **NO corregido, a
+>    propósito**: no está entre los once criterios y el lenguaje visual está diferido a producto
+>    (§10.5). Cambiar la paleta desde aquí decidiría por quien tiene esa autoridad.
+>
+> **Por qué MathML y no un `aria-label` en castellano.** Habría sido una segunda verbalización
+> compitiendo con el lexicón de `T-H8-02`, que la norma exige «validado por reconstrucción exacta de
+> fórmulas» — dos formas de decir la misma fórmula divergiendo desde el primer día. MathML no
+> verbaliza: entrega estructura. Lo sostiene la vuelta completa
+> `parse(mathText(toMathNode(f))) === f`, sin la cual un renderizador que se comiera un paréntesis
+> produciría markup impecable que **dice otra fórmula**, y en pantalla no se notaría.
+>
+> ### 3. Lo que el control positivo enseñó del instrumento ajeno
+>
+> La primera siembra para el tamaño de objetivo —un botón suelto de 20×20— **no la detectó axe**, y
+> no era fallo suyo: su regla implementa la excepción de espaciado de SC 2.5.8, y un objetivo
+> aislado con hueco de sobra conforma. La siembra buena es **deshacer el arreglo**, porque reproduce
+> el defecto real —ocho botones pegados— y vigila que nadie borre esa regla de estilo. **7 de 7.**
+>
+> ### 4. La credencial de OpenAI sí sirve para audio
+>
+> Comprobado contra la API: `gpt-4o-transcribe`, `whisper-1`, `gpt-4o-mini-tts`, `tts-1-hd`,
+> `gpt-realtime`, y varios **con snapshot fechado** (`gpt-4o-mini-transcribe-2025-12-15`,
+> `gpt-audio-2025-08-28`) — la forma que D-76 echaba en falta.
+>
+> **Dos salvedades.** El listado no prueba que la facturación de audio esté habilitada: eso lo dice
+> una llamada real, de fracción de céntimo, que no se hizo. Y D-76 no exigía que el id *pareciera*
+> fechado sino que **la documentación lo declarara**, lo cual se comprueba con
+> `node scripts/model/refresh-sources.mjs`, no con un listado. Es hallazgo, no decisión.
+>
+> De paso se hizo la comprobación de §9.2 que llevaba pendiente: **las cuatro credenciales tienen
+> huellas distintas**, así que la separación `SESION`/`AUTORIA` de P-II §8.2 se sostiene.
+>
+> ### 5. Lo que separa a F10 de estar completa
+>
+> | Falta | De quién |
+> |---|---|
+> | `T-H8-01/02` STT y TTS | **credenciales de voz** — puede que la de OpenAI ya sirva (§4) |
+> | `T-H8-11` CAL-14 / CAL-MULTIMODAL | calibración congelada; su conjunto dorado es de BENCH-03 |
+> | `T-H8-12` BENCH-03 | proveedor **y** umbrales congelados |
+> | `T-H8-14` corrida funcional | **humana** — y es la que llena la ventana de `T-H8-09` |
+> | Gate H8 | `approver=TECHNICAL_AUDITOR` |
+>
+> ### 6. Dos decisiones que esperan al propietario
+>
+> 1. **`ci:a11y:baseline` y `ci:a11y:catches` NO están en `ci.yml`.** No cuestan dinero de
+>    proveedor, pero sí minutos de Actions: necesitan `next build` y descargar Chromium en el
+>    runner. Con el presupuesto en USD 5 no correspondía decidirlo aquí. Se corren a mano, igual que
+>    `ci:e2e:live-session`.
+> 2. **El contraste** (§2.3).
+>
+> ### 7. Lo que sigue, por orden
+>
+> 1. **La pasada de promoción `HECHA` → `VERIFICADA`.** Van tres sesiones; ~50 tareas.
+> 2. **Decidir lo de las credenciales de voz**, que con §4 puede ser más barato de lo que parecía.
+> 3. **Re-correr BENCH-01** con D-77 y D-79, 3 repeticiones, ~MXN 145.
+> 4. **W5** cuando el propietario rompa su circularidad.
+>
+> ### 8. Verificación de esta sesión
+>
+> **2018 pruebas unitarias en verde.** Ojo con el número de partida: el traspaso decía 1949 y el
+> árbol en `HEAD` daba **1951** — se midió en vez de suponerlo, y el delta de +67 cuadra exacto
+> (26 + 19 + 22). Lint, typecheck 41/41, build 25/25, depcruise **551 módulos** con sus controles
+> positivos, `ci:arch:test-typecheck` (20 paquetes con `test/`), separación de modos, sesión seca,
+> adversarial, dorado, PBT, pureza, pasarela, grants, SBOM, drift, hardening, mangos y
+> `plan:status` (D-1…D-88): todo verde. **Tres commits sin subir**, que se agrupan por presupuesto.
+
+> ## Cierre anterior — F8 cerrada, F10 en 6 de 14 (2026-08-29) — **superado por el de arriba**
 >
 > **El Profesor IA da clase, y el gate H7 tiene su criterio de aceptación en verde.**
 >

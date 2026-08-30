@@ -1,4 +1,4 @@
-# Traspaso de sesión — 2026-08-29
+# Traspaso de sesión — 2026-08-29 (F10 en 9 de 14)
 
 Documento corto para retomar en otra conversación. El detalle está en
 [`HANDOFF.md`](HANDOFF.md) y [`PLAN_STATUS.md`](PLAN_STATUS.md); esto es lo mínimo para no empezar
@@ -8,15 +8,15 @@ de cero.
 
 > Retomo el proyecto Profesor IA en `C:\Users\gabri\Documents\edu_ia\profesor_ia_code`.
 > Lee `docs/plan/HANDOFF.md` (cabecera «EMPIEZA AQUÍ») y sigue desde ahí.
-> En la sesión anterior se cerró F8 (7 de 7 tareas y el AC del gate H7 en verde) y se arrancó F10
-> (6 de 14). Todo está subido y CI en verde.
+> F8 está cerrada y F10 va **9 de 14**: ya está hecho todo lo que no necesita proveedor de voz.
+> Hay **tres commits sin subir** (se agrupan por presupuesto de Actions).
 
 ## Dónde quedó
 
 | Fase | Estado |
 |---|---|
 | F8 · Profesor IA de sesión | **cerrada** — 7 de 7 tareas, `ci:e2e:live-session` en verde. Falta el acta firmada `docs/gates/H7.md`, que es del propietario |
-| F10 · Multimodal | **6 de 14** — los tres CRITICAL sin proveedor, más pizarrón, evidencia y capacidades |
+| F10 · Multimodal | **9 de 14** — los tres CRITICAL sin proveedor, pizarrón, evidencia, capacidades, línea base de accesibilidad, captura interna y telemetría H8. Lo que falta necesita voz, calibración congelada o corrida humana |
 | F9 · Cursos personalizados | no empezada. Es paralela y no condiciona gates, pero **F11 depende de ella** |
 | F11 · `LOCAL_SELF_USE` | **no la puede construir nadie más que el propietario** (ver abajo) |
 
@@ -71,15 +71,24 @@ devolviendo un número.**
 
 ## Lo siguiente, por orden
 
-1. **La pasada de promoción `HECHA` → `VERIFICADA`.** Lleva dos sesiones pendiente: ~50 tareas cuya
+1. **La pasada de promoción `HECHA` → `VERIFICADA`.** Lleva tres sesiones pendiente: ~50 tareas cuya
    evidencia hay que comprobar una por una contra las corridas de CI. Promoverlas en bloque sería
    firmar sin mirar.
-2. **`T-H8-10`** — línea base de accesibilidad con axe/Playwright. No necesita proveedor y tiene
-   valor comprobable.
-3. **`T-H8-06`** y **`T-H8-09`** — captura interna y telemetría. Tampoco necesitan proveedor.
-4. **Decidir lo de las credenciales de voz** (§2 de arriba).
-5. **Re-correr BENCH-01** con D-77 y D-79 puestos, 3 repeticiones, ~MXN 145. La semilla no cambia.
-6. **W5** cuando el propietario rompa su circularidad.
+2. **Decidir lo de las credenciales de voz** (§2 de arriba). Puede salir más barato de lo que
+   parecía: la credencial de OpenAI que ya está en `.env` **sí da acceso al catálogo de audio**, y
+   varios de esos modelos publican snapshot fechado. Falta comprobar la facturación con una llamada
+   real, y que la documentación declare el snapshot (`refresh-sources.mjs`), que es lo que D-76 exige.
+3. **Re-correr BENCH-01** con D-77 y D-79 puestos, 3 repeticiones, ~MXN 145. La semilla no cambia.
+4. **W5** cuando el propietario rompa su circularidad.
+
+## Dos decisiones de esta sesión que solo tú puedes tomar
+
+1. **Los checks `ci:a11y:baseline` y `ci:a11y:catches` no están en `ci.yml`.** No cuestan dinero de
+   proveedor, pero sí minutos de Actions: necesitan `next build` y descargar Chromium en el runner.
+   Con el presupuesto en USD 5, enchufarlos por push es gasto que no correspondía decidir sin ti.
+2. **El contraste de la paleta.** axe lo marca como *serious* en `.tag`, `.card-kicker` y los
+   botones de apelación y retirada. **No se tocó a propósito**: no está entre los once criterios de
+   la línea base, y el lenguaje visual está diferido a producto (§10.5).
 
 ## Lo que es del propietario y ningún modelo sustituye
 
@@ -109,9 +118,11 @@ regenerar SBOM y digest **en el mismo cambio**.
 
 ## Números al cerrar
 
-**1949 pruebas unitarias** (1851 al abrir la sesión, +98) más 131 contra PostgreSQL 17 real en CI.
-Depcruise sobre **541 módulos** sin violaciones, con 14 controles positivos. La última corrida observada es **`33288171686` sobre `07fa669`, los diez jobs en verde**. Hubo una
-en rojo por lo de D-85, corregida y verificada.
+**2018 pruebas unitarias** más 131 contra PostgreSQL 17 real. Depcruise sobre **551 módulos** sin
+violaciones. **Cuidado con el número de partida**: este documento decía 1949 y el árbol en `HEAD`
+daba **1951** — se midió con `git stash` en vez de suponerlo, y el delta de +67 cuadra exacto
+(26 + 19 + 22). La última corrida de CI observada sigue siendo **`33288171686` sobre `07fa669`**,
+los diez jobs en verde; los tres commits de esta sesión **no están subidos todavía**.
 
 Reglas de trabajo que siguen vigentes: los **commits** son por tarea con `PLAN_STATUS.md` en el
 mismo commit; los **pushes se agrupan** porque el presupuesto de Actions es de USD 5. Y **nunca se
