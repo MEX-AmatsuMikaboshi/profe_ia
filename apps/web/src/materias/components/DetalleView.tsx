@@ -1,6 +1,6 @@
 import { MATERIAS_COPY } from '../copy';
 import type { DetalleViewModel } from '../view-model';
-import { MateriaAccion, MateriaInsignia } from './MateriaAccion';
+import { ACCION_PRIMARIA, ACCION_SECUNDARIA, MateriaAccion, MateriaInsignia } from './MateriaAccion';
 
 /**
  * Detalle de materia (T-CC-05 ← UIUX §6.4).
@@ -33,13 +33,14 @@ export function DetalleView({ viewModel }: { readonly viewModel: DetalleViewMode
           <ul data-testid="artefactos">
             {preparation.artifacts.map((artifact) => (
               <li key={`${artifact.kind}-${artifact.ref}`} data-artefacto={artifact.kind}>
-                {artifact.kind}: {artifact.ref}
+                {MATERIAS_COPY.detalle.artifacts[artifact.kind]}: {artifact.ref}
               </li>
             ))}
           </ul>
 
           {preparation.retryable ? (
-            <button type="button" className="btn" data-testid="reintentar">
+            // En una materia fallida, reintentar **es** la acción principal.
+            <button type="button" className={ACCION_PRIMARIA} data-testid="reintentar">
               {MATERIAS_COPY.detalle.retryAction}
             </button>
           ) : (
@@ -114,7 +115,11 @@ export function DetalleView({ viewModel }: { readonly viewModel: DetalleViewMode
       )}
 
       <p>
-        <a className="btn" data-action="ver-progreso" href={`/materias/${card.courseId}/progreso`}>
+        <a
+          className={ACCION_SECUNDARIA}
+          data-action="ver-progreso"
+          href={`/materias/${card.courseId}/progreso`}
+        >
           {MATERIAS_COPY.progreso.title}
         </a>
       </p>

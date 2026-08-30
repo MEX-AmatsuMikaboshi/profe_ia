@@ -4,6 +4,7 @@ import {
   initialProgress,
   recordProgress,
   updateCourse,
+  PREPARATION_ARTIFACTS,
   type Course,
   type CourseProgress,
 } from '@profesor-ia/domain-engine';
@@ -282,6 +283,18 @@ describe('correspondencia con la fuente de verdad', () => {
   it('los estados copiados son exactamente los de DomainKcState', () => {
     const declarados = DomainKcState.shape.masteryStatus.options as readonly string[];
     expect([...AUTHORITATIVE_MASTERY_STATUSES].sort()).toEqual([...declarados].sort());
+  });
+
+  it('cada artefacto de preparación tiene prosa', () => {
+    // Sin esto, un artefacto nuevo en `PREPARATION_ARTIFACTS` renderiza
+    // `undefined` en la pantalla de preparación — que es la pantalla que existe
+    // justo para que el usuario sepa que el proceso sigue vivo.
+    for (const kind of PREPARATION_ARTIFACTS) {
+      expect(MATERIAS_COPY.detalle.artifacts[kind], `«${kind}» sin prosa`).toBeTruthy();
+    }
+    expect(Object.keys(MATERIAS_COPY.detalle.artifacts).sort()).toEqual(
+      [...PREPARATION_ARTIFACTS].sort(),
+    );
   });
 
   it('cada estado de pantalla tiene rótulo y ninguno se repite', () => {

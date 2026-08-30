@@ -148,6 +148,21 @@ describe('lo que ninguna de las cuatro puede decir', () => {
     }
   });
 
+  it('ningún control lleva `.btn` a secas: sin variante no se ve como control', () => {
+    // El sistema vendorizado da a `.btn` fondo y borde transparentes; la
+    // apariencia la pone la variante. «Continuar clase» salió como texto en
+    // negrita en la primera versión —clicable, del tamaño correcto y sin
+    // parecer un control—, y UIUX §3 pide una acción primaria **dominante**.
+    // No lo ve ninguna prueba sin navegador ni `ci:a11y:baseline`, que audita
+    // sólo Clase; se vio abriendo la demo. Esto es lo que impide que vuelva.
+    for (const html of TODAS) {
+      expect(html, 'hay un class="btn" sin variante').not.toMatch(/class="btn"/);
+    }
+    // Y con su control positivo: si nada llevara `.btn`, lo de arriba pasaría
+    // por vacío.
+    expect(INICIO).toContain('class="btn btn-primary"');
+  });
+
   it('cada vista tiene un solo h1 y todas sus secciones etiquetadas', () => {
     for (const html of TODAS) {
       expect(html.match(/<h1/g) ?? []).toHaveLength(1);

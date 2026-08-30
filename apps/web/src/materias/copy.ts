@@ -57,6 +57,18 @@ export const MATERIAS_COPY = {
     historyHeading: 'Historial de sesiones',
     noHistory: 'Todavía no hay sesiones registradas en esta materia.',
     preparationHeading: 'Preparación en curso',
+    /**
+     * Prosa para los artefactos de `PREPARATION_ARTIFACTS`.
+     *
+     * El identificador crudo —`sources_found`— es vocabulario interno, y ya
+     * mordió una vez en el descargo de Progreso. Un artefacto es justo lo que el
+     * usuario mira para saber si el proceso sigue vivo (`T-CC-02`): enseñárselo
+     * en jerga le pide que confíe en algo que no puede leer.
+     */
+    artifacts: {
+      sources_found: 'Fuentes encontradas',
+      course_proposal: 'Propuesta de curso',
+    },
     retryAction: 'Reintentar',
     /**
      * `no_sources_found` no es reintentable (T-CC-02): repetir la búsqueda con

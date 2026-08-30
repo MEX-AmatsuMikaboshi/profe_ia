@@ -32,6 +32,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* `.card` es `display: flex; flex-direction: column`, así que un hijo directo
+     se estira a todo el ancho. Sin esto, «Continuar clase» sale del tamaño de
+     su texto en la tarjeta de arriba y a todo lo ancho en las de la lista: el
+     mismo control con dos formas, que se lee como dos controles distintos. */
+  align-self: flex-start;
 }
 
 /* Los dos carriles van en bloques separados y del mismo peso visual: §6.2 pide
