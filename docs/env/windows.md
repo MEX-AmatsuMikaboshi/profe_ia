@@ -28,7 +28,7 @@ umbrales ni compromisos.
 | `ci:logic:mutation` (1 166 mutantes, concurrencia 4) | ~7,5 min |
 | `ci:arch:depcruise` (58 módulos) | ~2 s |
 
-## Las nueve trampas de esta máquina
+## Las diez trampas de esta máquina
 
 Son reales y cuestan una hora cada una si no se conocen.
 
@@ -93,6 +93,24 @@ Son reales y cuestan una hora cada una si no se conocen.
    sobra; es una limitación local.
    **Cómo distinguirlo de un fallo real**: exit 134 con `Zone Allocation failed` en la salida es
    siempre memoria. Un error de tipos dice `error TS….`
+
+10. **`&&` no encadena en PowerShell 5.1 (2026-08-30).** Es la única consola instalada —`pwsh` 7 **no
+    está**—, y choca de frente con la trampa 4: aquella manda usar PowerShell para pnpm, y aquí
+    cualquier orden encadenada muere con «El token '&&' no es un separador de instrucciones válido en
+    esta versión».
+    Es **error de parseo**, no fallo en ejecución: no corre ni el primer comando de la cadena. Por eso
+    engaña — parece que la batería «no hizo nada» en vez de que la consola la rechazó entera.
+    **Dentro de `package.json` sí funciona**: `ci:typecheck` y `ci:plan:status` encadenan con `&&` y
+    van bien, porque esos los ejecuta pnpm en su propio shell y no PowerShell. La confusión está en
+    copiar a la consola una cadena que en un script es legítima.
+    **Qué hacer.** Un bucle que falle cerrado:
+    ```powershell
+    foreach ($c in @('ci:lint','ci:typecheck')) {
+      pnpm run $c; if ($LASTEXITCODE -ne 0) { throw "FALLÓ: $c" }
+    }
+    ```
+    **`;` a secas no vale**: sigue adelante tras un fallo, así que una batería de veinte checks
+    terminaría «entera» con el tercero en rojo. Es degradación silenciosa con otro nombre.
 
 ## Trampa nº 6 — sockets AF_UNIX fantasma (2026-08-18)
 
