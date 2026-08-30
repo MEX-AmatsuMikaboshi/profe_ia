@@ -45,22 +45,22 @@ Sus tres tareas son `T-LSU-01` (corrida funcional del propietario de extremo a e
 Bloque B). **No hay forma de programarlas.** Lo que se puede hacer es dejarlas listas, y para eso
 hacen falta F9 y F10.
 
-### 2. Las «credenciales de voz», en llano
+### 2. Ya NO hay que contratar nada para la voz (D-89)
 
-Hoy el Profesor IA **sólo escribe**. F10 es donde pasa a hablar y a escuchar, y ninguna de las dos
-cosas se programa desde cero: se contratan.
+Esto cambia lo que decían las sesiones anteriores. Hoy el Profesor IA **sólo escribe**; F10 es donde
+pasa a hablar (TTS, *text-to-speech*) y a escuchar (STT, *speech-to-text*). Se daba por hecho que
+había que contratar a Deepgram o ElevenLabs y pagarlo aparte.
 
-- Que **escuche** se llama STT (*speech-to-text*): convierte lo que el alumno dice en texto.
-  Candidatos del plan: Deepgram, o el servicio de transcripción de OpenAI.
-- Que **hable** se llama TTS (*text-to-speech*): convierte la respuesta escrita en voz.
-  Candidatos: ElevenLabs, o el de OpenAI.
+**No hace falta: la llave de OpenAI que ya está en `.env` sirve para las dos**, y está comprobado
+haciendo el viaje completo — se generó una frase hablada y esa misma grabación se mandó a
+transcribir, y volvió palabra por palabra, con tildes y todo.
 
-Una **credencial** es la llave que esa empresa te da al contratar. Se guarda en
-`infra/compose/.env`, igual que la de Anthropic —`MODEL_CREDENTIAL_ANTHROPIC_SESION`— que ya está y
-es la que hace que el profesor pueda responder por escrito.
+Lo que eso **no** dice: la voz de un ordenador se entiende mejor que la de una persona con un
+micrófono normal en una habitación con ruido. Está probado que **funciona y que se puede pagar**, no
+que entienda bien a un alumno de verdad; eso lo mide BENCH-03 más adelante.
 
-**Si no las hay no se rompe nada**: la clase por escrito sigue funcionando. Sólo se quedan quietas
-`T-H8-01` y `T-H8-02` y lo que depende de ellas.
+Así que `T-H8-01` y `T-H8-02` ya no esperan a nadie: **hay que construirlas**, que es trabajo, pero
+sin decisión ni gasto tuyo por medio.
 
 ### 3. Dos calibraciones lanzan a propósito
 
@@ -74,26 +74,25 @@ devolviendo un número.**
 1. **La pasada de promoción `HECHA` → `VERIFICADA`.** Lleva tres sesiones pendiente: ~50 tareas cuya
    evidencia hay que comprobar una por una contra las corridas de CI. Promoverlas en bloque sería
    firmar sin mirar.
-2. **Decidir lo de las credenciales de voz** (§2 de arriba). Puede salir más barato de lo que
-   parecía: la credencial de OpenAI que ya está en `.env` **sí da acceso al catálogo de audio**, y
-   varios de esos modelos publican snapshot fechado. Falta comprobar la facturación con una llamada
-   real, y que la documentación declare el snapshot (`refresh-sources.mjs`), que es lo que D-76 exige.
+2. **`T-H8-01` y `T-H8-02`** — voz. Ya sin bloqueo externo (§2), y es la palanca más grande que
+   queda: con ellas caen también trozos de otras tres tareas.
 3. **Re-correr BENCH-01** con D-77 y D-79 puestos, 3 repeticiones, ~MXN 145. La semilla no cambia.
 4. **W5** cuando el propietario rompa su circularidad.
 
-## Dos decisiones de esta sesión que solo tú puedes tomar
+## Las dos que delegaste, resueltas (D-90)
 
-1. **Los checks `ci:a11y:baseline` y `ci:a11y:catches` no están en `ci.yml`.** No cuestan dinero de
-   proveedor, pero sí minutos de Actions: necesitan `next build` y descargar Chromium en el runner.
-   Con el presupuesto en USD 5, enchufarlos por push es gasto que no correspondía decidir sin ti.
-2. **El contraste de la paleta.** axe lo marca como *serious* en `.tag`, `.card-kicker` y los
-   botones de apelación y retirada. **No se tocó a propósito**: no está entre los once criterios de
-   la línea base, y el lenguaje visual está diferido a producto (§10.5).
+1. **Los checks de accesibilidad ya corren en CI**, dentro del job que ya construye la web en vez de
+   en uno nuevo: así no se repite el trabajo previo. Añaden **alrededor de un minuto** por corrida.
+2. **El contraste está corregido.** El rojo de marca sobre el fondo claro se leía mal —daba 3.76
+   cuando el mínimo exigido es 4.5—. Se cambió **sólo donde ese rojo hace de letra**, usando un tono
+   más oscuro **que la propia paleta ya traía**; el color de marca sigue igual en botones, bordes y
+   recuadros. Es decir: no se inventó ningún color nuevo, así que no se pisó nada que sea decisión de
+   diseño. Ahora la herramienta no encuentra ni un problema.
 
 ## Lo que es del propietario y ningún modelo sustituye
 
 - El **acta firmada** del gate H7 (`docs/gates/H7.md`).
-- La **decisión sobre credenciales de voz**.
+- ~~La decisión sobre credenciales de voz~~ — **ya no hace falta** (D-89).
 - La revisión humana de los 200 casos de BENCH-01 (D-41).
 - La auditoría de calidad pedagógica en muestra ciega (§6.2).
 - La lectura humana por muestra del paso 19, sobre el banco de 656.
@@ -118,11 +117,12 @@ regenerar SBOM y digest **en el mismo cambio**.
 
 ## Números al cerrar
 
-**2018 pruebas unitarias** más 131 contra PostgreSQL 17 real. Depcruise sobre **551 módulos** sin
+**2024 pruebas unitarias** más 131 contra PostgreSQL 17 real. Depcruise sobre **551 módulos** sin
 violaciones. **Cuidado con el número de partida**: este documento decía 1949 y el árbol en `HEAD`
 daba **1951** — se midió con `git stash` en vez de suponerlo, y el delta de +67 cuadra exacto
 (26 + 19 + 22). La última corrida de CI observada sigue siendo **`33288171686` sobre `07fa669`**,
-los diez jobs en verde; los tres commits de esta sesión **no están subidos todavía**.
+los diez jobs en verde. Los **seis commits de esta sesión no están subidos**: pediste acumular
+hasta diez o quince y subirlos de una vez.
 
 Reglas de trabajo que siguen vigentes: los **commits** son por tarea con `PLAN_STATUS.md` en el
 mismo commit; los **pushes se agrupan** porque el presupuesto de Actions es de USD 5. Y **nunca se

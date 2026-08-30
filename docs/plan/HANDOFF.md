@@ -31,9 +31,10 @@
 >    su cuenta con su regla `target-size`.
 > 2. **Las fórmulas se renderizaban como texto plano.** Quien mira la pantalla las lee; quien la
 >    escucha recibe una lista de caracteres. **Corregido con MathML.**
-> 3. **Contraste insuficiente** en `.tag`, `.card-kicker` y los botones fantasma. **NO corregido, a
->    propósito**: no está entre los once criterios y el lenguaje visual está diferido a producto
->    (§10.5). Cambiar la paleta desde aquí decidiría por quien tiene esa autoridad.
+> 3. **Contraste insuficiente** en `.tag`, `.card-kicker` y los botones fantasma. **Corregido
+>    después** (D-90), eligiendo un escalón que la paleta ya define en vez de inventar un color:
+>    `--color-accent` (3.76) sólo cambia donde hace de **texto**, pasando a `--color-accent-700`
+>    (6.41). El color de marca sigue igual donde funciona. **axe ya no reporta nada.**
 >
 > **Por qué MathML y no un `aria-label` en castellano.** Habría sido una segunda verbalización
 > compitiendo con el lexicón de `T-H8-02`, que la norma exige «validado por reconstrucción exacta de
@@ -49,16 +50,22 @@
 > aislado con hueco de sobra conforma. La siembra buena es **deshacer el arreglo**, porque reproduce
 > el defecto real —ocho botones pegados— y vigila que nadie borre esa regla de estilo. **7 de 7.**
 >
-> ### 4. La credencial de OpenAI sí sirve para audio
+> ### 4. ⚠ NO hay que contratar proveedor de voz: la credencial de OpenAI ya sirve (D-89)
 >
-> Comprobado contra la API: `gpt-4o-transcribe`, `whisper-1`, `gpt-4o-mini-tts`, `tts-1-hd`,
-> `gpt-realtime`, y varios **con snapshot fechado** (`gpt-4o-mini-transcribe-2025-12-15`,
-> `gpt-audio-2025-08-28`) — la forma que D-76 echaba en falta.
+> Esto **cambia el plan** que decían las tres sesiones anteriores. `T-H8-01/02` no estaban
+> bloqueadas por credencial; nadie lo había comprobado.
 >
-> **Dos salvedades.** El listado no prueba que la facturación de audio esté habilitada: eso lo dice
-> una llamada real, de fracción de céntimo, que no se hizo. Y D-76 no exigía que el id *pareciera*
-> fechado sino que **la documentación lo declarara**, lo cual se comprueba con
-> `node scripts/model/refresh-sources.mjs`, no con un listado. Es hallazgo, no decisión.
+> Verificado **de extremo a extremo**, no por listado: TTS con `gpt-4o-mini-tts` generó 244 KB de
+> audio, y ese mismo audio fue a `gpt-4o-transcribe`, que devolvió **exactamente** la frase enviada
+> —«La regla de introducción de la conjunción exige dos premisas»— con tildes y terminología lógica.
+> Un listado de modelos sólo dice qué se ve; la facturación la dice una llamada.
+>
+> **Dos salvedades que hay que conservar.** La voz sintética es más limpia que el micrófono de un
+> alumno en una habitación real: esto acredita **capacidad y facturación**, no calidad — el WER es de
+> BENCH-03. Y **no resuelve la identidad del modelo**: varios ids de audio llevan fecha, pero D-76 no
+> exige que el id *parezca* fechado sino que la documentación **declare** que lo es, y eso se
+> comprueba con `node scripts/model/refresh-sources.mjs`. Se pueden **construir**; coronar un
+> proveedor de voz es otra cosa.
 >
 > De paso se hizo la comprobación de §9.2 que llevaba pendiente: **las cuatro credenciales tienen
 > huellas distintas**, así que la separación `SESION`/`AUTORIA` de P-II §8.2 se sostiene.
@@ -67,35 +74,37 @@
 >
 > | Falta | De quién |
 > |---|---|
-> | `T-H8-01/02` STT y TTS | **credenciales de voz** — puede que la de OpenAI ya sirva (§4) |
+> | `T-H8-01/02` STT y TTS | **nada externo: hay que construirlas.** `speech-gateway` es un esqueleto de cuatro líneas |
 > | `T-H8-11` CAL-14 / CAL-MULTIMODAL | calibración congelada; su conjunto dorado es de BENCH-03 |
 > | `T-H8-12` BENCH-03 | proveedor **y** umbrales congelados |
 > | `T-H8-14` corrida funcional | **humana** — y es la que llena la ventana de `T-H8-09` |
 > | Gate H8 | `approver=TECHNICAL_AUDITOR` |
 >
-> ### 6. Dos decisiones que esperan al propietario
+> ### 6. Las dos decisiones que estaban abiertas, resueltas (D-90)
 >
-> 1. **`ci:a11y:baseline` y `ci:a11y:catches` NO están en `ci.yml`.** No cuestan dinero de
->    proveedor, pero sí minutos de Actions: necesitan `next build` y descargar Chromium en el
->    runner. Con el presupuesto en USD 5 no correspondía decidirlo aquí. Se corren a mano, igual que
->    `ci:e2e:live-session`.
-> 2. **El contraste** (§2.3).
+> El propietario delegó las dos. **Los checks de accesibilidad entran en CI**, dentro del job
+> `base` y no en uno propio: necesitan `apps/web` construida y `ci:build` acaba de dejarla ahí, así
+> que un job aparte repetiría checkout, install y build para llegar al mismo sitio. El navegador se
+> cachea por lockfile; **coste añadido ~1 min por corrida**. Y **el contraste está corregido** (§2.3),
+> con guarda en `ci:unit` que no necesita navegador.
 >
 > ### 7. Lo que sigue, por orden
 >
-> 1. **La pasada de promoción `HECHA` → `VERIFICADA`.** Van tres sesiones; ~50 tareas.
-> 2. **Decidir lo de las credenciales de voz**, que con §4 puede ser más barato de lo que parecía.
+> 1. **`T-H8-01/02`** — ya no hay bloqueo externo (§4). Es la palanca más grande que queda: con
+>    ellas caen también parte de `T-H8-06`, `T-H8-08` y el tramo de voz de BENCH-03.
+> 2. **La pasada de promoción `HECHA` → `VERIFICADA`.** Van tres sesiones; ~50 tareas.
 > 3. **Re-correr BENCH-01** con D-77 y D-79, 3 repeticiones, ~MXN 145.
 > 4. **W5** cuando el propietario rompa su circularidad.
 >
 > ### 8. Verificación de esta sesión
 >
-> **2018 pruebas unitarias en verde.** Ojo con el número de partida: el traspaso decía 1949 y el
+> **2024 pruebas unitarias en verde.** Ojo con el número de partida: el traspaso decía 1949 y el
 > árbol en `HEAD` daba **1951** — se midió en vez de suponerlo, y el delta de +67 cuadra exacto
 > (26 + 19 + 22). Lint, typecheck 41/41, build 25/25, depcruise **551 módulos** con sus controles
 > positivos, `ci:arch:test-typecheck` (20 paquetes con `test/`), separación de modos, sesión seca,
 > adversarial, dorado, PBT, pureza, pasarela, grants, SBOM, drift, hardening, mangos y
-> `plan:status` (D-1…D-88): todo verde. **Tres commits sin subir**, que se agrupan por presupuesto.
+> `plan:status` (D-1…D-90): todo verde, y **axe sin ninguna violación**. **Seis commits sin subir**:
+> el propietario pidió el 2026-08-29 acumular hasta diez o quince y subirlos de una vez.
 
 > ## Cierre anterior — F8 cerrada, F10 en 6 de 14 (2026-08-29) — **superado por el de arriba**
 >
