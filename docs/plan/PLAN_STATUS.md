@@ -240,7 +240,7 @@ El AC de la fase pide esa corrida completa, así que la fase **no está cerrada*
 | F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas VERIFICADAS y AC del gate cubierto y observado** (CI `32164277686`). Sólo faltan las firmas del acta |
 | F8 | H7 · Profesor IA de sesión | EN_CURSO | **7 de 7 tareas y el AC del gate cubierto.** `T-H7-01`, `T-H7-02` y `T-H7-03` VERIFICADAS; `T-H7-04`…`T-H7-07` HECHAS el 2026-08-29. **`ci:e2e:live-session` existe y pasa**: cinco actos con Perfil C (`claude-haiku-4-5-20251001`), los cuatro entregados y la caída degradando, con las siete comprobaciones del AC en verde —incluida «sin rescate docente», que se comprueba porque **no existe el campo** por el que se usaría, no porque no se usara—. **No corre en cada push**: gasta contra proveedor real, así que se trata como `bench:material` y su evidencia es la corrida. Informe en `analysis/reports/live-session.json`. **Falta el acta firmada** `docs/gates/H7.md`, que es del propietario |
 | F10 | H8 · Multimodal + telemetría | EN_CURSO | **11 de 14 tareas — todo lo construible está construido.** Los tres `CRITICAL` que no necesitan proveedor (`T-H8-04`, `T-H8-05`, `T-H8-07`), más `T-H8-03`, `T-H8-08`, `T-H8-13`, `T-H8-10` (línea base de accesibilidad, D-86), `T-H8-06` (captura interna, D-87), `T-H8-09` (telemetría H8, D-88) y **`T-H8-01/02` (voz, D-91)**. `CAL-MULTIMODAL` abierta por diseño, con sus dos puntos de fallo escritos. Las tres que faltan **no son código**: `T-H8-11` espera calibración congelada, `T-H8-12` (BENCH-03) espera esa calibración y umbrales preinscritos, y `T-H8-14` es corrida humana |
-| F9 | Cursos personalizados | EN_CURSO | **5 de 5 tareas con su política implementada** (D-92): `T-CC-01` modelo de cursos y continuidad, `T-CC-03` aislamiento experimental, `T-CC-04` autoridad de evaluación por dominio, `T-CC-02` flujo observable de creación y `T-CC-05` etiquetado. **No bloquea gates** (`DEC-CUSTOM-COURSES-001`). El **enganche del W0 generalizado** está puesto (D-93) y **las cuatro vistas** también (D-94). Lo único que queda es el e2e crear-materia→clase con prueba de aislamiento por consulta cruzada, que es el AC de la fase |
+| F9 | Cursos personalizados | EN_CURSO | **5 de 5 tareas con su política implementada** (D-92): `T-CC-01` modelo de cursos y continuidad, `T-CC-03` aislamiento experimental, `T-CC-04` autoridad de evaluación por dominio, `T-CC-02` flujo observable de creación y `T-CC-05` etiquetado. **No bloquea gates** (`DEC-CUSTOM-COURSES-001`). El **enganche del W0 generalizado** está puesto (D-93), **las cuatro vistas** también (D-94) y el **AC de la fase está cubierto** (D-95): `ci:e2e:course-creation` recorre sobre → investigación → propuesta → materia creada → clase sobre una materia sin sistema formal, y comprueba **por consulta cruzada** que ni un registro de esa clase llega al análisis SCED, con los controles positivos de que el curso de lógica sí alimenta los cuatro destinos y la materia propia sí guarda progreso, coste y telemetría. El check está en CI, en el job `h6`. **Falta sólo la corrida verde en `main`** para mover las cinco tareas a `VERIFICADA` |
 | F11–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9. **F11 depende de F9 y F10**, y sus tres tareas (`T-LSU-01/02/03`) son del propietario: la corrida real, el informe de valor y la decisión GO/NO-GO |
 
 ## Entorno de ejecución (verificado 2026-08-14)
@@ -2106,6 +2106,34 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   debían —el de correspondencia y las dos propiedades de reconstrucción— y ninguno más. Se quitó la
   palabra marca de los átomos: fallaron nueve pruebas en cuatro archivos. La segunda siembra importa
   más que la primera, porque es el defecto que un lexicón «más natural» introduciría sin querer.
+- **D-95 — El AC de F9 se comprueba por consulta cruzada, no registro a registro (2026-08-30).**
+  F9, `ci:e2e:course-creation`.
+  **Qué se ataca, y por qué así.** Comprobar que cada registro lleva su etiqueta es comprobar lo que
+  ya prueba `course-isolation.test.ts`. El fallo de un nivel más arriba es que **la consulta**
+  devuelva de más, y ése no es ruidoso: el análisis corre igual y produce números con la misma cara
+  que los buenos. La única forma de verlo es preguntar a la proyección experimental, sobre la unión
+  de lo que escribieron las dos clases, por lo que no debería tener.
+  **Y la mitad opuesta.** Se comprueba también que las dos proyecciones **suman el total**: una
+  puerta que descartara en silencio dejaría una corrida incompleta indistinguible de una en la que
+  esos datos nunca existieron. Más los dos controles positivos —el curso de lógica alimenta los
+  cuatro destinos experimentales; la materia propia guarda progreso, coste y telemetría—, sin los
+  cuales una puerta que rechazara todo dejaría verde la suite entera.
+  **El recorrido es real y se demostró rompiéndolo.** Sembrar que `runGeneralizedW0()` no transite el
+  curso rompe **7 de 13** pruebas: exactamente las que atraviesan la cadena, y sobreviven las 6 que
+  no la necesitan. Sembrar que `forSced()` devuelva todo rompe **una sola**, la de la consulta
+  cruzada. Un e2e cuya primera mitad se puede saltar no es un e2e, y esto lo comprueba en vez de
+  afirmarlo.
+  **Se asierta el código del error, no su texto.** Las tres primeras aserciones miraban el mensaje y
+  pasaban por casualidad; `CourseError` lleva el código en `.code`. Una aserción sobre prosa falla
+  el día que alguien reescribe el mensaje sin que nada esté roto, y puede pasar con **otro** error
+  que comparta una palabra.
+  **Dónde corre.** Job `h6` y no uno propio: comparte exactamente checkout sin submódulo, install y
+  build, y un job aparte repetiría los tres para llegar al mismo sitio. Es el criterio de D-90 para
+  los checks de accesibilidad.
+  **Lo que este AC NO cierra.** Llega hasta la puerta de la clase —`assertTeachable` y la evaluación
+  de una respuesta sin autoridad formal—, no conduce una sesión: eso lo hacen `ci:e2e:dry-session` y
+  `ci:e2e:live-session`. Y las cinco tareas siguen `HECHA`: sin corrida verde observada en `main` no
+  hay `VERIFICADA`.
 - **D-94 — Las cuatro vistas de materia no calculan ninguno de los tres números que podrían
   inventar, y Progreso cambia de forma con la autoridad (2026-08-30).** F9, `T-CC-05`.
   **Los tres números.** §6.1 prohíbe «inferir reglas pedagógicas a partir de porcentajes ficticios»

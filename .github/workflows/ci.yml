@@ -91,7 +91,7 @@ jobs:
     #
     # No necesita el submódulo de contenido: la sesión seca usa paquete
     # sintético de desarrollo, que es lo que §F7 admite mientras no haya corpus.
-    name: ci:mode-separation · ci:e2e:dry-session
+    name: ci:mode-separation · ci:e2e:dry-session · ci:e2e:course-creation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -113,6 +113,13 @@ jobs:
       # propiedades de §F7.
       - name: ci:e2e:dry-session
         run: pnpm run ci:e2e:dry-session
+      # AC de F9: crear-materia → clase sobre una materia sin sistema formal, y
+      # la consulta cruzada que comprueba que nada de esa clase entra al
+      # experimento. Va en este job y no en uno propio porque comparte
+      # exactamente lo que necesita —checkout sin submódulo, install y build— y
+      # un job aparte repetiría los tres para llegar al mismo sitio.
+      - name: ci:e2e:course-creation
+        run: pnpm run ci:e2e:course-creation
 
   adversarial:
     # AC de `T-H7-03`: extracción e injection del alumno (lista P-II §14.4
