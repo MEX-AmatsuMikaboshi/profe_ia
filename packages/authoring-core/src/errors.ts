@@ -15,6 +15,18 @@ export class AuthoringCoreError extends Error {
 export class W0ScopeError extends AuthoringCoreError {}
 
 /**
+ * Se intentó correr el W0 **generalizado** sobre el curso experimental
+ * (F9 ← T-CC-02, `DEC-CUSTOM-COURSES-001`, P-I §3.1.2).
+ *
+ * Es la mitad simétrica de {@link W0ScopeError}: aquélla impide que la corrida
+ * experimental investigue para otro cálculo, y ésta que el curso de lógica
+ * produzca su corpus por la vía generalizada, que **no** resuelve por mayoría
+ * contra `authorized-calculus-v1`. El resultado sería material que nadie
+ * comparó con la misma cara que el comparado.
+ */
+export class GeneralizedW0LaneError extends AuthoringCoreError {}
+
+/**
  * La entrada de una corrida W0 no es coherente consigo misma (F5/H4.5): un
  * candidato sin evaluación, una evaluación sin candidato, dos evaluaciones del
  * mismo candidato, o una decisión sobre una corrida que no está en
