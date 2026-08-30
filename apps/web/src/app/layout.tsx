@@ -8,6 +8,10 @@ import '@fontsource/archivo/400.css';
 import '@fontsource/archivo/600.css';
 import '@fontsource/archivo/800.css';
 import './tokens.generated.css';
+// Corrección de contraste del acento cuando hace de texto (T-H8-10). Va después
+// de los tokens y antes de la disposición: corrige roles del sistema de diseño,
+// no la colocación de la vista.
+import './a11y-contrast.css';
 // Disposición de la vista de Clase. No redefine tokens: sólo coloca.
 import './globals-clase.css';
 

@@ -1,0 +1,44 @@
+/* Contraste del acento cuando hace de texto (T-H8-10 ← WCAG 2.2 SC 1.4.3).
+ *
+ * ## Qué se corrige, y qué NO
+ *
+ * `--color-accent` (#ec3013) da **3.76** sobre `--color-bg` y **3.47** sobre
+ * `--color-surface`. AA para texto normal pide **4.5**. Lo detectó axe en
+ * `ci:a11y:baseline` sobre `.card-kicker`, `.tag-outline` y los dos botones
+ * fantasma —apelación y retirada—, que son los tres sitios donde el acento se
+ * usa como color de letra.
+ *
+ * **No se toca el color de marca.** `--color-accent` sigue exactamente igual
+ * donde funciona: fondo del botón primario, bordes, anillo de foco, el filete de
+ * los segmentos anclados. Lo que cambia son los tres **roles de texto**, que
+ * pasan a `--color-accent-700` (#ae1800) — un escalón que **el propio sistema
+ * vendorizado ya define** en su escala 100…900. No se inventa un color: se elige
+ * el que la paleta tiene para este uso. Da 6.41 y 5.91.
+ *
+ * ## Por qué en un archivo aparte
+ *
+ * `packages/ui-tokens/vendor/styles.css` no se edita: está hasheado y su
+ * `PROVENANCE.md` lo prohíbe expresamente, señalando «la capa de la app» para
+ * las adaptaciones. Y `globals-clase.css` declara en su cabecera que no redefine
+ * tokens, sólo coloca. Meter esto en cualquiera de los dos rompería un contrato
+ * escrito; en un archivo con este nombre, la desviación se ve.
+ *
+ * ## Lo que queda pendiente y no se toca aquí
+ *
+ * Blanco sobre `--color-accent` da **4.20**, así que `.btn-primary` con texto de
+ * 14 px tampoco llegaría a AA. **Hoy no se renderiza ninguno** en la vista de
+ * Clase, así que axe no lo ve y no es un hallazgo de esta línea base — pero lo
+ * será el día que aparezca. Arreglarlo exige cambiar el fondo de marca o el
+ * color del texto sobre él, que ya es lenguaje visual y está diferido a producto
+ * (Maestro §10.5).
+ */
+
+.card-kicker,
+.tag-outline,
+.btn-ghost {
+  color: var(--color-accent-700);
+}
+
+.tag-outline {
+  border-color: var(--color-accent-700);
+}

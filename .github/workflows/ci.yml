@@ -58,6 +58,31 @@ jobs:
       - name: ci:build
         run: pnpm run ci:build
 
+      # Línea base de accesibilidad (T-H8-10). Va **dentro de `base`** y no en un
+      # job propio a propósito: necesita `apps/web` construida, y `ci:build`
+      # acaba de dejarla ahí. Un job aparte repetiría checkout, `pnpm install` y
+      # build —uno o dos minutos— para llegar al mismo sitio, y el presupuesto de
+      # Actions es de USD 5.
+      #
+      # El navegador se cachea por lockfile: la primera corrida lo descarga
+      # (~20 s) y las siguientes lo restauran. `--with-deps` instala las
+      # bibliotecas del sistema, que no se cachean y cuestan unos segundos.
+      - name: caché del navegador de Playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: instalar Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: ci:a11y:baseline
+        run: pnpm run ci:a11y:baseline
+      # El control positivo corre siempre junto a la línea base, igual que
+      # `verify-depcruise-catches` junto a depcruise: una línea base en verde sin
+      # comprobar que el instrumento detecta no distingue «la vista es accesible»
+      # de «el instrumento no mira».
+      - name: ci:a11y:catches
+        run: pnpm run ci:a11y:catches
+
   h6:
     # AC del gate H6 (Plan.md §F7). Va en su propio job y no como paso de
     # `base` porque §0.4 cuenta un AC como cumplido sólo con **el check que

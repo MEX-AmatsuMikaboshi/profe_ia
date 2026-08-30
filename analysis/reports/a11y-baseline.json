@@ -165,20 +165,7 @@
   ],
   "findings": {
     "axeInBaseline": [],
-    "axeOutsideBaseline": [
-      {
-        "id": "color-contrast",
-        "impact": "serious",
-        "help": "Elements must meet minimum color contrast ratio thresholds",
-        "criterion": null,
-        "nodes": [
-          ".tag",
-          ".card-kicker",
-          "button[data-testid=\"apelacion\"]",
-          "button[data-testid=\"retirada\"]"
-        ]
-      }
-    ],
+    "axeOutsideBaseline": [],
     "targetSize": [],
     "focusWithoutIndicator": [],
     "keyboardTraps": [],
