@@ -8,10 +8,10 @@ de cero.
 
 > Retomo el proyecto Profesor IA en `C:\Users\gabri\Documents\edu_ia\profesor_ia_code`.
 > Lee `docs/plan/HANDOFF.md` (cabecera «EMPIEZA AQUÍ») y sigue desde ahí.
-> **F9 está completa y F10 va 11 de 14**: no queda nada construible en ninguna de las dos.
-> Hay **quince commits subidos el 2026-08-30**: lo primero es **mirar Actions** y comprobar la
-> corrida job por job, porque hasta que no haya verde en `main` ninguna tarea puede pasar a
-> `VERIFICADA`. Después, la pasada de promoción `HECHA` → `VERIFICADA` (~55 tareas, una por una).
+> **F9 está completa y F10 va 11 de 14**: no queda nada construible en ninguna de las dos, y
+> **la pasada de promoción está hecha** — 81 tareas `VERIFICADA` contra la corrida `33311824991`.
+> **Lo que queda es tuyo**: las actas firmadas, la revisión humana de BENCH-01, W5 y las tres
+> tareas de F11, que ya se puede empezar.
 
 ## Lo que cambió en esta sesión
 
@@ -28,7 +28,7 @@ de cero.
 | Fase | Estado |
 |---|---|
 | F8 · Profesor IA de sesión | **cerrada** — 7 de 7, `ci:e2e:live-session` en verde. Falta el acta firmada `docs/gates/H7.md`, que es tuya |
-| F9 · Cursos personalizados | **completa**: 5 de 5 tareas y el AC cubierto. Sólo falta la corrida verde en `main` para promover |
+| F9 · Cursos personalizados | **completa y verificada**: 5 de 5 tareas `VERIFICADA` con la corrida `33311824991`, y el AC cubierto |
 | F10 · Multimodal | **11 de 14 — no queda nada construible.** Calibración congelada (`T-H8-11`), BENCH-03 (`T-H8-12`) y tu corrida funcional (`T-H8-14`) |
 | F11 · `LOCAL_SELF_USE` | **ya no está bloqueada por nada nuestro.** Sus tres tareas son tu corrida, tu informe y tu decisión GO/NO-GO |
 
@@ -68,13 +68,12 @@ El criterio de aceptación de F9. No gasta nada.
 
 ## Lo siguiente, por orden
 
-1. **Mirar Actions y hacer la pasada de promoción `HECHA` → `VERIFICADA`.** Lleva cinco sesiones
-   pendiente: ~55 tareas cuya evidencia hay que comprobar una por una contra las corridas de CI.
-   Promoverlas en bloque sería firmar sin mirar. **Es lo más importante que queda que no dependa de
-   ti.**
+1. **F11 ya se puede empezar** — es tuya, y era lo que F9 y F10 bloqueaban.
 2. **Re-correr BENCH-01** con D-77 y D-79 puestos, 3 repeticiones, ~MXN 145. La semilla no cambia.
 3. **W5** cuando rompas su circularidad.
-4. Y con F9 y F10 donde están, **F11 ya se puede empezar** — es tuya.
+4. **Las doce filas que se quedaron en `HECHA`** (D-96), si quieres revisar el criterio: dos son las
+   del id duplicado `T-H2-05` y diez llevan salvedad. Cinco de esas diez son de calibración abierta
+   por diseño y se podrían haber promovido; elegiste el criterio conservador.
 
 ## Lo que es tuyo y ningún modelo sustituye
 
@@ -88,19 +87,33 @@ El criterio de aceptación de F9. No gasta nada.
   **y al menos una materia propia**), `T-LSU-02` (tu informe de valor con costos reales) y
   `T-LSU-03` (tu decisión GO/NO-GO del Bloque B).
 
+## La pasada de promoción, hecha
+
+**24 → 81 tareas `VERIFICADA`** (D-96), contra la corrida `33311824991` sobre `95d1f2b` con **los
+diez jobs en verde**, observada job por job. La regla exige las tres cosas: evidencia que resuelve,
+corrida verde observada, y una celda de estado que no declare parte pendiente de su propio
+entregable. **Las 113 citas de evidencia resuelven** — el comprobador tuvo que aprender a resolver
+las rutas abreviadas contra el paquete de la fila, porque sin eso declaraba 53 rutas buenas como
+inexistentes.
+
+Se quedan en `HECHA` doce filas, y ninguna por descuido: las **dos que comparten el id `T-H2-05`**
+—una lo lleva mal y no consta cuál— y **diez con salvedad**, de las que cuatro nombran una parte
+pendiente de su propio entregable.
+
 ## Lo que esta sesión NO cerró, y conviene no dar por hecho
 
-- **La suite contra PostgreSQL no se pudo correr en local.** Docker Desktop volvió a caer por la
-  trampa 6 (`Docker Desktop is unable to start` tras el crash del secrets-engine), incluso con
-  `pnpm run dev:docker`, que es el mitigador. Las 131 pruebas las corre CI en el job `db`; **no
-  están verificadas localmente en esta sesión.**
+- **La suite contra PostgreSQL no se pudo correr en local** —pero **sí corrió en CI**, verde, en el
+  job `ci:db:testcontainers · ci:db:negative` de la corrida `33311824991`. Docker Desktop volvió a
+  caer por la trampa 6 (`Docker Desktop is unable to start` tras el crash del secrets-engine),
+  incluso con `pnpm run dev:docker`, que es el mitigador.
 - **`ci:a11y:baseline` sigue auditando sólo la vista de Clase.** Las cuatro vistas nuevas heredan la
   regla de tamaño de objetivo por hoja de estilo, que es menos de lo que una corrida de axe
   demostraría. Ensanchar ese informe es trabajo de `T-H8-10`, no de F9.
 - **Las vistas se alimentan de un paquete sintético**, declarado en pantalla (UIUX §2). No hay
   `apps/api` sirviendo cursos.
-- **F9 sigue `EN_CURSO`** aunque esté completa: sin corrida verde observada en `main` no hay
-  `VERIFICADA`.
+- **La fase F9 sigue rotulada `EN_CURSO`** aunque sus cinco tareas estén `VERIFICADA`: el rótulo de
+  fase lo cierra el gate, no las tareas, y F9 no tiene gate propio (`DEC-CUSTOM-COURSES-001`: no
+  bloquea ninguno).
 
 ## Si vienes a seguir trabajando: cómo se trabaja aquí
 
@@ -129,7 +142,11 @@ e2e). Depcruise sobre **593 módulos** sin violaciones, con sus controles positi
 verde. **131 pruebas contra PostgreSQL 17 no se corrieron** (ver arriba).
 
 **Los números se miden, no se suponen**: los 2223 salen de `--project unit`, y sumarlos con los de
-`db` bajo la misma etiqueta ya produjo cifras incomparables en sesiones anteriores.
+`db` bajo la misma etiqueta ya produjo cifras incomparables en sesiones anteriores. Y el traspaso
+anterior daba por última corrida observada `33288171686` sobre `07fa669` cuando había una posterior
+—`33288528499` sobre `7e09fd7`— igual de verde.
+
+**Corrida de cierre: `33311824991` sobre `95d1f2b`, los diez jobs en verde.**
 
 Reglas de trabajo que siguen vigentes: los **commits** son por tarea con `PLAN_STATUS.md` en el
 mismo commit; los **pushes se agrupan** —el propietario fijó el corte en **quince commits**— porque

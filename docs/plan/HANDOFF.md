@@ -77,19 +77,33 @@
 >
 > ### 6. Lo que sigue, por orden
 >
-> 1. **Mirar Actions**, y con el árbol verde, **la pasada de promoción `HECHA` → `VERIFICADA`**:
->    ~55 tareas, una por una contra su corrida. Van cinco sesiones. Promoverlas en bloque sería
->    firmar sin mirar.
+> 1. **F11 ya se puede empezar**, y es lo que F9 y F10 bloqueaban.
 > 2. **Re-correr BENCH-01** con D-77 y D-79, 3 repeticiones, ~MXN 145.
 > 3. **W5** cuando el propietario rompa su circularidad.
-> 4. **F11 ya se puede empezar.**
+> 4. Las **doce filas que quedaron en `HECHA`** (D-96), si el propietario quiere revisar el criterio.
+>
+> ### 6.b La pasada de promoción, hecha (D-96)
+>
+> **24 → 81 tareas `VERIFICADA`**, contra `33311824991` sobre `95d1f2b` con **los diez jobs en
+> verde**, observada job por job. La regla exige las tres cosas: evidencia que resuelve, corrida
+> verde observada, y celda de estado que **no declare parte pendiente de su propio entregable**.
+>
+> **El comprobador de evidencia mintió a la primera.** Las filas citan la ruta completa una vez
+> —`packages/logic-core/src/calculus.ts`— y después abrevian —`test/calculus.test.ts`—. Sin resolver
+> eso contra el paquete de la fila, declaraba **53 rutas buenas como inexistentes**. Con la
+> resolución puesta, **las 113 resuelven**.
+>
+> Fuera quedan doce filas, ninguna por descuido: las **dos del id duplicado `T-H2-05`** —una lo lleva
+> mal y no consta cuál— y **diez con salvedad**, de las que cuatro nombran una parte pendiente de su
+> propio entregable. Las cinco de calibración abierta se podrían haber promovido; el propietario
+> eligió el criterio conservador.
 >
 > ### 7. Lo que esta sesión NO cerró
 >
-> - **La suite contra PostgreSQL no corrió en local.** Docker Desktop volvió a caer por la trampa 6
->   —`Docker Desktop is unable to start` tras el crash del secrets-engine— incluso con
->   `pnpm run dev:docker`, que es el mitigador; arrancó al segundo intento y el motor nunca llegó a
->   sano. Las 131 pruebas las corre CI en el job `db`. **No están verificadas localmente.**
+> - **La suite contra PostgreSQL no corrió en local**, pero **sí en CI y en verde**. Docker Desktop
+>   volvió a caer por la trampa 6 —`Docker Desktop is unable to start` tras el crash del
+>   secrets-engine— incluso con `pnpm run dev:docker`, que es el mitigador; arrancó al segundo
+>   intento y el motor nunca llegó a sano.
 > - **`ci:a11y:baseline` sigue auditando sólo Clase.** Las vistas nuevas heredan la regla de tamaño
 >   de objetivo por hoja de estilo, que es menos de lo que una corrida de axe demostraría. Ensanchar
 >   ese informe es de `T-H8-10`.
@@ -109,7 +123,7 @@
 >
 > ### 9. Verificación de esta sesión
 >
-> **2223 pruebas unitarias en verde** (2160 → 2174 → 2210 → 2223). Lint, typecheck 41/41, build
+> **Corrida `33311824991` sobre `95d1f2b`: los diez jobs en verde.** En local, **2223 pruebas unitarias** (2160 → 2174 → 2210 → 2223). Lint, typecheck 41/41, build
 > 25/25, depcruise **593 módulos** con sus controles positivos, axe sin violaciones, SBOM y drift
 > regenerados en el mismo cambio que movió el lockfile, YAML del workflow validado con un parser
 > antes de subirlo, y `plan:status` (D-1…D-95). **`ci:freeze:drift` falla, y es lo correcto**: cae

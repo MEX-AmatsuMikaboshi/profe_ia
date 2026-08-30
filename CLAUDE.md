@@ -278,7 +278,9 @@ devuelve de más— con sus controles positivos. Falta sólo la corrida verde en
 **F11 ya no está bloqueada por nada nuestro**; sus tres tareas (`T-LSU-01/02/03`) son del
 propietario. F12–F16 no empezadas.
 
-**2223 pruebas unitarias en verde**, con depcruise sobre 593 módulos. Mutation testing sobre
+**Corrida de referencia: `33311824991` sobre `95d1f2b`, los diez jobs en verde (2026-08-30), y con
+ella la pasada de promoción `HECHA` → `VERIFICADA`: 81 tareas verificadas, 12 fuera con motivo
+escrito (D-96).** **2223 pruebas unitarias en verde**, con depcruise sobre 593 módulos. Mutation testing sobre
 `logic-core` en verde. **Aviso sobre los conteos:** son de `--project unit`; sumar `unit` y `db` bajo
 la misma etiqueta ya produjo cifras incomparables en sesiones anteriores. La progresión medida es
 1851 (26-08) → 2024 (29-08) → 2089 (voz) → 2160 (política de F9) → 2223 (superficie de F9 y su AC).
