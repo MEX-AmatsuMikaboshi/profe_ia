@@ -62,7 +62,10 @@
     "ci:plan:status": "node scripts/plan/check-status.mjs && node scripts/plan/verify-check-status-catches.mjs",
     "demo": "node scripts/session/demo.mjs",
     "demo:turno": "node scripts/session/live-turn.mjs",
-    "ci:e2e:live-session": "node scripts/session/live-session.mjs"
+    "ci:e2e:live-session": "node scripts/session/live-session.mjs",
+    "ci:coords:pbt": "vitest run --project unit packages/visual-interaction/test/coordinates.test.ts",
+    "ci:annotations:staleness": "vitest run --project unit packages/visual-interaction/test/annotations.test.ts",
+    "ci:visual:no-verdict": "vitest run --project unit packages/visual-interaction/test/no-verdict.test.ts"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

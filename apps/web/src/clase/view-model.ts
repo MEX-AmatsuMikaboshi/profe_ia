@@ -66,6 +66,32 @@ export const F7_SUPPORTED_CAPABILITIES: ClaseCapabilityFlags = Object.freeze({
 });
 
 /**
+ * Configuración **recomendada** de la corrida H8 (T-H8-13 ← P-II §13-H8).
+ *
+ * Es literal de la norma y se declara ahora, aunque **no esté activa**: tenerla
+ * escrita deja ver de un vistazo qué separa la fase de hoy de la corrida
+ * multimodal, y evita que alguien la reconstruya de memoria cuando llegue F10.
+ *
+ * `externalScreenCapture` es la única en `false`, y no por falta de tiempo:
+ * P-II §11.6 la declara experimental y **apagada**, con activación por acción
+ * explícita. Encenderla por omisión capturaría pantalla fuera de la aplicación.
+ *
+ * **Encender cualquiera de las otras hoy lanza `CAPACIDAD_NO_IMPLEMENTADA`**,
+ * porque las superficies que las atienden son de F10 (`T-H8-01`…`T-H8-06`). Esa
+ * constante y esa guarda juntas son lo que impide que la corrida crea tener una
+ * capacidad que nadie implementó.
+ */
+export const H8_RECOMMENDED_CAPABILITIES: ClaseCapabilityFlags = Object.freeze({
+  voiceInput: true,
+  voiceOutput: true,
+  whiteboard: true,
+  visualBoardInterpretation: true,
+  uiAnnotations: true,
+  internalUiCapture: true,
+  externalScreenCapture: false,
+});
+
+/**
  * Una capacidad encendida sin superficie que la atienda **lanza**.
  *
  * `T-H7-07` dice que voz y pizarrón llegan en F10 y que Clase opera texto+Fitch.

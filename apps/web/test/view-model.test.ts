@@ -230,3 +230,32 @@ describe('la sesión seca y el corpus real nombran el mismo bloque (T-H7-01)', (
     expect(DRY_SESSION_ACTIVITY.kcId).toBe(DRY_SESSION_BLOCK_ID);
   });
 });
+
+describe('T-H8-13 — capacidades de la corrida H8', () => {
+  it('la configuración recomendada es la literal de P-II §13-H8', async () => {
+    const { H8_RECOMMENDED_CAPABILITIES } = await import('../src/clase/view-model');
+    expect(H8_RECOMMENDED_CAPABILITIES).toStrictEqual({
+      voiceInput: true,
+      voiceOutput: true,
+      whiteboard: true,
+      visualBoardInterpretation: true,
+      uiAnnotations: true,
+      internalUiCapture: true,
+      // La única apagada, y no por falta de tiempo: P-II §11.6 la declara
+      // experimental y OFF, con activación por acción explícita.
+      externalScreenCapture: false,
+    });
+  });
+
+  it('activarla hoy LANZA: las superficies son de F10', async () => {
+    const { H8_RECOMMENDED_CAPABILITIES, assertCapabilitiesImplemented } = await import(
+      '../src/clase/view-model'
+    );
+    // Declarar la configuración de H8 no la habilita. Si esto dejara de lanzar
+    // sin que F10 existiera, la corrida creería tener capacidades que nadie
+    // implementó, y eso contamina la matriz de autonomía.
+    expect(() => assertCapabilitiesImplemented(H8_RECOMMENDED_CAPABILITIES)).toThrow(
+      /CAPACIDAD_NO_IMPLEMENTADA/u,
+    );
+  });
+});

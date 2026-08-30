@@ -159,7 +159,7 @@ mano sin transferencia, y se podía **retirar** un reactivo del registro de cons
 en que un reactivo consumido reaparece. Detalle en
 [`../session/dry-session.md`](../session/dry-session.md).
 
-## F8 — H7 · Profesor IA de sesión (con LLM) (2 de 7 tareas)
+## F8 — H7 · Profesor IA de sesión (con LLM) (7 de 7 tareas; AC del gate cubierto)
 
 | Tarea | Prioridad | Estado | Evidencia | Fecha | Notas |
 |---|---|---|---|---|---|
@@ -174,6 +174,34 @@ en que un reactivo consumido reaparece. Detalle en
 **Gate H7:** `docs/gates/H7.md` — no abierto. Su AC exige **una sesión local completa sin rescate
 docente**, que necesita el binding ganador: no se alcanza escribiendo código.
 
+## F10 — H8 · Prueba funcional local multimodal (4 de 14 tareas)
+
+Los tres `CRITICAL` que **no** necesitan proveedor, más la declaración de capacidades. Lo que falta
+—STT, TTS, pizarrón, captura, telemetría, accesibilidad y BENCH-03— o necesita credenciales de un
+proveedor de voz, o necesita una calibración congelada, o es corrida humana.
+
+**Dos calibraciones quedan abiertas por diseño y su punto de fallo está escrito**: `CAL-MULTIMODAL`
+gobierna los umbrales de la política visual (`visionThresholds()`) y la antigüedad máxima de una
+anotación (`maxAnnotationAgeMs()`). Las dos **lanzan**; ninguna devuelve un número plausible.
+
+| Tarea | Prioridad | Estado | Evidencia | Fecha | Notas |
+|---|---|---|---|---|---|
+| T-H8-04 | CRITICAL | HECHA (mecanismo; CAL-MULTIMODAL abierta por diseño) | `packages/visual-interaction/src/vision-policy.ts`, 8 pruebas | 2026-08-29 | **Estado estructurado antes que visión.** `visionEligibility()` no pregunta «¿puedo usar visión?» sino «¿queda algo que la estructura no cubra?», y **por omisión responde que no**: con la estructura respondiendo, ni un motivo válido ni una confianza de 0.99 la dejan entrar. Los cinco motivos de P-I §8.9.1 son lista cerrada, y **sin motivo declarado se rechaza** — si no, «hacía falta visión» y «se recurrió a visión sin mirar el estado» serían indistinguibles. `visionThresholds()` **lanza**: CAL-MULTIMODAL se congela en BENCH-03, y dos números plausibles decidirían con una suposición cuándo el sistema afirma haber leído bien, que es donde nacen los errores confiados. Los umbrales entran por parámetro para que quien los tenga decida y quien no, choque con el punto de fallo. `DEC-VISION-001`: las tres acciones son `observe\|confirm\|decline` y **ninguna es «dar por válido»**. Un `decline` equivocado **no** es error confiado: el sistema dijo que no sabía y acertó al decirlo. |
+| T-H8-05 | CRITICAL | HECHA (mecanismo; `maxAgeMs` abierta por diseño) | `packages/visual-interaction/src/coordinates.ts` + `annotations.ts`, checks `ci:coords:pbt` y `ci:annotations:staleness`, 18 pruebas | 2026-08-29 | **Overlay de anotaciones.** Cinco primitivas y cuatro familias de target, listas cerradas. La regla que ordena todo: **el modelo decide qué, el frontend resuelve dónde**, así que una anotación normal **no lleva coordenadas** —lleva `fitch-line:4`— y las coordenadas sólo aparecen sin target lógico, con motivo obligatorio. Cuatro marcos con `normalized` de pivote; el PBT de ida y vuelta corre 500 casos. **El PBT refutó su propia tolerancia**: la primera escalaba por la magnitud del punto y falló con `(0,0)` y `scrollX≈4992`, porque el valor intermedio es ~1076 aunque entrada y salida sean cero — la tolerancia va con la escala del problema, no del punto. Revisión **monotónica** por superficie con rechazo duro; retroceder lanza, porque haría que una anotación obsoleta pareciera vigente. Equivalente textual **obligatorio** (§7.6): sin él la anotación no existe para quien no ve la pantalla. `maxAnnotationAgeMs()` lanza. |
+| T-H8-07 | CRITICAL | HECHA | `packages/visual-interaction/src/failure-attribution.ts`, 6 pruebas | 2026-08-29 | **Clasificación de fallos con evidencia.** Las cuatro clases de `DEC-FAILURE-ATTRIBUTION-001`; las tres no conceptuales **no cuentan como fallo de KC ni consumen intento elegible**, porque miden el sistema y no al alumno: contar un `PERCEPTION_ERROR` como fallo de KC mediría la calidad de nuestro OCR y la anotaría como conocimiento del alumno. `CONCEPTUAL_ERROR` es **residuo**: `classifyFailure()` exige los tres descartes **con evidencia** y lanza si falta uno o si viene vacío — sin eso, «conceptual» sería el cajón por omisión de todo lo que nadie miró. Con varias clases abiertas queda `pending_audit`, que P-I §8.9.3 admite: elegir una sería adivinar, y un pendiente tampoco consume intento. |
+| T-H8-13 | REQUIRED | HECHA | `apps/web/src/clase/view-model.ts` (`H8_RECOMMENDED_CAPABILITIES`), 2 pruebas | 2026-08-29 | La configuración literal de P-II §13-H8, declarada aunque **no esté activa**: tenerla escrita deja ver qué separa la fase de hoy de la corrida multimodal. `externalScreenCapture` es la única en `false`, y no por falta de tiempo: P-II §11.6 la declara experimental y OFF con activación explícita. **Activarla hoy lanza** `CAPACIDAD_NO_IMPLEMENTADA`, y hay prueba: si dejara de lanzar sin que F10 existiera, la corrida creería tener capacidades que nadie implementó. |
+| T-H8-01/02 | REQUIRED | PENDIENTE | — | — | STT y TTS. Necesitan credenciales de un proveedor de voz (Deepgram/ElevenLabs/OpenAI) que hoy no están en `.env` |
+| T-H8-03 | REQUIRED | PENDIENTE | — | — | `whiteboard-adapter` sobre Excalidraw (`DEC-WHITEBOARD-001`) |
+| T-H8-06 | REQUIRED | PENDIENTE | — | — | Captura interna; `externalScreenCapture` queda OFF (P-II §11.6) |
+| T-H8-08 | REQUIRED | PENDIENTE | — | — | Evidencia multimodal en el ledger; depende de que existan las superficies |
+| T-H8-09 | REQUIRED | PENDIENTE | — | — | Telemetría H8; el sizing de VPS va **después** de esta medida (`INFRA-01`, `CAL-12`) |
+| T-H8-10 | REQUIRED | PENDIENTE | — | — | Línea base de accesibilidad (`ci:a11y:baseline`); sin declaración WCAG AA global |
+| T-H8-11 | CALIBRATION | BLOQUEADA(CAL-14/CAL-FAMILIARIZATION sin congelar; su conjunto dorado es de BENCH-03) | — | — | `CAL-14/CAL-FAMILIARIZATION`; también congela `CAL-MULTIMODAL`, de la que dependen los dos puntos de fallo de T-H8-04 y T-H8-05 |
+| T-H8-12 | BENCHMARK | PENDIENTE | `ci:visual:no-verdict` (la mitad que no necesita proveedor) | 2026-08-29 | BENCH-03. La parte de **cero rutas de visión a veredicto formal** está cubierta: depcruise prohíbe la arista y `ci:visual:no-verdict` prohíbe la **superficie** —que no exista aquí nada que *parezca* veredicto aunque nadie lo importe—, con las dos siembras comprobadas. Lo demás (WER, latencias, reconstrucción de fórmulas) necesita proveedor y umbrales congelados |
+| T-H8-14 | REQUIRED | PENDIENTE | — | — | Corrida funcional del desarrollador. **Es humana** |
+
+---
+
 ## Fases siguientes
 
 | Fase | Hito | Estado | Bloqueo actual |
@@ -185,7 +213,8 @@ docente**, que necesita el binding ganador: no se alcanza escribiendo código.
 | F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 17 de 17 tareas con mecanismo implementado; **W1 ejecutado sobre el corpus real el 2026-08-20 (D-51): 77 fragmentos materializados en `source/`, `solutions/` reubicadas en `solutions-private/`, `kc/map.yaml` escrito con guarda de deriva; `T-H5-01` y `T-H5-03` VERIFICADAS (corrida `32424646954`, diez jobs en verde); **W2 ejecutado el 2026-08-21 (D-52): 43 elementos, 30 claims y 4 decisiones en `extracted/` y `provenance/`, cobertura KC 18/18**; **Rol B ejecutado el 2026-08-21 (D-53): secuencia, 18 objetivos observables y política pedagógica en `objectives/`, `pedagogy/` y `session-templates/`**; gate H5 abierto por freeze/auditoría y CAL-NLI materiales ausentes |
 | F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas VERIFICADAS y AC del gate cubierto y observado** (CI `32164277686`). Sólo faltan las firmas del acta |
 | F8 | H7 · Profesor IA de sesión | EN_CURSO | **7 de 7 tareas y el AC del gate cubierto.** `T-H7-01`, `T-H7-02` y `T-H7-03` VERIFICADAS; `T-H7-04`…`T-H7-07` HECHAS el 2026-08-29. **`ci:e2e:live-session` existe y pasa**: cinco actos con Perfil C (`claude-haiku-4-5-20251001`), los cuatro entregados y la caída degradando, con las siete comprobaciones del AC en verde —incluida «sin rescate docente», que se comprueba porque **no existe el campo** por el que se usaría, no porque no se usara—. **No corre en cada push**: gasta contra proveedor real, así que se trata como `bench:material` y su evidencia es la corrida. Informe en `analysis/reports/live-session.json`. **Falta el acta firmada** `docs/gates/H7.md`, que es del propietario |
-| F9–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9 |
+| F10 | H8 · Multimodal + telemetría | EN_CURSO | **4 de 14 tareas**: los tres `CRITICAL` que no necesitan proveedor (`T-H8-04`, `T-H8-05`, `T-H8-07`) y `T-H8-13`. `CAL-MULTIMODAL` abierta por diseño, con sus dos puntos de fallo escritos. Lo que falta necesita credenciales de voz, calibración congelada, o es corrida humana |
+| F9, F11–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9. **F11 depende de F9 y F10**, y sus tres tareas (`T-LSU-01/02/03`) son del propietario: la corrida real, el informe de valor y la decisión GO/NO-GO |
 
 ## Entorno de ejecución (verificado 2026-08-14)
 
