@@ -28,7 +28,7 @@ umbrales ni compromisos.
 | `ci:logic:mutation` (1 166 mutantes, concurrencia 4) | ~7,5 min |
 | `ci:arch:depcruise` (58 módulos) | ~2 s |
 
-## Las ocho trampas de esta máquina
+## Las nueve trampas de esta máquina
 
 Son reales y cuestan una hora cada una si no se conocen.
 
@@ -81,6 +81,18 @@ Son reales y cuestan una hora cada una si no se conocen.
 '`. Si hay que usar PowerShell, `Get-Content -Encoding utf8`.
    **Cómo comprobar que no pasó**: `file archivo` debe decir `UTF-8 text`, y `git diff --stat` sobre
    un archivo que no se tocó debe salir vacío. Un `head -3` basta para verlo a ojo.
+
+9. **Turbo con la concurrencia por omisión agota la memoria de esta máquina.** Son 16 GB, y con un
+   navegador abierto quedan libres 2–3. `turbo run typecheck` lanza diez `tsc` a la vez y varios
+   mueren con `FATAL ERROR: Zone Allocation failed - process out of memory` y **exit 134**, que no
+   es un error de tipos por más que el job se vea rojo. Lo mismo le pasa a `vitest`, que abre un
+   worker por núcleo.
+   **Qué hacer.** `pnpm exec turbo run typecheck --concurrency=2` y
+   `pnpm exec vitest run --project unit --maxWorkers=2`. Con Docker Desktop levantado hace falta
+   bajar a 1. Los scripts `ci:*` no lo llevan puesto porque en CI la máquina tiene memoria de
+   sobra; es una limitación local.
+   **Cómo distinguirlo de un fallo real**: exit 134 con `Zone Allocation failed` en la salida es
+   siempre memoria. Un error de tipos dice `error TS….`
 
 ## Trampa nº 6 — sockets AF_UNIX fantasma (2026-08-18)
 

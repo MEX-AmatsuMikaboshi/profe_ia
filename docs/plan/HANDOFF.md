@@ -1,11 +1,148 @@
 # HANDOFF — punto de continuación
 
 > **¿Vienes de otra conversación?** Empieza por [`TRASPASO.md`](TRASPASO.md), que es la versión
-> corta. Los tres bloqueos que las sesiones anteriores pedían «entender antes de decidir» están
-> **cerrados** (D-89, D-91, D-92); lo que queda abierto es trabajo del propietario o superficie
-> de F9.
+> corta. **F9 está completa y F10 va 11 de 14: no queda superficie que construir en ninguna de las
+> dos.** Lo que sigue abierto es trabajo del propietario, más la pasada de promoción
+> `HECHA` → `VERIFICADA`.
 
-> ## EMPIEZA AQUÍ — SE ACABÓ LO CONSTRUIBLE SIN EL PROPIETARIO (2026-08-30)
+> ## EMPIEZA AQUÍ — F9 COMPLETA; LA PELOTA ESTÁ EN ACTIONS (2026-08-30, segunda sesión del día)
+>
+> **F9 pasa de tener política a estar entera**, y con ella F11 deja de estar bloqueada por nada
+> nuestro.
+>
+> ```bash
+> pnpm run demo                          # Inicio ya no dice NO_IMPLEMENTADO
+> pnpm run ci:e2e:course-creation        # el AC de F9. No gasta nada
+> ```
+>
+> ### 1. Las tres cosas que faltaban
+>
+> | | Qué quedó |
+> |---|---|
+> | `T-CC-02` | `runGeneralizedW0()`: **otro recorrido con otra salida**, no `runW0()` con la guarda aflojada (D-93) |
+> | `T-CC-05` | Inicio, Mis materias, Detalle y Progreso, para los dos carriles (D-94) |
+> | AC de F9 | `ci:e2e:course-creation`, con aislamiento **por consulta cruzada** (D-95) |
+>
+> ### 2. D-93: la etapa que falta no está omitida, no existe
+>
+> `runW0()` resuelve por mayoría los claims de las fuentes **contra `authorized-calculus-v1`**. Para
+> «Revolución mexicana» no hay sistema formal contra el que comparar: la mayoría no sale vacía, es
+> que no hay pregunta que responda. Aflojar la guarda de alcance habría producido un
+> `SelectionManifest` **idéntico** al del curso experimental, y desde ahí nada en el tipo distingue
+> el corpus que W1 puede ingerir del que no.
+>
+> Por eso la ausencia es **de campo, no de comprobación**: `GeneralizedScope` no tiene
+> `formalSystemId` y `GeneralizedSourceEvaluation` no tiene `claims`. Y la propuesta es de otro
+> tipo, `generalized-course-proposal-v1`. Es el patrón de `T-CC-04` y de D-92.
+>
+> **Las dos puertas son simétricas**: `runW0()` rechaza un alcance sin el cálculo autorizado, y
+> `runGeneralizedW0()` rechaza el curso experimental. Sin la segunda, pasar lógica por la vía
+> generalizada produciría su corpus **saltándose la mayoría**. La prueba de la primera está escrita
+> como control positivo de la segunda.
+>
+> ### 3. D-94: los tres números que las vistas no calculan
+>
+> §6.1 prohíbe inferir reglas pedagógicas de porcentajes ficticios y §6.6 prohíbe la «retención
+> estimada». No basta con no copiar los del mockup: hay que **no tener dónde ponerlos**.
+>
+> 1. **Progreso** son recuentos por estado autoritativo —cuatro de trece—, no una fracción.
+> 2. **Retención** es una unión sin rama estimada: o medidas, o `retention_not_evaluated`.
+> 3. **Consumo** ausente es `null` con su frase. Un `0,00` con el ledger vacío afirma que no se ha
+>    gastado nada, que en una corrida con presupuesto no es lo mismo que no saberlo.
+>
+> **Progreso tiene dos formas.** La materia propia devuelve una rama sin `kcs`, `counts` ni
+> `retention`: «0 dominados de 0» sería una afirmación sobre el aprendizaje que nadie midió. Y
+> `reconfirmation_failed` **no se funde** con «en aprendizaje», aunque §6.6 sólo enumere cuatro
+> rótulos amables: borrarlo le quita al alumno la señal de que conviene volver sobre algo que ya
+> daba por sabido.
+>
+> ### 4. D-95: el aislamiento se pregunta a la consulta, no al registro
+>
+> Registro a registro ya lo prueba `course-isolation.test.ts`. El fallo de un nivel más arriba es que
+> **la consulta** devuelva de más, y no es ruidoso: el análisis corre igual y produce números con la
+> misma cara que los buenos. Así que se pregunta a la proyección experimental, sobre la unión de lo
+> que escribieron las dos clases, por lo que no debería tener — con la mitad opuesta (las dos
+> proyecciones **suman el total**) y los dos controles positivos.
+>
+> ### 5. Lo que separa a cada fase de estar cerrada
+>
+> | Falta | De quién |
+> |---|---|
+> | F9: **nada construible.** Sólo la corrida verde en `main` | CI |
+> | `T-H8-11` CAL-14 / CAL-MULTIMODAL | calibración congelada |
+> | `T-H8-12` BENCH-03 | umbrales congelados |
+> | `T-H8-14` corrida funcional | **humana** |
+> | Actas H7 y H8 | firmas del propietario / `TECHNICAL_AUDITOR` |
+> | F11 entera (`T-LSU-01/02/03`) | **sólo el propietario** — y ya no está bloqueada |
+>
+> ### 6. Lo que sigue, por orden
+>
+> 1. **Mirar Actions**, y con el árbol verde, **la pasada de promoción `HECHA` → `VERIFICADA`**:
+>    ~55 tareas, una por una contra su corrida. Van cinco sesiones. Promoverlas en bloque sería
+>    firmar sin mirar.
+> 2. **Re-correr BENCH-01** con D-77 y D-79, 3 repeticiones, ~MXN 145.
+> 3. **W5** cuando el propietario rompa su circularidad.
+> 4. **F11 ya se puede empezar.**
+>
+> ### 7. Lo que esta sesión NO cerró
+>
+> - **La suite contra PostgreSQL no corrió en local.** Docker Desktop volvió a caer por la trampa 6
+>   —`Docker Desktop is unable to start` tras el crash del secrets-engine— incluso con
+>   `pnpm run dev:docker`, que es el mitigador; arrancó al segundo intento y el motor nunca llegó a
+>   sano. Las 131 pruebas las corre CI en el job `db`. **No están verificadas localmente.**
+> - **`ci:a11y:baseline` sigue auditando sólo Clase.** Las vistas nuevas heredan la regla de tamaño
+>   de objetivo por hoja de estilo, que es menos de lo que una corrida de axe demostraría. Ensanchar
+>   ese informe es de `T-H8-10`.
+> - **Las vistas se alimentan de un paquete sintético** declarado en pantalla (UIUX §2).
+>
+> ### 8. Archivos nuevos de esta sesión
+>
+> ```text
+> packages/authoring-core/src/w0-generalized.ts              # D-93; empieza por aquí
+> packages/authoring-core/test/e2e-course-creation.test.ts   # el AC de F9
+> apps/web/src/materias/view-model.ts                        # D-94, los tres números que no se calculan
+> apps/web/src/materias/copy.ts                              # textos, cada uno citando su norma
+> apps/web/src/materias/demo-data.ts                         # paquete sintético (UIUX §2)
+> apps/web/src/materias/components/                          # las cuatro vistas + acción + aviso
+> apps/web/src/app/materias/                                 # rutas /materias, /:id, /:id/progreso
+> ```
+>
+> ### 9. Verificación de esta sesión
+>
+> **2223 pruebas unitarias en verde** (2160 → 2174 → 2210 → 2223). Lint, typecheck 41/41, build
+> 25/25, depcruise **593 módulos** con sus controles positivos, axe sin violaciones, SBOM y drift
+> regenerados en el mismo cambio que movió el lockfile, YAML del workflow validado con un parser
+> antes de subirlo, y `plan:status` (D-1…D-95). **`ci:freeze:drift` falla, y es lo correcto**: cae
+> cerrado contra el placeholder de F0 porque W5 no ha corrido, y no está en el workflow.
+>
+> **Cinco siembras, todas comprobadas.** Desactivar la puerta de carril rompe una prueba y ninguna
+> más; disfrazar la propuesta de manifiesto de selección, otra sola; desactivar la rama sin autoridad
+> de dominio rompe tres —dos del modelo y una del render—; pintar el consumo ausente como `0,00`,
+> una; y que `runGeneralizedW0()` no transite el curso rompe **7 de 13** del e2e: exactamente las que
+> atraviesan la cadena, y sobreviven las 6 que no la necesitan.
+>
+> ### 10. Dos lecciones de método
+>
+> **Una prueba puede estar mal en la dirección contraria.** La de términos prohibidos rechazaba
+> «validad» también **negado**, y «no está validada por el experimento de lógica» es justo la frase
+> que la norma exige. Al corregirla apareció algo real: el descargo decía «no tiene verificador
+> determinista» — jerga interna en la pantalla del alumno, y enunciada como carencia, que es lo que
+> P-I §3.1.2 prohíbe.
+>
+> **Asertar el texto de un error es asertar por casualidad.** Tres aserciones del e2e miraban el
+> mensaje; `CourseError` lleva el código en `.code`. Una aserción sobre prosa falla el día que
+> alguien reescribe el mensaje sin que nada esté roto, y puede pasar con **otro** error que comparta
+> una palabra.
+>
+> ### 11. Trampa nueva del entorno: la nº 9
+>
+> **Turbo y vitest con la concurrencia por omisión agotan la memoria de esta máquina.** Son 16 GB y
+> con un navegador abierto quedan 2–3 libres; `turbo run typecheck` lanza diez `tsc` y varios mueren
+> con **exit 134** y `FATAL ERROR: Zone Allocation failed`. **No es un error de tipos** por más que
+> el job se vea rojo. `--concurrency=2` y `--maxWorkers=2`; con Docker levantado, 1. Registrada en
+> `docs/env/windows.md`.
+
+> ## Cierre anterior — F10 en 11 de 14, F9 con su política (2026-08-30) — **superado por el de arriba**
 >
 > **F10 va 11 de 14 y no queda nada construible en ella. F9 tiene su política puesta.** Las dos
 > cosas que faltaban y no dependían de nadie están hechas.

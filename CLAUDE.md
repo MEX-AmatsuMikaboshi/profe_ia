@@ -47,7 +47,7 @@ pnpm run ci:lint && pnpm run ci:typecheck && pnpm run ci:unit && pnpm run ci:bui
 Verificación completa de que todo sigue en pie (~1 min sin Docker):
 
 ```bash
-pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && pnpm run ci:mode-separation && pnpm run ci:e2e:dry-session && pnpm run ci:adversarial:session && pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net && pnpm run db:grants:check && pnpm run ci:db:negative && pnpm run ci:supply:sbom && pnpm run ci:supply:drift && pnpm run ci:infra:hardening &&
+pnpm run ci:arch:depcruise && node scripts/arch/verify-depcruise-catches.mjs && pnpm run ci:mode-separation && pnpm run ci:e2e:dry-session && pnpm run ci:e2e:course-creation && pnpm run ci:adversarial:session && pnpm run ci:logic:golden && pnpm run ci:logic:pbt && pnpm run ci:logic:no-net && pnpm run db:grants:check && pnpm run ci:db:negative && pnpm run ci:supply:sbom && pnpm run ci:supply:drift && pnpm run ci:infra:hardening &&
 pnpm run ci:content:mangos && pnpm run ci:plan:status
 ```
 
@@ -61,6 +61,7 @@ pnpm run ci:content:mangos && pnpm run ci:plan:status
 | `pnpm run ci:logic:golden` / `:pbt` / `:no-net` | Conjunto dorado (413 casos) / propiedades fast-check / pureza del verificador |
 | `pnpm run ci:logic:mutation` | Stryker sobre `logic-core` (~8–9 min; se corre aparte) |
 | `pnpm run ci:mode-separation` / `ci:e2e:dry-session` | El AC del gate H6: separación de modos (12 propiedades) y sesión seca E2E reconstruible desde eventos (33) |
+| `pnpm run ci:e2e:course-creation` | El AC de F9: crear-materia → clase sobre una materia sin sistema formal, con el aislamiento comprobado **por consulta cruzada** y sus controles positivos (13) |
 | `pnpm run ci:gateway:fail-closed` | Que la pasarela no envía parámetros no declarados por el binding ni acepta un binding sin snapshot ni huella |
 | `pnpm run db:grants:check` | Que la migración de `GRANT` corresponde a la matriz vigente |
 | `pnpm run ci:supply:sbom` / `:drift` | SBOM CycloneDX + digest de lockfile / drift y advisories (bloqueante) |
@@ -208,6 +209,13 @@ Son reales y cuestan una hora cada una si no se conocen (`docs/env/windows.md`).
    Comprobación: `file archivo` debe decir `UTF-8 text`. **Si pasa durante una siembra de defecto,
    las pruebas fallan por el destrozo y no por el defecto** — y se concluye que el control detecta
    sin haber comprobado nada.
+8. **Turbo y vitest agotan la memoria de esta máquina con la concurrencia por omisión.** Son 16 GB
+   y con un navegador abierto quedan 2–3 libres; `turbo run typecheck` lanza diez `tsc` y varios
+   mueren con **exit 134** y `FATAL ERROR: Zone Allocation failed - process out of memory`. **No es
+   un error de tipos** por más que el job se vea rojo: un error de tipos dice `error TS…`. Usa
+   `pnpm exec turbo run typecheck --concurrency=2` y
+   `pnpm exec vitest run --project unit --maxWorkers=2`; con Docker Desktop levantado, 1. Los
+   scripts `ci:*` no lo llevan puesto porque en CI hay memoria de sobra: es una limitación local.
 
 ## 6. Estado actual (2026-08-30)
 
@@ -254,16 +262,28 @@ congelada), `T-H8-12` (BENCH-03, umbrales preinscritos) y `T-H8-14` (corrida hum
 —`T-H8-01/02`— está construida: STT, TTS y un **único** lexicón de verbalización que sirve a las dos
 direcciones, con reconstrucción exacta de fórmulas comprobada por propiedad (D-91).
 
-**F9 con su política completa y su superficie no** (D-92): modelo de cursos, aislamiento
-experimental, autoridad de evaluación por dominio, flujo observable de creación y etiquetado. Faltan
-las cuatro vistas, el enganche del W0 generalizado y el e2e crear-materia→clase. **F11 depende de
-F9**, y sus tres tareas (`T-LSU-01/02/03`) son del propietario: no hay nada que programar en ellas.
-F12–F16 no empezadas.
+**F9 completa: 5 de 5 tareas y el AC cubierto.** La política es de D-92 —modelo de cursos,
+aislamiento experimental, autoridad de evaluación por dominio, flujo observable y etiquetado— y la
+superficie llegó el 2026-08-30. **El W0 generalizado es otro recorrido, no `runW0()` con la guarda
+aflojada** (D-93): para una materia sin sistema formal la resolución por mayoría contra
+`authorized-calculus-v1` no está omitida, **no existe**, así que `GeneralizedScope` no tiene
+`formalSystemId` ni `GeneralizedSourceEvaluation` tiene `claims`, y la propuesta es de otro tipo.
+**Las cuatro vistas no calculan ninguno de los tres números que podrían inventar** (D-94): el
+progreso son recuentos y no porcentajes, la retención se declara `retention_not_evaluated` en vez de
+estimarse, y el consumo ausente se dice con palabras y no como `0,00`. **Progreso tiene dos formas**:
+la materia propia devuelve una rama sin campos de dominio, porque «0 dominados de 0» sería una
+afirmación que nadie midió. El AC es `ci:e2e:course-creation` (D-95), que comprueba el aislamiento
+**por consulta cruzada** —el fallo que importa no es la etiqueta que falta sino la consulta que
+devuelve de más— con sus controles positivos. Falta sólo la corrida verde en `main` para promover.
+**F11 ya no está bloqueada por nada nuestro**; sus tres tareas (`T-LSU-01/02/03`) son del
+propietario. F12–F16 no empezadas.
 
-**2160 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
+**2223 pruebas unitarias en verde**, con depcruise sobre 593 módulos. Mutation testing sobre
 `logic-core` en verde. **Aviso sobre los conteos:** son de `--project unit`; sumar `unit` y `db` bajo
 la misma etiqueta ya produjo cifras incomparables en sesiones anteriores. La progresión medida es
-1851 (26-08) → 2024 (29-08) → 2089 (voz) → 2160 (F9).
+1851 (26-08) → 2024 (29-08) → 2089 (voz) → 2160 (política de F9) → 2223 (superficie de F9 y su AC).
+**Las 131 pruebas contra PostgreSQL 17 no se corrieron en local el 2026-08-30**: Docker Desktop
+volvió a caer por la trampa 6 incluso con `pnpm run dev:docker`. Las corre CI en el job `db`.
 
 **✅ CI VIVA desde el 2026-08-29, tras diez sesiones muerta.** Dos causas encadenadas, y conviene
 saber las dos porque ninguna era la que este archivo decía.

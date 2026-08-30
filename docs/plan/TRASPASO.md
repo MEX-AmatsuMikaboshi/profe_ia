@@ -1,4 +1,4 @@
-# Traspaso de sesión — 2026-08-30 (F10 en 11 de 14, F9 con su política puesta)
+# Traspaso de sesión — 2026-08-30 (F9 completa; ya no queda superficie que construir)
 
 Documento corto para retomar en otra conversación. El detalle está en
 [`HANDOFF.md`](HANDOFF.md) y [`PLAN_STATUS.md`](PLAN_STATUS.md); esto es lo mínimo para no empezar
@@ -8,29 +8,29 @@ de cero.
 
 > Retomo el proyecto Profesor IA en `C:\Users\gabri\Documents\edu_ia\profesor_ia_code`.
 > Lee `docs/plan/HANDOFF.md` (cabecera «EMPIEZA AQUÍ») y sigue desde ahí.
-> **Ya no queda nada construible en F10**, y F9 tiene su política puesta pero no su superficie.
-> Hay **once commits sin subir**: lo primero es `git push origin main` y **mirar Actions**,
-> porque hasta que no haya verde en `main` ninguna tarea puede pasar a `VERIFICADA`.
-> Después, la pasada de promoción `HECHA` → `VERIFICADA` (~50 tareas, una por una).
+> **F9 está completa y F10 va 11 de 14**: no queda nada construible en ninguna de las dos.
+> Hay **quince commits subidos el 2026-08-30**: lo primero es **mirar Actions** y comprobar la
+> corrida job por job, porque hasta que no haya verde en `main` ninguna tarea puede pasar a
+> `VERIFICADA`. Después, la pasada de promoción `HECHA` → `VERIFICADA` (~55 tareas, una por una).
 
 ## Lo que cambió en esta sesión
 
-**Se acabó lo que se podía construir sin ti.** Las dos cosas que faltaban y no dependían de nadie
-están hechas:
+**F9 pasa de tener política a estar entera.** Las tres cosas que le faltaban están hechas:
 
 | | Qué era | Qué quedó |
 |---|---|---|
-| `T-H8-01/02` | la voz: que el Profesor IA hable y escuche | STT, TTS y el lexicón de verbalización, con reconstrucción exacta de fórmulas comprobada por propiedad (D-91) |
-| `T-CC-01…05` | el carril de materias propias, del que **F11 depende** | modelo de cursos, aislamiento experimental, autoridad de evaluación por dominio, flujo observable y etiquetado (D-92) |
+| `T-CC-02` | el enganche del W0 generalizado | `runGeneralizedW0()`: otro recorrido con otra salida, no el experimental con la guarda aflojada (D-93) |
+| `T-CC-05` | las cuatro vistas | Inicio, Mis materias, Detalle y Progreso, para los dos carriles, sin calcular ninguno de los tres números que podrían inventar (D-94) |
+| AC de F9 | el e2e crear-materia → clase | `ci:e2e:course-creation`, con la prueba de aislamiento **por consulta cruzada** (D-95) |
 
 ## Dónde quedó
 
 | Fase | Estado |
 |---|---|
 | F8 · Profesor IA de sesión | **cerrada** — 7 de 7, `ci:e2e:live-session` en verde. Falta el acta firmada `docs/gates/H7.md`, que es tuya |
-| F10 · Multimodal | **11 de 14 — no queda nada construible.** Las tres que faltan son calibración congelada (`T-H8-11`), BENCH-03 (`T-H8-12`) y tu corrida funcional (`T-H8-14`) |
-| F9 · Cursos personalizados | **política completa, superficie no.** Faltan las cuatro vistas, el enganche del W0 generalizado y el e2e crear-materia→clase |
-| F11 · `LOCAL_SELF_USE` | **no la puede construir nadie más que tú.** Sus tres tareas son tu corrida, tu informe y tu decisión GO/NO-GO |
+| F9 · Cursos personalizados | **completa**: 5 de 5 tareas y el AC cubierto. Sólo falta la corrida verde en `main` para promover |
+| F10 · Multimodal | **11 de 14 — no queda nada construible.** Calibración congelada (`T-H8-11`), BENCH-03 (`T-H8-12`) y tu corrida funcional (`T-H8-14`) |
+| F11 · `LOCAL_SELF_USE` | **ya no está bloqueada por nada nuestro.** Sus tres tareas son tu corrida, tu informe y tu decisión GO/NO-GO |
 
 ## Lo que funciona hoy, y cómo verlo
 
@@ -38,44 +38,43 @@ están hechas:
 pnpm run demo
 ```
 
-Abre `http://localhost:3010/materias/logica/clase`. Levanta verificador + api + web sin Docker. El
-recorrido de la demo, con qué preguntar y qué contestar a cada objeción, está en
-[`../session/demo.md`](../session/demo.md).
+Abre `http://localhost:3010`. Desde esta sesión, Inicio ya no dice `NO_IMPLEMENTADO`: se ve la
+materia activa con su punto de retorno, la materia propia en preparación, «Mis materias» con los dos
+carriles separados, el detalle y el progreso. Todo declarado en pantalla como **datos de
+demostración**, porque `apps/api` aún no sirve cursos. La clase sigue en
+`/materias/logica/clase`, y su recorrido está en [`../session/demo.md`](../session/demo.md).
 
 ```bash
-pnpm run ci:e2e:live-session
+pnpm run ci:e2e:course-creation
 ```
 
-El criterio de aceptación del gate H7. **Gasta céntimos** contra el proveedor real.
+El criterio de aceptación de F9. No gasta nada.
 
-## Los tres puntos que antes había «que entender antes de decidir»: cerrados
+## Las tres cosas que esta sesión decidió, y por qué
 
-Los tres estaban abiertos como decisiones. Ya no lo están, y lo que queda de cada uno es o trabajo
-tuyo o una nota de mantenimiento.
-
-1. **La voz — cerrado.** No había que contratar nada (D-89: la llave de OpenAI que ya está en `.env`
-   sirve para TTS y STT, comprobado de ida y vuelta) **y ya está construido** (D-91). Lo que sigue
-   sin estar medido es la **calidad** con un micrófono real en una habitación con ruido: eso es
-   BENCH-03, y no se puede hacer sin umbrales congelados. Que funcione y que entienda bien a un
-   alumno son dos afirmaciones distintas, y sólo la primera está demostrada.
-2. **F11 no es código — cerrado como decisión, abierto como trabajo tuyo.** No hay nada que
-   programar ahí, y ya no hace falta seguir discutiéndolo: lo que hacía falta era dejarla
-   arrancable, y F9 y F10 son lo que faltaba para eso.
-3. **Las dos calibraciones que lanzan — cerrado como regla permanente.** `visionThresholds()` y
-   `maxAnnotationAgeMs()` fallan cerrado **a propósito** y se congelan en `T-H8-11`/BENCH-03. No es
-   un pendiente que revisar cada sesión: es cómo tiene que quedarse hasta que exista el número. **No
-   los «arregles» devolviendo un valor.**
+1. **El W0 generalizado es otro recorrido, no `runW0()` con la guarda aflojada.** Aflojarla habría
+   producido, para «Revolución mexicana», un `SelectionManifest` idéntico al del curso experimental,
+   y desde ahí nada en el tipo distingue el corpus que W1 puede ingerir del que no. La etapa que
+   falta —la mayoría contra `authorized-calculus-v1`— no está omitida: **no existe** para una
+   materia sin sistema formal, así que no hay campo donde declararlo.
+2. **Las vistas no calculan ninguno de los tres números que podrían inventar.** Progreso son
+   recuentos, no porcentajes; la retención se declara `retention_not_evaluated`; el consumo ausente
+   se dice con palabras y no como `0,00` —un cero con el ledger vacío afirma que no se ha gastado
+   nada, que no es lo mismo que no saberlo—. Y **Progreso tiene dos formas**: la materia propia no
+   tiene campos de dominio, porque «0 dominados de 0» sería una afirmación que nadie midió.
+3. **El aislamiento se comprueba por consulta cruzada.** Registro a registro ya lo prueba
+   `course-isolation.test.ts`. Lo que se ataca aquí es que **la consulta** devuelva de más, que es
+   el fallo silencioso: el análisis corre igual y produce números con la misma cara que los buenos.
 
 ## Lo siguiente, por orden
 
-1. **La pasada de promoción `HECHA` → `VERIFICADA`.** Lleva cuatro sesiones pendiente: ~50 tareas
-   cuya evidencia hay que comprobar una por una contra las corridas de CI. Promoverlas en bloque
-   sería firmar sin mirar. **Es lo más importante que queda que no dependa de ti.**
-2. **La superficie de F9**: las cuatro vistas de UIUX §6, el enganche del W0 generalizado y el e2e
-   crear-materia → clase con prueba de aislamiento por consulta cruzada. Es lo que separa a F9 de
-   estar cerrada, y lo que hace cómoda tu corrida de F11.
-3. **Re-correr BENCH-01** con D-77 y D-79 puestos, 3 repeticiones, ~MXN 145. La semilla no cambia.
-4. **W5** cuando rompas su circularidad.
+1. **Mirar Actions y hacer la pasada de promoción `HECHA` → `VERIFICADA`.** Lleva cinco sesiones
+   pendiente: ~55 tareas cuya evidencia hay que comprobar una por una contra las corridas de CI.
+   Promoverlas en bloque sería firmar sin mirar. **Es lo más importante que queda que no dependa de
+   ti.**
+2. **Re-correr BENCH-01** con D-77 y D-79 puestos, 3 repeticiones, ~MXN 145. La semilla no cambia.
+3. **W5** cuando rompas su circularidad.
+4. Y con F9 y F10 donde están, **F11 ya se puede empezar** — es tuya.
 
 ## Lo que es tuyo y ningún modelo sustituye
 
@@ -89,52 +88,50 @@ tuyo o una nota de mantenimiento.
   **y al menos una materia propia**), `T-LSU-02` (tu informe de valor con costos reales) y
   `T-LSU-03` (tu decisión GO/NO-GO del Bloque B).
 
-## Dos fallos de CI que conviene conocer
+## Lo que esta sesión NO cerró, y conviene no dar por hecho
 
-**D-85 — un paquete nuevo con pruebas necesita tres cosas, no una.** `visual-interaction` se creó con
-43 pruebas y sin `tsconfig.test.json`, así que ningún proyecto de TypeScript las compilaba. El
-typecheck local pasaba no porque estuvieran bien, sino porque nadie las miraba. Hacen falta:
-
-1. su `tsconfig.test.json`,
-2. su script `typecheck` encadenando los dos proyectos,
-3. sus dependencias de prueba declaradas en el `package.json`.
-
-El árbol se ve verde sin ninguna de las tres. Y si se toca el lockfile, `ci:supply:drift` exige
-regenerar SBOM y digest **en el mismo cambio** — pasó otra vez en `T-H8-01/02`, y el check lo cazó.
-
-**La misma lección, otra vez, en el propio comprobador del plan.** `check-status.mjs` sólo reconocía
-ids `T-Hx-nn`, así que las filas de F9 (`T-CC-nn`) y las de F11 (`T-LSU-nn`) **no se validaban**: un
-estado mal escrito ahí habría pasado inadvertido. Corregido en esta sesión — de 91 tareas vigiladas
-a 96. **Que un control exista no es lo mismo que vigile lo que crees.**
+- **La suite contra PostgreSQL no se pudo correr en local.** Docker Desktop volvió a caer por la
+  trampa 6 (`Docker Desktop is unable to start` tras el crash del secrets-engine), incluso con
+  `pnpm run dev:docker`, que es el mitigador. Las 131 pruebas las corre CI en el job `db`; **no
+  están verificadas localmente en esta sesión.**
+- **`ci:a11y:baseline` sigue auditando sólo la vista de Clase.** Las cuatro vistas nuevas heredan la
+  regla de tamaño de objetivo por hoja de estilo, que es menos de lo que una corrida de axe
+  demostraría. Ensanchar ese informe es trabajo de `T-H8-10`, no de F9.
+- **Las vistas se alimentan de un paquete sintético**, declarado en pantalla (UIUX §2). No hay
+  `apps/api` sirviendo cursos.
+- **F9 sigue `EN_CURSO`** aunque esté completa: sin corrida verde observada en `main` no hay
+  `VERIFICADA`.
 
 ## Si vienes a seguir trabajando: cómo se trabaja aquí
 
-Tres cosas que este repositorio da por sabidas y cuestan una sesión si no se saben.
+Cuatro cosas que este repositorio da por sabidas y cuestan una sesión si no se saben.
 
 1. **Sembrar antes de creer.** Cuando un control sale verde a la primera, no está comprobado: hay
-   que romper lo que vigila y ver que **falla, y sólo por eso**. En esta sesión sirvió tres veces, y
-   una de ellas destapó una trampa del entorno.
-2. **PowerShell 5.1 destroza la codificación al reescribir un archivo** (trampa nº 8 de
-   `docs/env/windows.md`). `Get-Content -Raw` lee en ANSI, así que el conectivo de conjunción se
-   vuelve mojibake sin que nada falle. Peor todavía si pasa a mitad de una siembra: las pruebas
-   fallan por el destrozo y se concluye que el control detecta cuando no se comprobó nada.
-   Comprobación: `file archivo` debe decir `UTF-8 text`.
-3. **Un paquete nuevo con pruebas necesita tres cosas** (D-85), y **si se toca el lockfile hay que
-   regenerar SBOM y digest en el mismo cambio**. Las dos volvieron a morder en `T-H8-01/02`, y las
-   dos las cazó el check correspondiente.
+   que romper lo que vigila y ver que **falla, y sólo por eso**. En esta sesión se hizo cinco veces
+   y siempre dijo algo: una de ellas demostró que el e2e recorre la cadena de verdad (rompe 7 de 13
+   pruebas, exactamente las que la atraviesan).
+2. **Una prueba puede estar mal en la dirección contraria.** La de términos prohibía «validad»
+   también **negado**, y «no está validada por el experimento de lógica» es justo la frase que la
+   norma exige. Corregida — y de paso destapó jerga interna en la pantalla del alumno.
+3. **PowerShell 5.1 destroza la codificación al reescribir un archivo** (trampa nº 8 de
+   `docs/env/windows.md`). Comprobación: `file archivo` debe decir `UTF-8 text`.
+4. **Turbo y vitest agotan la memoria de esta máquina** (trampa nº 9, nueva). `exit 134` con
+   `Zone Allocation failed` es memoria, no un error de tipos: `--concurrency=2` y `--maxWorkers=2`.
+
+Y la de siempre: **si se toca el lockfile hay que regenerar SBOM y digest en el mismo cambio** — pasó
+otra vez aquí, al añadir `domain-engine` a `apps/web`.
 
 ## Números al cerrar
 
-**2160 pruebas unitarias** (2024 → 2089 con la voz → 2160 con F9) más 131 contra PostgreSQL 17 real.
-Depcruise sobre **576 módulos** sin violaciones, con sus controles positivos. Lint, typecheck 41/41,
-build 25/25 y `plan:status` (D-1…D-92) en verde.
+**2223 pruebas unitarias** (2160 → 2174 con el W0 generalizado → 2210 con las vistas → 2223 con el
+e2e). Depcruise sobre **593 módulos** sin violaciones, con sus controles positivos. Lint, typecheck
+41/41, build 25/25, axe sin violaciones, SBOM y drift regenerados, y `plan:status` (D-1…D-95) en
+verde. **131 pruebas contra PostgreSQL 17 no se corrieron** (ver arriba).
 
-**Los números se miden, no se suponen**: el traspaso anterior decía «tres commits sin subir» en la
-cabecera y «seis» en el cierre, y el árbol daba siete. Hoy son **once**, contados con
-`git rev-list --count origin/main..HEAD`. La última corrida de CI observada sigue siendo
-**`33288171686` sobre `07fa669`** — es decir, **nada de lo de las dos últimas sesiones se ha visto
-en verde en `main` todavía**, y por eso ninguna de esas tareas puede pasar a `VERIFICADA`.
+**Los números se miden, no se suponen**: los 2223 salen de `--project unit`, y sumarlos con los de
+`db` bajo la misma etiqueta ya produjo cifras incomparables en sesiones anteriores.
 
 Reglas de trabajo que siguen vigentes: los **commits** son por tarea con `PLAN_STATUS.md` en el
-mismo commit; los **pushes se agrupan** porque el presupuesto de Actions es de USD 5. Y **nunca se
-versiona `.env`**: `git status --short` antes de cada commit.
+mismo commit; los **pushes se agrupan** —el propietario fijó el corte en **quince commits**— porque
+el presupuesto de Actions es de USD 5. Y **nunca se versiona `.env`**: `git status --short` antes de
+cada commit.
