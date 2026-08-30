@@ -61,7 +61,11 @@ if (ESTADOS.size === 0 && lineaEstados !== undefined) {
   fallos.push('No se pudo leer ningún estado de la línea «Estados:».');
 }
 
-const filas = [...texto.matchAll(/^\| (T-H[0-9.]+-[0-9]+) \| ([A-Z_]+) \| ([^|]+) \|/gm)];
+// Los ids de tarea no son todos `T-Hx-nn`: F9 usa `T-CC-nn` y F11 `T-LSU-nn`
+// (Plan.md §F9 y §F11). Con el patrón antiguo, esas filas **no se validaban** —
+// un estado mal escrito en F9 pasaba inadvertido y el árbol se veía verde—, que
+// es la misma clase de agujero que D-85: existir no es lo mismo que vigilar.
+const filas = [...texto.matchAll(/^\| (T-(?:H[0-9.]+|CC|LSU)-[0-9]+) \| ([A-Z_]+) \| ([^|]+) \|/gm)];
 if (filas.length === 0) fallos.push('No se reconoció ninguna fila de tarea en PLAN_STATUS.md.');
 for (const fila of filas) {
   const tarea = fila[1];

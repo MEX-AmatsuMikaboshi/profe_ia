@@ -202,6 +202,32 @@ anotación (`maxAnnotationAgeMs()`). Las dos **lanzan**; ninguna devuelve un nú
 
 ---
 
+## F9 — Cursos personalizados `CUSTOM_COURSE_UNVALIDATED` (5 de 5 tareas, política implementada)
+
+No bloquea gates (`DEC-CUSTOM-COURSES-001`; Apéndice D paso 11), pero **F11 depende de ella**:
+`T-LSU-01` exige que la corrida del propietario cubra «curso de lógica **y al menos una materia
+personalizada**».
+
+Lo implementado es la **política**: qué puede y qué no puede hacer este carril. Lo que falta es
+superficie —las cuatro vistas, el enganche del W0 generalizado y el e2e— y está declarado abajo,
+tarea por tarea, en vez de escondido tras un «HECHA».
+
+| Tarea | Prioridad | Estado | Evidencia | Fecha | Notas |
+|---|---|---|---|---|---|
+| T-CC-01 | REQUIRED | HECHA | `packages/domain-engine/src/courses.ts`, 19 pruebas | 2026-08-30 | **El tipo de curso es inmutable, y ahí está la puerta que había que cerrar.** La forma en que este carril contamina el experimento no es enseñar mal una materia propia: es que una `CUSTOM_COURSE_UNVALIDATED` —investigada por el sistema, sin corpus autorizado, sin freeze— cambie de tipo y sus intentos entren al análisis de Etapa 1, donde serían indistinguibles de los buenos. `updateCourse()` **lanza**, y también en sentido contrario: degradar el curso de lógica sacaría sesiones del análisis sin dejar hueco, y una corrida incompleta no se distingue de una en la que esas sesiones nunca ocurrieron. **No hay campo que ordene los carriles**: ni `isValidated` ni `quality`, porque P-I §3.1.2 pide mostrar la diferencia «sin presentar el modo personalizado como defectuoso». `failed` es **estado y no excepción**, porque la norma pide reintentos autorizados y un fallo que sólo existe como excepción no se puede mostrar ni reintentar. Rechazar la propuesta vuelve a `researching` y no a `draft`: volver a pedir el sobre castigaría al usuario por no aceptar. En continuidad (`OWNER-CONTINUITY-001`), `resumePoint: null` dice «no hay dónde volver» y ausente diría «no se registró» — y cruzar el progreso de dos materias lanza, porque mandaría al alumno al punto de retorno de otra asignatura y en pantalla parecería un fallo de navegación |
+| T-CC-03 | CRITICAL | HECHA | `packages/domain-engine/src/course-isolation.ts`, 14 pruebas con control positivo | 2026-08-30 | **Aislamiento experimental.** Los cuatro destinos del plan —`reservation`, `probe_round`, `primary_metric`, `sced_analysis`— son lista cerrada, y una materia personalizada no entra en ninguno. El fallo que esto previene **no es ruidoso**: el análisis seguiría corriendo y produciría números de una corrida que nadie diseñó, con la misma cara que los buenos. **Sin etiqueta no se pasa**: un carril no declarado lanza, porque suponerlo decidiría en silencio a qué corrida pertenece el registro. **Las proyecciones son dos, no una con `WHERE`**: un filtro se rompe en silencio el día que alguien escribe una consulta nueva y lo olvida. `partitionByTrack()` **lanza** ante un registro sin etiquetar en vez de descartarlo, porque un descarte silencioso lo borra de las dos proyecciones y una corrida a la que le faltan datos no se distingue de una en la que nunca existieron. **Control positivo obligatorio**: se comprueba que el curso de lógica **sí** alimenta los cuatro, y que la materia propia **sí** guarda progreso y coste — sin eso, una puerta que rechazara todo dejaría verdes todas las negativas y al experimento sin datos |
+| T-CC-04 | CRITICAL | HECHA | `packages/domain-engine/src/evaluation-authority.ts`, 15 pruebas | 2026-08-30 | **Autoridad de evaluación por dominio.** Fingir equivalencia con `logic-core` no es un acto deliberado: pasa solo cuando alguien necesita evaluar una respuesta de historia, no hay verificador, y devuelve `{ valid: false }` porque es la forma que ya existe. A partir de ahí un juicio sin autoridad viaja por las mismas tuberías y se registra con el mismo nombre que un veredicto del cálculo congelado — nadie mintió y es indistinguible de una mentira. Por eso **la forma del resultado cambia con la autoridad**: la rama sin verificador **no tiene dónde escribir un veredicto** (no hay `valid`, ni `verdict`, ni `correct`), y el descargo es obligatorio porque un resultado a secas se lee como veredicto. Los niveles son **dos y no tres**: un `partial_authority` sería el agujero por el que pasaría todo lo que «casi» verifica, que es la equivalencia fingida. El **LLM-juez lanza** salvo autorización que cite su referencia normativa — mismo patrón que `assertPackageMayCrownWinner()`: el punto de fallo es donde se enchufa la decisión que falta |
+| T-CC-02 | REQUIRED | HECHA (política y vista; el enganche del W0 generalizado es de la corrida) | `packages/domain-engine/src/course-creation.ts`, 12 pruebas | 2026-08-30 | **Preparación observable.** Lo que descarta es la rueda girando con un «preparando tu materia…»: cuando la preparación tarda diez minutos, esa pantalla no distingue *investigando* de *lleva cuatro minutos parada* de *falló y nadie lo dijo*, y el usuario espera indefinidamente en la tercera. `PreparationView` lleva estado, artefactos ya producidos y último mensaje, porque un proceso del que se ve **qué lleva hecho** es un proceso del que se sabe si sigue vivo. Los mensajes son **códigos con prosa en un solo sitio**, no `string` suelto en cada punto de fallo. `no_sources_found` **no es reintentable** y `provider_unavailable` sí: reintentar la primera repetiría la misma búsqueda y el mismo vacío, y el usuario concluiría que el sistema está roto cuando falta información suya. `PLAN-UX-001` se promete **literal y modesto** —sigue con la pestaña cerrada, no con el ordenador apagado—, con prueba de que el texto no dice «siempre» ni «en la nube» |
+| T-CC-05 | REQUIRED | HECHA (etiquetado y separación de estados; las cuatro vistas quedan pendientes) | `apps/web/src/clase/course-badge.ts`, 12 pruebas | 2026-08-30 | **Las dos maneras de mentir con una etiqueta, y son opuestas.** La obvia es que una materia propia parezca validada, que UIUX §6.2 prohíbe y ocurriría sola reutilizando el distintivo del curso de lógica. La que se olvida es que parezca **rota**: un aviso amarillo junto a cada materia del usuario dice, sin escribirlo, que el sistema desconfía de lo que él pidió aprender, y P-I §3.1.2 lo prohíbe igual. Por eso la insignia **no tiene tono de severidad**: tiene `track`, que dice a qué carril pertenece. Hay prueba de las dos mitades, con listas de términos que afirman validación y de términos que degradan. **UI-CORR-01 se implementa como tres huecos**, y el experimental es `null` mientras H11 no produzca veredictos — con **control positivo** de que con veredictos sí se muestra, porque si nunca pasara no sería un hueco sino una prohibición, y el día que H11 concluya nadie sabría por dónde enchufarlo |
+
+**Lo que falta de F9, y no es política.** Las cuatro vistas de UIUX §6 (Inicio, Mis materias,
+Detalle, Progreso) para los dos carriles; el enganche real del **W0 generalizado** al flujo de
+creación, que hoy llega hasta `researching` y espera al pipeline; y el **e2e
+crear-materia → propuesta → clase** con su prueba de aislamiento por consulta cruzada contra la base.
+El AC de la fase pide esa corrida completa, así que la fase **no está cerrada**.
+
+---
+
 ## Fases siguientes
 
 | Fase | Hito | Estado | Bloqueo actual |
@@ -213,8 +239,9 @@ anotación (`maxAnnotationAgeMs()`). Las dos **lanzan**; ninguna devuelve un nú
 | F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 17 de 17 tareas con mecanismo implementado; **W1 ejecutado sobre el corpus real el 2026-08-20 (D-51): 77 fragmentos materializados en `source/`, `solutions/` reubicadas en `solutions-private/`, `kc/map.yaml` escrito con guarda de deriva; `T-H5-01` y `T-H5-03` VERIFICADAS (corrida `32424646954`, diez jobs en verde); **W2 ejecutado el 2026-08-21 (D-52): 43 elementos, 30 claims y 4 decisiones en `extracted/` y `provenance/`, cobertura KC 18/18**; **Rol B ejecutado el 2026-08-21 (D-53): secuencia, 18 objetivos observables y política pedagógica en `objectives/`, `pedagogy/` y `session-templates/`**; gate H5 abierto por freeze/auditoría y CAL-NLI materiales ausentes |
 | F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas VERIFICADAS y AC del gate cubierto y observado** (CI `32164277686`). Sólo faltan las firmas del acta |
 | F8 | H7 · Profesor IA de sesión | EN_CURSO | **7 de 7 tareas y el AC del gate cubierto.** `T-H7-01`, `T-H7-02` y `T-H7-03` VERIFICADAS; `T-H7-04`…`T-H7-07` HECHAS el 2026-08-29. **`ci:e2e:live-session` existe y pasa**: cinco actos con Perfil C (`claude-haiku-4-5-20251001`), los cuatro entregados y la caída degradando, con las siete comprobaciones del AC en verde —incluida «sin rescate docente», que se comprueba porque **no existe el campo** por el que se usaría, no porque no se usara—. **No corre en cada push**: gasta contra proveedor real, así que se trata como `bench:material` y su evidencia es la corrida. Informe en `analysis/reports/live-session.json`. **Falta el acta firmada** `docs/gates/H7.md`, que es del propietario |
-| F10 | H8 · Multimodal + telemetría | EN_CURSO | **9 de 14 tareas**: los tres `CRITICAL` que no necesitan proveedor (`T-H8-04`, `T-H8-05`, `T-H8-07`), más `T-H8-03`, `T-H8-08`, `T-H8-13` `T-H8-10` (línea base de accesibilidad, D-86) `T-H8-06` (captura interna, D-87) y `T-H8-09` (telemetría H8, D-88). `CAL-MULTIMODAL` abierta por diseño, con sus dos puntos de fallo escritos. Lo que falta necesita credenciales de voz, calibración congelada, o es corrida humana |
-| F9, F11–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9. **F11 depende de F9 y F10**, y sus tres tareas (`T-LSU-01/02/03`) son del propietario: la corrida real, el informe de valor y la decisión GO/NO-GO |
+| F10 | H8 · Multimodal + telemetría | EN_CURSO | **11 de 14 tareas — todo lo construible está construido.** Los tres `CRITICAL` que no necesitan proveedor (`T-H8-04`, `T-H8-05`, `T-H8-07`), más `T-H8-03`, `T-H8-08`, `T-H8-13`, `T-H8-10` (línea base de accesibilidad, D-86), `T-H8-06` (captura interna, D-87), `T-H8-09` (telemetría H8, D-88) y **`T-H8-01/02` (voz, D-91)**. `CAL-MULTIMODAL` abierta por diseño, con sus dos puntos de fallo escritos. Las tres que faltan **no son código**: `T-H8-11` espera calibración congelada, `T-H8-12` (BENCH-03) espera esa calibración y umbrales preinscritos, y `T-H8-14` es corrida humana |
+| F9 | Cursos personalizados | EN_CURSO | **5 de 5 tareas con su política implementada** (D-92): `T-CC-01` modelo de cursos y continuidad, `T-CC-03` aislamiento experimental, `T-CC-04` autoridad de evaluación por dominio, `T-CC-02` flujo observable de creación y `T-CC-05` etiquetado. **No bloquea gates** (`DEC-CUSTOM-COURSES-001`). Lo que queda no es política sino superficie: las cuatro vistas (Inicio/Mis materias/Detalle/Progreso), el enganche del W0 generalizado y el e2e crear-materia→clase |
+| F11–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9. **F11 depende de F9 y F10**, y sus tres tareas (`T-LSU-01/02/03`) son del propietario: la corrida real, el informe de valor y la decisión GO/NO-GO |
 
 ## Entorno de ejecución (verificado 2026-08-14)
 
@@ -2079,6 +2106,39 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   debían —el de correspondencia y las dos propiedades de reconstrucción— y ninguno más. Se quitó la
   palabra marca de los átomos: fallaron nueve pruebas en cuatro archivos. La segunda siembra importa
   más que la primera, porque es el defecto que un lexicón «más natural» introduciría sin querer.
+- **D-92 — El carril personalizado se aísla en la escritura y no en la exportación, y la autoridad de
+  evaluación cambia la *forma* del resultado, no sólo su contenido (2026-08-30).** F9, `T-CC-01`…`T-CC-05`.
+  **Dónde se pone la puerta.** El aislamiento de `DEC-CUSTOM-COURSES-001` podría implementarse
+  filtrando al exportar, que es lo barato. Se hizo al revés —una puerta que se cruza en cada
+  escritura— porque el fallo que previene **no es ruidoso**: unos intentos de materia personalizada
+  colados en las métricas primarias no rompen nada, el análisis sigue corriendo y produce números de
+  una corrida que nadie diseñó. Un filtro de exportación que alguien olvide no falla: pasa de más.
+  **Y por eso son dos proyecciones, no una con `WHERE`.** Un `WHERE` olvidado en una consulta nueva
+  se rompe en silencio; una tabla que no existe se rompe en voz alta.
+  **Sin etiqueta se lanza, no se supone.** Ni «si no viene carril, será funcional» ni su contraria:
+  las dos convierten un registro mal formado en una decisión callada sobre a qué corrida pertenece.
+  Y `partitionByTrack()` lanza en vez de descartar, porque un descarte silencioso borra el registro
+  de **las dos** proyecciones y deja una corrida incompleta indistinguible de una en la que esos
+  datos nunca existieron.
+  **La equivalencia fingida se evita por tipo, no por disciplina.** «No finge equivalencia con
+  `logic-core`» es fácil de incumplir sin querer: hace falta evaluar algo, no hay verificador, y se
+  devuelve `{ valid: false }` porque es la forma que ya existe en el sistema. Desde ese momento un
+  juicio sin autoridad viaja por las mismas tuberías y se registra con el mismo nombre que un
+  veredicto del cálculo congelado — nadie mintió, y el resultado es indistinguible de una mentira.
+  Por eso la rama `no_formal_authority` de `DomainEvaluation` **no tiene campo donde escribirlo**. No
+  está prohibido: no existe.
+  **Dos niveles, no tres.** Se descartó un `partial_authority` intermedio para lo que «casi»
+  verifica: sería el cajón donde acabaría todo, y «casi» es precisamente la equivalencia que la
+  norma prohíbe.
+  **Los controles positivos son la mitad del trabajo.** Una puerta de aislamiento que rechazara
+  **todo** dejaría verdes las nueve pruebas negativas y al experimento sin datos; un
+  `assertMayEmitFormalVerdict` que lanzara siempre dejaría al curso de lógica sin poder calificar.
+  Las dos cosas se comprueban explícitamente, igual que en la suite negativa de privilegios. Y lo
+  mismo con el hueco experimental de UI-CORR-01: si nunca se pudiera rellenar no sería un hueco sino
+  una prohibición, y el día que H11 concluya nadie sabría por dónde enchufarlo.
+  **Lo que esta decisión NO cierra.** F9 tiene la política, no la superficie: faltan las cuatro
+  vistas, el enganche del W0 generalizado y el e2e con prueba de aislamiento por consulta cruzada.
+  El AC de la fase pide esa corrida, así que la fase sigue `EN_CURSO`.
 - **D-88 — La telemetría H8 separa latencias porque la decisión de infraestructura depende de ello,
   y se niega a dimensionar con una ventana que no da la talla (2026-08-29).** `T-H8-09`.
   **Catálogo cerrado, con unidad.** Las catorce métricas de §13-H8 enumeradas, por la misma razón
