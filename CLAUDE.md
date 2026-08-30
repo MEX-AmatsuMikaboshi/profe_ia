@@ -199,6 +199,15 @@ Son reales y cuestan una hora cada una si no se conocen (`docs/env/windows.md`).
    backend. Arráncalo **siempre con `pnpm run dev:docker`**, que limpia
    `%LOCALAPPDATA%\Docker\run` **y** `%LOCALAPPDATA%\docker-secrets-engine` —los dos, limpiar uno
    sólo mueve el fallo al otro— antes de lanzarlo. Desde el icono seguirá fallando (D-31).
+7. **PowerShell 5.1 destroza la codificación al reescribir archivos.** `Get-Content -Raw` lee en
+   ANSI, no en UTF-8, así que
+   `(Get-Content x -Raw) -replace 'a','b' | Set-Content x -Encoding utf8` convierte `∧` en `âˆ§` y
+   `ó` en `Ã³` **sin que nada falle**. Aquí muerde siempre: el cálculo, el lexicón de voz y la
+   documentación están llenos de conectivos y tildes. Edita con las herramientas de edición, o con
+   `python -c` usando `io.open(..., encoding='utf-8')` y `newline` de salto de línea Unix.
+   Comprobación: `file archivo` debe decir `UTF-8 text`. **Si pasa durante una siembra de defecto,
+   las pruebas fallan por el destrozo y no por el defecto** — y se concluye que el control detecta
+   sin haber comprobado nada.
 
 ## 6. Estado actual (2026-08-30)
 

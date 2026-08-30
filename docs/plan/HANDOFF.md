@@ -92,7 +92,55 @@
 > Las dos tareas se comprobaron **sembrando defectos**, no razonando: quitar `⊥` del lexicón rompe
 > los tres controles que debe y ninguno más; quitar la palabra marca de los átomos rompe nueve
 > pruebas en cuatro archivos; abrir el aislamiento a tres de los cuatro destinos rompe el control que
-> lo vigila. **Nueve commits sin subir.**
+> lo vigila.
+>
+> ### 9. Archivos nuevos de esta sesión, por si hay que ir a leerlos
+>
+> ```text
+> packages/speech-gateway/src/lexicon.ts          # la tabla única; empieza por aquí
+> packages/speech-gateway/src/stt.ts              # captura, normalización, COMMIT, correcciones
+> packages/speech-gateway/src/tts.ts              # guion, reproducción, interrupción, degradación
+> packages/speech-gateway/test/                   # 65 pruebas; `calculus-correspondence` es el control
+> packages/domain-engine/src/courses.ts           # T-CC-01 modelo y continuidad
+> packages/domain-engine/src/course-isolation.ts  # T-CC-03 la puerta de escritura
+> packages/domain-engine/src/evaluation-authority.ts  # T-CC-04 quién puede juzgar
+> packages/domain-engine/src/course-creation.ts   # T-CC-02 preparación observable
+> apps/web/src/clase/course-badge.ts              # T-CC-05 etiquetado y UI-CORR-01
+> ```
+>
+> `speech-gateway` se creó con **las tres cosas de D-85** —`tsconfig.test.json`, `typecheck`
+> encadenando los dos proyectos y las dependencias de prueba declaradas—. Su devDependency de
+> `logic-core` es **sólo para el control de correspondencia**; que `src/` no la importe lo vigila
+> `test/no-verdict.test.ts` además de depcruise.
+>
+> ### 10. La acción concreta que toca ahora
+>
+> **Subir.** Hay **once commits sin subir** y la última corrida observada sigue siendo
+> `33288171686` sobre `07fa669`: nada de las dos últimas sesiones se ha visto verde en `main`, y por
+> eso ninguna de esas tareas puede pasar a `VERIFICADA`.
+>
+> ```bash
+> git push origin main
+> ```
+>
+> Después, **mirar la pestaña Actions del remoto** y no suponer. Si un check falla sin salida propia,
+> la primera puerta sigue siendo la anotación:
+>
+> ```bash
+> gh api repos/MEX-AmatsuMikaboshi/profe_ia/check-runs/<job_id>/annotations --jq '.[].message'
+> ```
+>
+> Y con el árbol verde, **la pasada de promoción `HECHA` → `VERIFICADA`**: ~50 tareas, una por una
+> contra su corrida. Promoverlas en bloque sería firmar sin mirar.
+>
+> ### 11. Cómo se comprobó, por si hay que repetirlo
+>
+> Ninguna de las dos tareas se dio por buena porque las pruebas salieran verdes a la primera: se
+> **sembró el defecto** y se comprobó que los controles lo detectan, y sólo ése. Es la disciplina que
+> el repositorio ya pide para los mutantes «inalcanzables» y para la suite negativa de privilegios.
+> Al hacerlo apareció además la **trampa nº 8** de `docs/env/windows.md`: PowerShell 5.1 destroza la
+> codificación al reescribir, y si eso pasa a mitad de una siembra, las pruebas fallan **por el
+> destrozo y no por el defecto** — y se concluye que el control detecta sin haber comprobado nada.
 
 > ## Cierre anterior — F10 en 9 de 14 (2026-08-29) — **superado por el de arriba**
 >

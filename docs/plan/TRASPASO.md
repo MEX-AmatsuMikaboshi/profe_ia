@@ -8,8 +8,10 @@ de cero.
 
 > Retomo el proyecto Profesor IA en `C:\Users\gabri\Documents\edu_ia\profesor_ia_code`.
 > Lee `docs/plan/HANDOFF.md` (cabecera «EMPIEZA AQUÍ») y sigue desde ahí.
-> **Ya no queda nada construible en F10**, y F9 tiene su política puesta.
-> Hay **nueve commits sin subir** (se agrupan por presupuesto de Actions).
+> **Ya no queda nada construible en F10**, y F9 tiene su política puesta pero no su superficie.
+> Hay **once commits sin subir**: lo primero es `git push origin main` y **mirar Actions**,
+> porque hasta que no haya verde en `main` ninguna tarea puede pasar a `VERIFICADA`.
+> Después, la pasada de promoción `HECHA` → `VERIFICADA` (~50 tareas, una por una).
 
 ## Lo que cambió en esta sesión
 
@@ -105,6 +107,22 @@ ids `T-Hx-nn`, así que las filas de F9 (`T-CC-nn`) y las de F11 (`T-LSU-nn`) **
 estado mal escrito ahí habría pasado inadvertido. Corregido en esta sesión — de 91 tareas vigiladas
 a 96. **Que un control exista no es lo mismo que vigile lo que crees.**
 
+## Si vienes a seguir trabajando: cómo se trabaja aquí
+
+Tres cosas que este repositorio da por sabidas y cuestan una sesión si no se saben.
+
+1. **Sembrar antes de creer.** Cuando un control sale verde a la primera, no está comprobado: hay
+   que romper lo que vigila y ver que **falla, y sólo por eso**. En esta sesión sirvió tres veces, y
+   una de ellas destapó una trampa del entorno.
+2. **PowerShell 5.1 destroza la codificación al reescribir un archivo** (trampa nº 8 de
+   `docs/env/windows.md`). `Get-Content -Raw` lee en ANSI, así que el conectivo de conjunción se
+   vuelve mojibake sin que nada falle. Peor todavía si pasa a mitad de una siembra: las pruebas
+   fallan por el destrozo y se concluye que el control detecta cuando no se comprobó nada.
+   Comprobación: `file archivo` debe decir `UTF-8 text`.
+3. **Un paquete nuevo con pruebas necesita tres cosas** (D-85), y **si se toca el lockfile hay que
+   regenerar SBOM y digest en el mismo cambio**. Las dos volvieron a morder en `T-H8-01/02`, y las
+   dos las cazó el check correspondiente.
+
 ## Números al cerrar
 
 **2160 pruebas unitarias** (2024 → 2089 con la voz → 2160 con F9) más 131 contra PostgreSQL 17 real.
@@ -112,7 +130,7 @@ Depcruise sobre **576 módulos** sin violaciones, con sus controles positivos. L
 build 25/25 y `plan:status` (D-1…D-92) en verde.
 
 **Los números se miden, no se suponen**: el traspaso anterior decía «tres commits sin subir» en la
-cabecera y «seis» en el cierre, y el árbol daba siete. Hoy son **nueve**, contados con
+cabecera y «seis» en el cierre, y el árbol daba siete. Hoy son **once**, contados con
 `git rev-list --count origin/main..HEAD`. La última corrida de CI observada sigue siendo
 **`33288171686` sobre `07fa669`** — es decir, **nada de lo de las dos últimas sesiones se ha visto
 en verde en `main` todavía**, y por eso ninguna de esas tareas puede pasar a `VERIFICADA`.

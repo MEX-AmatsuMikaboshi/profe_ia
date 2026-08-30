@@ -28,7 +28,7 @@ umbrales ni compromisos.
 | `ci:logic:mutation` (1 166 mutantes, concurrencia 4) | ~7,5 min |
 | `ci:arch:depcruise` (58 módulos) | ~2 s |
 
-## Las siete trampas de esta máquina
+## Las ocho trampas de esta máquina
 
 Son reales y cuestan una hora cada una si no se conocen.
 
@@ -64,6 +64,23 @@ Son reales y cuestan una hora cada una si no se conocen.
    infra/database/tsconfig.test.json`, D-62), `pnpm run ci:typecheck -- --concurrency=1` le pasa la
    bandera **al `tsc` final** y falla con `TS5023`. Para serializar, `pnpm exec turbo run typecheck
    --concurrency=1`.
+
+8. **PowerShell 5.1 destruye la codificación al reescribir un archivo (2026-08-30).**
+   `Get-Content -Raw` lee con la **página de códigos ANSI** del sistema, no UTF-8. Así que el patrón
+   obvio para editar un archivo desde la consola —
+   `(Get-Content x -Raw) -replace 'a','b' | Set-Content x -Encoding utf8`— lee los bytes UTF-8 como
+   Latin-1 y los reescribe como UTF-8: `∧` se convierte en `âˆ§`, `ó` en `Ã³`, y el archivo entero
+   queda ilegible **sin que ningún comando falle**.
+   Muerde donde más duele en este repositorio, porque `logic-core`, el lexicón de voz y toda la
+   documentación están llenos de `∧ ∨ ¬ → ↔ ⊥` y de tildes. Y **es peor de lo que parece**: si
+   ocurre a mitad de una siembra de defecto, las pruebas fallan —pero por el destrozo, no por el
+   defecto sembrado—, y se concluye que el control detecta cuando no se ha comprobado nada.
+   **Qué hacer.** Editar con las herramientas de edición del agente, o con
+   `python -c` abriendo con `io.open(..., encoding='utf-8')` y escribiendo con
+   `newline='
+'`. Si hay que usar PowerShell, `Get-Content -Encoding utf8`.
+   **Cómo comprobar que no pasó**: `file archivo` debe decir `UTF-8 text`, y `git diff --stat` sobre
+   un archivo que no se tocó debe salir vacío. Un `head -3` basta para verlo a ojo.
 
 ## Trampa nº 6 — sockets AF_UNIX fantasma (2026-08-18)
 
