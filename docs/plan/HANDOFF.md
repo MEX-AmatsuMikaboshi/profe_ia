@@ -1,6 +1,103 @@
 # HANDOFF — punto de continuación
 
-> ## EMPIEZA AQUÍ — EL PROFESOR IA DA CLASE (2026-08-29)
+> ## EMPIEZA AQUÍ — F8 CERRADA, F10 EN 6 DE 14 (2026-08-29)
+>
+> **El Profesor IA da clase, y el gate H7 tiene su criterio de aceptación en verde.**
+>
+> ```bash
+> pnpm run demo                 # la clase, en http://localhost:3010/materias/logica/clase
+> pnpm run ci:e2e:live-session  # el AC del gate H7. GASTA céntimos
+> ```
+>
+> ### 1. F8 completa: 7 de 7 tareas y el AC cubierto
+>
+> | Tarea | Qué faltaba |
+> |---|---|
+> | `T-H7-01` | el bucle W7 encadenado — **VERIFICADA** |
+> | `T-H7-04` | la política decidía diez estrategias y el bucle **ignoraba las diez** |
+> | `T-H7-05` | repetir un turno fallido repetía el acto que falló |
+> | `T-H7-06` | una caída del proveedor rompía la clase |
+> | `T-H7-07` | ya estaba dentro de `T-H6-13`; sólo faltaba declararla |
+>
+> ### 2. El hallazgo de la sesión: correr el AC en vivo destapó una autorización que faltaba
+>
+> `ci:e2e:live-session` corrió y el acto de repetición salió **`degraded`**. Causa:
+> `sessionOperations()` **no incluía `rephrase_explanation`**, porque esa operación no sale de la
+> tabla de estrategias sino de `rephrasedExecution()`. La pasarela la rechazaba, el puerto lanzaba, y
+> el turno caía a modo degradado — o sea que **una segunda pasada perfectamente sana se registraba
+> como caída de proveedor**.
+>
+> **Ninguna prueba con puerto inyectado podía verlo**: un puerto falso no comprueba autorizaciones.
+> Es el complemento exacto de D-82 — allí una regla existía y no detectaba; aquí una autorización
+> faltaba y sólo se notaba contra el proveedor real.
+>
+> Y **la primera versión del check pasó en verde con el defecto puesto**, porque miraba la operación
+> y no el `outcome`. Acertar por el motivo equivocado es indistinguible de acertar hasta que alguien
+> mira. Los dos corregidos (D-84).
+>
+> ### 3. F10 arrancada: los tres CRITICAL que no necesitan proveedor
+>
+> `visual-interaction` deja de ser un esqueleto de cuatro líneas.
+>
+> - **`T-H8-04`** — estado estructurado **antes** que visión. Con la estructura respondiendo, ni un
+>   motivo válido ni una confianza de 0.99 dejan entrar a la visión.
+> - **`T-H8-05`** — overlay de anotaciones. El modelo decide **qué**, el frontend resuelve **dónde**:
+>   una anotación normal no lleva coordenadas, lleva `fitch-line:4`.
+> - **`T-H8-07`** — atribución de fallos. Las tres clases no conceptuales **no cuentan como fallo de
+>   KC**: contar un `PERCEPTION_ERROR` mediría la calidad de nuestro OCR y la anotaría como
+>   conocimiento del alumno.
+> - Más `T-H8-03` (estado del pizarrón), `T-H8-08` (familias de evento) y `T-H8-13` (capacidades).
+>
+> **El PBT de coordenadas refutó su propia tolerancia**: la primera escalaba por la magnitud del
+> punto y falló con `(0,0)` y `scrollX≈4992`, porque el valor intermedio es ~1076 aunque entrada y
+> salida sean cero. La tolerancia va con la escala del problema, no del punto.
+>
+> Tres checks nuevos: `ci:coords:pbt`, `ci:annotations:staleness` y `ci:visual:no-verdict` — este
+> último prohíbe la **superficie** y no sólo la arista: que no exista aquí nada que *parezca* un
+> veredicto aunque nadie lo importe. Con sus dos siembras comprobadas.
+>
+> ### 4. Dos calibraciones abiertas **por diseño**, con su punto de fallo escrito
+>
+> `visionThresholds()` y `maxAnnotationAgeMs()` **lanzan**. No es deuda: elegir esos números
+> decidiría con una suposición cuándo el sistema afirma haber leído bien, que es exactamente donde
+> nacen los **errores confiados**. Se congelan en `T-H8-11` / BENCH-03.
+>
+> ### 5. Qué separa esto de F11, con nombres
+>
+> `Plan.md` §726: el camino es `F8 → F10 → F11`, y **F9 es paralelo y no condiciona gates**.
+>
+> | Bloqueo | De quién |
+> |---|---|
+> | `T-H8-01/02` STT y TTS | faltan **credenciales de un proveedor de voz** (Deepgram / ElevenLabs / OpenAI) en `.env` |
+> | `T-H8-11` CAL-14 y CAL-MULTIMODAL | calibración congelada; su conjunto dorado es de BENCH-03 |
+> | `T-H8-12` BENCH-03 | necesita proveedor **y** umbrales congelados |
+> | `T-H8-14` corrida funcional | **humana** |
+> | Gate H8 | `approver=TECHNICAL_AUDITOR` |
+> | **F11 entera** | `T-LSU-01/02/03` son del propietario: la corrida real, el informe de valor y la decisión GO/NO-GO |
+>
+> **F11 no es una fase que se pueda construir**: es el propietario usando el sistema y decidiendo.
+> Lo que queda a nuestro alcance es dejarla lista, y para eso lo que más rinde es `T-H8-10`
+> (`ci:a11y:baseline`), `T-H8-06` y `T-H8-09`, que no necesitan proveedor.
+>
+> ### 6. Lo que sigue, por orden
+>
+> 1. **La pasada de promoción `HECHA` → `VERIFICADA`.** Sigue pendiente y ya van dos sesiones: hay
+>    ~50 tareas esperando y promoverlas en bloque sería firmar sin mirar.
+> 2. **`T-H8-10`** — línea base de accesibilidad con axe/Playwright. No necesita proveedor.
+> 3. **Credenciales de voz** — es lo único que desbloquea `T-H8-01/02`, y con ellas casi todo F10.
+> 4. **`ci:e2e:live-session` a `ci.yml`** si se decide gastar por push; hoy se corre a mano.
+> 5. **Re-correr BENCH-01** con D-77 y D-79, 3 repeticiones, ~MXN 145.
+> 6. **W5** cuando el propietario rompa su circularidad.
+>
+> ### 7. Verificación de esta sesión
+>
+> **1949 pruebas unitarias en verde** (1851 al abrir, **+98**). Lint, typecheck 41/41, build 25/25,
+> depcruise **541 módulos** con sus 14 controles positivos, `ci:visual:no-verdict`, separación de
+> modos, sesión seca, adversarial, dorado, PBT, pureza, pasarela, grants, SBOM, drift, hardening,
+> mangos y `plan:status` (91 tareas): todo verde. Las 131 contra PostgreSQL corrieron **en CI**.
+> **Ocho corridas de CI observadas, todas con los diez jobs en verde.**
+
+> ## Cierre anterior — el Profesor IA da clase (2026-08-29) — **superado por el de arriba**
 >
 > **El bucle W7 corre.** Un alumno abre la vista de Clase, pregunta, y el Profesor IA le responde
 > citando el material del curso por su mango corto. Se ve funcionando con:
