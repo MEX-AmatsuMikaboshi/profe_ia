@@ -1,0 +1,16 @@
+{
+  // Segundo proyecto para `test/`. Sin él las pruebas no se compilan en ningún
+  // sitio y el árbol se ve verde igual — es el defecto de D-85, que se creó con
+  // 43 pruebas sin este archivo y sólo lo cazó `ci:arch:test-typecheck` en CI.
+  //
+  // No pueden ir en `tsconfig.json`: ese proyecto emite a `dist/` con
+  // `rootDir: src`, así que meterlas ahí las publicaría.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}

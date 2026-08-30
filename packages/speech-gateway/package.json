@@ -2,7 +2,7 @@
   "name": "@profesor-ia/speech-gateway",
   "version": "0.0.0",
   "private": true,
-  "description": "Adaptadores TTS/STT y commits de transcripción (F10/H8).",
+  "description": "STT, TTS y lexicón de verbalización. Sin autoridad formal (DEC-VOICE-001).",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,12 +17,14 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json"
   },
   "dependencies": {
     "@profesor-ia/contracts": "workspace:*"
   },
   "devDependencies": {
+    "@profesor-ia/logic-core": "workspace:*",
+    "fast-check": "^4.9.0",
     "typescript": "5.9.3"
   }
 }

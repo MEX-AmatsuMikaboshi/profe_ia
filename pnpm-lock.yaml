@@ -406,6 +406,12 @@ importers:
         specifier: workspace:*
         version: link:../contracts
     devDependencies:
+      '@profesor-ia/logic-core':
+        specifier: workspace:*
+        version: link:../logic-core
+      fast-check:
+        specifier: ^4.9.0
+        version: 4.9.0
       typescript:
         specifier: 5.9.3
         version: 5.9.3
