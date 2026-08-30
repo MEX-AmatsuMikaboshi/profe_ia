@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { standingLabel, type TurnPort, type TurnState } from '../turn';
+import { VozProfesor } from './VozProfesor';
 
 /**
  * Panel del Profesor IA (T-H7-01 ← UIUX §3).
@@ -123,6 +124,11 @@ function TurnBody({ state }: { readonly state: TurnState }) {
               ({state.turn.degraded.freezeVersion}), no del Profesor IA.
             </p>
           )}
+
+          {/* La voz va junto al turno que dice, y no en un control global: lo
+              que se reproduce es **este** guion, con su filtro de egreso ya
+              aplicado. Un botón de voz suelto en la página no sabría cuál. */}
+          <VozProfesor turn={state.turn} />
 
           <ol data-testid="profesor-segmentos">
             {state.turn.segments.map((segmento, i) => (
