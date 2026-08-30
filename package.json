@@ -65,7 +65,9 @@
     "ci:e2e:live-session": "node scripts/session/live-session.mjs",
     "ci:coords:pbt": "vitest run --project unit packages/visual-interaction/test/coordinates.test.ts",
     "ci:annotations:staleness": "vitest run --project unit packages/visual-interaction/test/annotations.test.ts",
-    "ci:visual:no-verdict": "vitest run --project unit packages/visual-interaction/test/no-verdict.test.ts"
+    "ci:visual:no-verdict": "vitest run --project unit packages/visual-interaction/test/no-verdict.test.ts",
+    "ci:a11y:baseline": "node scripts/a11y/baseline.mjs",
+    "ci:a11y:catches": "node scripts/a11y/verify-baseline-catches.mjs"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -104,6 +106,7 @@
     }
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^9.39.0",
     "@profesor-ia/experiment": "workspace:*",
     "@profesor-ia/security-policy": "workspace:*",
@@ -116,6 +119,7 @@
     "eslint": "^9.39.0",
     "fast-check": "^4.9.0",
     "pg": "^8.23.0",
+    "playwright": "^1.62.1",
     "turbo": "^2.5.9",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.46.0",

@@ -11,7 +11,7 @@
     "properties": [
       {
         "name": "profesor-ia:lockfile-sha256",
-        "value": "421125a4943a8a623ac892527a96e1c980da29e2316ba51f93bef293e1780b3b"
+        "value": "cb0895b8de6fcf6dcad6372dfb12f937f79b631490a4ebbca0b8162aa3f66ab4"
       },
       {
         "name": "profesor-ia:node-version",
@@ -80,6 +80,45 @@
     },
     {
       "type": "library",
+      "name": "@axe-core/playwright",
+      "version": "4.13.0",
+      "purl": "pkg:npm/%40axe-core%2Fplaywright@4.13.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "axe-core",
+      "version": "4.13.0",
+      "purl": "pkg:npm/axe-core@4.13.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "playwright-core",
+      "version": "1.62.1",
+      "purl": "pkg:npm/playwright-core@1.62.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "fast-check",
       "version": "4.9.0",
       "purl": "pkg:npm/fast-check@4.9.0",
@@ -103,6 +142,25 @@
           }
         }
       ]
+    },
+    {
+      "type": "library",
+      "name": "playwright",
+      "version": "1.62.1",
+      "purl": "pkg:npm/playwright@1.62.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fsevents",
+      "version": "2.3.2",
+      "purl": "pkg:npm/fsevents@2.3.2"
     },
     {
       "type": "library",

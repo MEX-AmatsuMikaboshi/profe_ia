@@ -54,3 +54,20 @@
   width: 100%;
   resize: vertical;
 }
+
+/* Tamaño de objetivo (T-H8-10 ← Maestro §10.5, WCAG 2.2 SC 2.5.8).
+ *
+ * Los botones que no llevan `.btn` —la paleta de notación, el historial del
+ * editor— salían a 21–22 px de alto y hasta 20.5 de ancho: por debajo del
+ * mínimo de 24×24. Lo detectaron a la vez `ci:a11y:baseline` y la regla
+ * `target-size` de axe, que sí implementa la excepción de espaciado y aun así
+ * los marcó, o sea que no eran falsos positivos del instrumento propio.
+ *
+ * Va aquí y no en los tokens: es disposición, no lenguaje visual. El sistema
+ * vendorizado no fija altura mínima en `.btn` y no es este archivo quien debe
+ * redefinirlo.
+ */
+.clase-shell button {
+  min-block-size: 24px;
+  min-inline-size: 24px;
+}

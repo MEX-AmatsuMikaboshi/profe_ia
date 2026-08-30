@@ -1,4 +1,5 @@
 import { CLASE_COPY } from '../copy';
+import { Formula } from './Formula';
 import type { FitchDocument, FitchEditorHistory } from '../fitch-document';
 import { canRedo, canUndo, toFitchText } from '../fitch-document';
 import type { LineDecoration, LocalReview } from '../local-review';
@@ -91,7 +92,7 @@ export function FitchEditor({
               data-notes={codes.join(' ')}
             >
               <span aria-hidden="true">{'│ '.repeat(line.depth)}</span>
-              <span data-testid={`formula-${line.lineId}`}>{line.formula}</span>
+              <Formula source={line.formula} testId={`formula-${line.lineId}`} />
               <span data-testid={`justificacion-${line.lineId}`}>{line.rule}</span>
               {/* Texto además de la señal visual: la sangría sola no se lee con
                   lector de pantalla ni sobrevive a una captura en gris. */}

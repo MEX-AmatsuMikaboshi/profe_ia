@@ -195,7 +195,7 @@ anotación (`maxAnnotationAgeMs()`). Las dos **lanzan**; ninguna devuelve un nú
 | T-H8-06 | REQUIRED | PENDIENTE | — | — | Captura interna; `externalScreenCapture` queda OFF (P-II §11.6) |
 | T-H8-08 | REQUIRED | HECHA (familias y replay; los emisores dependen de las superficies) | `packages/evidence/src/multimodal.ts`, 9 pruebas | 2026-08-29 | Las cinco familias literales de P-II §9.3 **en el ledger existente**: un segundo registro tendría su propia cadena de hashes y reconstruir una sesión exigiría entrelazar dos historias no comparables. Los tipos se **enumeran**, no se admite `familia.*` libre: `board.element.create` y `board.element.created` son dos nombres del mismo hecho, y un ledger append-only conserva los dos para siempre — hay prueba de que el nombre *parecido* no cuela. **Los parciales de voz no son tipo de evento** (P-I §8.10): sólo el `COMMIT` es un hecho. En el replay, `null` y **ausente** no son lo mismo: `null` dice «no hubo» y ausente «no se registró», y confundirlos hace irreconstruible justo el evento que alguien querrá revisar. Un prompt sin binding describe una llamada irreproducible y se rechaza. |
 | T-H8-09 | REQUIRED | PENDIENTE | — | — | Telemetría H8; el sizing de VPS va **después** de esta medida (`INFRA-01`, `CAL-12`) |
-| T-H8-10 | REQUIRED | PENDIENTE | — | — | Línea base de accesibilidad (`ci:a11y:baseline`); sin declaración WCAG AA global |
+| T-H8-10 | REQUIRED | HECHA (7 de 11 criterios verificados; 4 esperan superficie o corrida humana) | `packages/visual-interaction/src/accessibility.ts` (18 pruebas), `apps/web/src/clase/formula-mathml.ts` (8 pruebas), checks `ci:a11y:baseline` y `ci:a11y:catches`, informe `analysis/reports/a11y-baseline.json` | 2026-08-29 | **Línea base ejecutada y documentada.** Los once criterios son la unión de Maestro §10.5 y UIUX §8. El libro mayor **se niega** a declarar verificado un criterio sin check que lo verifique, y también uno cuya superficie no está montada: axe sobre una página sin pizarrón no encuentra problemas en el pizarrón, y ese silencio no es una verificación. `wcagGlobalConformance` es el literal `'no_declarada'` — no hay campo donde afirmar lo contrario. Encontró tres defectos reales, dos corregidos aquí (trece objetivos por debajo de 24×24 px; fórmulas sin MathML) y uno **deliberadamente no corregido**: el contraste no está entre los once criterios y el lenguaje visual está diferido a producto (§10.5). Sin proveedor de voz. Ver D-86 |
 | T-H8-11 | CALIBRATION | BLOQUEADA(CAL-14/CAL-FAMILIARIZATION sin congelar; su conjunto dorado es de BENCH-03) | — | — | `CAL-14/CAL-FAMILIARIZATION`; también congela `CAL-MULTIMODAL`, de la que dependen los dos puntos de fallo de T-H8-04 y T-H8-05 |
 | T-H8-12 | BENCHMARK | PENDIENTE | `ci:visual:no-verdict` (la mitad que no necesita proveedor) | 2026-08-29 | BENCH-03. La parte de **cero rutas de visión a veredicto formal** está cubierta: depcruise prohíbe la arista y `ci:visual:no-verdict` prohíbe la **superficie** —que no exista aquí nada que *parezca* veredicto aunque nadie lo importe—, con las dos siembras comprobadas. Lo demás (WER, latencias, reconstrucción de fórmulas) necesita proveedor y umbrales congelados |
 | T-H8-14 | REQUIRED | PENDIENTE | — | — | Corrida funcional del desarrollador. **Es humana** |
@@ -213,7 +213,7 @@ anotación (`maxAnnotationAgeMs()`). Las dos **lanzan**; ninguna devuelve un nú
 | F6 | H5 · Ingesta, autoría y freeze (W1–W5) | EN_CURSO | 17 de 17 tareas con mecanismo implementado; **W1 ejecutado sobre el corpus real el 2026-08-20 (D-51): 77 fragmentos materializados en `source/`, `solutions/` reubicadas en `solutions-private/`, `kc/map.yaml` escrito con guarda de deriva; `T-H5-01` y `T-H5-03` VERIFICADAS (corrida `32424646954`, diez jobs en verde); **W2 ejecutado el 2026-08-21 (D-52): 43 elementos, 30 claims y 4 decisiones en `extracted/` y `provenance/`, cobertura KC 18/18**; **Rol B ejecutado el 2026-08-21 (D-53): secuencia, 18 objetivos observables y política pedagógica en `objectives/`, `pedagogy/` y `session-templates/`**; gate H5 abierto por freeze/auditoría y CAL-NLI materiales ausentes |
 | F7 | H6 · Sesión determinista sin LLM | EN_CURSO | **14 de 14 tareas VERIFICADAS y AC del gate cubierto y observado** (CI `32164277686`). Sólo faltan las firmas del acta |
 | F8 | H7 · Profesor IA de sesión | EN_CURSO | **7 de 7 tareas y el AC del gate cubierto.** `T-H7-01`, `T-H7-02` y `T-H7-03` VERIFICADAS; `T-H7-04`…`T-H7-07` HECHAS el 2026-08-29. **`ci:e2e:live-session` existe y pasa**: cinco actos con Perfil C (`claude-haiku-4-5-20251001`), los cuatro entregados y la caída degradando, con las siete comprobaciones del AC en verde —incluida «sin rescate docente», que se comprueba porque **no existe el campo** por el que se usaría, no porque no se usara—. **No corre en cada push**: gasta contra proveedor real, así que se trata como `bench:material` y su evidencia es la corrida. Informe en `analysis/reports/live-session.json`. **Falta el acta firmada** `docs/gates/H7.md`, que es del propietario |
-| F10 | H8 · Multimodal + telemetría | EN_CURSO | **6 de 14 tareas**: los tres `CRITICAL` que no necesitan proveedor (`T-H8-04`, `T-H8-05`, `T-H8-07`) y `T-H8-13`. `CAL-MULTIMODAL` abierta por diseño, con sus dos puntos de fallo escritos. Lo que falta necesita credenciales de voz, calibración congelada, o es corrida humana |
+| F10 | H8 · Multimodal + telemetría | EN_CURSO | **7 de 14 tareas**: los tres `CRITICAL` que no necesitan proveedor (`T-H8-04`, `T-H8-05`, `T-H8-07`), más `T-H8-03`, `T-H8-08`, `T-H8-13` y `T-H8-10` (línea base de accesibilidad, D-86). `CAL-MULTIMODAL` abierta por diseño, con sus dos puntos de fallo escritos. Lo que falta necesita credenciales de voz, calibración congelada, o es corrida humana |
 | F9, F11–F16 | — | PENDIENTE | Ver dependencias en `Plan.md` §9. **F11 depende de F9 y F10**, y sus tres tareas (`T-LSU-01/02/03`) son del propietario: la corrida real, el informe de valor y la decisión GO/NO-GO |
 
 ## Entorno de ejecución (verificado 2026-08-14)
@@ -1997,6 +1997,54 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   siembra incluían una que no funcionaba en absoluto. «La regla existe» y «la regla detecta» son
   afirmaciones distintas, y el repositorio ya lo sabía —lo dice de la suite negativa de privilegios y
   del conjunto dorado—. Faltaba aplicarlo aquí.
+- **D-86 — La línea base de accesibilidad se ejecuta, y encontró tres defectos reales que ninguna
+  prueba sin navegador podía ver (2026-08-29).** `T-H8-10`, `ci:a11y:baseline` y `ci:a11y:catches`.
+  **El libro mayor es ejecutable, no prosa.** `buildAccessibilityBaseline()` reúne los **once**
+  criterios —unión de Maestro §10.5 (ocho) y UIUX §8 (diez), que no son la misma lista— y se niega a
+  marcar uno `verificado` sin nombrar el check que lo verifica. Y hay una segunda negativa que es la
+  que de verdad importa: **un criterio cuya superficie no está montada tampoco puede estar
+  verificado**. axe sobre una página sin pizarrón «no encuentra problemas en el pizarrón», y ese
+  silencio es indistinguible de un pizarrón accesible — la disciplina de controles positivos
+  aplicada aquí. Por eso `CRIT-ARRASTRE`, `CRIT-ESCENA-DOM` y `CRIT-OVERLAY` salen `no_verificado`
+  con la ausencia como motivo, que es el resultado honesto y no una carencia del instrumento.
+  **La conformidad WCAG global no tiene dónde escribirse.** `wcagGlobalConformance` es el literal
+  `'no_declarada'`: un booleano que hoy vale `false` es el `true` sin auditar de dentro de un año, y
+  las dos autoridades prohíben expresamente declararla sin auditoría criterio por criterio.
+  **Navegador de verdad, no jsdom.** Dos criterios —tamaño de objetivo y foco visible— son
+  geométricos, y jsdom no calcula disposición: devolvería «sin problemas» para ambos. Los dos
+  defectos que aparecieron son justo de esa clase. **(1) Trece objetivos por debajo de 24×24 px**:
+  los botones sin clase `.btn` —la paleta de notación, el historial del editor— salían a 21 px de
+  alto, y axe lo confirmó por su cuenta con su regla `target-size`. **(2) Las fórmulas se
+  renderizaban como texto plano**, sin MathML ni equivalente: quien mira la pantalla las lee, quien
+  la escucha recibe una lista de caracteres.
+  **MathML, y no una verbalización nuestra.** La tentación era un `aria-label` con la fórmula dicha
+  en castellano. Habría sido una **segunda** verbalización compitiendo con el lexicón de `T-H8-02`,
+  que la norma exige «validado por reconstrucción exacta de fórmulas» — dos formas de decir la misma
+  fórmula divergiendo desde el primer día. MathML no verbaliza: entrega estructura y deja hablar al
+  lector de pantalla, que es por lo que el Maestro lo prefiere. La propiedad que lo sostiene es la
+  vuelta completa: `parse(mathText(toMathNode(f)))` devuelve la fórmula original, con los paréntesis
+  en su sitio — sin ella, un renderizador que se comiera uno produciría markup impecable que **dice
+  otra fórmula**, y en pantalla no se notaría porque el paréntesis perdido tampoco se ve. Lo que no
+  parsea no se adivina: cae a texto plano con su motivo.
+  **El contraste NO se arregló, y es deliberado.** axe marca `color-contrast` en `.tag`,
+  `.card-kicker` y los botones fantasma. Es un hallazgo real y se publica en el informe, pero **no
+  está entre los once criterios** ni en §10.5 ni en §8, y el lenguaje visual está **diferido a
+  producto** (§10.5): cambiar la paleta desde aquí decidiría por quien tiene esa autoridad. El check
+  separa las violaciones dentro y fuera de la línea base, y sólo las de dentro lo tumban.
+  **Y la siembra enseñó algo del instrumento ajeno.** El primer control positivo para el tamaño de
+  objetivo —un botón suelto de 20×20— **no lo detectó axe**, y no era fallo de axe: su regla
+  implementa la excepción de espaciado de SC 2.5.8, y un objetivo aislado con hueco de sobra
+  conforma. La siembra buena es deshacer el arreglo, porque reproduce el defecto real —ocho botones
+  pegados— y de paso vigila que nadie borre esa regla de estilo. **7 de 7 siembras detectadas.**
+  **Lo que la regla de arquitectura corrigió por el camino.** El primer intento importaba
+  `logic-core` por el barrel, y `sin-verificador-fuera-del-verificador` lo rechazó: eso habría puesto
+  `verify()` en el cliente y roto la ruta única de verificación. Entra por
+  `@profesor-ia/logic-core/syntax`, el subpath sin veredicto que existe exactamente para esto.
+  **Los dos checks NO están en `ci.yml`, y es decisión pendiente del propietario.** No cuestan dinero
+  de proveedor, pero sí minutos de Actions: necesitan `next build` y la descarga del binario de
+  Chromium en el runner. Con el presupuesto en USD 5 y la instrucción de agrupar pushes, enchufarlos
+  por push es un gasto que no corresponde decidir aquí. Se corren a mano, igual que
+  `ci:e2e:live-session`.
 - **D-85 — Un paquete nuevo con `test/` y sin `tsconfig.test.json` deja sus pruebas sin typechequear,
   y la guarda de D-62 lo detectó en CI (2026-08-29).** Al crear `visual-interaction` con 43 pruebas
   se olvidó el segundo proyecto de TypeScript. **El typecheck local pasaba** —41 de 41 tareas en

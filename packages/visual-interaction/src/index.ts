@@ -10,3 +10,4 @@ export * from './annotations.js';
 export * from './failure-attribution.js';
 export * from './vision-policy.js';
 export * from './whiteboard.js';
+export * from './accessibility.js';

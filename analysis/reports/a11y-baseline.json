@@ -1,0 +1,193 @@
+{
+  "task": "T-H8-10",
+  "generatedBy": "ci:a11y:baseline",
+  "engine": "chromium (empaquetado)",
+  "view": "/materias/logica/clase",
+  "wcagGlobalConformance": "no_declarada",
+  "surfaces": [
+    {
+      "surface": "editor-fitch",
+      "present": true,
+      "detail": "FitchEditor en la vista de Clase"
+    },
+    {
+      "surface": "controles-de-sesion",
+      "present": true,
+      "detail": "pistas, pausa, apelación y retirada"
+    },
+    {
+      "surface": "transcripcion-y-profesor",
+      "present": true,
+      "detail": "conversación y panel del Profesor IA"
+    },
+    {
+      "surface": "microfono",
+      "present": false,
+      "detail": "T-H8-01 pendiente: sin credencial de proveedor de voz no hay captura"
+    },
+    {
+      "surface": "pizarron",
+      "present": false,
+      "detail": "T-H8-03 dejó el adaptador de estado; falta montarlo en la vista"
+    },
+    {
+      "surface": "overlay-anotaciones",
+      "present": false,
+      "detail": "T-H8-05 dejó el modelo de anotación; falta la capa que lo dibuja"
+    },
+    {
+      "surface": "notacion-logica",
+      "present": true,
+      "detail": "1 fórmulas renderizadas en el editor"
+    }
+  ],
+  "rulings": [
+    {
+      "criterionId": "CRIT-TECLADO",
+      "status": "verificado",
+      "checks": [
+        "ci:a11y:baseline#recorrido-de-foco"
+      ],
+      "note": "",
+      "statement": "Editor Fitch y controles críticos —micrófono, pistas, pausa, apelación y retirada— operables por teclado.",
+      "source": "Maestro §10.5; UIUX §8",
+      "missingSurfaces": []
+    },
+    {
+      "criterionId": "CRIT-FOCO",
+      "status": "verificado",
+      "checks": [
+        "ci:a11y:baseline#foco-visible"
+      ],
+      "note": "",
+      "statement": "Foco visible y no oscurecido.",
+      "source": "Maestro §10.5; UIUX §8",
+      "missingSurfaces": []
+    },
+    {
+      "criterionId": "CRIT-SIN-TRAMPAS",
+      "status": "verificado",
+      "checks": [
+        "ci:a11y:baseline#recorrido-de-foco"
+      ],
+      "note": "",
+      "statement": "Ausencia de trampas de teclado.",
+      "source": "Maestro §10.5; UIUX §8",
+      "missingSurfaces": []
+    },
+    {
+      "criterionId": "CRIT-ARRASTRE",
+      "status": "no_verificado",
+      "checks": [],
+      "note": "el pizarrón no está montado en la vista: no hay gesto de arrastre que auditar (T-H8-03)",
+      "statement": "Alternativa a gestos de arrastre cuando el control crítico la requiera, con excepción documentada si una acción del pizarrón es esencial.",
+      "source": "Maestro §10.5; UIUX §8",
+      "missingSurfaces": [
+        "pizarron"
+      ]
+    },
+    {
+      "criterionId": "CRIT-OBJETIVO",
+      "status": "verificado",
+      "checks": [
+        "ci:a11y:baseline#tamano-de-objetivo",
+        "axe#target-size"
+      ],
+      "note": "",
+      "statement": "Objetivos interactivos compatibles con WCAG 2.2 SC 2.5.8 (24×24 px CSS) o alternativa permitida por el criterio.",
+      "source": "Maestro §10.5; UIUX §8",
+      "missingSurfaces": []
+    },
+    {
+      "criterionId": "CRIT-OVERLAY",
+      "status": "no_verificado",
+      "checks": [],
+      "note": "la capa de anotaciones no se dibuja todavía; T-H8-05 dejó el modelo, no el renderizado",
+      "statement": "Overlay SVG no interactivo para tecnología asistiva (aria-hidden / sin captura de eventos) y equivalente textual de la anotación.",
+      "source": "Maestro §10.5; UIUX §8",
+      "missingSurfaces": [
+        "overlay-anotaciones"
+      ]
+    },
+    {
+      "criterionId": "CRIT-ESCENA-DOM",
+      "status": "no_verificado",
+      "checks": [],
+      "note": "el pizarrón no está montado en la vista; su adaptador de estado existe pero no se renderiza (T-H8-03)",
+      "statement": "Representación DOM navegable de la escena estructurada del pizarrón.",
+      "source": "Maestro §10.5; UIUX §8",
+      "missingSurfaces": [
+        "pizarron"
+      ]
+    },
+    {
+      "criterionId": "CRIT-NOTACION",
+      "status": "verificado",
+      "checks": [
+        "ci:a11y:baseline#notacion-semantica"
+      ],
+      "note": "",
+      "statement": "Notación lógica expuesta semánticamente, preferentemente MathML con capa de compatibilidad cuando sea necesaria.",
+      "source": "Maestro §10.5; UIUX §8",
+      "missingSurfaces": []
+    },
+    {
+      "criterionId": "CRIT-MOVIMIENTO",
+      "status": "verificado",
+      "checks": [
+        "ci:a11y:baseline#movimiento-reducido"
+      ],
+      "note": "",
+      "statement": "Reducción de movimiento respetada (prefers-reduced-motion).",
+      "source": "UIUX §8",
+      "missingSurfaces": []
+    },
+    {
+      "criterionId": "CRIT-PALABRA",
+      "status": "verificado",
+      "checks": [
+        "ci:a11y:baseline#estado-por-palabra"
+      ],
+      "note": "",
+      "statement": "Estados comunicados por palabra además de color o movimiento.",
+      "source": "UIUX §3, §8",
+      "missingSurfaces": []
+    },
+    {
+      "criterionId": "CRIT-AYUDAS-TECNICAS",
+      "status": "no_verificado",
+      "checks": [],
+      "note": "no hay corrida con participante: el registro se llena en T-H8-14, que es humana. El mecanismo está en canRuleOutAccessibilityBarrier() y sus pruebas",
+      "statement": "Registro de ayudas técnicas y configuraciones relevantes del participante, para separar barreras de interfaz de errores de contenido.",
+      "source": "Maestro §10.5; P-I §8.9.3",
+      "missingSurfaces": []
+    }
+  ],
+  "findings": {
+    "axeInBaseline": [],
+    "axeOutsideBaseline": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "criterion": null,
+        "nodes": [
+          ".tag",
+          ".card-kicker",
+          "button[data-testid=\"apelacion\"]",
+          "button[data-testid=\"retirada\"]"
+        ]
+      }
+    ],
+    "targetSize": [],
+    "focusWithoutIndicator": [],
+    "keyboardTraps": [],
+    "stateWithoutWords": [],
+    "animatedWithReducedMotion": [],
+    "notation": {
+      "mathml": 1,
+      "formulas": 1,
+      "conSemantica": 1
+    }
+  }
+}

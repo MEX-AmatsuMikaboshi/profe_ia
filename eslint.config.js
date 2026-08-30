@@ -40,6 +40,20 @@ export default tseslint.config(
     },
   },
   {
+    // `scripts/a11y/` conduce un navegador: los cuerpos que se pasan a
+    // `page.evaluate()` **se ejecutan en la página**, no en Node, así que
+    // `document` y `getComputedStyle` son legítimos ahí y sólo ahí. Se abren por
+    // ruta y no globalmente para que un `document` en un script de Node siga
+    // siendo el error que es.
+    files: ['scripts/a11y/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        document: 'readonly',
+        getComputedStyle: 'readonly',
+      },
+    },
+  },
+  {
     rules: {
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
