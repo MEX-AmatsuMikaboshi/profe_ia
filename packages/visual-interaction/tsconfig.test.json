@@ -1,0 +1,18 @@
+{
+  // Los archivos de prueba **no entran** en `tsconfig.json`: ese proyecto emite a
+  // `dist/` con `rootDir: src`, y meterlos ahí los publicaría. Sin este segundo
+  // proyecto no se compilan en ningún sitio.
+  //
+  // Faltaba al crear el paquete, y **lo detectó `ci:arch:test-typecheck` en CI**
+  // (D-62): las 43 pruebas de este paquete pasaban sin que nadie las
+  // typechequeara. El typecheck local no lo veía porque no las incluía — que es
+  // exactamente el agujero contra el que esa guarda existe.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}

@@ -1997,6 +1997,21 @@ Consecuencia: **ya no queda ningún catálogo pendiente** (`pendingCatalogs()` d
   siembra incluían una que no funcionaba en absoluto. «La regla existe» y «la regla detecta» son
   afirmaciones distintas, y el repositorio ya lo sabía —lo dice de la suite negativa de privilegios y
   del conjunto dorado—. Faltaba aplicarlo aquí.
+- **D-85 — Un paquete nuevo con `test/` y sin `tsconfig.test.json` deja sus pruebas sin typechequear,
+  y la guarda de D-62 lo detectó en CI (2026-08-29).** Al crear `visual-interaction` con 43 pruebas
+  se olvidó el segundo proyecto de TypeScript. **El typecheck local pasaba** —41 de 41 tareas en
+  verde— porque ningún proyecto incluía esos archivos: no fallaban, sencillamente **no se
+  compilaban**. `ci:arch:test-typecheck` lo cazó con el mensaje exacto: «estos paquetes tienen
+  `test/` y ningún proyecto de TypeScript los compila».
+  **Es justo el agujero contra el que D-62 existe**, y ésta es la primera vez que la guarda dispara
+  sobre un paquete nuevo en vez de sobre uno existente. Comprobado en los dos sentidos: con el
+  proyecto puesto, un `const n: number = 'texto'` sembrado en una prueba **sí** produce `TS2322`.
+  **Y de paso, la guarda de suministro.** Añadir `fast-check` como dependencia de desarrollo movió el
+  lockfile y `ci:supply:drift` exigió regenerar SBOM y digest en el mismo cambio, que es exactamente
+  lo que esa comprobación existe para forzar.
+  **La lección operativa:** un paquete nuevo con pruebas necesita tres cosas, no una — su
+  `tsconfig.test.json`, su script `typecheck` encadenando los dos proyectos, y sus dependencias de
+  prueba declaradas. El árbol se ve verde sin ninguna de las tres.
 - **D-84 — El AC del gate H7 destapó que una operación no estaba autorizada, y ninguna prueba con
   puerto inyectado podía verlo (2026-08-29).** `T-H7-04`…`T-H7-07` y `ci:e2e:live-session`.
   **Las estrategias se ejecutan de verdad.** El bucle de `T-H7-01` mandaba siempre las mismas
