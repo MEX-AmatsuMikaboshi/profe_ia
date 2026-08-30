@@ -200,7 +200,7 @@ Son reales y cuestan una hora cada una si no se conocen (`docs/env/windows.md`).
    `%LOCALAPPDATA%\Docker\run` **y** `%LOCALAPPDATA%\docker-secrets-engine` —los dos, limpiar uno
    sólo mueve el fallo al otro— antes de lanzarlo. Desde el icono seguirá fallando (D-31).
 
-## 6. Estado actual (2026-08-26)
+## 6. Estado actual (2026-08-30)
 
 F0/H0, F1/H1 y F2/H2 completas. **F3/H3 con sus 5 tareas y el criterio técnico cubierto**: los tres
 checks de infraestructura están en CI; el gate espera sólo Infisical y firmas. F5/H4.5 con 8 de 8,
@@ -238,14 +238,23 @@ están fijados por fecha están **deprecados con apagado el 2026-12-11**. Se com
 corrida material que **rechaza toda renuncia**. `T-H4-11`/BENCH-02 sigue bloqueada por esto, no por
 credenciales.
 
-**F8/H7 con 2 de 7**: `T-H7-02` (validador de anclaje) y `T-H7-03` (no revelación y suite
-adversarial). Las cuatro restantes viven dentro del bucle W7; ya tienen binding ganador con el que
-empezar `T-H7-01`. F9–F16 no empezadas.
+**F8/H7 cerrada, 7 de 7**, con `ci:e2e:live-session` en verde; falta el acta firmada.
 
-**1851 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
-`logic-core` en verde. **Aviso:** los conteos de sesiones anteriores («1890», «1918 unitarias») no son
-comparables — parecen haber sumado los proyectos `unit` y `db` bajo la misma etiqueta. Medido el 2026-08-26,
-`--project unit` da 1851 y `--project db` da 131.
+**F10/H8 con 11 de 14, y no queda nada construible.** Las tres que faltan son `T-H8-11` (calibración
+congelada), `T-H8-12` (BENCH-03, umbrales preinscritos) y `T-H8-14` (corrida humana). La voz
+—`T-H8-01/02`— está construida: STT, TTS y un **único** lexicón de verbalización que sirve a las dos
+direcciones, con reconstrucción exacta de fórmulas comprobada por propiedad (D-91).
+
+**F9 con su política completa y su superficie no** (D-92): modelo de cursos, aislamiento
+experimental, autoridad de evaluación por dominio, flujo observable de creación y etiquetado. Faltan
+las cuatro vistas, el enganche del W0 generalizado y el e2e crear-materia→clase. **F11 depende de
+F9**, y sus tres tareas (`T-LSU-01/02/03`) son del propietario: no hay nada que programar en ellas.
+F12–F16 no empezadas.
+
+**2160 pruebas unitarias en verde + 131 contra PostgreSQL 17 real.** Mutation testing sobre
+`logic-core` en verde. **Aviso sobre los conteos:** son de `--project unit`; sumar `unit` y `db` bajo
+la misma etiqueta ya produjo cifras incomparables en sesiones anteriores. La progresión medida es
+1851 (26-08) → 2024 (29-08) → 2089 (voz) → 2160 (F9).
 
 **✅ CI VIVA desde el 2026-08-29, tras diez sesiones muerta.** Dos causas encadenadas, y conviene
 saber las dos porque ninguna era la que este archivo decía.

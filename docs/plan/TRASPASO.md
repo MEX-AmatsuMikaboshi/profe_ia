@@ -1,4 +1,4 @@
-# Traspaso de sesión — 2026-08-29 (F10 en 9 de 14)
+# Traspaso de sesión — 2026-08-30 (F10 en 11 de 14, F9 con su política puesta)
 
 Documento corto para retomar en otra conversación. El detalle está en
 [`HANDOFF.md`](HANDOFF.md) y [`PLAN_STATUS.md`](PLAN_STATUS.md); esto es lo mínimo para no empezar
@@ -8,17 +8,27 @@ de cero.
 
 > Retomo el proyecto Profesor IA en `C:\Users\gabri\Documents\edu_ia\profesor_ia_code`.
 > Lee `docs/plan/HANDOFF.md` (cabecera «EMPIEZA AQUÍ») y sigue desde ahí.
-> F8 está cerrada y F10 va **9 de 14**: ya está hecho todo lo que no necesita proveedor de voz.
-> Hay **tres commits sin subir** (se agrupan por presupuesto de Actions).
+> **Ya no queda nada construible en F10**, y F9 tiene su política puesta.
+> Hay **nueve commits sin subir** (se agrupan por presupuesto de Actions).
+
+## Lo que cambió en esta sesión
+
+**Se acabó lo que se podía construir sin ti.** Las dos cosas que faltaban y no dependían de nadie
+están hechas:
+
+| | Qué era | Qué quedó |
+|---|---|---|
+| `T-H8-01/02` | la voz: que el Profesor IA hable y escuche | STT, TTS y el lexicón de verbalización, con reconstrucción exacta de fórmulas comprobada por propiedad (D-91) |
+| `T-CC-01…05` | el carril de materias propias, del que **F11 depende** | modelo de cursos, aislamiento experimental, autoridad de evaluación por dominio, flujo observable y etiquetado (D-92) |
 
 ## Dónde quedó
 
 | Fase | Estado |
 |---|---|
-| F8 · Profesor IA de sesión | **cerrada** — 7 de 7 tareas, `ci:e2e:live-session` en verde. Falta el acta firmada `docs/gates/H7.md`, que es del propietario |
-| F10 · Multimodal | **9 de 14** — los tres CRITICAL sin proveedor, pizarrón, evidencia, capacidades, línea base de accesibilidad, captura interna y telemetría H8. Lo que falta necesita voz, calibración congelada o corrida humana |
-| F9 · Cursos personalizados | no empezada. Es paralela y no condiciona gates, pero **F11 depende de ella** |
-| F11 · `LOCAL_SELF_USE` | **no la puede construir nadie más que el propietario** (ver abajo) |
+| F8 · Profesor IA de sesión | **cerrada** — 7 de 7, `ci:e2e:live-session` en verde. Falta el acta firmada `docs/gates/H7.md`, que es tuya |
+| F10 · Multimodal | **11 de 14 — no queda nada construible.** Las tres que faltan son calibración congelada (`T-H8-11`), BENCH-03 (`T-H8-12`) y tu corrida funcional (`T-H8-14`) |
+| F9 · Cursos personalizados | **política completa, superficie no.** Faltan las cuatro vistas, el enganche del W0 generalizado y el e2e crear-materia→clase |
+| F11 · `LOCAL_SELF_USE` | **no la puede construir nadie más que tú.** Sus tres tareas son tu corrida, tu informe y tu decisión GO/NO-GO |
 
 ## Lo que funciona hoy, y cómo verlo
 
@@ -36,93 +46,76 @@ pnpm run ci:e2e:live-session
 
 El criterio de aceptación del gate H7. **Gasta céntimos** contra el proveedor real.
 
-## Las tres cosas que hay que entender antes de decidir
+## Los tres puntos que antes había «que entender antes de decidir»: cerrados
 
-### 1. F11 no es código: es que el propietario use el sistema
+Los tres estaban abiertos como decisiones. Ya no lo están, y lo que queda de cada uno es o trabajo
+tuyo o una nota de mantenimiento.
 
-Sus tres tareas son `T-LSU-01` (corrida funcional del propietario de extremo a extremo), `T-LSU-02`
-(su informe de valor con costos reales y autonomía observada) y `T-LSU-03` (su decisión GO/NO-GO del
-Bloque B). **No hay forma de programarlas.** Lo que se puede hacer es dejarlas listas, y para eso
-hacen falta F9 y F10.
-
-### 2. Ya NO hay que contratar nada para la voz (D-89)
-
-Esto cambia lo que decían las sesiones anteriores. Hoy el Profesor IA **sólo escribe**; F10 es donde
-pasa a hablar (TTS, *text-to-speech*) y a escuchar (STT, *speech-to-text*). Se daba por hecho que
-había que contratar a Deepgram o ElevenLabs y pagarlo aparte.
-
-**No hace falta: la llave de OpenAI que ya está en `.env` sirve para las dos**, y está comprobado
-haciendo el viaje completo — se generó una frase hablada y esa misma grabación se mandó a
-transcribir, y volvió palabra por palabra, con tildes y todo.
-
-Lo que eso **no** dice: la voz de un ordenador se entiende mejor que la de una persona con un
-micrófono normal en una habitación con ruido. Está probado que **funciona y que se puede pagar**, no
-que entienda bien a un alumno de verdad; eso lo mide BENCH-03 más adelante.
-
-Así que `T-H8-01` y `T-H8-02` ya no esperan a nadie: **hay que construirlas**, que es trabajo, pero
-sin decisión ni gasto tuyo por medio.
-
-### 3. Dos calibraciones lanzan a propósito
-
-`visionThresholds()` y `maxAnnotationAgeMs()` **fallan cerrado**. No es deuda ni un bug: elegir esos
-números decidiría con una suposición cuándo el sistema afirma haber leído bien un manuscrito, que es
-donde nacen los errores confiados. Se congelan en `T-H8-11` / BENCH-03. **No los «arregles»
-devolviendo un número.**
+1. **La voz — cerrado.** No había que contratar nada (D-89: la llave de OpenAI que ya está en `.env`
+   sirve para TTS y STT, comprobado de ida y vuelta) **y ya está construido** (D-91). Lo que sigue
+   sin estar medido es la **calidad** con un micrófono real en una habitación con ruido: eso es
+   BENCH-03, y no se puede hacer sin umbrales congelados. Que funcione y que entienda bien a un
+   alumno son dos afirmaciones distintas, y sólo la primera está demostrada.
+2. **F11 no es código — cerrado como decisión, abierto como trabajo tuyo.** No hay nada que
+   programar ahí, y ya no hace falta seguir discutiéndolo: lo que hacía falta era dejarla
+   arrancable, y F9 y F10 son lo que faltaba para eso.
+3. **Las dos calibraciones que lanzan — cerrado como regla permanente.** `visionThresholds()` y
+   `maxAnnotationAgeMs()` fallan cerrado **a propósito** y se congelan en `T-H8-11`/BENCH-03. No es
+   un pendiente que revisar cada sesión: es cómo tiene que quedarse hasta que exista el número. **No
+   los «arregles» devolviendo un valor.**
 
 ## Lo siguiente, por orden
 
-1. **La pasada de promoción `HECHA` → `VERIFICADA`.** Lleva tres sesiones pendiente: ~50 tareas cuya
-   evidencia hay que comprobar una por una contra las corridas de CI. Promoverlas en bloque sería
-   firmar sin mirar.
-2. **`T-H8-01` y `T-H8-02`** — voz. Ya sin bloqueo externo (§2), y es la palanca más grande que
-   queda: con ellas caen también trozos de otras tres tareas.
+1. **La pasada de promoción `HECHA` → `VERIFICADA`.** Lleva cuatro sesiones pendiente: ~50 tareas
+   cuya evidencia hay que comprobar una por una contra las corridas de CI. Promoverlas en bloque
+   sería firmar sin mirar. **Es lo más importante que queda que no dependa de ti.**
+2. **La superficie de F9**: las cuatro vistas de UIUX §6, el enganche del W0 generalizado y el e2e
+   crear-materia → clase con prueba de aislamiento por consulta cruzada. Es lo que separa a F9 de
+   estar cerrada, y lo que hace cómoda tu corrida de F11.
 3. **Re-correr BENCH-01** con D-77 y D-79 puestos, 3 repeticiones, ~MXN 145. La semilla no cambia.
-4. **W5** cuando el propietario rompa su circularidad.
+4. **W5** cuando rompas su circularidad.
 
-## Las dos que delegaste, resueltas (D-90)
-
-1. **Los checks de accesibilidad ya corren en CI**, dentro del job que ya construye la web en vez de
-   en uno nuevo: así no se repite el trabajo previo. Añaden **alrededor de un minuto** por corrida.
-2. **El contraste está corregido.** El rojo de marca sobre el fondo claro se leía mal —daba 3.76
-   cuando el mínimo exigido es 4.5—. Se cambió **sólo donde ese rojo hace de letra**, usando un tono
-   más oscuro **que la propia paleta ya traía**; el color de marca sigue igual en botones, bordes y
-   recuadros. Es decir: no se inventó ningún color nuevo, así que no se pisó nada que sea decisión de
-   diseño. Ahora la herramienta no encuentra ni un problema.
-
-## Lo que es del propietario y ningún modelo sustituye
+## Lo que es tuyo y ningún modelo sustituye
 
 - El **acta firmada** del gate H7 (`docs/gates/H7.md`).
-- ~~La decisión sobre credenciales de voz~~ — **ya no hace falta** (D-89).
 - La revisión humana de los 200 casos de BENCH-01 (D-41).
 - La auditoría de calidad pedagógica en muestra ciega (§6.2).
 - La lectura humana por muestra del paso 19, sobre el banco de 656.
 - La **Parte A ciega** a una familia que no sea candidata de BENCH-01.
 - **Romper la circularidad de W5.**
-- Las tres tareas de **F11**.
+- Las tres tareas de **F11**: `T-LSU-01` (tu corrida de extremo a extremo con el curso de lógica
+  **y al menos una materia propia**), `T-LSU-02` (tu informe de valor con costos reales) y
+  `T-LSU-03` (tu decisión GO/NO-GO del Bloque B).
 
-## Un fallo de CI que conviene conocer (D-85)
+## Dos fallos de CI que conviene conocer
 
-`visual-interaction` se creó con 43 pruebas y **sin `tsconfig.test.json`**, así que ningún proyecto
-de TypeScript las compilaba. El typecheck local pasaba —41 de 41 tareas— no porque estuvieran bien,
-sino porque nadie las miraba. Lo cazó `ci:arch:test-typecheck` en CI.
-
-**Regla que deja:** un paquete nuevo con pruebas necesita **tres** cosas, no una:
+**D-85 — un paquete nuevo con pruebas necesita tres cosas, no una.** `visual-interaction` se creó con
+43 pruebas y sin `tsconfig.test.json`, así que ningún proyecto de TypeScript las compilaba. El
+typecheck local pasaba no porque estuvieran bien, sino porque nadie las miraba. Hacen falta:
 
 1. su `tsconfig.test.json`,
 2. su script `typecheck` encadenando los dos proyectos,
 3. sus dependencias de prueba declaradas en el `package.json`.
 
 El árbol se ve verde sin ninguna de las tres. Y si se toca el lockfile, `ci:supply:drift` exige
-regenerar SBOM y digest **en el mismo cambio**.
+regenerar SBOM y digest **en el mismo cambio** — pasó otra vez en `T-H8-01/02`, y el check lo cazó.
+
+**La misma lección, otra vez, en el propio comprobador del plan.** `check-status.mjs` sólo reconocía
+ids `T-Hx-nn`, así que las filas de F9 (`T-CC-nn`) y las de F11 (`T-LSU-nn`) **no se validaban**: un
+estado mal escrito ahí habría pasado inadvertido. Corregido en esta sesión — de 91 tareas vigiladas
+a 96. **Que un control exista no es lo mismo que vigile lo que crees.**
 
 ## Números al cerrar
 
-**2024 pruebas unitarias** más 131 contra PostgreSQL 17 real. Depcruise sobre **551 módulos** sin
-violaciones. **Cuidado con el número de partida**: este documento decía 1949 y el árbol en `HEAD`
-daba **1951** — se midió con `git stash` en vez de suponerlo, y el delta de +67 cuadra exacto
-(26 + 19 + 22). La última corrida de CI observada sigue siendo **`33288171686` sobre `07fa669`**,
-los diez jobs en verde. Los **seis commits de esta sesión no están subidos**: pediste acumular
-hasta diez o quince y subirlos de una vez.
+**2160 pruebas unitarias** (2024 → 2089 con la voz → 2160 con F9) más 131 contra PostgreSQL 17 real.
+Depcruise sobre **576 módulos** sin violaciones, con sus controles positivos. Lint, typecheck 41/41,
+build 25/25 y `plan:status` (D-1…D-92) en verde.
+
+**Los números se miden, no se suponen**: el traspaso anterior decía «tres commits sin subir» en la
+cabecera y «seis» en el cierre, y el árbol daba siete. Hoy son **nueve**, contados con
+`git rev-list --count origin/main..HEAD`. La última corrida de CI observada sigue siendo
+**`33288171686` sobre `07fa669`** — es decir, **nada de lo de las dos últimas sesiones se ha visto
+en verde en `main` todavía**, y por eso ninguna de esas tareas puede pasar a `VERIFICADA`.
 
 Reglas de trabajo que siguen vigentes: los **commits** son por tarea con `PLAN_STATUS.md` en el
 mismo commit; los **pushes se agrupan** porque el presupuesto de Actions es de USD 5. Y **nunca se

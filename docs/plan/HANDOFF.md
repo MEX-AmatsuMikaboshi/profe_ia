@@ -1,9 +1,100 @@
 # HANDOFF — punto de continuación
 
 > **¿Vienes de otra conversación?** Empieza por [`TRASPASO.md`](TRASPASO.md), que es la versión
-> corta y explica en llano los tres bloqueos que hay que entender antes de decidir nada.
+> corta. Los tres bloqueos que las sesiones anteriores pedían «entender antes de decidir» están
+> **cerrados** (D-89, D-91, D-92); lo que queda abierto es trabajo del propietario o superficie
+> de F9.
 
-> ## EMPIEZA AQUÍ — F10 EN 9 DE 14 (2026-08-29)
+> ## EMPIEZA AQUÍ — SE ACABÓ LO CONSTRUIBLE SIN EL PROPIETARIO (2026-08-30)
+>
+> **F10 va 11 de 14 y no queda nada construible en ella. F9 tiene su política puesta.** Las dos
+> cosas que faltaban y no dependían de nadie están hechas.
+>
+> ```bash
+> pnpm run demo                 # la clase, en http://localhost:3010/materias/logica/clase
+> pnpm exec vitest run --project unit    # 2160 en verde
+> ```
+>
+> ### 1. Las dos tareas
+>
+> | Tarea | Qué dejó |
+> |---|---|
+> | `T-H8-01/02` | STT, TTS y el lexicón de verbalización, con reconstrucción exacta de fórmulas por propiedad (D-91) |
+> | `T-CC-01…05` | el carril de materias propias: modelo, aislamiento, autoridad de evaluación, flujo observable y etiquetado (D-92) |
+>
+> ### 2. La decisión que ordena el paquete de voz: **una tabla, no dos**
+>
+> La tentación era escribir una verbalización para el altavoz y otra para el micrófono. Sería el
+> defecto que `formula-mathml.ts` ya documentó, agravado: divergirían el canal de entrada y el de
+> salida, así que el Profesor IA diría «letra P implica letra Q» y **no reconocería esa misma frase
+> de vuelta**. Hay una tabla y dos funciones inversas, y la reconstrucción exacta que P-I §8.10 exige
+> no es una prueba añadida: es la relación que la define.
+>
+> **La reconstrucción va antes que la naturalidad, y lo dice la norma** («no por naturalidad
+> percibida»). El átomo `P` se dice «letra P» porque sin la palabra marca el átomo `O` y el
+> conectivo `∨` son el mismo sonido, y una disyunción dictada volvería como un átomo.
+>
+> **La normalización no adivina.** Dictar a un campo de fórmula exige que la locución entera sea
+> lexicalizable; la prosa se deja intacta. Recorrerla buscando trozos con forma de notación
+> convertiría la «y» de «tres y cuatro» en una conjunción — defecto invisible, porque produce una
+> fórmula bien formada que el alumno no dijo.
+>
+> ### 3. D-91: por qué el lexicón no importa `logic-core`
+>
+> `visual-sin-veredicto-formal` prohíbe a `speech-gateway` **toda** la ruta de verificación, sin la
+> excepción del subpath `syntax` que sí tiene `apps/web`. La tentación era añadírsela. Es peor: el
+> módulo que la necesitara tendría que **parsear**, y un segundo parser del cálculo en el paquete de
+> voz es justo la divergencia que `sin-verificador-fuera-del-verificador` existe para impedir. La
+> tabla vive local y un control comprueba que sigue correspondiendo al cálculo congelado — patrón de
+> `db:grants:check` y `ci:content:mangos`.
+>
+> ### 4. D-92: el aislamiento se pone al **escribir**, no al exportar
+>
+> Filtrar al exportar era lo barato. El fallo que esto previene **no es ruidoso**: unos intentos de
+> materia personalizada colados en las métricas primarias no rompen nada — el análisis sigue
+> corriendo y produce números de una corrida que nadie diseñó, con la misma cara que los buenos. Un
+> `WHERE` olvidado no falla: pasa de más. Por eso son **dos proyecciones**, no una con filtro.
+>
+> Y la equivalencia fingida con `logic-core` se evita **por tipo**: la rama sin verificador no tiene
+> campo donde escribir un veredicto. No está prohibido — no existe.
+>
+> ### 5. Lo que separa a cada fase de estar cerrada
+>
+> | Falta | De quién |
+> |---|---|
+> | F9: cuatro vistas, W0 generalizado enganchado, e2e crear-materia→clase | construible, no hecho |
+> | `T-H8-11` CAL-14 / CAL-MULTIMODAL | calibración congelada |
+> | `T-H8-12` BENCH-03 | umbrales congelados |
+> | `T-H8-14` corrida funcional | **humana** |
+> | Actas H7 y H8 | firmas del propietario / `TECHNICAL_AUDITOR` |
+> | F11 entera (`T-LSU-01/02/03`) | **sólo el propietario** |
+>
+> ### 6. Lo que sigue, por orden
+>
+> 1. **La pasada de promoción `HECHA` → `VERIFICADA`.** Van cuatro sesiones; ~50 tareas. Es lo más
+>    importante que queda que no dependa del propietario.
+> 2. **La superficie de F9** — lo que hace cómoda la corrida de F11.
+> 3. **Re-correr BENCH-01** con D-77 y D-79, 3 repeticiones, ~MXN 145.
+> 4. **W5** cuando el propietario rompa su circularidad.
+>
+> ### 7. Un control que existía y no vigilaba lo que parecía
+>
+> `check-status.mjs` sólo reconocía ids `T-Hx-nn`, así que las filas de F9 (`T-CC-nn`) y las de F11
+> (`T-LSU-nn`) **no se validaban**: un estado mal escrito ahí habría pasado inadvertido. Corregido —
+> de 91 tareas vigiladas a **96**. Es D-85 otra vez: que un control exista no es que vigile lo que
+> crees.
+>
+> ### 8. Verificación de esta sesión
+>
+> **2160 pruebas unitarias en verde** (2024 → 2089 con la voz → 2160 con F9). Lint, typecheck 41/41,
+> build 25/25, depcruise **576 módulos** con sus controles positivos, `ci:arch:test-typecheck`,
+> SBOM y drift regenerados en el mismo cambio que movió el lockfile, y `plan:status` (D-1…D-92).
+> Las dos tareas se comprobaron **sembrando defectos**, no razonando: quitar `⊥` del lexicón rompe
+> los tres controles que debe y ninguno más; quitar la palabra marca de los átomos rompe nueve
+> pruebas en cuatro archivos; abrir el aislamiento a tres de los cuatro destinos rompe el control que
+> lo vigila. **Nueve commits sin subir.**
+
+> ## Cierre anterior — F10 en 9 de 14 (2026-08-29) — **superado por el de arriba**
 >
 > **Lo que quedaba sin proveedor está hecho.** Tres tareas más de F10, y la línea base de
 > accesibilidad encontró defectos reales en la vista que ya dábamos por buena.
