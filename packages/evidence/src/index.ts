@@ -3,3 +3,4 @@
 export const PACKAGE_NAME = '@profesor-ia/evidence' as const;
 
 export * from './ledger.js';
+export * from './multimodal.js';

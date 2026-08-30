@@ -9,3 +9,4 @@ export * from './coordinates.js';
 export * from './annotations.js';
 export * from './failure-attribution.js';
 export * from './vision-policy.js';
+export * from './whiteboard.js';
