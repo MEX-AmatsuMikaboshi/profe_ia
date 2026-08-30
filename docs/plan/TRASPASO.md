@@ -92,11 +92,26 @@ devolviendo un número.**
 - **Romper la circularidad de W5.**
 - Las tres tareas de **F11**.
 
+## Un fallo de CI que conviene conocer (D-85)
+
+`visual-interaction` se creó con 43 pruebas y **sin `tsconfig.test.json`**, así que ningún proyecto
+de TypeScript las compilaba. El typecheck local pasaba —41 de 41 tareas— no porque estuvieran bien,
+sino porque nadie las miraba. Lo cazó `ci:arch:test-typecheck` en CI.
+
+**Regla que deja:** un paquete nuevo con pruebas necesita **tres** cosas, no una:
+
+1. su `tsconfig.test.json`,
+2. su script `typecheck` encadenando los dos proyectos,
+3. sus dependencias de prueba declaradas en el `package.json`.
+
+El árbol se ve verde sin ninguna de las tres. Y si se toca el lockfile, `ci:supply:drift` exige
+regenerar SBOM y digest **en el mismo cambio**.
+
 ## Números al cerrar
 
 **1949 pruebas unitarias** (1851 al abrir la sesión, +98) más 131 contra PostgreSQL 17 real en CI.
-Depcruise sobre **541 módulos** sin violaciones, con 14 controles positivos. **Ocho corridas de CI
-observadas, todas con los diez jobs en verde.**
+Depcruise sobre **541 módulos** sin violaciones, con 14 controles positivos. La última corrida observada es **`33288171686` sobre `07fa669`, los diez jobs en verde**. Hubo una
+en rojo por lo de D-85, corregida y verificada.
 
 Reglas de trabajo que siguen vigentes: los **commits** son por tarea con `PLAN_STATUS.md` en el
 mismo commit; los **pushes se agrupan** porque el presupuesto de Actions es de USD 5. Y **nunca se
