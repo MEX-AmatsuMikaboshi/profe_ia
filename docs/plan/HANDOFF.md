@@ -1,5 +1,8 @@
 # HANDOFF — punto de continuación
 
+> **¿Vienes de otra conversación?** Empieza por [`TRASPASO.md`](TRASPASO.md), que es la versión
+> corta y explica en llano los tres bloqueos que hay que entender antes de decidir nada.
+
 > ## EMPIEZA AQUÍ — F8 CERRADA, F10 EN 6 DE 14 (2026-08-29)
 >
 > **El Profesor IA da clase, y el gate H7 tiene su criterio de aceptación en verde.**
@@ -78,6 +81,46 @@
 > **F11 no es una fase que se pueda construir**: es el propietario usando el sistema y decidiendo.
 > Lo que queda a nuestro alcance es dejarla lista, y para eso lo que más rinde es `T-H8-10`
 > (`ci:a11y:baseline`), `T-H8-06` y `T-H8-09`, que no necesitan proveedor.
+>
+> ### 5.b Qué son las «credenciales de voz», en llano
+>
+> Aparece como bloqueo de `T-H8-01/02` y conviene que se entienda sin jerga, porque es una decisión
+> del propietario y cuesta dinero.
+>
+> **Hoy el Profesor IA sólo escribe y lee texto.** Cuando responde, lo hace en una caja; cuando el
+> alumno le habla, en realidad lo teclea. F10 es la fase donde eso cambia y el profesor pasa a
+> **hablar** y a **escuchar**.
+>
+> Ninguna de las dos cosas se programa desde cero: se contratan a una empresa que ya las hace.
+>
+> | Lo que falta | Cómo se llama en el plan | Qué hace |
+> |---|---|---|
+> | Que el profesor **escuche** | STT, *speech-to-text* | convierte lo que el alumno dice en texto |
+> | Que el profesor **hable** | TTS, *text-to-speech* | convierte la respuesta escrita en voz |
+>
+> **Una «credencial» es la llave de esa empresa.** Te registras en su web, contratas un plan, y te dan
+> una cadena larga de caracteres. Esa cadena se guarda en `infra/compose/.env` y es lo que permite al
+> sistema usar el servicio y que te lo cobren a ti y no a otro.
+>
+> **Ya tenemos una igual, y funciona**: `MODEL_CREDENTIAL_ANTHROPIC_SESION` es la llave de Anthropic,
+> y es la que hace que el profesor pueda responder por escrito. Lo que falta es la equivalente para
+> voz, de otra empresa.
+>
+> **Los candidatos que el plan nombra** (§F10, `T-H8-01`/`T-H8-02`), y que hay que reverificar antes
+> de elegir:
+>
+> - Para **escuchar**: Deepgram, o el servicio de transcripción de OpenAI.
+> - Para **hablar**: ElevenLabs, o el de OpenAI.
+>
+> **Qué pasa si no las hay.** No se rompe nada: el Profesor IA sigue dando clase por escrito, que es
+> lo que hace hoy. Sólo significa que `T-H8-01` y `T-H8-02` no se pueden construir, y con ellas se
+> quedan quietas las que dependen de que exista voz —parte de `T-H8-06`, `T-H8-08` y el tramo de voz
+> de BENCH-03—. **No es urgente**: es lo que separa a F10 de estar completa, y F10 es una de las dos
+> cosas que F11 necesita.
+>
+> **Lo que sí se puede hacer sin ellas** son `T-H8-06` (captura de pantalla interna), `T-H8-09`
+> (telemetría de recursos y costos) y `T-H8-10` (línea base de accesibilidad). Con esas tres, F10
+> llegaría a ~9 de 14 sin gastar un peso más.
 >
 > ### 6. Lo que sigue, por orden
 >
