@@ -20,10 +20,15 @@ export function DetalleView({ viewModel }: { readonly viewModel: DetalleViewMode
   return (
     <main className="materias-shell" data-testid="detalle-materia" data-materia={card.courseId}>
       <header>
-        <h1>{card.title}</h1>
+        <div><p className="eyebrow">RESUMEN DE LA MATERIA</p><h1>{card.title}</h1></div>
       </header>
 
       <MateriaInsignia card={card} />
+
+      <div className="course-actions">
+        {card.teachable && <MateriaAccion card={card} />}
+        <a className={ACCION_SECUNDARIA} data-action="ver-progreso" href={`/materias/${card.courseId}/progreso`}>{MATERIAS_COPY.progreso.title}</a>
+      </div>
 
       {preparation !== null && (
         <section className="card" data-testid="preparacion" aria-label={MATERIAS_COPY.detalle.preparationHeading}>
@@ -55,6 +60,7 @@ export function DetalleView({ viewModel }: { readonly viewModel: DetalleViewMode
         </section>
       )}
 
+      <details className="workspace-details"><summary>Estado del curso y evaluación</summary>
       <section className="card" data-testid="estado-tecnico">
         <h2 className="card-kicker">{MATERIAS_COPY.misMaterias.statusTechnical}</h2>
         <p>{status.technicalPackage}</p>
@@ -66,6 +72,7 @@ export function DetalleView({ viewModel }: { readonly viewModel: DetalleViewMode
         </p>
       </section>
 
+      </details>
       <section aria-label={MATERIAS_COPY.detalle.outlineHeading}>
         <h2>{MATERIAS_COPY.detalle.outlineHeading}</h2>
         <ul className="materias-lista" data-testid="unidades">
@@ -108,21 +115,6 @@ export function DetalleView({ viewModel }: { readonly viewModel: DetalleViewMode
         )}
       </section>
 
-      {card.teachable && (
-        <p>
-          <MateriaAccion card={card} />
-        </p>
-      )}
-
-      <p>
-        <a
-          className={ACCION_SECUNDARIA}
-          data-action="ver-progreso"
-          href={`/materias/${card.courseId}/progreso`}
-        >
-          {MATERIAS_COPY.progreso.title}
-        </a>
-      </p>
     </main>
   );
 }

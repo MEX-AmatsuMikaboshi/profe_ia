@@ -33,7 +33,7 @@ export function ProgresoView({ viewModel }: { readonly viewModel: ProgresoViewMo
       data-autoridad={viewModel.kind}
     >
       <header>
-        <h1>{MATERIAS_COPY.progreso.title}</h1>
+        <div><p className="eyebrow">TU RECORRIDO</p><h1>{MATERIAS_COPY.progreso.title}</h1><p className="page-subtitle">Consulta lo trabajado, tus sesiones y los próximos repasos.</p></div>
       </header>
 
       <MateriaInsignia card={badgeCard} />

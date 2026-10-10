@@ -7,6 +7,10 @@ Estados: `PENDIENTE → EN_CURSO → HECHA → VERIFICADA` (VERIFICADA = sus che
 > desde el 15-08-2026 hay remoto y GitHub Actions ejecuta, así que la condición ya es alcanzable:
 > una tarea pasa a `VERIFICADA` cuando sus checks se observan en verde en `main`, no antes.
 
+> **Prioridad del propietario, 16-09-2026:** reorganizar el frontend completo conservando
+> la paleta, antes de retomar la integración funcional. Primera propuesta y comprobaciones
+> locales en [FRONTEND_REDESIGN.md](FRONTEND_REDESIGN.md). No cambia los estados de gate.
+
 ## F0 — H0 · Repositorio, contratos y CI
 
 | Tarea | Etiqueta | Estado | Evidencia | Fecha | Notas |

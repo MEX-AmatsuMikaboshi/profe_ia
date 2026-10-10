@@ -111,7 +111,7 @@ export function inicioDemo(): InicioViewModel {
     // Sin ledger poblado: `null`, no `0,00`.
     cost: null,
     capabilitiesNote:
-      'Sesión seca con paquete sintético: sin voz, sin pizarrón y sin modelo en vivo.',
+      'La clase incluye pizarrón y lectura en voz alta cuando el navegador la permite. Las respuestas del profesor requieren conexión con el proveedor configurado.',
   });
 }
 

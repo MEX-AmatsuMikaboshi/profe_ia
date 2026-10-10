@@ -134,6 +134,7 @@ export function VozProfesor({ synthesis, ...props }: VozProfesorProps) {
       <p className="clase-voz-nota">{CLASE_COPY.voice.notice}</p>
       <div className="clase-voz-controles">
         <button
+          className="btn btn-secondary"
           type="button"
           data-testid="voz-hablar"
           onClick={estado.kind === 'hablando' ? detener : hablar}

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { AppShell } from './AppShell';
 
 // Fuente autoalojada. `@fontsource/archivo` entra por el lockfile, el SBOM y el
 // control de drift; el `@import` a Google Fonts del CSS vendorizado se retira en
@@ -21,6 +22,7 @@ import '@excalidraw/excalidraw/index.css';
 import './globals-clase.css';
 // Disposición de las cuatro vistas de materia (T-CC-05). Tampoco redefine tokens.
 import './globals-materias.css';
+import './workspace.css';
 
 export const metadata = {
   title: 'Profesor IA',
@@ -30,7 +32,7 @@ export const metadata = {
 export default function RootLayout({ children }: { readonly children: ReactNode }) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body><AppShell>{children}</AppShell></body>
     </html>
   );
 }

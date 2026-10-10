@@ -3,6 +3,10 @@
   "generatedBy": "ci:a11y:baseline",
   "engine": "chromium (empaquetado)",
   "view": "/materias/logica/clase",
+  "presentationStates": [
+    "paneles-cerrados",
+    "paneles-abiertos"
+  ],
   "wcagGlobalConformance": "no_declarada",
   "surfaces": [
     {
@@ -28,7 +32,7 @@
     {
       "surface": "pizarron",
       "present": true,
-      "detail": "T-H8-03 dejó el adaptador de estado; falta montarlo en la vista"
+      "detail": "Pizarrón montado y desplegado durante la auditoría"
     },
     {
       "surface": "overlay-anotaciones",

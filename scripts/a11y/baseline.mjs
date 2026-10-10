@@ -327,12 +327,27 @@ async function main() {
     log(`\n  motor     ${canal}`);
     log(`  vista     ${base}${RUTA}\n`);
 
-    const axe = await corrreAxe(page);
-    const objetivosPequenos = await midetObjetivos(page);
+    // La composición nueva inicia los paneles secundarios cerrados. Auditar sólo
+    // ese estado haría desaparecer sus posibles defectos del informe de axe.
+    const axeInicial = await corrreAxe(page);
+    const objetivosIniciales = await midetObjetivos(page);
+    const focoInicial = await recorreFoco(page, 40);
+    for (const summary of await page.locator('.workspace-details > summary').all()) {
+      await summary.click();
+    }
+    const pizarron = page.locator('[data-testid="pizarron"]');
+    if (await pizarron.count() > 0) await pizarron.waitFor({ state: 'visible' });
+    const axeAbierto = await corrreAxe(page);
+    const unicos = (entries) => [...new Map(entries.map((entry) => [JSON.stringify(entry), entry])).values()];
+    const axe = {
+      enLineaBase: unicos([...axeInicial.enLineaBase, ...axeAbierto.enLineaBase]),
+      fueraDeLineaBase: unicos([...axeInicial.fueraDeLineaBase, ...axeAbierto.fueraDeLineaBase]),
+    };
+    const objetivosPequenos = unicos([...objetivosIniciales, ...await midetObjetivos(page)]);
     const mudos = await estadosConPalabra(page);
     const notacion = await notacionSemantica(page);
     const animados = await movimientoReducido(page);
-    const foco = await recorreFoco(page, 40);
+    const foco = [...focoInicial, ...await recorreFoco(page, 40)];
 
     const enfocados = foco.filter((f) => f !== null);
     const sinFocoVisible = enfocados.filter((f) => !f.focoVisible);
@@ -372,7 +387,7 @@ async function main() {
       {
         surface: 'pizarron',
         present: await presentes('[data-testid="pizarron"]'),
-        detail: 'T-H8-03 dejó el adaptador de estado; falta montarlo en la vista',
+        detail: 'Pizarrón montado y desplegado durante la auditoría',
       },
       {
         surface: 'overlay-anotaciones',
@@ -545,6 +560,7 @@ async function main() {
       generatedBy: 'ci:a11y:baseline',
       engine: canal,
       view: RUTA,
+      presentationStates: ['paneles-cerrados', 'paneles-abiertos'],
       wcagGlobalConformance: report.wcagGlobalConformance,
       surfaces: superficies,
       rulings: report.rulings,

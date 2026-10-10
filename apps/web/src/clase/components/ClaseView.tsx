@@ -40,6 +40,18 @@ export interface ClaseViewProps {
   readonly board?: ReactNode;
 }
 
+const STATE_LABELS: Record<ClaseViewModel['primaryState'], string> = {
+  preparada: 'Lista para empezar',
+  autenticacion: 'Identificación',
+  consentimiento_confirmado: 'Participación confirmada',
+  diagnostico: 'Punto de partida',
+  explicacion: 'Explicación',
+  comprobacion: 'Comprobación',
+  practica: 'Práctica',
+  evaluacion_operativa: 'Evaluación',
+  cierre: 'Cierre de clase',
+};
+
 function SaveIndicator({ state }: { readonly state: SaveState }) {
   // Ninguna rama dice «guardado» sin estarlo: un indicador optimista convierte
   // un fallo de guardado en trabajo perdido que el alumno creía a salvo.
@@ -98,7 +110,12 @@ function HintControls({ hints }: { readonly hints: HintControl }) {
     );
   }
   return (
-    <button type="button" data-testid="pedir-pista" data-next-level={hints.nextLevel}>
+    <button
+      className="btn btn-secondary"
+      type="button"
+      data-testid="pedir-pista"
+      data-next-level={hints.nextLevel}
+    >
       {CLASE_COPY.hints.action} ({hints.nextLevel}/{hints.maximumLevel})
     </button>
   );
@@ -107,8 +124,8 @@ function HintControls({ hints }: { readonly hints: HintControl }) {
 function LocalReviewPanel({ review }: { readonly review: LocalReview }) {
   const notes = [...review.syntax, ...review.structure, ...review.references];
   return (
-    <section data-testid="revision-local" data-authoritative={String(review.authoritative)}>
-      <h2>{CLASE_COPY.localReview.title}</h2>
+    <section className="card" data-testid="revision-local" data-authoritative={String(review.authoritative)}>
+      <h2 className="card-title">{CLASE_COPY.localReview.title}</h2>
       {/* El descargo va siempre, también sin observaciones: es justo el caso en
           el que «no hay nada» se leería como «está bien». */}
       <p data-testid="revision-local-descargo">{CLASE_COPY.localReview.disclaimer}</p>
@@ -145,7 +162,7 @@ function VerdictPanel({ submission }: { readonly submission: SubmissionState }) 
       const { verification } = submission.verdict;
       const goalMissed = verification.valid && verification.goalReached === false;
       return (
-        <section data-testid="veredicto" data-valid={String(verification.valid)}>
+        <section className="card" data-testid="veredicto" data-valid={String(verification.valid)}>
           <p>{verification.valid ? CLASE_COPY.verdict.valid : CLASE_COPY.verdict.invalid}</p>
           {/* D-9: válida y «resuelve el reactivo» son cosas distintas. */}
           {goalMissed ? <p>{CLASE_COPY.verdict.validButGoalNotReached}</p> : null}
@@ -180,14 +197,14 @@ export function ClaseView({
     >
       {/* UIUX §2: los datos ilustrativos se declaran; no se dejan pasar por reales. */}
       {syntheticPackage ? (
-        <p className="tag tag-outline" data-testid="paquete-sintetico">
-          Sesión seca con paquete sintético de desarrollo. No es evidencia experimental.
+        <p className="class-demo" data-testid="paquete-sintetico">
+          Vista de demostración. Esta sesión no guarda tu avance ni genera evidencia experimental.
         </p>
       ) : null}
 
       <header>
-        <span data-testid="estado-primario">{viewModel.primaryState}</span>
-        <SaveIndicator state={viewModel.saveState} />
+        <div className="class-heading"><h1>Tu clase</h1><span className="class-state" data-testid="estado-primario">{STATE_LABELS[viewModel.primaryState]}</span></div>
+        {syntheticPackage ? <span className="class-demo">Avance sin guardar · Demostración</span> : <SaveIndicator state={viewModel.saveState} />}
       </header>
 
       {viewModel.probeNotice === null ? null : <ProbeNotice />}
@@ -202,19 +219,27 @@ export function ClaseView({
             <p data-testid="sin-actividad">No hay actividad abierta.</p>
           ) : (
             <section className="card" data-testid="actividad" aria-label="Actividad">
+              <h2 className="eyebrow">ACTIVIDAD ACTUAL</h2>
               <p>{viewModel.activity.statement}</p>
             </section>
           )}
 
-          {viewModel.whiteboardVisible ? board : null}
-
           {viewModel.fitchEditorVisible ? children : null}
 
-          <LocalReviewPanel review={localReview} />
+          <div className="class-tools"><HintControls hints={viewModel.hints} /></div>
           <VerdictPanel submission={submission} />
+          <LocalReviewPanel review={localReview} />
+
+          {viewModel.whiteboardVisible && board ? (
+            <details className="workspace-details board-disclosure">
+              <summary>Pizarrón · Un espacio para explorar tus ideas</summary>
+              {board}
+            </details>
+          ) : null}
         </div>
 
         <aside className="clase-lateral" aria-label="Acompañamiento">
+          {professor ?? null}
           {viewModel.rubric === null ? null : (
             <section className="card" data-testid="rubrica" aria-label={CLASE_COPY.rubric.title}>
               <h2 className="card-title">{CLASE_COPY.rubric.title}</h2>
@@ -227,6 +252,7 @@ export function ClaseView({
           )}
 
           {/* El Profesor IA es interlocutor visible, no la superficie dominante. */}
+          <details className="workspace-details"><summary>Conversación de la clase</summary>
           <section
             className="card"
             data-testid="conversacion"
@@ -245,15 +271,13 @@ export function ClaseView({
               ))}
             </ol>
           </section>
-
-          {professor ?? null}
+          </details>
         </aside>
       </div>
 
-      <section className="card" aria-label="Controles de sesión">
-        <HintControls hints={viewModel.hints} />
-
-        <button className="btn" type="button" data-testid="pausa" disabled={!viewModel.pause.available}>
+      <section className="class-controls" aria-label="Controles de sesión">
+        <div>
+        <button className="btn btn-secondary" type="button" data-testid="pausa" disabled={!viewModel.pause.available}>
           {viewModel.pause.paused ? CLASE_COPY.pause.resumed : CLASE_COPY.pause.action}
         </button>
         <p data-testid="pausa-consecuencia" data-consequence={viewModel.pause.consequence}>
@@ -261,17 +285,22 @@ export function ClaseView({
             ? CLASE_COPY.pause.consequenceInvalidatesProbe
             : CLASE_COPY.pause.consequenceNone}
         </p>
+        </div>
 
         {/* UI-CORR-04: apelación y retirada, con acceso inequívoco. */}
+        <div>
         <button className="btn btn-ghost" type="button" data-testid="apelacion">
           {CLASE_COPY.appeal.action}
         </button>
         <p data-testid="apelacion-efecto">{CLASE_COPY.appeal.effect}</p>
+        </div>
 
+        <div>
         <button className="btn btn-ghost" type="button" data-testid="retirada">
           {CLASE_COPY.withdrawal.action}
         </button>
         <p data-testid="retirada-efecto">{CLASE_COPY.withdrawal.effect}</p>
+        </div>
       </section>
     </main>
   );

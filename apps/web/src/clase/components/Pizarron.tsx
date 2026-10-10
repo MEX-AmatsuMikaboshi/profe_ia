@@ -192,6 +192,7 @@ export function Pizarron({ binding, onOperations }: PizarronProps) {
         {INSERTABLES.map((que) => (
           <button
             key={que}
+            className="btn btn-secondary"
             type="button"
             data-testid={`pizarron-insertar-${que}`}
             aria-describedby="pizarron-sin-arrastre-ayuda"
@@ -211,6 +212,7 @@ export function Pizarron({ binding, onOperations }: PizarronProps) {
           onChange={(e) => setTextoNuevo(e.target.value)}
         />
         <button
+          className="btn btn-secondary"
           type="button"
           data-testid="pizarron-insertar-text"
           disabled={textoNuevo.trim() === ''}

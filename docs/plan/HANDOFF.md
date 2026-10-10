@@ -1,4 +1,52 @@
+# Handoff para revisar y actualizar el plan — 2026-10-01
+
+## Propósito del siguiente chat
+
+El siguiente chat debe elaborar o actualizar `Plan.md` con mejoras y correcciones para **Profesor IA**. Antes de proponer cambios, reconcilia `AUDITORIA_PROFESORIA.md`, `docs/plan/FRONTEND_REDESIGN.md`, este `docs/plan/HANDOFF.md`, `docs/plan/PLAN_STATUS.md`, el `Plan.md` existente y el código actual. Inspecciona el contenido actual de `Plan.md`; no lo sobrescribas a ciegas. Entrega un plan ordenado por fases y dependencias, con criterios verificables y una primera rebanada vertical que materialice una clase real.
+
+No se ha pedido implementar esa funcionalidad en este handoff. El nombre correcto del producto es **Profesor IA**; nunca lo llames “Profesoría”.
+
+## Dirección del producto: una clase individual conducida por Profesor IA
+
+El propietario rechazó la experiencia actual porque se siente como un módulo o página de tareas, o como un chatbot pasivo. Quiere una sesión individual en la que Profesor IA conduce la clase. Al pulsar **Iniciar clase**, Profesor IA debe hablar primero, recuperar el contexto del alumno, plantear el objetivo, explicar, preguntar, escuchar y diagnosticar. Según la evidencia, decide si avanza, repasa o propone práctica; abre herramientas sólo cuando la actividad pedagógica lo requiere, y cierra con resumen, progreso y pendientes.
+
+Profesor IA controla la secuencia y el ritmo. El alumno no dirige las transiciones entre actos, pero conserva derechos claros: puede preguntar, pedir una pausa, repetición o explicación alternativa, apelar una decisión, retirarse o terminar la sesión, y usar un control accesible de emergencia.
+
+La experiencia prioriza voz y conversación. El editor Fitch, el pizarrón, una actividad y la transcripción aparecen según el acto en curso, no todos a la vez. Los estados visibles deben comunicar cuándo el profesor habla, escucha o procesa, cuándo hay una actividad, y cuándo la sesión está en pausa o en cierre.
+
+Un “Sí entendí” no es evidencia suficiente. Comprueba comprensión pidiendo al alumno explicar la idea con sus propias palabras o transferirla a un ejemplo nuevo.
+
+## Patrón de tutoría y evidencia
+
+Usa este ciclo breve: pregunta → intento del alumno → diagnóstico → ayuda mínima adecuada (pregunta, ejemplo, valor de prueba, pista o modelado) → nueva comprobación → decisión de avanzar o regresar. Recuerda las confusiones observadas y adapta el apoyo; detecta señales de cansancio o frustración y permite responder a ellas.
+
+Referencias para estudiar al elaborar el plan:
+
+- Transcripción de tutoría: https://www.cs.cmu.edu/~neil/transcript.html
+- Ejemplo de apoyo individual en LPS Richmond: https://practices.learningaccelerator.org/artifacts/example-one-on-one-student-support-at-lps-richmond
+- Artículo de ICCE: https://library.apsce.net/index.php/ICCE/article/view/4957
+- Enseñanza explícita primaria y secundaria: https://www.edresearch.edu.au/guides-resources/videos/teach-explicitly-primary-and-secondary
+
+No copies mecánicamente una tutoría humana: puede contener interrupciones, pistas demasiado directas, ausencia de apertura o cierre, o aceptar una respuesta incorrecta. Diseña objetivos explícitos, turnos breves, verificación independiente de las respuestas, cierre de sesión y persistencia del contexto pedagógico.
+
+## Arquitectura objetivo que debe evaluar el plan
+
+Evalúa un sistema híbrido: Markdown y playbooks para objetivos, explicaciones, errores frecuentes y criterios; reglas y máquina de estados para secuencia, derechos y consecuencias; LLM para expresión natural e interpretación; un verificador determinista para comprobar respuestas; y persistencia para conservar contexto, confusiones y progreso. Hacia el alumno debe presentarse como una sola personalidad coherente.
+
+## Contexto del repositorio y cautelas de continuidad
+
+El repositorio ya tiene cambios locales pendientes y cuatro commits sin subir. No pierdas ni mezcles accidentalmente ese trabajo. El rediseño exterior puede reutilizarse; la sección **Clase** debe replantearse como una sesión dinámica, no asumirse resuelta por el rediseño de páginas.
+
+### Historial anterior
+
 # HANDOFF — punto de continuación
+
+> **Prioridad vigente, 16-09-2026:** el propietario pidió reorganizar el frontend
+> completo y conservar sus colores antes de retomar la integración funcional.
+> Ver [FRONTEND_REDESIGN.md](FRONTEND_REDESIGN.md) para la propuesta implementada,
+> verificaciones locales y pendientes. Las cabeceras históricas de agosto que dicen
+> que no queda superficie construible no describen el diagnóstico posterior de
+> `AUDITORIA_PROFESORIA.md`. No se han promovido gates ni completado la sesión real.
 
 > **¿Vienes de otra conversación?** Empieza por [`TRASPASO.md`](TRASPASO.md), que es la versión
 > corta. **F9 está completa y F10 va 11 de 14: no queda superficie que construir en ninguna de las

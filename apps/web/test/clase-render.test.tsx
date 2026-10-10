@@ -21,13 +21,14 @@ const REVIEW = reviewFitchDocument(drySessionDocument());
 function render(
   input: ClaseViewInput,
   submission: SubmissionState = { kind: 'inactivo' },
+  syntheticPackage = true,
 ): string {
   return renderToStaticMarkup(
     <ClaseView
       viewModel={buildClaseViewModel(input)}
       localReview={REVIEW}
       submission={submission}
-      syntheticPackage
+      syntheticPackage={syntheticPackage}
     />,
   );
 }
@@ -99,8 +100,14 @@ describe('render de la vista de Clase (T-H6-13)', () => {
       [{ kind: 'cambios_sin_guardar' as const }, CLASE_COPY.save.unsaved],
       [{ kind: 'error' as const, code: 'IO', detail: 'x' }, CLASE_COPY.save.failed],
     ] as const) {
-      expect(render({ ...drySessionViewInput(), saveState: state })).toContain(texto);
+      expect(render({ ...drySessionViewInput(), saveState: state }, { kind: 'inactivo' }, false)).toContain(texto);
     }
+  });
+
+  it('la demostración no promete un guardado que no existe', () => {
+    const html = render(drySessionViewInput());
+    expect(html).toContain('Avance sin guardar');
+    expect(html).not.toContain('data-save-state="guardado"');
   });
 
   it('el descargo de la revisión local se muestra también sin observaciones', () => {

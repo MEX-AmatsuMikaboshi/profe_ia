@@ -9,12 +9,11 @@
  */
 export function NoImplementado({ ruta }: { readonly ruta: string }) {
   return (
-    <main data-testid="no-implementado">
-      <h1>NO_IMPLEMENTADO</h1>
-      <p>
-        La ruta <code>{ruta}</code> no está implementada todavía. En F7 sólo existe la vista de
-        Clase (T-H6-13); las demás vistas llegan en su fase.
-      </p>
+    <main className="materias-shell" data-testid="no-implementado" data-code="NO_IMPLEMENTADO">
+      <header><div><p className="eyebrow">SECCIÓN NO DISPONIBLE</p><h1>Esta sección aún no está lista</h1></div></header>
+      <p>Mientras tanto, puedes volver a tus materias y explorar las pantallas disponibles.</p>
+      <p className="page-subtitle">Dirección solicitada: <code>{ruta}</code></p>
+      <div className="course-actions"><a className="btn btn-secondary" href="/materias">Ir a mis materias</a><a className="btn btn-ghost" href="/">Volver al inicio</a></div>
     </main>
   );
 }

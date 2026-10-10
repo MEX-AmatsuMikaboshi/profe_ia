@@ -166,7 +166,18 @@ export function ClaseSession() {
           onUndo={() => setHistory((current) => undo(current))}
           onRedo={() => setHistory((current) => redo(current))}
         />
-        <button type="button" data-testid="enviar-verificador" onClick={() => void submit()}>
+        {/* `btn-secondary`, no `btn-primary`: blanco sobre `--color-accent` da
+            4.20 y AA pide 4.5, como `a11y-contrast.css` ya dejó escrito. Este
+            botón no se deshabilita nunca, así que axe sí lo mide —el del panel
+            del profesor se libraba por estar deshabilitado— y con el primario
+            entra una violación de contraste real. Subirlo a primario exige
+            cambiar el color de marca, que Maestro §10.5 difiere a producto. */}
+        <button
+          className="btn btn-secondary"
+          type="button"
+          data-testid="enviar-verificador"
+          onClick={() => void submit()}
+        >
           Enviar al verificador
         </button>
       </>

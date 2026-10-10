@@ -24,13 +24,13 @@ export const MATERIAS_COPY = {
      * §6.1 los pide «cuando el motor los haya programado». Vacío significa que
      * no programó ninguno, no que no haya nada que repasar.
      */
-    noReviews: 'El motor no ha programado ningún repaso todavía.',
+    noReviews: 'Todavía no hay repasos programados.',
     costHeading: 'Consumo registrado',
     /**
      * §6.1: coste «cuando exista en `cost-ledger`». Un 0,00 con el ledger vacío
      * afirmaría que no se ha gastado nada, que no es lo mismo que no saberlo.
      */
-    noCost: 'No hay consumo registrado en el ledger todavía.',
+    noCost: 'Todavía no hay consumo registrado.',
     capabilitiesHeading: 'Capacidades y proveedor',
   },
 

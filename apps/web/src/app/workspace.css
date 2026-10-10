@@ -1,0 +1,150 @@
+/* Composición del espacio de estudio. Conserva los tokens de color y Archivo. */
+.app-frame { min-height: 100dvh; display: grid; grid-template-columns: 224px minmax(0, 1fr); }
+.app-sidebar { position: sticky; top: 0; height: 100dvh; padding: 32px 20px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--color-neutral-300); background: var(--color-surface); }
+.app-brand { display: flex; align-items: center; gap: 10px; color: var(--color-text); text-decoration: none; font-size: 24px; font-weight: 800; letter-spacing: -1px; }
+.app-brand-mark { display: grid; place-items: center; width: 38px; height: 42px; background: var(--color-accent); color: var(--color-text); font-size: 29px; }
+.brand-ia { color: var(--color-accent-700); }
+.app-brand small { display: block; margin-top: 2px; color: var(--color-neutral-700); font-size: 10px; font-weight: 400; letter-spacing: 0; }
+.nav-caption { margin: 54px 12px 12px; font-size: 10px; font-weight: 600; letter-spacing: 1.7px; color: var(--color-neutral-700); }
+.app-nav { display: grid; gap: 6px; }
+.app-nav a { display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 10px 14px; text-decoration: none; color: var(--color-neutral-700); border-left: 3px solid transparent; }
+.app-nav svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.app-nav a:hover { background: var(--color-neutral-200); color: var(--color-text); }
+.app-nav a[aria-current] { background: var(--color-bg); color: var(--color-text); font-weight: 600; border-left-color: var(--color-accent); }
+.sidebar-bottom { margin-top: auto; display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--color-neutral-700); padding: 16px 12px 0; border-top: 1px solid var(--color-neutral-300); }
+.local-dot { width: 6px; height: 6px; background: var(--color-neutral-700); border-radius: 50%; }
+.app-content { min-width: 0; }
+.app-topbar { min-height: 68px; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 40px; border-bottom: 1px solid var(--color-neutral-300); font-size: 12px; }
+.topbar-context { color: var(--color-neutral-700); }
+.topbar-note { color: var(--color-neutral-700); }
+.back-link { text-decoration: none; color: var(--color-text); min-height: 32px; display: inline-flex; align-items: center; }
+.skip-content { position: fixed; top: -100px; left: 16px; z-index: 100; padding: 12px; background: var(--color-bg); color: var(--color-text); }
+.skip-content:focus { top: 8px; }
+.demo-notice { max-width: 1200px; margin: 22px auto 0; padding: 0 40px; color: var(--color-neutral-700); font-size: 11px; }
+.demo-notice p { margin: 0; border-left: 2px solid var(--color-neutral-400); padding-left: 10px; }
+.materias-shell { max-width: 1200px; padding: 32px 40px 64px; gap: 28px; }
+.materias-shell > header { align-items: center; }
+.materias-shell h1 { font-size: clamp(28px, 3vw, 38px); letter-spacing: -1.2px; }
+.page-subtitle { margin: 8px 0 0; color: var(--color-neutral-700); font-size: 14px; line-height: 1.6; }
+.eyebrow { margin: 0 0 12px; color: var(--color-neutral-700); font-size: 10px; letter-spacing: 1.8px; font-weight: 600; text-transform: uppercase; }
+.materias-shell h2 { font-size: 18px; line-height: 1.35; margin-bottom: 16px; }
+.materias-shell h3 { font-size: 21px; line-height: 1.3; }
+.materias-shell .card { padding: 24px; gap: 12px; box-shadow: none; border: 1px solid var(--color-neutral-300); background: var(--color-bg); }
+.materias-shell .card p:last-child { margin-bottom: 0; }
+.materias-shell .tag[data-track] { display: block; font-weight: 400; font-size: 12px; line-height: 1.6; text-transform: none; letter-spacing: 0; border: 0; background: none; padding: 0; color: var(--color-neutral-700); white-space: normal; }
+.materias-shell .tag[data-track] strong { color: var(--color-text); font-weight: 600; }
+.materias-shell .btn { min-height: 42px; padding: 12px 18px; }
+/* El acento y la tinta existentes alcanzan 3.95:1. A 19px/800 el texto es
+   grande (>=14pt en negrita), cuyo mínimo AA es 3:1. Hover conserva el fondo;
+   al presionar, el escalón oscuro necesita la letra clara. */
+.app-frame .btn-primary { color: var(--color-text); font-size: 19px; }
+.app-frame .btn-primary:hover { background: var(--color-accent); }
+.app-frame .btn-primary:active { background: var(--color-accent-700); color: var(--color-bg); }
+.home-lead { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(230px, 1fr); gap: 22px; }
+.materias-shell .resume-card { background: var(--color-surface); border-top: 3px solid var(--color-accent); padding: 30px; }
+.resume-card h2 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.4px; color: var(--color-neutral-700); }
+.resume-card h3 { font-size: clamp(25px, 3vw, 34px); max-width: 24ch; margin-bottom: 16px; }
+.resume-card [data-testid='materia-activa'] { display: flex; flex-direction: column; gap: 10px; }
+.resume-card .btn { margin-top: 12px; }
+.section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+.section-heading h2 { margin: 0; }
+.section-heading a, .course-card-link { color: var(--color-text); font-size: 13px; text-underline-offset: 5px; }
+.home-library { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.home-library h2 { font-size: 15px; color: var(--color-neutral-700); }
+.home-library .course-card-link { display: inline-flex; align-items: center; min-height: 36px; align-self: flex-start; margin-top: auto; }
+.course-card-title a { color: inherit; text-decoration: none; }
+.course-card-title a:hover { text-decoration: underline; }
+.workspace-details { border-top: 1px solid var(--color-neutral-300); padding-top: 16px; }
+.workspace-details > summary { cursor: pointer; padding: 8px 0; min-height: 40px; color: var(--color-neutral-700); font-size: 13px; font-weight: 600; }
+.workspace-details[open] > summary { margin-bottom: 16px; }
+.home-system { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.materias-carriles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.materias-carriles > section > h2 { font-size: 14px; color: var(--color-neutral-700); }
+.materias-carriles .card { border-top: 3px solid var(--color-neutral-800); }
+.materias-carriles .card > .btn { margin-top: 8px; }
+[data-testid='estado-ui-corr-01'] { margin: 0; }
+[data-testid='estado-ui-corr-01'] dt { margin-top: 14px; }
+[data-testid='estado-ui-corr-01'] dd { margin: 4px 0 0; font-size: 13px; color: var(--color-neutral-700); }
+.course-nav { max-width: 1200px; margin: 24px auto 0; padding: 0 40px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.course-nav a { min-height: 38px; padding: 8px 0; color: var(--color-neutral-700); text-decoration: none; font-size: 13px; }
+.course-nav a:first-child { margin-right: auto; }
+.course-nav a[aria-current] { color: var(--color-text); border-bottom: 2px solid var(--color-accent); font-weight: 600; }
+.course-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+[data-testid='unidades'] { counter-reset: units; }
+.materias-shell [data-testid='unidades'] > li { counter-increment: units; position: relative; padding-left: 72px; }
+[data-testid='unidades'] > li::before { content: counter(units, decimal-leading-zero); position: absolute; left: 24px; top: 24px; font-size: 17px; color: var(--color-neutral-700); }
+[data-testid='unidades'] > li p { color: var(--color-neutral-700); font-size: 12px; }
+[data-testid='recuentos'] { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 0; }
+[data-testid='recuentos'] > div { border-left: 2px solid var(--color-neutral-300); padding-left: 16px; }
+[data-testid='recuentos'] dd { margin: 8px 0 0; font-size: 36px; font-weight: 600; }
+.progreso-kc { padding: 16px; gap: 20px; }
+.progreso-kc > span:first-child { font-weight: 600; min-width: 56px; }
+.progreso-kc > span:last-child:not(.tag) { margin-left: auto; font-size: 12px; color: var(--color-neutral-700); }
+.app-frame-class { grid-template-columns: minmax(0, 1fr); }
+.app-frame-class .app-topbar { max-width: none; background: var(--color-surface); }
+.clase-shell { max-width: 1320px; padding: 24px 40px 48px; gap: 24px; }
+.clase-shell > header { align-items: center; }
+.clase-shell h1 { font-size: 30px; margin: 0; }
+.class-heading { display: flex; gap: 16px; align-items: center; }
+.class-state { font-size: 12px; background: var(--color-surface); padding: 6px 10px; }
+.class-demo { margin: 0; font-size: 11px; color: var(--color-neutral-700); }
+.clase-cuerpo { gap: 24px; }
+.clase-principal, .clase-lateral { gap: 20px; }
+.clase-shell .card { box-shadow: none; border-color: var(--color-neutral-300); padding: 24px; }
+.clase-shell h2 { font-size: 18px; }
+.clase-shell [data-testid='actividad'] { border-left: 3px solid var(--color-accent); background: var(--color-surface); }
+.clase-shell [data-testid='actividad'] p { margin: 0; font-size: 19px; line-height: 1.55; }
+.clase-shell [data-testid='actividad'] .eyebrow { margin-bottom: 12px; font-size: 10px; }
+.clase-shell [data-testid='editor-fitch'] { min-height: 220px; }
+.clase-shell [data-testid='enviar-verificador'] { align-self: flex-start; min-height: 44px; padding: 12px 22px; background: var(--color-text); color: var(--color-bg); }
+.clase-shell [data-testid='editor-fitch'] [role='group'] { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 4px; }
+.clase-shell [data-testid='lineas'] { margin: 8px 0; padding: 12px 16px 12px 40px; background: var(--color-bg); border-block: 1px solid var(--color-neutral-300); }
+.clase-shell [data-testid='lineas'] li { padding: 10px 8px; }
+.clase-shell [data-testid^='justificacion-'] { margin-left: 28px; font-family: var(--font-body); font-size: 12px; color: var(--color-neutral-700); }
+.clase-shell [data-testid='revision-local'] { font-size: 12px; background: transparent; border: 0; border-top: 1px solid var(--color-neutral-300); padding: 16px 0; }
+.clase-shell [data-testid='revision-local'] h2 { font-size: 13px; }
+.clase-lateral [data-testid='profesor'] { border-top: 3px solid var(--color-accent); }
+.clase-lateral textarea { min-height: 96px; }
+.clase-lateral .card { padding: 20px; }
+.clase-lateral ol { padding-left: 18px; font-size: 13px; }
+.class-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; border-top: 1px solid var(--color-neutral-300); padding-top: 24px; }
+.class-controls > div { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.class-controls p { font-size: 11px; color: var(--color-neutral-700); margin: 0; }
+.class-controls .btn { min-height: 40px; text-align: left; }
+.class-tools { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.board-disclosure { border: 1px solid var(--color-neutral-300); padding: 0; }
+.board-disclosure > summary { padding: 16px 20px; color: var(--color-text); }
+.board-disclosure[open] > summary { margin-bottom: 0; border-bottom: 1px solid var(--color-neutral-300); }
+.board-disclosure .card { border: 0; }
+.app-frame details > summary:hover { color: var(--color-text); }
+@media (min-width: 70rem) { .clase-cuerpo { grid-template-columns: minmax(0, 1fr) 350px; } }
+@media (max-width: 70rem) {
+  .app-frame { grid-template-columns: 184px minmax(0, 1fr); }
+  .app-frame-class { grid-template-columns: minmax(0, 1fr); }
+  .app-sidebar { padding-inline: 14px; }
+  .app-brand { font-size: 21px; }
+  .app-brand small { font-size: 9px; }
+  .materias-shell, .clase-shell { padding-inline: 24px; }
+  .app-topbar, .demo-notice, .course-nav { padding-inline: 24px; }
+  .home-lead { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 48rem) {
+  .app-frame { display: block; }
+  .app-sidebar { position: static; height: auto; padding: 16px 20px 0; border-right: 0; border-bottom: 1px solid var(--color-neutral-300); gap: 16px; }
+  .app-brand small, .nav-caption, .sidebar-bottom { display: none; }
+  .app-nav { display: flex; gap: 12px; }
+  .app-nav a { border-left: 0; border-bottom: 3px solid transparent; padding: 10px 12px; }
+  .app-nav a[aria-current] { border-bottom-color: var(--color-accent); background: transparent; }
+  .app-topbar { min-height: 48px; padding-inline: 20px; }
+  .topbar-note { display: none; }
+  .materias-shell, .clase-shell { padding: 24px 20px 40px; gap: 24px; }
+  .demo-notice, .course-nav { padding-inline: 20px; }
+  .home-library, .materias-carriles, .home-system, .class-controls { grid-template-columns: minmax(0, 1fr); }
+  .materias-shell .resume-card { padding: 24px; }
+  .class-heading { display: block; }
+  .class-state { display: inline-block; margin-top: 8px; }
+  .clase-shell > header { flex-wrap: wrap; }
+  .clase-lateral { position: static; }
+  [data-testid='recuentos'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .course-nav { gap: 16px; }
+}

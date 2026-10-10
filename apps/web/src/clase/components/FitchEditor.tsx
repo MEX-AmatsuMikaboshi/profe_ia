@@ -55,13 +55,18 @@ export function FitchEditor({
   const document: FitchDocument = history.present;
 
   return (
-    <section data-testid="editor-fitch" aria-label={CLASE_COPY.editor.title}>
-      <h2>{CLASE_COPY.editor.title}</h2>
+    <section className="card" data-testid="editor-fitch" aria-label={CLASE_COPY.editor.title}>
+      <h2 className="card-title">{CLASE_COPY.editor.title}</h2>
 
       {document.goal === null ? null : <p data-testid="meta">Meta: {document.goal}</p>}
 
       <div role="group" aria-label="Notación">
         {NOTATION_PALETTE.map((symbol) => (
+          // Sin `.btn` a propósito. El relleno del sistema subiría estos
+          // botones por encima de 24 px y dejaría sin defecto la siembra de
+          // `T-H8-10`, que quita `min-block-size` justo para comprobar que el
+          // instrumento ve la paleta por debajo del mínimo. Vestir la paleta
+          // exige decidir antes qué garantiza su tamaño.
           <button
             key={symbol}
             type="button"
@@ -109,6 +114,7 @@ export function FitchEditor({
 
       <div role="group" aria-label="Historial">
         <button
+          className="btn btn-ghost"
           type="button"
           data-testid="deshacer"
           disabled={!canUndo(history)}
@@ -116,10 +122,17 @@ export function FitchEditor({
         >
           {CLASE_COPY.editor.undo}
         </button>
-        <button type="button" data-testid="rehacer" disabled={!canRedo(history)} onClick={onRedo}>
+        <button
+          className="btn btn-ghost"
+          type="button"
+          data-testid="rehacer"
+          disabled={!canRedo(history)}
+          onClick={onRedo}
+        >
           {CLASE_COPY.editor.redo}
         </button>
         <button
+          className="btn btn-ghost"
           type="button"
           data-testid="exportar"
           onClick={onExport === undefined ? undefined : () => onExport(toFitchText(document))}

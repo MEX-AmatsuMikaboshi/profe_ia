@@ -20,9 +20,10 @@ import { MateriaAccion, MateriaInsignia } from './MateriaAccion';
 function Fila({ row }: { readonly row: MateriaRow }) {
   return (
     <li className="card" data-materia={row.courseId} data-track={row.badge.track}>
-      <h3>{row.title}</h3>
+      <h3 className="course-card-title"><a href={`/materias/${row.courseId}`}>{row.title}</a></h3>
       <MateriaInsignia card={row} />
 
+      <details className="workspace-details"><summary>Estado del curso y evaluación</summary>
       <dl data-testid="estado-ui-corr-01">
         <dt className="card-kicker">{MATERIAS_COPY.misMaterias.statusTechnical}</dt>
         <dd data-estado="tecnico">{row.status.technicalPackage}</dd>
@@ -37,8 +38,10 @@ function Fila({ row }: { readonly row: MateriaRow }) {
           {row.status.experimental ?? MATERIAS_COPY.misMaterias.noExperimental}
         </dd>
       </dl>
+      </details>
 
       <MateriaAccion card={row} />
+      <a className="course-card-link" href={`/materias/${row.courseId}`}>Ver temario y detalles →</a>
     </li>
   );
 }
@@ -47,7 +50,7 @@ export function MisMateriasView({ viewModel }: { readonly viewModel: MisMaterias
   return (
     <main className="materias-shell" data-testid="mis-materias">
       <header>
-        <h1>{MATERIAS_COPY.misMaterias.title}</h1>
+        <div><p className="eyebrow">TU BIBLIOTECA</p><h1>{MATERIAS_COPY.misMaterias.title}</h1><p className="page-subtitle">Elige una materia para ver sus temas o entrar a clase.</p></div>
       </header>
 
       <div className="materias-carriles">

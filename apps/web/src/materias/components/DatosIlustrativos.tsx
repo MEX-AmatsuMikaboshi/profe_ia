@@ -13,11 +13,9 @@ import { MATERIAS_COPY } from '../copy';
  */
 export function DatosIlustrativos() {
   return (
-    <aside className="card" data-testid="datos-ilustrativos" role="note">
+    <aside className="demo-notice" data-testid="datos-ilustrativos" role="note">
       <p>
-        <strong>Datos de demostración.</strong> Las materias, el avance y las fechas de esta
-        pantalla vienen de un paquete sintético de desarrollo, no de una corrida. Nada de esto es
-        una medida.
+        <strong>Vista de demostración.</strong> Materias, avance y fechas son ilustrativos. Nada de esto es una medida.
       </p>
     </aside>
   );

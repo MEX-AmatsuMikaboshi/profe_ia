@@ -68,7 +68,8 @@ try {
   /* 1 — tamaño de objetivo
    *
    * La siembra deshace exactamente el arreglo que T-H8-10 introdujo en
-   * `globals-clase.css`. Es mejor que inventar un botón diminuto: reproduce el
+   * `globals-clase.css` y el espaciado añadido en la reorganización visual.
+   * Es mejor que inventar un botón diminuto: reproduce el
    * defecto real —la paleta de notación, ocho botones pegados de 21 px de alto—
    * y por eso vigila que nadie borre esa regla sin enterarse.
    *
@@ -89,11 +90,15 @@ try {
       antes === 0 && despues.some((o) => o.testid.startsWith('simbolo-')),
       `antes ${String(antes)}, después ${String(despues.length)}`,
     );
-    // Y axe lo ve por su cuenta, con su propia excepción de espaciado
-    // implementada: dos instrumentos independientes, no uno.
+    // La nueva separación de 8px satisface la excepción de espaciado de axe
+    // aun al quitar el mínimo. Para sembrar una infracción de WCAG también
+    // hay que retirar esa separación; no se reduce el espacio de la UI real.
+    await page.addStyleTag({
+      content: '.clase-shell [data-testid="editor-fitch"] [aria-label="Notación"] { gap: 0; }',
+    });
     const axe = await corrreAxe(page);
     comprueba(
-      'tamaño de objetivo: axe también lo marca, dentro de la línea base',
+      'tamaño de objetivo: axe detecta la paleta pequeña sin separación',
       axe.enLineaBase.some((v) => v.id === 'target-size'),
       `axe en línea base: ${axe.enLineaBase.map((v) => v.id).join(', ') || '(ninguna)'}`,
     );
