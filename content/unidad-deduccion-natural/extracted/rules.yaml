@@ -1,0 +1,162 @@
+# Sección «rules» del esquema cerrado (T-H5-02, Rol A). Corrida W2 del 2026-08-21T19:51:55.760Z sobre el corpus W1 (tarball 02351aa31c05…). Redactado por el modelo asistente (salvedad D-41/D-48): el CORPUS_APPROVER lo audita antes del freeze de W5.
+{
+  "extractionVersion": "w2-extraction-v1",
+  "courseId": "unidad-deduccion-natural",
+  "section": "rules",
+  "items": [
+    {
+      "itemId": "regla-r",
+      "section": "rules",
+      "statement": "R: de A (línea m) se reitera A. (rule_id R)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration",
+          "fragmentSha256": "b59c3c0be52cfb542a4ec42191c2eadcac67ccef7305d431b22de4d9ba06e0be"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-conj-i",
+      "section": "rules",
+      "statement": "∧I: de A y B se deriva A∧B. (rule_id ∧I)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction",
+          "fragmentSha256": "aa5e7722a478f3a1fe37f66409e7c7284cc3e44e50cbac3d8ce25f359cd859db"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-conj-e",
+      "section": "rules",
+      "statement": "∧E: de A∧B se deriva A, y de A∧B se deriva B. (rule_id ∧E)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction",
+          "fragmentSha256": "aa5e7722a478f3a1fe37f66409e7c7284cc3e44e50cbac3d8ce25f359cd859db"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-disy-i",
+      "section": "rules",
+      "statement": "∨I: de A se deriva A∨B, y de A se deriva B∨A. (rule_id ∨I)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction",
+          "fragmentSha256": "b0ce086d0cf9f69ff7812b0f839954db5a3fd59687f977a1e3619c2489482400"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-disy-e",
+      "section": "rules",
+      "statement": "∨E: de A∨B, una subprueba de A a C y una subprueba de B a C, se deriva C. (rule_id ∨E)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction",
+          "fragmentSha256": "b0ce086d0cf9f69ff7812b0f839954db5a3fd59687f977a1e3619c2489482400"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-cond-i",
+      "section": "rules",
+      "statement": "→I: de una subprueba que abre con el supuesto A y cierra en B se deriva A→B. (rule_id →I)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional",
+          "fragmentSha256": "fa0984630a0c4f36b8accdd6fd2ab578a520265873c5257c99363eca603b0498"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-cond-e",
+      "section": "rules",
+      "statement": "→E: de A→B y A se deriva B. (rule_id →E)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional",
+          "fragmentSha256": "fa0984630a0c4f36b8accdd6fd2ab578a520265873c5257c99363eca603b0498"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-bicond-i",
+      "section": "rules",
+      "statement": "↔I: de una subprueba de A a B y una de B a A se deriva A↔B. (rule_id ↔I)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional",
+          "fragmentSha256": "a641cda152bed173d5420515bd4aa1d1e0cbaa930115cc8d97728beecd3bd27b"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-bicond-e",
+      "section": "rules",
+      "statement": "↔E: de A↔B y A se deriva B; de A↔B y B se deriva A. (rule_id ↔E)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional",
+          "fragmentSha256": "a641cda152bed173d5420515bd4aa1d1e0cbaa930115cc8d97728beecd3bd27b"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-neg-i",
+      "section": "rules",
+      "statement": "¬I: de una subprueba que abre con el supuesto A y cierra en ⊥ se deriva ¬A. (rule_id ¬I)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation",
+          "fragmentSha256": "bafb2c7354db6477da53e944ec8417361ba084a275751c97fa9fd18c857eab6e"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-neg-e",
+      "section": "rules",
+      "statement": "¬E: de ¬A y A se deriva ⊥. (rule_id ¬E)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation",
+          "fragmentSha256": "bafb2c7354db6477da53e944ec8417361ba084a275751c97fa9fd18c857eab6e"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-x",
+      "section": "rules",
+      "statement": "X: de ⊥ se deriva cualquier fórmula A. (rule_id X)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation",
+          "fragmentSha256": "bafb2c7354db6477da53e944ec8417361ba084a275751c97fa9fd18c857eab6e"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-ip",
+      "section": "rules",
+      "statement": "IP: de una subprueba que abre con el supuesto ¬A y cierra en ⊥ se deriva A. (rule_id IP)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation",
+          "fragmentSha256": "bafb2c7354db6477da53e944ec8417361ba084a275751c97fa9fd18c857eab6e"
+        }
+      ]
+    },
+    {
+      "itemId": "regla-dne",
+      "section": "rules",
+      "statement": "DNE: de ¬¬A se deriva A. (rule_id DNE)",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#double-negation-elimination",
+          "fragmentSha256": "f9085aceb06ce4a867122982d5e8728b57d25f6951a9b7cd3cf59eb8819fdb51"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,270 @@
+# Plan de retrieval y spacing (T-H5-04, Rol B). Corrida del 2026-08-21T20:39:04.474Z sobre kc/map.yaml. Redactado por el modelo asistente (salvedad D-41/D-48/D-52): el propietario audita objetivos y señales observables antes del freeze de W5.
+{
+  "policyVersion": "pedagogy-policy-h5-v1",
+  "blocks": [
+    {
+      "blockPosition": 1,
+      "teaches": "KC01",
+      "eligibleForRetrieval": []
+    },
+    {
+      "blockPosition": 2,
+      "teaches": "KC02",
+      "eligibleForRetrieval": [
+        "KC01"
+      ]
+    },
+    {
+      "blockPosition": 3,
+      "teaches": "KC03",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02"
+      ]
+    },
+    {
+      "blockPosition": 4,
+      "teaches": "KC04",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03"
+      ]
+    },
+    {
+      "blockPosition": 5,
+      "teaches": "KC05",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04"
+      ]
+    },
+    {
+      "blockPosition": 6,
+      "teaches": "KC06",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05"
+      ]
+    },
+    {
+      "blockPosition": 7,
+      "teaches": "KC07",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06"
+      ]
+    },
+    {
+      "blockPosition": 8,
+      "teaches": "KC08",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07"
+      ]
+    },
+    {
+      "blockPosition": 9,
+      "teaches": "KC09",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07",
+        "KC08"
+      ]
+    },
+    {
+      "blockPosition": 10,
+      "teaches": "KC10",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07",
+        "KC08",
+        "KC09"
+      ]
+    },
+    {
+      "blockPosition": 11,
+      "teaches": "KC11",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07",
+        "KC08",
+        "KC09",
+        "KC10"
+      ]
+    },
+    {
+      "blockPosition": 12,
+      "teaches": "KC12",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07",
+        "KC08",
+        "KC09",
+        "KC10",
+        "KC11"
+      ]
+    },
+    {
+      "blockPosition": 13,
+      "teaches": "KC13",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07",
+        "KC08",
+        "KC09",
+        "KC10",
+        "KC11",
+        "KC12"
+      ]
+    },
+    {
+      "blockPosition": 14,
+      "teaches": "KC14",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07",
+        "KC08",
+        "KC09",
+        "KC10",
+        "KC11",
+        "KC12",
+        "KC13"
+      ]
+    },
+    {
+      "blockPosition": 15,
+      "teaches": "KC15",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07",
+        "KC08",
+        "KC09",
+        "KC10",
+        "KC11",
+        "KC12",
+        "KC13",
+        "KC14"
+      ]
+    },
+    {
+      "blockPosition": 16,
+      "teaches": "KC16",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07",
+        "KC08",
+        "KC09",
+        "KC10",
+        "KC11",
+        "KC12",
+        "KC13",
+        "KC14",
+        "KC15"
+      ]
+    },
+    {
+      "blockPosition": 17,
+      "teaches": "KC17",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07",
+        "KC08",
+        "KC09",
+        "KC10",
+        "KC11",
+        "KC12",
+        "KC13",
+        "KC14",
+        "KC15",
+        "KC16"
+      ]
+    },
+    {
+      "blockPosition": 18,
+      "teaches": "KC18",
+      "eligibleForRetrieval": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KC05",
+        "KC06",
+        "KC07",
+        "KC08",
+        "KC09",
+        "KC10",
+        "KC11",
+        "KC12",
+        "KC13",
+        "KC14",
+        "KC15",
+        "KC16",
+        "KC17"
+      ]
+    }
+  ],
+  "eligiblePairs": 153,
+  "note": "Las dos reglas de §8.3.4: la recuperación actúa sobre conocimiento ya introducido y no sustituye a la primera enseñanza, y la revisión espaciada nunca consume reserva de medición —una enseña, la otra mide y permanece aislada—.",
+  "structureNote": "El plan va por bloque y no por KC suelto: con una entrada por KC, «ya introducido» saldría cierto por construcción y el control pasaría por vacío. Aquí se deriva de comparar la posición del KC con la del bloque, así que un bloque mal colocado lo vuelve falso.",
+  "intervalNote": "Aquí no se fija ningún intervalo: §8.3.4 dice que la programación «corresponde al motor/calendario», y el sobre lo congela el calendario SCED de T-H5-11. Escribir un número sería fabricar una calibración que nadie congeló."
+}

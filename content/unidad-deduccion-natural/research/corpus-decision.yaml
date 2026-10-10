@@ -1,0 +1,49 @@
+# Decisión del CORPUS_APPROVER (T-H45-07). Aplicada el 2026-08-20T00:01:28.835Z. El propietario revisó evaluations-2026-08-19.json y autorizó la propuesta tal cual: el corpus autorizado es el conjunto authorizableReferences del manifiesto. El componente modal queda fuera de esta unidad (cobertura 0.0); su autorización queda condicionada a permiso documentado de Trueman.
+{
+  "decidedAt": "2026-08-20T00:01:28.835Z",
+  "record": {
+    "decision": {
+      "kind": "autorizado",
+      "decidedBy": "CORPUS_APPROVER"
+    },
+    "nextState": "corpus_autorizado",
+    "courseId": "unidad-deduccion-natural",
+    "manifestVersion": "w0-selection-manifest-v1"
+  },
+  "history": [
+    {
+      "from": "solicitud_curso",
+      "to": "alcance_acotado"
+    },
+    {
+      "from": "alcance_acotado",
+      "to": "fuentes_descubiertas"
+    },
+    {
+      "from": "fuentes_descubiertas",
+      "to": "fuentes_evaluadas"
+    },
+    {
+      "from": "fuentes_evaluadas",
+      "to": "fuentes_comparadas"
+    },
+    {
+      "from": "fuentes_comparadas",
+      "to": "licencias_clasificadas"
+    },
+    {
+      "from": "licencias_clasificadas",
+      "to": "cobertura_evaluada"
+    },
+    {
+      "from": "cobertura_evaluada",
+      "to": "propuesta_corpus"
+    },
+    {
+      "from": "propuesta_corpus",
+      "to": "corpus_autorizado"
+    }
+  ],
+  "finalState": "corpus_autorizado",
+  "nota": "La firma vale sobre el manifiesto de selection-manifest.yaml tal como se presentó. MIT OCW 24.241 permanece excluido (NC/SA sin compatibilidad declarada). forallx-yyc/logica-modal permanece LICENSE_UNRESOLVED y fuera de la base expresiva."
+}

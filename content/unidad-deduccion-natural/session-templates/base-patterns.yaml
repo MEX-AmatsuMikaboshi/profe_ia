@@ -1,0 +1,114 @@
+# Plantillas de sesión derivadas de los patrones base de §8.3.2 (T-H5-04, Rol B). Corrida del 2026-08-21T20:39:04.474Z sobre kc/map.yaml. Redactado por el modelo asistente (salvedad D-41/D-48/D-52): el propietario audita objetivos y señales observables antes del freeze de W5.
+{
+  "policyVersion": "pedagogy-policy-h5-v1",
+  "note": "Proyección de BASE_PATTERNS. Los pasos que son acciones del motor no se convierten en estrategia: inventarles una afirmaría una decisión pedagógica donde solo hay una transición, y quien las implementa es F7.",
+  "patterns": [
+    {
+      "patternId": "kc_procedimental_nuevo",
+      "steps": [
+        {
+          "catalogEntryId": "explicacion_directa_breve"
+        },
+        {
+          "catalogEntryId": "ejemplo_trabajado"
+        },
+        {
+          "catalogEntryId": "ejemplo_incompleto"
+        },
+        {
+          "catalogEntryId": "practica_guiada"
+        },
+        {
+          "catalogEntryId": "practica_independiente"
+        },
+        {
+          "catalogEntryId": "comprobacion_de_transferencia_cercana"
+        }
+      ]
+    },
+    {
+      "patternId": "dificultad_parcial",
+      "steps": [
+        {
+          "catalogEntryId": "scaffolding_contingente"
+        },
+        {
+          "engineAction": "comprobación"
+        },
+        {
+          "catalogEntryId": "fading_contingente"
+        }
+      ]
+    },
+    {
+      "patternId": "error_repetido_mismo_tipo",
+      "steps": [
+        {
+          "catalogEntryId": "feedback_correctivo"
+        },
+        {
+          "catalogEntryId": "autoexplicacion_guiada"
+        },
+        {
+          "engineAction": "explicación dirigida / ejemplo contrastante"
+        },
+        {
+          "engineAction": "nueva práctica"
+        }
+      ]
+    },
+    {
+      "patternId": "fallo_de_prerrequisito",
+      "steps": [
+        {
+          "engineAction": "suspender avance del KC actual"
+        },
+        {
+          "catalogEntryId": "recuperacion_de_prerrequisito"
+        },
+        {
+          "engineAction": "volver al KC objetivo"
+        }
+      ]
+    },
+    {
+      "patternId": "dominio_aparente_o_dependencia_de_ayuda",
+      "steps": [
+        {
+          "engineAction": "nuevo intento sin ayuda"
+        },
+        {
+          "catalogEntryId": "comprobacion_de_transferencia_cercana"
+        },
+        {
+          "engineAction": "sonda independiente cuando corresponda al calendario"
+        }
+      ]
+    }
+  ],
+  "selfExplanationTemplate": {
+    "templateId": "plt-autoexplicacion-v1",
+    "appliesTo": "autoexplicacion_guiada",
+    "prompt": "¿Por qué la línea {linea} se sigue de {citadas} por {regla}? Responde sobre {kcNombre}, no sobre el resultado.",
+    "placeholders": [
+      "linea",
+      "citadas",
+      "regla",
+      "kcNombre"
+    ],
+    "anchoredToKc": true,
+    "note": "El prompt es dirigido y anclado al KC (§8.3.3). Su respuesta sirve para diagnóstico y adaptación; **no sustituye al verificador formal**."
+  },
+  "taskFeedbackTemplate": {
+    "templateId": "plt-feedback-tarea-v1",
+    "appliesTo": "feedback_correctivo",
+    "prompt": "La línea {linea} fue rechazada con {codigo}. Lo que el verificador señala es {detalle}. Revisa {que_revisar} antes del siguiente intento.",
+    "placeholders": [
+      "linea",
+      "codigo",
+      "detalle",
+      "que_revisar"
+    ],
+    "note": "Centrado en tarea y proceso (§5.10). El código `E-*` y el detalle los pone el verificador: el agente no los redacta ni los reinterpreta."
+  }
+}

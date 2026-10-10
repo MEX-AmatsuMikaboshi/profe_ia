@@ -1,0 +1,182 @@
+# Propuesta de corpus y autorización (T-H45-06/07). Corrida W0 en vivo del 2026-08-19. Estado: corpus_autorizado — decisión del CORPUS_APPROVER en corpus-decision.yaml (2026-08-20T00:01:28.835Z).
+{
+  "manifest": {
+    "courseId": "unidad-deduccion-natural",
+    "inventory": [
+      {
+        "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+        "sourceVersion": "master@ec34df8 (2025-12-18)",
+        "status": "autorizado",
+        "snapshotSha256": "02351aa31c05f027ddb1c6a63b0bfd27e05b4a8a2751fc7a58dcffb691999510",
+        "licenseEvidence": "CC BY 4.0 — LICENSE.md del repositorio + detección SPDX de GitHub + frontmatter; assets/by.pdf incluido en el repo.",
+        "attributionChain": [
+          "P. D. Magnus (forall x, University at Albany, CC BY 4.0)",
+          "Tim Button (forall x: Cambridge, UCL, CC BY 4.0)",
+          "Aaron Thomas-Bolduc y Richard Zach (forall x: Calgary, University of Calgary, CC BY 4.0)",
+          "J. Robert Loftis (material adicional, ejercicios)"
+        ]
+      },
+      {
+        "sourceComponent": "forallx-yyc/logica-modal",
+        "sourceVersion": "master@ec34df8 (2025-12-18)",
+        "status": "LICENSE_UNRESOLVED",
+        "snapshotSha256": "02351aa31c05f027ddb1c6a63b0bfd27e05b4a8a2751fc7a58dcffb691999510",
+        "licenseEvidence": "«used with permission» declarado en el frontmatter; la licencia global CC BY del repo no resuelve la cadena de derechos de este componente.",
+        "attributionChain": [
+          "Robert Trueman (A Modal Logic Primer, used with permission)"
+        ]
+      },
+      {
+        "sourceComponent": "mit-ocw/24.241-logic-i-fall-2009",
+        "sourceVersion": "Fall 2009 (archivado)",
+        "status": "excluido",
+        "snapshotSha256": "c0ba558009225874a0cc02528331596ad1f666f172b0aaa655a10c68b9ffcb55",
+        "licenseEvidence": "CC BY-NC-SA 4.0 — aviso de licencia del curso y página de condiciones de uso de MIT OCW.",
+        "attributionChain": [
+          "Massachusetts Institute of Technology (MIT OpenCourseWare)",
+          "Dr. Ephraim Glick (24.241 Logic I, Fall 2009)"
+        ]
+      }
+    ],
+    "licenseVerdicts": [
+      {
+        "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+        "verdict": {
+          "status": "autorizado",
+          "blocked": false,
+          "reason": "Licencia preferida (CC-BY-4.0) con proveniencia registrada."
+        }
+      },
+      {
+        "sourceComponent": "forallx-yyc/logica-modal",
+        "verdict": {
+          "status": "LICENSE_UNRESOLVED",
+          "blocked": true,
+          "reason": "Proveniencia no resuelta («used with permission»): no se incorpora como base expresiva hasta resolverla y, cuando corresponda, revisión jurídica profesional."
+        }
+      },
+      {
+        "sourceComponent": "mit-ocw/24.241-logic-i-fall-2009",
+        "verdict": {
+          "status": "excluido",
+          "blocked": true,
+          "reason": "NC/SA solo cuando el uso previsto sea compatible, y aquí no se declaró compatible. NC/SA no se convierten en base expresiva predeterminada de un producto potencialmente comercial."
+        }
+      }
+    ],
+    "scores": [
+      {
+        "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+        "observations": {
+          "autoridad": 0.95,
+          "revision": 0.9,
+          "estabilidad": 0.9,
+          "explicitud": 0.95,
+          "verificabilidad": 1,
+          "cobertura": 1
+        },
+        "scalarAvailable": false
+      },
+      {
+        "sourceComponent": "forallx-yyc/logica-modal",
+        "observations": {
+          "autoridad": 0.8,
+          "revision": 0.7,
+          "estabilidad": 0.9,
+          "explicitud": 0.8,
+          "verificabilidad": 0.3,
+          "cobertura": 0
+        },
+        "scalarAvailable": false
+      },
+      {
+        "sourceComponent": "mit-ocw/24.241-logic-i-fall-2009",
+        "observations": {
+          "autoridad": 0.9,
+          "revision": 0.7,
+          "estabilidad": 0.85,
+          "explicitud": 0.6,
+          "verificabilidad": 0.4,
+          "cobertura": 0.5
+        },
+        "scalarAvailable": false
+      }
+    ],
+    "saturation": {
+      "curve": [
+        {
+          "round": 1,
+          "newItems": 2,
+          "newFraction": 1
+        },
+        {
+          "round": 2,
+          "newItems": 0,
+          "newFraction": 0
+        }
+      ],
+      "diversity": {
+        "distinctLineages": 2,
+        "totalFindings": 2,
+        "diversityRatio": 1
+      },
+      "stopDecisionAvailable": false
+    },
+    "conflicts": [],
+    "selectionRationale": "El componente primario es forallx-yyc/tfl-deduccion-natural: CC BY 4.0 verificada por tres vías, cubre los dieciocho KC del bloque y sus claims se verifican mecánicamente contra el cálculo autorizado (de esta obra se transcribió). El componente modal queda LICENSE_UNRESOLVED (material «used with permission» de Trueman) y no se necesita para el bloque. MIT OCW 24.241 queda excluido como base expresiva por NC/SA — es el default conservador; declarar compatibilidad es decisión del aprobador, no de la corrida. OpenStax no tiene ningún título de lógica en su catálogo de 129. El subárbol solutions/ del repo se excluye de la base expresiva: su lugar es solutions-private en W1 (I-2/I-4).",
+    "authorizableReferences": [
+      "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#02351aa31c05f027ddb1c6a63b0bfd27e05b4a8a2751fc7a58dcffb691999510"
+    ],
+    "manifestVersion": "w0-selection-manifest-v1",
+    "counts": {
+      "autorizado": 1,
+      "excluido": 1,
+      "LICENSE_UNRESOLVED": 1,
+      "pendiente": 0
+    }
+  },
+  "readiness": {
+    "hasAuthorized": true,
+    "pendingComponents": [],
+    "unresolvedComponents": [
+      "forallx-yyc/logica-modal"
+    ]
+  },
+  "history": [
+    {
+      "from": "solicitud_curso",
+      "to": "alcance_acotado"
+    },
+    {
+      "from": "alcance_acotado",
+      "to": "fuentes_descubiertas"
+    },
+    {
+      "from": "fuentes_descubiertas",
+      "to": "fuentes_evaluadas"
+    },
+    {
+      "from": "fuentes_evaluadas",
+      "to": "fuentes_comparadas"
+    },
+    {
+      "from": "fuentes_comparadas",
+      "to": "licencias_clasificadas"
+    },
+    {
+      "from": "licencias_clasificadas",
+      "to": "cobertura_evaluada"
+    },
+    {
+      "from": "cobertura_evaluada",
+      "to": "propuesta_corpus"
+    }
+  ],
+  "openstaxSearch": {
+    "query": "logic",
+    "totalCount": 129,
+    "matchingTitles": []
+  },
+  "note": "El veredicto de autonomía de W0 debe tratar forallx-yyc conservadoramente: es la obra de la que se transcribió el cálculo autorizado (DEC-W0-SCOPE-001).",
+  "estado": "corpus_autorizado"
+}

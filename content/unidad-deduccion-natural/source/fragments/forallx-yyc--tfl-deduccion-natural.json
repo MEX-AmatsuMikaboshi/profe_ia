@@ -1,0 +1,1145 @@
+# Fragmentos del componente forallx-yyc/tfl-deduccion-natural (T-H5-01, §3.3). Corrida W1 del 2026-08-20T22:17:38.469Z. IDs estables derivados (D-17).
+[
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#truth-functional-logic",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#truth-functional-logic",
+    "sha256": "e8cd2021ae3d774dd29b86fd02d9df682f38d5bad400c90ebb33bdf0f6c1bf67",
+    "kind": "parte",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#first-steps-to-symbolization",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#first-steps-to-symbolization",
+    "sha256": "593468c446b7af9f5ab7aa44b3ced2cecdff29af6c2b7d6c24fda22dd854bd7f",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#validity-in-virtue-of-form",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#validity-in-virtue-of-form",
+    "sha256": "3686aff684b8c62310d3f1e3d06617e834ebd295045652ca35d48ab183fb11a3",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#validity-for-special-reasons",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#validity-for-special-reasons",
+    "sha256": "61cbbd12e48a0efbfb3b03e23b659b2bc2b5c3da28deac8be68eaa593eb0bc2f",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#atomic-sentences",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#atomic-sentences",
+    "sha256": "f43bc351e864c43c077d278831d5234ecd7d47003a6282aaf1634a18ca6225e0",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#connectives",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#connectives",
+    "sha256": "789e4c0e39b948d8a3b114f7c2d931d00f19fe1be8799c6d49336abb92445efc",
+    "kind": "capitulo",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#negation",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#negation",
+    "sha256": "ac45a83893e78055cf26a1eca75991feec0ea9f1fbe325212f08f5fbc7ca4677",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#conjunction",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#conjunction",
+    "sha256": "5fbaa9ee32fd10fd37419ce6c636ca3cf12fdcc64ba2eaaa35ea9db26d13f08a",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#disjunction",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#disjunction",
+    "sha256": "f0733d1e34c44150d4d7f66b864f4cfbc5ec60cfcfb5b2d16c7c2dc58060dcc6",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#conditional",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#conditional",
+    "sha256": "120bc69cebfbe5ee551edbdcb241c0d8874690eb8e01f7bf3c259d8b40377c98",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#biconditional",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#biconditional",
+    "sha256": "c483ab1883f073ef4d32993295563090d115edfb82b9ae2994a4cf3f52f19063",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#unless",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#unless",
+    "sha256": "9514694e30076548b99479b11c97b45c19e343a4f74a852e125400c9ea50f983",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#sentences-of-tfl",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#sentences-of-tfl",
+    "sha256": "be4824804dc2c562ec7f2b19dbcf6863450999e6ed9f80db27212eaf378ab7de",
+    "kind": "capitulo",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#expressions",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#expressions",
+    "sha256": "c08287e5b0e7a11a65222e591478e2e2c8f962e76cf56395f44373dc8a69ba17",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#sentences",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#sentences",
+    "sha256": "8071920a8e03bf27360d2134306f9d483137b54164a99fef1d333cd81bef2c17",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#bracketing-conventions",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#bracketing-conventions",
+    "sha256": "f97423ee5ab956939a1c5a9f60e02486a635b9ba4cf8d490d275ea2d9d560928",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC01"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#ambiguity",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#ambiguity",
+    "sha256": "c7756b32e0716683091a092e6fbe7ed85229f846d70f6ac851a0f781947517a0",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#use-and-mention",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#use-and-mention",
+    "sha256": "f795645f964d28d29761d901518bfd2b4167f0cb32ff2e94f8561a9c7470461e",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#quotation-conventions",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#quotation-conventions",
+    "sha256": "ead3cc2c3134157cda8a2ef4ebadf007fa87e993ef5b7546299c8099f9e67a19",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#object-language-and-metalanguage",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#object-language-and-metalanguage",
+    "sha256": "03a3ad725164a407ef0dd7a51073eae406bfa187215ce0c83f213287deea19ea",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#metavariables",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#metavariables",
+    "sha256": "e90ef79b26105548a5f98651e1d581d2a5ed568b4eeb98db52b7fe0111009884",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#quotation-conventions-for-arguments",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-tfl.tex#quotation-conventions-for-arguments",
+    "sha256": "2092d2b5b0722ddfd33bd97ff8292074cf55b68732dc9ccc99073db0cf5f9f78",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#truth-tables",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#truth-tables",
+    "sha256": "32da46c22fb1304eecce779ba7597b50246f7d783c7819027b0d47f95b4372a4",
+    "kind": "parte",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#characteristic-truth-tables",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#characteristic-truth-tables",
+    "sha256": "aff080c21d288e5de80bc72ecd48ebba94a67680fef7da97db62da8d25f43d64",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#truth-functional-connectives",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#truth-functional-connectives",
+    "sha256": "6efa5a6eb3c4fe2e13ca263e4ce7843e3e37dba4c6271417bf024759e69fa751",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#the-idea-of-truth-functionality",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#the-idea-of-truth-functionality",
+    "sha256": "842f5fa3e58d2c25a02656aabf9610d9253b124812a28c86ce24782b5dc5c8cc",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#symbolizing-versus-translating",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#symbolizing-versus-translating",
+    "sha256": "aab7b10c2d0562cb55ff9a3807a58e5c55891522e61a1dee3a760c7d450ac7f9",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#indicative-versus-subjunctive-conditionals",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#indicative-versus-subjunctive-conditionals",
+    "sha256": "2f1bfc0482d4e2e0cc390ebbbd6e399bb8473a4b81d735eaba46992e25c3df51",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#complete-truth-tables",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#complete-truth-tables",
+    "sha256": "1f3038850943c11d0a8afdac0f6acbc9afaf53c0ae490157b4f742555319b11c",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#a-worked-example",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#a-worked-example",
+    "sha256": "c5fe7b9c03d72b12cca2552778710320df7f658460c4921ee95d580e37a04fc4",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#building-complete-truth-tables",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#building-complete-truth-tables",
+    "sha256": "41af4388a5a74a11f76839692d35f34348abe015b62dd1e73cf10c9c6be4923d",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#more-about-brackets",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#more-about-brackets",
+    "sha256": "bef0221748fd4f2eed0c292d9f1d3324a591614c9c2693f8884aa57be684743f",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#semantic-concepts",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#semantic-concepts",
+    "sha256": "c14b574b4c71024faf2f7f43597ace15ee3d6c19c68d12bab807a27706c20d4d",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#tautologies-and-contradictions",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#tautologies-and-contradictions",
+    "sha256": "fb7f66709c710cc640ab589ea560e28639ab61c883a5bdbeddd55275e16fb45a",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#equivalence",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#equivalence",
+    "sha256": "223942eb599c09099457bd761d560654209fd03095c45f5abd535656f762eeb9",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#satisfiability",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#satisfiability",
+    "sha256": "ea80718b6b6ab034799c94e3caec35bb423b0f60d7f40b720b05d72d5235ecd0",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#entailment-and-validity",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#entailment-and-validity",
+    "sha256": "5109f22ac6a5fb095fd982efd7715f228d1e8ff5cb8f37001b6c0456bea2e309",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#the-double-turnstile",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#the-double-turnstile",
+    "sha256": "8b364800093ea564e1344a2678161fe9544e02537976434c683ab99f2d5e1b98",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#entails-versus-eif",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#entails-versus-eif",
+    "sha256": "379d78badf4bc9ad3cf3bca36587b262684b805b1ce7f643222fa95d65c38dea",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#limitations-of-tfl",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#limitations-of-tfl",
+    "sha256": "c104102216b7868e624901f30f09f92fa10f2805758b72a59ac5a7afb1b50de4",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#truth-table-shortcuts",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#truth-table-shortcuts",
+    "sha256": "ddc2949bd4f32c866468c3fff518e2ca2c905471d7495f8e5818672f07f319ae",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#working-through-truth-tables",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#working-through-truth-tables",
+    "sha256": "fb6587e004dffff9d1c37921761443b22fe64df6984bd57ad18cbfd573ba9d67",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#testing-for-validity-and-entailment",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#testing-for-validity-and-entailment",
+    "sha256": "40f77683813398ab79877bd1bec2b9b4525e978fff98954f73cefe523a4a44e7",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-truthtables.tex#partial-truth-tables",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-truthtables.tex#partial-truth-tables",
+    "sha256": "77134c0d9ab5f7a8b6b9341973b0a9f1db6bdd95069feda608178f547e4cfc60",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#natural-deduction-for-tfl",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#natural-deduction-for-tfl",
+    "sha256": "19197b405c57820841502c68a1f017c9982def9a0c5e1ffdc68c9c6ce7d515bb",
+    "kind": "parte",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-very-idea-of-natural-deduction",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#the-very-idea-of-natural-deduction",
+    "sha256": "f1e76df60b37b48d63034c91bd61ec15780d1d81b23b2b742cdb39b1c48f1693",
+    "kind": "capitulo",
+    "relatedConcepts": [
+      "KC02"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#basic-rules-for-tfl",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#basic-rules-for-tfl",
+    "sha256": "788c087987f1ff1a93538f8d79186aa7b4cca06057d60213e945412de5e9d0cb",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof",
+    "sha256": "6452bbc78e14fd1645d66ba3a9167b29c4823f015bf504f60d6fb33716be4f2d",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC02"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#reiteration",
+    "sha256": "b59c3c0be52cfb542a4ec42191c2eadcac67ccef7305d431b22de4d9ba06e0be",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC03"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#conjunction",
+    "sha256": "aa5e7722a478f3a1fe37f66409e7c7284cc3e44e50cbac3d8ce25f359cd859db",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC04",
+      "KC05"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#conditional",
+    "sha256": "fa0984630a0c4f36b8accdd6fd2ab578a520265873c5257c99363eca603b0498",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC06",
+      "KC09"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs",
+    "sha256": "df79225887718da9bd88b936a495bcda1ca3543f1c3bd87ae5b45a09e1c405e8",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC08"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#biconditional",
+    "sha256": "a641cda152bed173d5420515bd4aa1d1e0cbaa930115cc8d97728beecd3bd27b",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC14",
+      "KC15"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#disjunction",
+    "sha256": "b0ce086d0cf9f69ff7812b0f839954db5a3fd59687f977a1e3619c2489482400",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC07",
+      "KC13"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#contradiction-and-negation",
+    "sha256": "bafb2c7354db6477da53e944ec8417361ba084a275751c97fa9fd18c857eab6e",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC10",
+      "KC11",
+      "KC12"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#constructing-proofs",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#constructing-proofs",
+    "sha256": "5b46aca9a5deb7512bfc92379440e59f9e114b078edb97b62328d367084868ca",
+    "kind": "capitulo",
+    "relatedConcepts": [
+      "KC18"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-backward-from-what-we-want",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#working-backward-from-what-we-want",
+    "sha256": "8996be23250dbe083e1b50966e8e65bb5f17ff06c95adc682c4bfe50e99fcacd",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC18"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-forward-from-what-we-have",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#working-forward-from-what-we-have",
+    "sha256": "40ade7730f0b19897563fface1061d091b0b034f748eac4ff0047354c277d7b4",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC18"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#strategies-at-work",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#strategies-at-work",
+    "sha256": "7793f985942172d982c36b6114bb2a268f301a147d8c82b76f1aa7d2ea88fa63",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC18"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-forward-from-ered",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#working-forward-from-ered",
+    "sha256": "ff60f180adca0e55393edfac73a4a6b0146bb66290497927c1006835922920d0",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC18"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#proceed-indirectly",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#proceed-indirectly",
+    "sha256": "c8096384379cca1663591531c5014473c7ca818077fe5509ab987f078ad9a679",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC17"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#indirect-proof-of-excluded-middle",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#indirect-proof-of-excluded-middle",
+    "sha256": "39886a56397c217f7282fa7a12e2687a35300b8f6292c40c5085ae9b97b50ecb",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC17"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-rules-for-tfl",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#additional-rules-for-tfl",
+    "sha256": "08829a09d42314f409b752380557da18ff88c8a7a3037b1df1402691204aeac2",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunctive-syllogism",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#disjunctive-syllogism",
+    "sha256": "a2d7ac9d1df16765a4ebe0d15ffa71e58afae53f341e2f0250f1fb6d8c3ea57e",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#modus-tollens",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#modus-tollens",
+    "sha256": "dc93d057e7cd5fc1dfef477bd9d9bb6d16046d9588f255635d716f99abf34e47",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#double-negation-elimination",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#double-negation-elimination",
+    "sha256": "f9085aceb06ce4a867122982d5e8728b57d25f6951a9b7cd3cf59eb8819fdb51",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC16"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#excluded-middle",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#excluded-middle",
+    "sha256": "ab23714815b2e8b900660fc5526c23b1e08cedf9d2bc42379be69fd2e0d7d84f",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#de-morgan-rules",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#de-morgan-rules",
+    "sha256": "29943eaba9f1f5b5694fa203c03b2e858c57e83c8f37a5afdbad5ecdcb4e040d",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#proof-theoretic-concepts",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#proof-theoretic-concepts",
+    "sha256": "ea5ac141fe63948e8ef97695cbfb46a096bf0ece0475be36537a81e438b88375",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derived-rules",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#derived-rules",
+    "sha256": "9199d70958c7b4cc53866742f241efbd14122121a85c57fb2fb35ebc650a8e1c",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-reiteration",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#derivation-of-reiteration",
+    "sha256": "80b972a508d8ef4494b96414bac10cb2e36feade1a134435054a18d06f651ae5",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-disjunctive-syllogism",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#derivation-of-disjunctive-syllogism",
+    "sha256": "8734b38f0bf65c7b705f3d3dac9c1d21ab4c1f29dd5a82418b7de47a01567ab6",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-modus-tollens",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#derivation-of-modus-tollens",
+    "sha256": "0185fa01b1eee9b000cce2ef2484838efa4509d91eeec99791529c6e3024cbc2",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-double-negation-elimination",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#derivation-of-double-negation-elimination",
+    "sha256": "763e21521970ee650d29d34d9be436d4f6aa7943e6b60ff4da9f451d0c584f42",
+    "kind": "seccion",
+    "relatedConcepts": [
+      "KC16"
+    ],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-excluded-middle",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#derivation-of-excluded-middle",
+    "sha256": "23c058d05edf19ffedbf9d4686f82521157bdedca61693fbbd60cf36aa679428",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-de-morgan-rules",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#derivation-of-de-morgan-rules",
+    "sha256": "8ff923f444f618652dfd56462118a0a547c5c7676892d76eeadad6217f7267d7",
+    "kind": "seccion",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  },
+  {
+    "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#soundness-and-completeness",
+    "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+    "sourceVersion": "master@ec34df8 (2025-12-18)",
+    "location": "forallx-yyc-prooftfl.tex#soundness-and-completeness",
+    "sha256": "ab2eee8689a8633ec96fd4528de56bebbf699f8fc1eb5dbfb2b8bb4ded86bedf",
+    "kind": "capitulo",
+    "relatedConcepts": [],
+    "authorizationStatus": "autorizado",
+    "permittedUses": [
+      "fuente_documental",
+      "base_expresiva"
+    ]
+  }
+]

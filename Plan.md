@@ -156,7 +156,7 @@ profesor-ia/
 │   ├── security-policy/         # matriz de permisos y canarios
 │   └── experiment/              # freeze, calendario SCED, exportación, verdict-engine
 ├── content/
-│   └── unidad-deduccion-natural/   # submódulo/repositorio separado (§4.3)
+│   └── unidad-deduccion-natural/   # contenido integrado en este repositorio (§4.3)
 ├── analysis/
 │   ├── notebooks/  ├── synthetic-data/  └── reports/
 ├── infra/
@@ -170,6 +170,11 @@ profesor-ia/
 Módulos adicionales dentro de `logic-core` o paquete hermano: `proof-search/` (buscador) y `isomorphism-canonicalizer/` (**paquete separado**, prohibido en la ruta de verificación).
 
 ### 4.3 Repositorio de contenido `unidad-deduccion-natural/` (P-II §3.2 — estructura obligatoria)
+
+Desde el 2026-10-10, por instrucción del propietario, este árbol se versiona directamente
+en el repositorio público `profe_ia`, incluidas las soluciones y las reservas de evaluación.
+Esto sustituye la separación previa mediante submódulo; las restricciones de acceso de
+los procesos de sesión y web, los hashes del cálculo y los controles de freeze se conservan.
 
 ```text
 research/   (whitelist.yaml, candidates/, source-scores.yaml, conflicts.yaml,

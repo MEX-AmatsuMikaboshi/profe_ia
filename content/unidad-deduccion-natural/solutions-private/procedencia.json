@@ -1,0 +1,22 @@
+# Procedencia de solutions-private (I-2/I-4). Copiado del subárbol solutions/ del tarball ec34df8f8f42ccba2bf2d24403ebad335afa93b9 en la ingesta W1 del 2026-08-20T22:17:38.469Z. No es base expresiva: su contenido alimenta las soluciones de W3, nunca los fragmentos del corpus.
+{
+  "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+  "sourceVersion": "master@ec34df8 (2025-12-18)",
+  "snapshotSha256": "02351aa31c05f027ddb1c6a63b0bfd27e05b4a8a2751fc7a58dcffb691999510",
+  "copiedAt": "2026-08-20T22:17:38.469Z",
+  "files": [
+    "fitch.sty",
+    "forallx-sol-fol.tex",
+    "forallx-sol-frontmatter.tex",
+    "forallx-sol-interpretations.tex",
+    "forallx-sol-metatheory.tex",
+    "forallx-sol-ml.tex",
+    "forallx-sol-prooffol.tex",
+    "forallx-sol-prooftfl.tex",
+    "forallx-sol-tfl.tex",
+    "forallx-sol-truthtables.tex",
+    "forallx-sol-what.tex",
+    "forallxyyc-solutions.tex",
+    "latexml.sty"
+  ]
+}

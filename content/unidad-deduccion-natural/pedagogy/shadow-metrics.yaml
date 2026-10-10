@@ -1,0 +1,17 @@
+# Métricas sombra (BKT opcional, sin autoridad) (T-H5-04, Rol B). Corrida del 2026-08-21T20:39:04.474Z sobre kc/map.yaml. Redactado por el modelo asistente (salvedad D-41/D-48/D-52): el propietario audita objetivos y señales observables antes del freeze de W5.
+{
+  "policyVersion": "pedagogy-policy-h5-v1",
+  "note": "Proyección literal de BKT_SHADOW_H5_CONFIGURATION (T-H5-16, DEC-BKT-001/CAL-11): deshabilitado, sin parámetros y sin superficie de lectura para la sesión. Habilitarlo exige calibración incorporada, no un cambio en este archivo.",
+  "bktShadow": {
+    "version": "bkt-shadow-disabled-h5-v1",
+    "enabled": false,
+    "reasonCode": "CAL_11_NOT_EXECUTED",
+    "parameters": null,
+    "authority": "none",
+    "visibility": "analysis_only",
+    "affectsAdvance": false,
+    "affectsMastery": false,
+    "affectsRecovery": false,
+    "affectsClosure": false
+  }
+}

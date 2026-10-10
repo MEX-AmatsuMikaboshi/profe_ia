@@ -1,0 +1,32 @@
+# Manifiesto del corpus ingerido (T-H5-01). Corrida W1 del 2026-08-20T22:17:38.469Z. Identidad en dos niveles (D-51): tarball verificado contra W0 y contenido textual anclado a la ingesta previa.
+{
+  "corpusVersion": "w1-corpus-v1",
+  "courseId": "unidad-deduccion-natural",
+  "ingestedAt": "2026-08-20T22:17:38.469Z",
+  "components": [
+    {
+      "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+      "sourceVersion": "master@ec34df8 (2025-12-18)",
+      "origin": "Open Logic Project / University of Calgary (GitHub rzach/forallx-yyc)",
+      "notationFamily": "fitch",
+      "snapshotSha256": "7a988a58d38187cfeb9f67e1ea6518614f2300ec892bdcdd706d4adfc9cdd15f",
+      "licenseEvidence": "CC BY 4.0 — LICENSE.md del repositorio + detección SPDX de GitHub + frontmatter; assets/by.pdf incluido en el repo.",
+      "authorizationStatus": "autorizado",
+      "permittedUses": [
+        "fuente_documental",
+        "base_expresiva"
+      ]
+    }
+  ],
+  "contentSha256": {
+    "forallx-yyc/tfl-deduccion-natural": "7a988a58d38187cfeb9f67e1ea6518614f2300ec892bdcdd706d4adfc9cdd15f"
+  },
+  "tarballSha256": {
+    "forallx-yyc/tfl-deduccion-natural": "02351aa31c05f027ddb1c6a63b0bfd27e05b4a8a2751fc7a58dcffb691999510"
+  },
+  "fragmentCount": 77,
+  "kcsWithoutExpressiveBase": [],
+  "requiredSectionsDeclared": 19,
+  "identityNotes": [],
+  "seccionKcProvenance": "Mapeo sección→KC declarado en scripts/content/w1-ingest-run.mjs (SECCION_KC), redactado por el asistente en W1 a partir de los claims de research/evaluations-2026-08-19.json."
+}

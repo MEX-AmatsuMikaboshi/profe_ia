@@ -39,13 +39,10 @@ has visto el check verde, la tarea es `HECHA`, no `VERIFICADA`.
 Ejecuta **todo desde PowerShell**. En el Bash de Git, `$APPDATA` se expande a una ruta Windows dentro
 de un contexto POSIX y el shim de pnpm resuelve a `C:\Program Files\Git\...\pnpm.cjs`, que no existe.
 
-**El submódulo de contenido es requisito, no accesorio.** `content/unidad-deduccion-natural/` trae el
-cálculo congelado, el corpus y los 413 casos del conjunto dorado: sin él, `ci:unit`, `ci:logic:*` y
-`ci:content:mangos` no pueden correr. Si el árbol se clonó sin `--recurse-submodules`:
-
-```bash
-git submodule update --init --recursive
-```
+**El contenido es requisito y forma parte del repositorio.** `content/unidad-deduccion-natural/`
+trae el cálculo congelado, el corpus y los 413 casos del conjunto dorado: sin él, `ci:unit`,
+`ci:logic:*` y `ci:content:mangos` no pueden correr. Desde el 2026-10-10, el clon normal incluye
+todos sus archivos; no se necesita inicializar un submódulo ni acceder al repositorio privado.
 
 **`&&` no encadena en esta consola.** PowerShell 5.1 —la única instalada; no hay `pwsh` 7— lo
 rechaza al parsear: «El token '&&' no es un separador de instrucciones válido en esta versión». Dentro
@@ -157,7 +154,7 @@ a mano parece funcionar hasta que el check lo desmiente:
 |---|---|---|---|
 | `infra/database/migrations/20260815120100_grants.sql` | `packages/security-policy/src/matrix.ts` | `db:grants` | `db:grants:check` |
 | `apps/web/src/app/tokens.generated.css` | `packages/ui-tokens/vendor/styles.css` | `web:tokens` | `ci:web:tokens` |
-| `analysis/reports/fragment-handles.json` | el corpus del submódulo | `content:mangos` | `ci:content:mangos` |
+| `analysis/reports/fragment-handles.json` | el corpus de `content/` | `content:mangos` | `ci:content:mangos` |
 | el conjunto dorado (413 casos) | `scripts/logic/generate-golden.mjs` | `logic:golden:generate` | **el diff debe quedar vacío** |
 
 **La matriz de permisos tiene un paso fácil de olvidar**: el generador lee el paquete **compilado**,
@@ -171,7 +168,7 @@ expresamente. Lo que se toca es la derivación.
 
 `.github/workflows/ci.yml`. Cuando uno se pone rojo, esta tabla ahorra abrirlo:
 
-| Job | Corre | Necesita el submódulo |
+| Job | Corre | Usa contenido educativo |
 |---|---|---|
 | `base` | `ci:lint` · `ci:typecheck` · `ci:unit` · `ci:build` · `ci:a11y:baseline` · `ci:a11y:catches` | sí |
 | `h6` | `ci:mode-separation` · `ci:e2e:dry-session` · `ci:e2e:course-creation` | sí |
@@ -184,9 +181,8 @@ expresamente. Lo que se toca es la derivación.
 | `infra` | `ci:infra:hardening` · `ci:infra:compose-up` | sí |
 | `db` | `db:grants:check` · `ci:db:negative` | no |
 
-Los jobs marcados con submódulo dependen de `CONTENT_TOKEN` y hacen `checkout` recursivo: **si un
-gitlink apunta a un commit que no se subió al remoto de contenido, fallan en `checkout` con
-`upload-pack: not our ref`** y el mensaje no menciona el submódulo. Ver §6.
+Todos los jobs reciben el contenido mediante el checkout normal. Desde la integración del
+2026-10-10, no dependen de `CONTENT_TOKEN`, de un gitlink ni de un segundo repositorio.
 
 ### El pipeline de contenido W0–W5
 
@@ -459,8 +455,8 @@ detalle está en `docs/plan/HANDOFF.md` §8.
 **Un commit por tarea `T-*`**, con su id en el título y `PLAN_STATUS.md` actualizado en el mismo
 commit. **El `push`, en cambio, se agrupa**: el presupuesto de Actions es de USD 5 con tope, y el
 propietario pidió el 2026-08-29 dejar de subir una vez por tarea. Es desviación declarada de §8, no
-olvido — y va en este orden: **primero el submódulo de contenido, después el monorepo**, o los jobs
-con `checkout` recursivo fallan como falló la sesión 16.
+olvido. Desde el 2026-10-10, código y contenido se suben juntos a `origin/main`; ya no hay
+un push previo al repositorio de contenido ni un checkout recursivo.
 
 Dos pushes seguidos **cancelan la corrida del primero** (`concurrency` por `github.ref`, con
 `cancel-in-progress`), y una corrida cancelada no promueve nada a `VERIFICADA`. `ci:logic:mutation`
@@ -469,8 +465,9 @@ no lo verás fallar.
 
 **Nunca se versiona `.env`.** Antes de cada commit, `git status --short`: si aparece un `.env`, para.
 
-`content/unidad-deduccion-natural/` es un repositorio independiente con historial propio, registrado
-como gitlink; falta crear su remoto y formalizarlo con `git submodule add` (D-2).
+`content/unidad-deduccion-natural/` contiene archivos normales del repositorio público, incluidas
+las soluciones y las reservas de evaluación, por instrucción del propietario el 2026-10-10.
+El repositorio privado anterior conserva su historial; no se usa como dependencia del clon.
 
 ### Las anclas se citan por mango corto (D-77, 2026-08-26)
 

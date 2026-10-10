@@ -1,0 +1,85 @@
+# Sección «restrictions» del esquema cerrado (T-H5-02, Rol A). Corrida W2 del 2026-08-21T19:51:55.760Z sobre el corpus W1 (tarball 02351aa31c05…). Redactado por el modelo asistente (salvedad D-41/D-48): el CORPUS_APPROVER lo audita antes del freeze de W5.
+{
+  "extractionVersion": "w2-extraction-v1",
+  "courseId": "unidad-deduccion-natural",
+  "section": "restrictions",
+  "items": [
+    {
+      "itemId": "res-cita-linea",
+      "section": "restrictions",
+      "statement": "Para citar una línea suelta: debe venir antes de la línea que aplica la regla, y no estar dentro de una subprueba ya cerrada en ese punto.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs",
+          "fragmentSha256": "df79225887718da9bd88b936a495bcda1ca3543f1c3bd87ae5b45a09e1c405e8"
+        }
+      ]
+    },
+    {
+      "itemId": "res-cita-subprueba",
+      "section": "restrictions",
+      "statement": "Para citar una subprueba: debe estar entera antes de la aplicación, no puede quedar dentro de otra subprueba ya cerrada, y su última línea no puede estar dentro de una subprueba anidada.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs",
+          "fragmentSha256": "df79225887718da9bd88b936a495bcda1ca3543f1c3bd87ae5b45a09e1c405e8"
+        }
+      ]
+    },
+    {
+      "itemId": "res-linea-vs-subprueba",
+      "section": "restrictions",
+      "statement": "Donde la regla pide una línea no vale citar una subprueba, y donde pide una subprueba no vale citar una línea.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs",
+          "fragmentSha256": "df79225887718da9bd88b936a495bcda1ca3543f1c3bd87ae5b45a09e1c405e8"
+        }
+      ]
+    },
+    {
+      "itemId": "res-parentesis-indispensables",
+      "section": "restrictions",
+      "statement": "Los paréntesis son parte indispensable de la oración: quitarlos cambia el alcance, y ¬(Q∧R) es muy distinto de ¬Q∧R.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#bracketing-conventions",
+          "fragmentSha256": "f97423ee5ab956939a1c5a9f60e02486a635b9ba4cf8d490d275ea2d9d560928"
+        }
+      ]
+    },
+    {
+      "itemId": "res-conjuncion-binaria",
+      "section": "restrictions",
+      "statement": "La definición oficial solo admite conjunciones de dos conyuntos; el libro mantiene la convención estricta de paréntesis y no suprime los internos en las pruebas.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction",
+          "fragmentSha256": "aa5e7722a478f3a1fe37f66409e7c7284cc3e44e50cbac3d8ce25f359cd859db"
+        }
+      ]
+    },
+    {
+      "itemId": "res-eliminacion-operador-principal",
+      "section": "restrictions",
+      "statement": "∧E solo se aplica cuando la conjunción es el operador principal de la línea citada: de C∨(D∧E) no se sigue D.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction",
+          "fragmentSha256": "aa5e7722a478f3a1fe37f66409e7c7284cc3e44e50cbac3d8ce25f359cd859db"
+        }
+      ]
+    },
+    {
+      "itemId": "res-explosion-exige-falsum",
+      "section": "restrictions",
+      "statement": "X solo se aplica cuando ya se tiene ⊥ en la prueba, y ⊥ solo se obtiene de supuestos contradictorios.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation",
+          "fragmentSha256": "bafb2c7354db6477da53e944ec8417361ba084a275751c97fa9fd18c857eab6e"
+        }
+      ]
+    }
+  ]
+}

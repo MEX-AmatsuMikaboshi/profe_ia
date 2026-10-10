@@ -1,0 +1,96 @@
+# Sección «notation» del esquema cerrado (T-H5-02, Rol A). Corrida W2 del 2026-08-21T19:51:55.760Z sobre el corpus W1 (tarball 02351aa31c05…). Redactado por el modelo asistente (salvedad D-41/D-48): el CORPUS_APPROVER lo audita antes del freeze de W5.
+{
+  "extractionVersion": "w2-extraction-v1",
+  "courseId": "unidad-deduccion-natural",
+  "section": "notation",
+  "items": [
+    {
+      "itemId": "not-numeracion-lineas",
+      "section": "notation",
+      "statement": "Toda línea de la prueba va numerada, para poder citarla después; bajo las premisas se traza una raya.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof",
+          "fragmentSha256": "6452bbc78e14fd1645d66ba3a9167b29c4823f015bf504f60d6fb33716be4f2d"
+        }
+      ]
+    },
+    {
+      "itemId": "not-justificacion-linea",
+      "section": "notation",
+      "statement": "Cada línea que no sea supuesto lleva justificación: el nombre de la regla y las líneas a las que se aplica (por ejemplo «R 4»).",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration",
+          "fragmentSha256": "b59c3c0be52cfb542a4ec42191c2eadcac67ccef7305d431b22de4d9ba06e0be"
+        }
+      ]
+    },
+    {
+      "itemId": "not-metavariables",
+      "section": "notation",
+      "statement": "Las metavariables A, B no son oraciones de TFL sino símbolos del metalenguaje para hablar de cualquier oración; m, n hacen lo propio con los números de línea y no aparecen en una prueba real.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration",
+          "fragmentSha256": "b59c3c0be52cfb542a4ec42191c2eadcac67ccef7305d431b22de4d9ba06e0be"
+        }
+      ]
+    },
+    {
+      "itemId": "not-subprueba-vertical",
+      "section": "notation",
+      "statement": "Un supuesto adicional se marca con una raya debajo y una línea vertical adicional que sangra la subprueba; al cerrarla se vuelve a una sola línea vertical.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional",
+          "fragmentSha256": "fa0984630a0c4f36b8accdd6fd2ab578a520265873c5257c99363eca603b0498"
+        }
+      ]
+    },
+    {
+      "itemId": "not-corchetes",
+      "section": "notation",
+      "statement": "Los corchetes «[» y «]» se admiten en lugar de los paréntesis: no hay diferencia lógica entre (P∨Q) y [P∨Q].",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#bracketing-conventions",
+          "fragmentSha256": "f97423ee5ab956939a1c5a9f60e02486a635b9ba4cf8d490d275ea2d9d560928"
+        }
+      ]
+    },
+    {
+      "itemId": "not-parentesis-externos",
+      "section": "notation",
+      "statement": "Se permite omitir los paréntesis más externos de una oración, con la obligación de reponerlos al incrustarla en otra más compleja.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#bracketing-conventions",
+          "fragmentSha256": "f97423ee5ab956939a1c5a9f60e02486a635b9ba4cf8d490d275ea2d9d560928"
+        }
+      ]
+    },
+    {
+      "itemId": "not-cinco-conectivos",
+      "section": "notation",
+      "statement": "Los conectivos de TFL son cinco: ¬, ∧, ∨, → y ↔; los cuatro binarios se aplican siempre a exactamente dos oraciones.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#sentences",
+          "fragmentSha256": "8071920a8e03bf27360d2134306f9d483137b54164a99fef1d333cd81bef2c17"
+        }
+      ]
+    },
+    {
+      "itemId": "not-simbolo-falsum",
+      "section": "notation",
+      "statement": "El símbolo ⊥ se lee «contradicción»; al citar ¬E es convención poner primero el número de la negación y después el de la oración negada.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation",
+          "fragmentSha256": "bafb2c7354db6477da53e944ec8417361ba084a275751c97fa9fd18c857eab6e"
+        }
+      ]
+    }
+  ]
+}

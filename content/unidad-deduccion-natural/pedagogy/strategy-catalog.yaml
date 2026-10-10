@@ -1,0 +1,75 @@
+# Catálogo de estrategias, cerrado y de doce (T-H5-04, Rol B). Corrida del 2026-08-21T20:39:04.474Z sobre kc/map.yaml. Redactado por el modelo asistente (salvedad D-41/D-48/D-52): el propietario audita objetivos y señales observables antes del freeze de W5.
+{
+  "policyVersion": "pedagogy-policy-h5-v1",
+  "catalogSize": 12,
+  "note": "Proyección de STRATEGY_CATALOG, que se deriva de P-I §5.10 y del enum de P-II §7.2.1. Dos entradas no tienen miembro de enum y declaran por dónde se expresan; el catálogo no admite categorías nuevas con autoridad operativa.",
+  "decisionHierarchy": [
+    "seguridad, integridad, modo pedagógico y límites de no revelación",
+    "prerrequisitos bloqueantes",
+    "política de dominio y recuperación",
+    "selección de estrategia según tipo de KC y estado observable",
+    "adaptación lingüística/visual de la IA dentro de la estrategia elegida"
+  ],
+  "entries": [
+    {
+      "catalogEntryId": "explicacion_directa_breve",
+      "es": "explicación directa breve",
+      "decisionStrategy": "direct_explanation"
+    },
+    {
+      "catalogEntryId": "ejemplo_trabajado",
+      "es": "ejemplo trabajado",
+      "decisionStrategy": "worked_example"
+    },
+    {
+      "catalogEntryId": "ejemplo_incompleto",
+      "es": "ejemplo incompleto/completion problem",
+      "decisionStrategy": "completion_problem"
+    },
+    {
+      "catalogEntryId": "practica_guiada",
+      "es": "práctica guiada",
+      "decisionStrategy": "guided_practice"
+    },
+    {
+      "catalogEntryId": "practica_independiente",
+      "es": "práctica independiente",
+      "decisionStrategy": "independent_practice"
+    },
+    {
+      "catalogEntryId": "scaffolding_contingente",
+      "es": "scaffolding contingente",
+      "decisionStrategy": "scaffolding"
+    },
+    {
+      "catalogEntryId": "fading_contingente",
+      "es": "fading contingente",
+      "expressedBy": "bajando `assistanceLevel` en la decisión: el fading es literalmente retirar ayuda, y `assistanceLevel` ya es un campo del contrato de P-II §7.2.1."
+    },
+    {
+      "catalogEntryId": "autoexplicacion_guiada",
+      "es": "autoexplicación guiada",
+      "decisionStrategy": "self_explanation"
+    },
+    {
+      "catalogEntryId": "retrieval_practice",
+      "es": "retrieval practice",
+      "decisionStrategy": "retrieval"
+    },
+    {
+      "catalogEntryId": "feedback_correctivo",
+      "es": "feedback correctivo centrado en tarea/proceso",
+      "expressedBy": "acompañando a la decisión, no compitiendo con ella: se da feedback **y** se elige estrategia en el mismo paso, así que un enum de opciones excluyentes lo habría vuelto incompatible con las otras once."
+    },
+    {
+      "catalogEntryId": "recuperacion_de_prerrequisito",
+      "es": "recuperación de prerrequisito",
+      "decisionStrategy": "prerequisite_remediation"
+    },
+    {
+      "catalogEntryId": "comprobacion_de_transferencia_cercana",
+      "es": "comprobación de transferencia cercana",
+      "decisionStrategy": "near_transfer"
+    }
+  ]
+}

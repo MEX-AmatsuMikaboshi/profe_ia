@@ -1,0 +1,538 @@
+# Mapa de conocimiento KC01–KC18 (T-H5-03, P-I §5.2). Generado por scripts/content/kc-map-write.mjs desde KC_CATALOG — no se edita a mano; la prueba kc-map-artifact exige igualdad profunda con el catálogo.
+{
+  "mapVersion": "kc-map-v1",
+  "provenance": "Transcripción literal del catálogo KC01–KC18 del Maestro (P-I §5.2) tal como vive en packages/authoring-core/src/kc-map.ts (KC_CATALOG). Generado por kcMapDocument(); no se edita a mano — la prueba kc-map-artifact exige igualdad profunda con el catálogo.",
+  "authorizedCalculusVersion": "authorized-calculus-v1",
+  "foundationKcs": [
+    "KC01",
+    "KC02",
+    "KC08"
+  ],
+  "nodes": [
+    {
+      "kcId": "KC01",
+      "name": "Fórmulas bien formadas, conectivos y corchetes del cálculo",
+      "stage1Status": "Obligatorio",
+      "dependencies": []
+    },
+    {
+      "kcId": "KC02",
+      "name": "Notación Fitch, citas de líneas y lectura de subpruebas",
+      "stage1Status": "Obligatorio",
+      "dependencies": [
+        {
+          "on": "KC01",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC03",
+      "name": "Reiteración `R`",
+      "stage1Status": "Obligatorio",
+      "ruleId": "R",
+      "dependencies": [
+        {
+          "on": "KC02",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC04",
+      "name": "Introducción de conjunción `∧I`",
+      "stage1Status": "Obligatorio",
+      "ruleId": "∧I",
+      "dependencies": [
+        {
+          "on": "KC01",
+          "type": "FORMAL"
+        },
+        {
+          "on": "KC02",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC05",
+      "name": "Eliminación de conjunción `∧E`",
+      "stage1Status": "Obligatorio",
+      "ruleId": "∧E",
+      "dependencies": [
+        {
+          "on": "KC01",
+          "type": "FORMAL"
+        },
+        {
+          "on": "KC02",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC06",
+      "name": "Eliminación del condicional `→E`",
+      "stage1Status": "Obligatorio",
+      "ruleId": "→E",
+      "dependencies": [
+        {
+          "on": "KC01",
+          "type": "FORMAL"
+        },
+        {
+          "on": "KC02",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC07",
+      "name": "Introducción de disyunción `∨I`",
+      "stage1Status": "Obligatorio",
+      "ruleId": "∨I",
+      "dependencies": [
+        {
+          "on": "KC01",
+          "type": "FORMAL"
+        },
+        {
+          "on": "KC02",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC08",
+      "name": "Alcance, accesibilidad y descarga de supuestos",
+      "stage1Status": "Transversal",
+      "dependencies": [
+        {
+          "on": "KC02",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC09",
+      "name": "Introducción del condicional `→I`",
+      "stage1Status": "Condicional al alcance del conjunto",
+      "ruleId": "→I",
+      "dependencies": [
+        {
+          "on": "KC08",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC10",
+      "name": "Obtención de `⊥` mediante `¬E`",
+      "stage1Status": "Obligatorio cuando el conjunto lo requiera",
+      "ruleId": "¬E",
+      "dependencies": [
+        {
+          "on": "KC01",
+          "type": "FORMAL"
+        },
+        {
+          "on": "KC02",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC11",
+      "name": "Introducción de negación `¬I`",
+      "stage1Status": "Obligatorio cuando el conjunto lo requiera",
+      "ruleId": "¬I",
+      "dependencies": [
+        {
+          "on": "KC08",
+          "type": "FORMAL"
+        },
+        {
+          "on": "KC10",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC12",
+      "name": "Explosión `X` (`⊥E`)",
+      "stage1Status": "Obligatorio cuando el conjunto lo requiera",
+      "ruleId": "X",
+      "dependencies": [
+        {
+          "on": "KC10",
+          "type": "POLITICA_CONTENIDO"
+        }
+      ]
+    },
+    {
+      "kcId": "KC13",
+      "name": "Eliminación de disyunción / prueba por casos `∨E`",
+      "stage1Status": "Condicional al alcance del conjunto",
+      "ruleId": "∨E",
+      "dependencies": [
+        {
+          "on": "KC08",
+          "type": "FORMAL"
+        },
+        {
+          "on": "KC07",
+          "type": "PEDAGOGICA"
+        }
+      ],
+      "conditions": [
+        "disponer de una disyunción"
+      ]
+    },
+    {
+      "kcId": "KC14",
+      "name": "Introducción del bicondicional `↔I`",
+      "stage1Status": "Obligatorio cuando el conjunto lo requiera",
+      "ruleId": "↔I",
+      "dependencies": [
+        {
+          "on": "KC08",
+          "type": "FORMAL"
+        },
+        {
+          "on": "KC09",
+          "type": "FORMAL"
+        }
+      ]
+    },
+    {
+      "kcId": "KC15",
+      "name": "Eliminación del bicondicional `↔E`",
+      "stage1Status": "Obligatorio cuando el conjunto lo requiera",
+      "ruleId": "↔E",
+      "dependencies": [
+        {
+          "on": "KC06",
+          "type": "CONCEPTUAL_ANALOGICA"
+        }
+      ]
+    },
+    {
+      "kcId": "KC16",
+      "name": "Eliminación de doble negación `DNE`",
+      "stage1Status": "Derivada permitida",
+      "ruleId": "DNE",
+      "dependencies": [
+        {
+          "on": "KC01",
+          "type": "FORMAL"
+        },
+        {
+          "on": "KC10",
+          "type": "CONCEPTUAL_ANALOGICA"
+        },
+        {
+          "on": "KC11",
+          "type": "CONCEPTUAL_ANALOGICA"
+        }
+      ]
+    },
+    {
+      "kcId": "KC17",
+      "name": "Prueba indirecta `IP` — RAA clásica",
+      "stage1Status": "Primitiva clásica",
+      "ruleId": "IP",
+      "dependencies": [
+        {
+          "on": "KC08",
+          "type": "FORMAL"
+        },
+        {
+          "on": "KC10",
+          "type": "FORMAL"
+        }
+      ],
+      "conditions": [
+        "el orden respecto de KC16 es P, no necesidad formal"
+      ]
+    },
+    {
+      "kcId": "KC18",
+      "name": "Selección de estrategia y trabajo hacia atrás",
+      "stage1Status": "Opcional y no determinante",
+      "dependencies": [
+        {
+          "on": "KC03",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC04",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC05",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC06",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC07",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC08",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC09",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC10",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC11",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC12",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC13",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC14",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC15",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC16",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "on": "KC17",
+          "type": "PEDAGOGICA"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "KC02",
+      "to": "KC01",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC03",
+      "to": "KC02",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC04",
+      "to": "KC01",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC04",
+      "to": "KC02",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC05",
+      "to": "KC01",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC05",
+      "to": "KC02",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC06",
+      "to": "KC01",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC06",
+      "to": "KC02",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC07",
+      "to": "KC01",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC07",
+      "to": "KC02",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC08",
+      "to": "KC02",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC09",
+      "to": "KC08",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC10",
+      "to": "KC01",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC10",
+      "to": "KC02",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC11",
+      "to": "KC08",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC11",
+      "to": "KC10",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC12",
+      "to": "KC10",
+      "type": "POLITICA_CONTENIDO"
+    },
+    {
+      "from": "KC13",
+      "to": "KC08",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC13",
+      "to": "KC07",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC14",
+      "to": "KC08",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC14",
+      "to": "KC09",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC15",
+      "to": "KC06",
+      "type": "CONCEPTUAL_ANALOGICA"
+    },
+    {
+      "from": "KC16",
+      "to": "KC01",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC16",
+      "to": "KC10",
+      "type": "CONCEPTUAL_ANALOGICA"
+    },
+    {
+      "from": "KC16",
+      "to": "KC11",
+      "type": "CONCEPTUAL_ANALOGICA"
+    },
+    {
+      "from": "KC17",
+      "to": "KC08",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC17",
+      "to": "KC10",
+      "type": "FORMAL"
+    },
+    {
+      "from": "KC18",
+      "to": "KC03",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC04",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC05",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC06",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC07",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC08",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC09",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC10",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC11",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC12",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC13",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC14",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC15",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC16",
+      "type": "PEDAGOGICA"
+    },
+    {
+      "from": "KC18",
+      "to": "KC17",
+      "type": "PEDAGOGICA"
+    }
+  ]
+}

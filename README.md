@@ -144,11 +144,12 @@ desde PowerShell**: en el Bash de Git, `$APPDATA` se expande a una ruta Windows 
 POSIX y el shim de pnpm no resuelve.
 
 ```bash
-git clone --recurse-submodules https://github.com/MEX-AmatsuMikaboshi/profe_ia.git
+git clone https://github.com/MEX-AmatsuMikaboshi/profe_ia.git
 ```
 
-Sin el submódulo de contenido, `ci:unit` y `ci:logic:golden` no pueden correr: leen el cálculo
-congelado y los 413 casos del conjunto dorado desde ahí.
+El contenido educativo se incluye directamente en `content/unidad-deduccion-natural/`:
+el clon trae el corpus, el cálculo congelado y los 413 casos del conjunto dorado que leen
+`ci:unit` y `ci:logic:golden`. No requiere submódulos ni acceso a otro repositorio.
 
 ```bash
 pnpm install
@@ -181,7 +182,7 @@ Comprobación completa de que todo sigue en pie (~1 min sin Docker) y la tabla e
 apps/          web · api · verifier · authoring-worker · measurement-worker · background-worker
 packages/      contratos y motores; logic-core e isomorphism-canonicalizer SEPARADOS por regla
 tools/         cli (el CLI vive aquí por D-1) · bench (BENCH-01)
-content/       submódulo con historial propio: corpus, cálculo congelado, conjunto dorado
+content/       contenido educativo versionado: corpus, cálculo congelado, conjunto dorado
 infra/         compose, migraciones, runbooks
 docs/          plan, gates, sesión, modelo, entorno, calidad
 docs_maes/     el Maestro y la especificación UI/UX — autoridad, no documentación

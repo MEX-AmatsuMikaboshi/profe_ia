@@ -1,0 +1,2614 @@
+{
+  "version": "1",
+  "description": "Alcance, citas y descarga de supuestos",
+  "generator": "scripts/logic/generate-golden.mjs",
+  "seedBase": 20260814,
+  "authorizedCalculusVersion": "authorized-calculus-v1",
+  "count": 63,
+  "cases": [
+    {
+      "id": "scope-0001-descarga-correcta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0002-cita-a-subprueba-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B→B",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0003-subproof-incompleta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "C→C",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B→(C→C)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-INCOMPLETE"
+        ]
+      }
+    },
+    {
+      "id": "scope-0004-subproof-anidada-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "C→C",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B→(C→C)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C→C",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-NESTED-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0005-supuesto-abierto-al-final",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-OPEN-ASSUMPTION",
+          "E-STRUCT-CONCLUSION-DEPTH"
+        ]
+      }
+    },
+    {
+      "id": "scope-0006-as-fuera-de-subprueba",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0007-premisa-tardia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0008-subprueba-de-una-linea",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B→B",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                2
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0009-descarga-vacua",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B→A",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0010-descarga-correcta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B→B",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0011-cita-a-subprueba-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→C",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0012-subproof-incompleta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "D→D",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→(D→D)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-INCOMPLETE"
+        ]
+      }
+    },
+    {
+      "id": "scope-0013-subproof-anidada-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "D→D",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→(D→D)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D→D",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-NESTED-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0014-supuesto-abierto-al-final",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-OPEN-ASSUMPTION",
+          "E-STRUCT-CONCLUSION-DEPTH"
+        ]
+      }
+    },
+    {
+      "id": "scope-0015-as-fuera-de-subprueba",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0016-premisa-tardia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0017-subprueba-de-una-linea",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C→C",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                2
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0018-descarga-vacua",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→B",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0019-descarga-correcta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→C",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0020-cita-a-subprueba-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D→D",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0021-subproof-incompleta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D→(E→E)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-INCOMPLETE"
+        ]
+      }
+    },
+    {
+      "id": "scope-0022-subproof-anidada-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D→(E→E)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-NESTED-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0023-supuesto-abierto-al-final",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-OPEN-ASSUMPTION",
+          "E-STRUCT-CONCLUSION-DEPTH"
+        ]
+      }
+    },
+    {
+      "id": "scope-0024-as-fuera-de-subprueba",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0025-premisa-tardia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0026-subprueba-de-una-linea",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D→D",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                2
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0027-descarga-vacua",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D→C",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0028-descarga-correcta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D→D",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0029-cita-a-subprueba-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0030-subproof-incompleta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E→(A→A)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-INCOMPLETE"
+        ]
+      }
+    },
+    {
+      "id": "scope-0031-subproof-anidada-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E→(A→A)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-NESTED-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0032-supuesto-abierto-al-final",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-OPEN-ASSUMPTION",
+          "E-STRUCT-CONCLUSION-DEPTH"
+        ]
+      }
+    },
+    {
+      "id": "scope-0033-as-fuera-de-subprueba",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0034-premisa-tardia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0035-subprueba-de-una-linea",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                2
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0036-descarga-vacua",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E→D",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0037-descarga-correcta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0038-cita-a-subprueba-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0039-subproof-incompleta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "B→B",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→(B→B)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-INCOMPLETE"
+        ]
+      }
+    },
+    {
+      "id": "scope-0040-subproof-anidada-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "B→B",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→(B→B)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B→B",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-NESTED-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0041-supuesto-abierto-al-final",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-OPEN-ASSUMPTION",
+          "E-STRUCT-CONCLUSION-DEPTH"
+        ]
+      }
+    },
+    {
+      "id": "scope-0042-as-fuera-de-subprueba",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0043-premisa-tardia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0044-subprueba-de-una-linea",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                2
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0045-descarga-vacua",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→E",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0046-descarga-correcta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0047-cita-a-subprueba-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→C",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0048-subproof-incompleta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→(E→E)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-INCOMPLETE"
+        ]
+      }
+    },
+    {
+      "id": "scope-0049-subproof-anidada-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→(E→E)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-NESTED-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0050-supuesto-abierto-al-final",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-OPEN-ASSUMPTION",
+          "E-STRUCT-CONCLUSION-DEPTH"
+        ]
+      }
+    },
+    {
+      "id": "scope-0051-as-fuera-de-subprueba",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0052-premisa-tardia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0053-subprueba-de-una-linea",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C→C",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                2
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0054-descarga-vacua",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→A",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0055-descarga-correcta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B→B",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0056-cita-a-subprueba-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D→D",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0057-subproof-incompleta",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D→(A→A)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-INCOMPLETE"
+        ]
+      }
+    },
+    {
+      "id": "scope-0058-subproof-anidada-cerrada",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 2
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 2
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D→(A→A)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-SUBPROOF-NESTED-CLOSED"
+        ]
+      }
+    },
+    {
+      "id": "scope-0059-supuesto-abierto-al-final",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-OPEN-ASSUMPTION",
+          "E-STRUCT-CONCLUSION-DEPTH"
+        ]
+      }
+    },
+    {
+      "id": "scope-0060-as-fuera-de-subprueba",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0061-premisa-tardia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "scope-0062-subprueba-de-una-linea",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D→D",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                2
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "scope-0063-descarga-vacua",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D→B",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    }
+  ]
+}

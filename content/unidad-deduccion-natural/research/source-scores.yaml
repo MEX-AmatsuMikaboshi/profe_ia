@@ -1,0 +1,67 @@
+# Observaciones de idoneidad (T-H45-04). scalarAvailable: false — los pesos se congelan en H4.5 con el corpus real. Corrida del 2026-08-19T18:12:25.628Z.
+{
+  "scores": [
+    {
+      "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+      "observations": {
+        "autoridad": 0.95,
+        "revision": 0.9,
+        "estabilidad": 0.9,
+        "explicitud": 0.95,
+        "verificabilidad": 1,
+        "cobertura": 1
+      },
+      "scalarAvailable": false
+    },
+    {
+      "sourceComponent": "forallx-yyc/logica-modal",
+      "observations": {
+        "autoridad": 0.8,
+        "revision": 0.7,
+        "estabilidad": 0.9,
+        "explicitud": 0.8,
+        "verificabilidad": 0.3,
+        "cobertura": 0
+      },
+      "scalarAvailable": false
+    },
+    {
+      "sourceComponent": "mit-ocw/24.241-logic-i-fall-2009",
+      "observations": {
+        "autoridad": 0.9,
+        "revision": 0.7,
+        "estabilidad": 0.85,
+        "explicitud": 0.6,
+        "verificabilidad": 0.4,
+        "cobertura": 0.5
+      },
+      "scalarAvailable": false
+    }
+  ],
+  "notes": {
+    "forallx-yyc/tfl-deduccion-natural": {
+      "autoridad": "0.95 — University of Calgary (Taylor Institute), Open Logic Project; adopción documentada en ADOPTIONS.md.",
+      "revision": "0.9 — erratas abiertas por GitHub, ediciones anuales revisadas (CHANGELOG.md), múltiples remixes revisados por pares.",
+      "estabilidad": "0.9 — repositorio activo desde 2016, revisiones identificadas por commit; el snapshot queda congelado por hash.",
+      "explicitud": "0.95 — reglas básicas y derivadas explícitas en la referencia rápida; notación y sistema alternativos declarados en el apéndice.",
+      "verificabilidad": "1.0 — sus claims se verifican mecánicamente contra authorized-calculus-v1: el cálculo congelado se transcribió de esta obra.",
+      "cobertura": "1.0 — las partes II–VI (TFL, tablas de verdad, deducción natural) cubren los dieciocho KC del bloque."
+    },
+    "forallx-yyc/logica-modal": {
+      "autoridad": "0.8 — Robert Trueman, A Modal Logic Primer, integrado en la edición Calgary.",
+      "revision": "0.7 — obra independiente revisada, integrada con cambios.",
+      "estabilidad": "0.9 — mismo repositorio y congelado por hash.",
+      "explicitud": "0.8 — sistema modal Fitch explícito.",
+      "verificabilidad": "0.3 — fuera del alcance del bloque: no hay cálculo autorizado contra el que verificarla.",
+      "cobertura": "0.0 — no cubre ningún KC del bloque proposicional."
+    },
+    "mit-ocw/24.241-logic-i-fall-2009": {
+      "autoridad": "0.9 — MIT, curso impartido (Dr. Ephraim Glick).",
+      "revision": "0.7 — material de curso publicado y archivado; sin proceso de erratas abierto comparable al repo.",
+      "estabilidad": "0.85 — curso archivado (Fall 2009), contenido congelado por OCW.",
+      "explicitud": "0.6 — el curso usa su propio sistema de derivación; no se extrajeron claims en esta corrida.",
+      "verificabilidad": "0.4 — verificable en principio, pero sin claims extraídos no hay nada que verificar en esta corrida.",
+      "cobertura": "0.5 — cubre cálculo sentencial y predicado según el temario; no evaluado por KC."
+    }
+  }
+}

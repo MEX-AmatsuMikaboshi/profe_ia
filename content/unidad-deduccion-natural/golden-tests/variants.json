@@ -1,0 +1,2570 @@
+{
+  "version": "1",
+  "description": "Variantes estructuralmente distintas de la misma conclusión",
+  "generator": "scripts/logic/generate-golden.mjs",
+  "seedBase": 20260814,
+  "authorizedCalculusVersion": "authorized-calculus-v1",
+  "count": 50,
+  "cases": [
+    {
+      "id": "variant-0001-extraer-y-reconjuntar",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧A",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "B∧A"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "A∧B⊢B∧A"
+    },
+    {
+      "id": "variant-0002-orden-inverso-de-extraccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧A",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "B∧A"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "A∧B⊢B∧A"
+    },
+    {
+      "id": "variant-0003-con-reiteracion-intermedia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∧B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧A",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "B∧A"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "A∧B⊢B∧A"
+    },
+    {
+      "id": "variant-0004-citando-la-premisa-original",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∧B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧A",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "B∧A"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "A∧B⊢B∧A"
+    },
+    {
+      "id": "variant-0005-via-subprueba-condicional",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∧B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B∧A",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(A∧B)→(B∧A)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧A",
+            "rule": "→E",
+            "refs": [
+              6,
+              1
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "B∧A"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "A∧B⊢B∧A"
+    },
+    {
+      "id": "variant-0006-extraer-y-reconjuntar",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧B",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "C∧B"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "B∧C⊢C∧B"
+    },
+    {
+      "id": "variant-0007-orden-inverso-de-extraccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧B",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "C∧B"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "B∧C⊢C∧B"
+    },
+    {
+      "id": "variant-0008-con-reiteracion-intermedia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∧C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧B",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "C∧B"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "B∧C⊢C∧B"
+    },
+    {
+      "id": "variant-0009-citando-la-premisa-original",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∧C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧B",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "C∧B"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "B∧C⊢C∧B"
+    },
+    {
+      "id": "variant-0010-via-subprueba-condicional",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∧C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C∧B",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(B∧C)→(C∧B)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧B",
+            "rule": "→E",
+            "refs": [
+              6,
+              1
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "C∧B"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "B∧C⊢C∧B"
+    },
+    {
+      "id": "variant-0011-extraer-y-reconjuntar",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧C",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "D∧C"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "C∧D⊢D∧C"
+    },
+    {
+      "id": "variant-0012-orden-inverso-de-extraccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧C",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "D∧C"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "C∧D⊢D∧C"
+    },
+    {
+      "id": "variant-0013-con-reiteracion-intermedia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧C",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "D∧C"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "C∧D⊢D∧C"
+    },
+    {
+      "id": "variant-0014-citando-la-premisa-original",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧C",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "D∧C"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "C∧D⊢D∧C"
+    },
+    {
+      "id": "variant-0015-via-subprueba-condicional",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D∧C",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(C∧D)→(D∧C)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧C",
+            "rule": "→E",
+            "refs": [
+              6,
+              1
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "D∧C"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "C∧D⊢D∧C"
+    },
+    {
+      "id": "variant-0016-extraer-y-reconjuntar",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧D",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "E∧D"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "D∧E⊢E∧D"
+    },
+    {
+      "id": "variant-0017-orden-inverso-de-extraccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧D",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "E∧D"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "D∧E⊢E∧D"
+    },
+    {
+      "id": "variant-0018-con-reiteracion-intermedia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∧E",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧D",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "E∧D"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "D∧E⊢E∧D"
+    },
+    {
+      "id": "variant-0019-citando-la-premisa-original",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∧E",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧D",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "E∧D"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "D∧E⊢E∧D"
+    },
+    {
+      "id": "variant-0020-via-subprueba-condicional",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∧E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E∧D",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(D∧E)→(E∧D)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧D",
+            "rule": "→E",
+            "refs": [
+              6,
+              1
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "E∧D"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "D∧E⊢E∧D"
+    },
+    {
+      "id": "variant-0021-extraer-y-reconjuntar",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧E",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "A∧E"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "E∧A⊢A∧E"
+    },
+    {
+      "id": "variant-0022-orden-inverso-de-extraccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧E",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "A∧E"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "E∧A⊢A∧E"
+    },
+    {
+      "id": "variant-0023-con-reiteracion-intermedia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∧A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧E",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "A∧E"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "E∧A⊢A∧E"
+    },
+    {
+      "id": "variant-0024-citando-la-premisa-original",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∧A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧E",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "A∧E"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "E∧A⊢A∧E"
+    },
+    {
+      "id": "variant-0025-via-subprueba-condicional",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∧A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A∧E",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(E∧A)→(A∧E)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧E",
+            "rule": "→E",
+            "refs": [
+              6,
+              1
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "A∧E"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "E∧A⊢A∧E"
+    },
+    {
+      "id": "variant-0026-extraer-y-reconjuntar",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧A",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "C∧A"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "A∧C⊢C∧A"
+    },
+    {
+      "id": "variant-0027-orden-inverso-de-extraccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧A",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "C∧A"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "A∧C⊢C∧A"
+    },
+    {
+      "id": "variant-0028-con-reiteracion-intermedia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∧C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧A",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "C∧A"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "A∧C⊢C∧A"
+    },
+    {
+      "id": "variant-0029-citando-la-premisa-original",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∧C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧A",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "C∧A"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "A∧C⊢C∧A"
+    },
+    {
+      "id": "variant-0030-via-subprueba-condicional",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∧C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C∧A",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(A∧C)→(C∧A)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧A",
+            "rule": "→E",
+            "refs": [
+              6,
+              1
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "C∧A"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "A∧C⊢C∧A"
+    },
+    {
+      "id": "variant-0031-extraer-y-reconjuntar",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧B",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "D∧B"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "B∧D⊢D∧B"
+    },
+    {
+      "id": "variant-0032-orden-inverso-de-extraccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧B",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "D∧B"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "B∧D⊢D∧B"
+    },
+    {
+      "id": "variant-0033-con-reiteracion-intermedia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∧D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧B",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "D∧B"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "B∧D⊢D∧B"
+    },
+    {
+      "id": "variant-0034-citando-la-premisa-original",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∧D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧B",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "D∧B"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "B∧D⊢D∧B"
+    },
+    {
+      "id": "variant-0035-via-subprueba-condicional",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∧D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D∧B",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(B∧D)→(D∧B)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧B",
+            "rule": "→E",
+            "refs": [
+              6,
+              1
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "D∧B"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "B∧D⊢D∧B"
+    },
+    {
+      "id": "variant-0036-extraer-y-reconjuntar",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧C",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "E∧C"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "C∧E⊢E∧C"
+    },
+    {
+      "id": "variant-0037-orden-inverso-de-extraccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧C",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "E∧C"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "C∧E⊢E∧C"
+    },
+    {
+      "id": "variant-0038-con-reiteracion-intermedia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧E",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧C",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "E∧C"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "C∧E⊢E∧C"
+    },
+    {
+      "id": "variant-0039-citando-la-premisa-original",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧E",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧C",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "E∧C"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "C∧E⊢E∧C"
+    },
+    {
+      "id": "variant-0040-via-subprueba-condicional",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E∧C",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(C∧E)→(E∧C)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧C",
+            "rule": "→E",
+            "refs": [
+              6,
+              1
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "E∧C"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "C∧E⊢E∧C"
+    },
+    {
+      "id": "variant-0041-extraer-y-reconjuntar",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧D",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "A∧D"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "D∧A⊢A∧D"
+    },
+    {
+      "id": "variant-0042-orden-inverso-de-extraccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧D",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "A∧D"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "D∧A⊢A∧D"
+    },
+    {
+      "id": "variant-0043-con-reiteracion-intermedia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∧A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧D",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "A∧D"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "D∧A⊢A∧D"
+    },
+    {
+      "id": "variant-0044-citando-la-premisa-original",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∧A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧D",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "A∧D"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "D∧A⊢A∧D"
+    },
+    {
+      "id": "variant-0045-via-subprueba-condicional",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∧A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A∧D",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(D∧A)→(A∧D)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧D",
+            "rule": "→E",
+            "refs": [
+              6,
+              1
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "A∧D"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "D∧A⊢A∧D"
+    },
+    {
+      "id": "variant-0046-extraer-y-reconjuntar",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧E",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "B∧E"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "E∧B⊢B∧E"
+    },
+    {
+      "id": "variant-0047-orden-inverso-de-extraccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧E",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "B∧E"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "E∧B⊢B∧E"
+    },
+    {
+      "id": "variant-0048-con-reiteracion-intermedia",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∧B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧E",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "B∧E"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "E∧B⊢B∧E"
+    },
+    {
+      "id": "variant-0049-citando-la-premisa-original",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∧B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧E",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "B∧E"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "E∧B⊢B∧E"
+    },
+    {
+      "id": "variant-0050-via-subprueba-condicional",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∧B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B∧E",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(E∧B)→(B∧E)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧E",
+            "rule": "→E",
+            "refs": [
+              6,
+              1
+            ],
+            "depth": 0
+          }
+        ],
+        "goal": "B∧E"
+      },
+      "expected": {
+        "valid": true,
+        "goalReached": true
+      },
+      "equivalenceClass": "E∧B⊢B∧E"
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+# Objetivos observables y secuencia de enseñanza (T-H5-04, Rol B). Corrida del 2026-08-21T20:39:04.474Z sobre kc/map.yaml. Redactado por el modelo asistente (salvedad D-41/D-48/D-52): el propietario audita objetivos y señales observables antes del freeze de W5.
+{
+  "policyVersion": "pedagogy-policy-h5-v1",
+  "courseId": "unidad-deduccion-natural",
+  "mapVersion": "kc-map-v1",
+  "teachingSequence": [
+    "KC01",
+    "KC02",
+    "KC03",
+    "KC04",
+    "KC05",
+    "KC06",
+    "KC07",
+    "KC08",
+    "KC09",
+    "KC10",
+    "KC11",
+    "KC12",
+    "KC13",
+    "KC14",
+    "KC15",
+    "KC16",
+    "KC17",
+    "KC18"
+  ],
+  "sequenceDerivation": "Orden topológico determinista sobre kc/map.yaml, desempate por id, comprobado arista por arista. No se escribe a mano.",
+  "objectives": [
+    {
+      "kcId": "KC01",
+      "statement": "Escribir y leer fórmulas bien formadas del cálculo autorizado, con sus cinco conectivos y su paréntesis obligatorio.",
+      "observableEvidence": "El alumno entrega fórmulas que el analizador acepta, y corrige las rechazadas leyendo el código: `E-SYN-PARSE`, `E-SYN-PRECEDENCE`, `E-SYN-SYMBOL` o `E-SYN-ALIAS`."
+    },
+    {
+      "kcId": "KC02",
+      "statement": "Leer una derivación en formato Fitch: numeración de líneas, justificación de cada línea y alcance de las subpruebas.",
+      "observableEvidence": "El alumno cita líneas existentes y anteriores en sus justificaciones; sus intentos dejan de producir `E-REF-FORWARD`."
+    },
+    {
+      "kcId": "KC03",
+      "statement": "Aplicar `R` para reiterar una línea accesible.",
+      "observableEvidence": "Una derivación aceptada en la que una línea se justifica con `R` sobre una línea accesible anterior."
+    },
+    {
+      "kcId": "KC04",
+      "statement": "Aplicar `∧I` para introducir una conjunción a partir de sus dos conyuntos.",
+      "observableEvidence": "Una derivación aceptada en la que la conjunción se justifica con `∧I` citando las dos líneas, sin `E-RULE-ARITY` ni `E-RULE-SHAPE`."
+    },
+    {
+      "kcId": "KC05",
+      "statement": "Aplicar `∧E` para obtener cualquiera de los conyuntos de una conjunción.",
+      "observableEvidence": "Una derivación aceptada con `∧E` sobre una línea cuya conjunción es el operador principal; el intento sobre un operador principal distinto produce `E-RULE-MAINOP` y el alumno lo corrige."
+    },
+    {
+      "kcId": "KC06",
+      "statement": "Aplicar `→E` a partir de un condicional y su antecedente.",
+      "observableEvidence": "Una derivación aceptada en la que el consecuente se justifica con `→E` citando condicional y antecedente."
+    },
+    {
+      "kcId": "KC07",
+      "statement": "Aplicar `∨I` para introducir una disyunción desde uno de sus disyuntos.",
+      "observableEvidence": "Una derivación aceptada con `∨I` sobre una línea accesible, en cualquiera de las dos posiciones del disyunto."
+    },
+    {
+      "kcId": "KC08",
+      "statement": "Abrir y cerrar subpruebas respetando alcance, accesibilidad y descarga de supuestos.",
+      "observableEvidence": "El alumno deja de citar líneas de subpruebas cerradas: sus intentos no producen `E-REF-CLOSED`, `E-REF-SUBPROOF-INCOMPLETE` ni `E-REF-SUBPROOF-NESTED-CLOSED`."
+    },
+    {
+      "kcId": "KC09",
+      "statement": "Aplicar `→I` cerrando una subprueba que abre con el antecedente y termina en el consecuente.",
+      "observableEvidence": "Una derivación aceptada en la que el condicional se justifica con `→I` citando la subprueba completa, no una línea suelta."
+    },
+    {
+      "kcId": "KC10",
+      "statement": "Obtener `⊥` con `¬E` a partir de una fórmula y su negación.",
+      "observableEvidence": "Una derivación aceptada en la que `⊥` se justifica con `¬E` citando ambas líneas."
+    },
+    {
+      "kcId": "KC11",
+      "statement": "Aplicar `¬I` cerrando en `⊥` una subprueba que abre con el supuesto que se quiere negar.",
+      "observableEvidence": "Una derivación aceptada en la que la negación se justifica con `¬I` sobre una subprueba que termina en `⊥`."
+    },
+    {
+      "kcId": "KC12",
+      "statement": "Aplicar `X` para obtener cualquier fórmula a partir de `⊥`.",
+      "observableEvidence": "Una derivación aceptada en la que la línea se justifica con `X` citando una línea con `⊥` accesible."
+    },
+    {
+      "kcId": "KC13",
+      "statement": "Aplicar `∨E` con las dos subpruebas que llevan cada disyunto a la misma conclusión.",
+      "observableEvidence": "Una derivación aceptada en la que la conclusión se justifica con `∨E` citando la disyunción y las dos subpruebas completas."
+    },
+    {
+      "kcId": "KC14",
+      "statement": "Aplicar `↔I` con las dos subpruebas recíprocas.",
+      "observableEvidence": "Una derivación aceptada en la que el bicondicional se justifica con `↔I` citando ambas subpruebas."
+    },
+    {
+      "kcId": "KC15",
+      "statement": "Aplicar `↔E` en cualquiera de sus dos direcciones.",
+      "observableEvidence": "Una derivación aceptada con `↔E` citando el bicondicional y el lado disponible."
+    },
+    {
+      "kcId": "KC16",
+      "statement": "Aplicar `DNE` para eliminar exactamente dos negaciones.",
+      "observableEvidence": "Una derivación aceptada con `DNE` sobre una línea de la forma `¬¬A`; aplicarla sobre otra forma produce `E-RULE-SHAPE`."
+    },
+    {
+      "kcId": "KC17",
+      "statement": "Aplicar `IP` cuando la vía directa no prospera: suponer la negación de la meta y cerrar en `⊥`.",
+      "observableEvidence": "Una derivación aceptada en la que la meta se justifica con `IP` sobre una subprueba que abre con su negación y termina en `⊥`."
+    },
+    {
+      "kcId": "KC18",
+      "statement": "Elegir estrategia ante una meta: trabajar hacia atrás desde el operador principal de la conclusión, hacia adelante desde lo disponible, o indirectamente.",
+      "observableEvidence": "El alumno enuncia, antes de escribir la derivación, qué regla planea usar en la última línea y qué submetas abre; la derivación posterior es aceptada."
+    }
+  ]
+}

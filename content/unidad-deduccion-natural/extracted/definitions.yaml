@@ -1,0 +1,162 @@
+# Sección «definitions» del esquema cerrado (T-H5-02, Rol A). Corrida W2 del 2026-08-21T19:51:55.760Z sobre el corpus W1 (tarball 02351aa31c05…). Redactado por el modelo asistente (salvedad D-41/D-48): el CORPUS_APPROVER lo audita antes del freeze de W5.
+{
+  "extractionVersion": "w2-extraction-v1",
+  "courseId": "unidad-deduccion-natural",
+  "section": "definitions",
+  "items": [
+    {
+      "itemId": "def-oracion-tfl",
+      "section": "definitions",
+      "statement": "Oración de TFL, definición inductiva de siete cláusulas: toda letra oracional es una oración; si A es oración, ¬A es oración; si A y B son oraciones, lo son (A∧B), (A∨B), (A→B) y (A↔B); nada más es una oración.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#sentences",
+          "fragmentSha256": "8071920a8e03bf27360d2134306f9d483137b54164a99fef1d333cd81bef2c17"
+        }
+      ]
+    },
+    {
+      "itemId": "def-letra-oracional",
+      "section": "definitions",
+      "statement": "Letra oracional (oración atómica): una letra mayúscula, opcionalmente con subíndice, que representa una oración básica y no puede descomponerse.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#atomic-sentences",
+          "fragmentSha256": "f43bc351e864c43c077d278831d5234ecd7d47003a6282aaf1634a18ca6225e0"
+        }
+      ]
+    },
+    {
+      "itemId": "def-expresion-vs-oracion",
+      "section": "definitions",
+      "statement": "Expresión frente a oración: «Q∧R» sin paréntesis no es, en sentido estricto, una oración de TFL, sino una mera expresión.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#bracketing-conventions",
+          "fragmentSha256": "f97423ee5ab956939a1c5a9f60e02486a635b9ba4cf8d490d275ea2d9d560928"
+        }
+      ]
+    },
+    {
+      "itemId": "def-prueba-formal",
+      "section": "definitions",
+      "statement": "Prueba formal (derivación): una secuencia de oraciones, algunas marcadas como supuestos iniciales o premisas, cuya última línea es la conclusión.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof",
+          "fragmentSha256": "6452bbc78e14fd1645d66ba3a9167b29c4823f015bf504f60d6fb33716be4f2d"
+        }
+      ]
+    },
+    {
+      "itemId": "def-supuesto",
+      "section": "definitions",
+      "statement": "Supuesto: todo lo escrito sobre la raya de una prueba. Lo escrito debajo o se sigue de los supuestos o es un supuesto nuevo.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof",
+          "fragmentSha256": "6452bbc78e14fd1645d66ba3a9167b29c4823f015bf504f60d6fb33716be4f2d"
+        }
+      ]
+    },
+    {
+      "itemId": "def-subprueba",
+      "section": "definitions",
+      "statement": "Subprueba: prueba subsidiaria dentro de la principal, abierta con un supuesto adicional; plantea qué podría mostrarse si además se supusiera eso.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs",
+          "fragmentSha256": "df79225887718da9bd88b936a495bcda1ca3543f1c3bd87ae5b45a09e1c405e8"
+        }
+      ]
+    },
+    {
+      "itemId": "def-descarga",
+      "section": "definitions",
+      "statement": "Descarga: cerrar una subprueba es descargar sus supuestos; a partir de ahí no se puede recurrir a nada obtenido bajo el supuesto descargado.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs",
+          "fragmentSha256": "df79225887718da9bd88b936a495bcda1ca3543f1c3bd87ae5b45a09e1c405e8"
+        }
+      ]
+    },
+    {
+      "itemId": "def-contradiccion",
+      "section": "definitions",
+      "statement": "Contradicción (⊥): símbolo que se introduce cuando la prueba contiene a la vez una oración y su negación. Oficialmente se adopta como letra oracional que solo puede ser falsa.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation",
+          "fragmentSha256": "bafb2c7354db6477da53e944ec8417361ba084a275751c97fa9fd18c857eab6e"
+        }
+      ]
+    },
+    {
+      "itemId": "def-deduccion-natural",
+      "section": "definitions",
+      "statement": "Sistema de deducción natural: sistema que muestra la validez de un argumento manipulando oraciones según reglas fijadas de antemano, en vez de recorrer valuaciones.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-very-idea-of-natural-deduction",
+          "fragmentSha256": "f1e76df60b37b48d63034c91bd61ec15780d1d81b23b2b742cdb39b1c48f1693"
+        }
+      ]
+    },
+    {
+      "itemId": "def-estrategia-hacia-atras",
+      "section": "definitions",
+      "statement": "Trabajar hacia atrás: mirar el operador principal de la conclusión buscada y planear la regla de introducción de ese operador, convirtiendo sus premisas o subpruebas en las nuevas metas.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-backward-from-what-we-want",
+          "fragmentSha256": "8996be23250dbe083e1b50966e8e65bb5f17ff06c95adc682c4bfe50e99fcacd"
+        }
+      ]
+    },
+    {
+      "itemId": "def-estrategia-hacia-adelante",
+      "section": "definitions",
+      "statement": "Trabajar hacia adelante: aplicar las reglas de eliminación del operador principal de las premisas y supuestos disponibles para rellenar los pasos que faltan.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-forward-from-what-we-have",
+          "fragmentSha256": "40ade7730f0b19897563fface1061d091b0b034f748eac4ff0047354c277d7b4"
+        }
+      ]
+    },
+    {
+      "itemId": "def-estrategia-indirecta",
+      "section": "definitions",
+      "statement": "Proceder indirectamente: cuando trabajar hacia atrás y hacia adelante no da resultado, abrir una subprueba con el supuesto ¬A y buscar dentro de ella una prueba de ⊥ para cerrar con IP.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#proceed-indirectly",
+          "fragmentSha256": "c8096384379cca1663591531c5014473c7ca818077fe5509ab987f078ad9a679"
+        }
+      ]
+    },
+    {
+      "itemId": "def-falsum-comodin",
+      "section": "definitions",
+      "statement": "Comodín ⊥: una vez justificado ⊥, la regla X permite justificar cualquier cosa, de modo que ⊥ funciona como comodín dentro de la prueba.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-forward-from-ered",
+          "fragmentSha256": "ff60f180adca0e55393edfac73a4a6b0146bb66290497927c1006835922920d0"
+        }
+      ]
+    },
+    {
+      "itemId": "def-sin-receta",
+      "section": "definitions",
+      "statement": "Construcción de pruebas: no hay receta simple para encontrar una prueba ni sustituto de la práctica; lo que hay son reglas de pulgar y estrategias.",
+      "anchors": [
+        {
+          "fragmentId": "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#constructing-proofs",
+          "fragmentSha256": "5b46aca9a5deb7512bfc92379440e59f9e114b078edb97b62328d367084868ca"
+        }
+      ]
+    }
+  ]
+}

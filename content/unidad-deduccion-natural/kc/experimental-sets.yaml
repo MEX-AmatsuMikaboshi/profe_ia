@@ -1,0 +1,1076 @@
+# Propuesta de conjuntos experimentales (T-H5-12). Corrida del 2026-08-23T05:52:48.895Z. **No congelada**: freezeExperimentalSelection() exige la decisión del EXPERIMENT_AUDITOR, que solo puede aprobar o rechazar la plausibilidad de la primera propuesta.
+{
+  "generatedAt": "2026-08-23T05:52:48.895Z",
+  "status": "propuesta_ordenada_sin_congelar",
+  "calendar": {
+    "calibrationVersion": "sced-opportunity-h5-v1",
+    "kSet": 3,
+    "minValidItemsPerOpportunity": 2,
+    "plannedOpportunitiesBySet": {
+      "A": 19,
+      "B": 19,
+      "C": 19
+    }
+  },
+  "discardedProposals": [],
+  "ranking": [
+    {
+      "proposalId": "sel-por-conectivo",
+      "criterio": "Agrupa por familia de conectivo: conjunción y disyunción, condicional y bicondicional, negación y lo que depende de ⊥. Busca que cada conjunto tenga una identidad temática.",
+      "formalCrossEdges": [],
+      "contentPolicyCrossEdges": [],
+      "otherCrossEdges": [
+        {
+          "from": "KC18",
+          "to": "KC03",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC04",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC05",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC07",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC10",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC11",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC12",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC13",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC16",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC17",
+          "type": "PEDAGOGICA"
+        }
+      ],
+      "carryoverRiskEdges": [],
+      "sharedGeneralStrategyCount": 36,
+      "maximumComplexityDifference": 86.596326,
+      "complexityInterpretation": "structurally_comparable_not_psychometrically_equivalent",
+      "complexityBySet": [
+        {
+          "setId": "A",
+          "itemCount": 162,
+          "minIndex": 0,
+          "maxIndex": 82.15309,
+          "meanIndex": 29.996113
+        },
+        {
+          "setId": "B",
+          "itemCount": 190,
+          "minIndex": 3.888661,
+          "maxIndex": 77.947196,
+          "meanIndex": 43.091631
+        },
+        {
+          "setId": "C",
+          "itemCount": 190,
+          "minIndex": 3.510029,
+          "maxIndex": 86.596326,
+          "meanIndex": 44.542652
+        }
+      ],
+      "nominalProbeItemsBySet": {
+        "A": 57,
+        "B": 57,
+        "C": 57
+      },
+      "sets": [
+        {
+          "setId": "A",
+          "targetKcs": [
+            "KC03",
+            "KC04",
+            "KC05",
+            "KC07",
+            "KC13"
+          ],
+          "supportKcs": [
+            "KC01",
+            "KC02",
+            "KC08"
+          ],
+          "authorizedCalculusVersion": "authorized-calculus-v1"
+        },
+        {
+          "setId": "B",
+          "targetKcs": [
+            "KC06",
+            "KC09",
+            "KC14",
+            "KC15",
+            "KC18"
+          ],
+          "supportKcs": [
+            "KC01",
+            "KC02",
+            "KC03",
+            "KC04",
+            "KC05",
+            "KC07",
+            "KC08",
+            "KC10",
+            "KC11",
+            "KC12",
+            "KC13",
+            "KC16",
+            "KC17"
+          ],
+          "authorizedCalculusVersion": "authorized-calculus-v1"
+        },
+        {
+          "setId": "C",
+          "targetKcs": [
+            "KC10",
+            "KC11",
+            "KC12",
+            "KC16",
+            "KC17"
+          ],
+          "supportKcs": [
+            "KC01",
+            "KC02",
+            "KC08"
+          ],
+          "authorizedCalculusVersion": "authorized-calculus-v1"
+        }
+      ],
+      "probeCountsBySet": {
+        "A": 112,
+        "B": 140,
+        "C": 140
+      },
+      "transferMeasurementCountsBySet": {
+        "A": 10,
+        "B": 10,
+        "C": 10
+      },
+      "crossEdgeJustifications": []
+    },
+    {
+      "proposalId": "sel-topologica",
+      "criterio": "Bloques consecutivos del orden de enseñanza. Toda dependencia cruzada apunta hacia atrás, que es la dirección en la que el alumno ya vio el prerrequisito.",
+      "formalCrossEdges": [
+        {
+          "from": "KC14",
+          "to": "KC09",
+          "type": "FORMAL"
+        },
+        {
+          "from": "KC17",
+          "to": "KC10",
+          "type": "FORMAL"
+        }
+      ],
+      "contentPolicyCrossEdges": [],
+      "otherCrossEdges": [
+        {
+          "from": "KC13",
+          "to": "KC07",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC15",
+          "to": "KC06",
+          "type": "CONCEPTUAL_ANALOGICA"
+        },
+        {
+          "from": "KC16",
+          "to": "KC10",
+          "type": "CONCEPTUAL_ANALOGICA"
+        },
+        {
+          "from": "KC16",
+          "to": "KC11",
+          "type": "CONCEPTUAL_ANALOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC03",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC04",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC05",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC06",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC07",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC09",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC10",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC11",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC12",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC13",
+          "type": "PEDAGOGICA"
+        }
+      ],
+      "carryoverRiskEdges": [
+        {
+          "from": "KC14",
+          "to": "KC09",
+          "type": "FORMAL"
+        },
+        {
+          "from": "KC17",
+          "to": "KC10",
+          "type": "FORMAL"
+        }
+      ],
+      "sharedGeneralStrategyCount": 36,
+      "maximumComplexityDifference": 86.596326,
+      "complexityInterpretation": "structurally_comparable_not_psychometrically_equivalent",
+      "complexityBySet": [
+        {
+          "setId": "A",
+          "itemCount": 162,
+          "minIndex": 0,
+          "maxIndex": 69.030381,
+          "meanIndex": 20.120891
+        },
+        {
+          "setId": "B",
+          "itemCount": 190,
+          "minIndex": 5.485059,
+          "maxIndex": 82.15309,
+          "meanIndex": 51.336419
+        },
+        {
+          "setId": "C",
+          "itemCount": 190,
+          "minIndex": 3.510029,
+          "maxIndex": 86.596326,
+          "meanIndex": 44.717791
+        }
+      ],
+      "nominalProbeItemsBySet": {
+        "A": 57,
+        "B": 57,
+        "C": 57
+      },
+      "sets": [
+        {
+          "setId": "A",
+          "targetKcs": [
+            "KC03",
+            "KC04",
+            "KC05",
+            "KC06",
+            "KC07"
+          ],
+          "supportKcs": [
+            "KC01",
+            "KC02",
+            "KC08"
+          ],
+          "authorizedCalculusVersion": "authorized-calculus-v1"
+        },
+        {
+          "setId": "B",
+          "targetKcs": [
+            "KC09",
+            "KC10",
+            "KC11",
+            "KC12",
+            "KC13"
+          ],
+          "supportKcs": [
+            "KC01",
+            "KC02",
+            "KC07",
+            "KC08"
+          ],
+          "authorizedCalculusVersion": "authorized-calculus-v1"
+        },
+        {
+          "setId": "C",
+          "targetKcs": [
+            "KC14",
+            "KC15",
+            "KC16",
+            "KC17",
+            "KC18"
+          ],
+          "supportKcs": [
+            "KC01",
+            "KC02",
+            "KC03",
+            "KC04",
+            "KC05",
+            "KC06",
+            "KC07",
+            "KC08",
+            "KC09",
+            "KC10",
+            "KC11",
+            "KC12",
+            "KC13"
+          ],
+          "authorizedCalculusVersion": "authorized-calculus-v1"
+        }
+      ],
+      "probeCountsBySet": {
+        "A": 112,
+        "B": 140,
+        "C": 140
+      },
+      "transferMeasurementCountsBySet": {
+        "A": 10,
+        "B": 10,
+        "C": 10
+      },
+      "crossEdgeJustifications": [
+        {
+          "from": "KC14",
+          "to": "KC09",
+          "type": "FORMAL",
+          "explanation": "KC14 (Introducción del bicondicional `↔I`) depende de KC09 (Introducción del condicional `→I`) por una arista FORMAL y quedan en conjuntos distintos. La dependencia se enseña antes, así que el alumno llega al conjunto posterior con el prerrequisito ya practicado: el efecto medido incluye ese arrastre y se interpreta como tal, no como efecto puro del KC objetivo.",
+          "carryoverRiskAcknowledged": true,
+          "retentionCompatibility": "La retención se mide con la reserva `retention`, disjunta de la práctica del prerrequisito (§7.7), así que el arrastre afecta a la interpretación del efecto y no contamina el material con el que se mide."
+        },
+        {
+          "from": "KC17",
+          "to": "KC10",
+          "type": "FORMAL",
+          "explanation": "KC17 (Prueba indirecta `IP` — RAA clásica) depende de KC10 (Obtención de `⊥` mediante `¬E`) por una arista FORMAL y quedan en conjuntos distintos. La dependencia se enseña antes, así que el alumno llega al conjunto posterior con el prerrequisito ya practicado: el efecto medido incluye ese arrastre y se interpreta como tal, no como efecto puro del KC objetivo.",
+          "carryoverRiskAcknowledged": true,
+          "retentionCompatibility": "La retención se mide con la reserva `retention`, disjunta de la práctica del prerrequisito (§7.7), así que el arrastre afecta a la interpretación del efecto y no contamina el material con el que se mide."
+        }
+      ]
+    },
+    {
+      "proposalId": "sel-alterna",
+      "criterio": "Reparto alterno por posición en la secuencia. Control: si una partición que ignora la estructura del mapa saliera bien ordenada, el criterio de orden no estaría midiendo nada.",
+      "formalCrossEdges": [
+        {
+          "from": "KC11",
+          "to": "KC10",
+          "type": "FORMAL"
+        },
+        {
+          "from": "KC14",
+          "to": "KC09",
+          "type": "FORMAL"
+        },
+        {
+          "from": "KC17",
+          "to": "KC10",
+          "type": "FORMAL"
+        }
+      ],
+      "contentPolicyCrossEdges": [
+        {
+          "from": "KC12",
+          "to": "KC10",
+          "type": "POLITICA_CONTENIDO"
+        }
+      ],
+      "otherCrossEdges": [
+        {
+          "from": "KC13",
+          "to": "KC07",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC15",
+          "to": "KC06",
+          "type": "CONCEPTUAL_ANALOGICA"
+        },
+        {
+          "from": "KC16",
+          "to": "KC11",
+          "type": "CONCEPTUAL_ANALOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC03",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC05",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC06",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC09",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC10",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC11",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC13",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC14",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC16",
+          "type": "PEDAGOGICA"
+        },
+        {
+          "from": "KC18",
+          "to": "KC17",
+          "type": "PEDAGOGICA"
+        }
+      ],
+      "carryoverRiskEdges": [],
+      "sharedGeneralStrategyCount": 36,
+      "maximumComplexityDifference": 86.596326,
+      "complexityInterpretation": "structurally_comparable_not_psychometrically_equivalent",
+      "complexityBySet": [
+        {
+          "setId": "A",
+          "itemCount": 162,
+          "minIndex": 3.888661,
+          "maxIndex": 86.596326,
+          "meanIndex": 51.776472
+        },
+        {
+          "setId": "B",
+          "itemCount": 190,
+          "minIndex": 0,
+          "maxIndex": 71.356938,
+          "meanIndex": 33.277697
+        },
+        {
+          "setId": "C",
+          "itemCount": 190,
+          "minIndex": 0,
+          "maxIndex": 82.15309,
+          "meanIndex": 35.785965
+        }
+      ],
+      "nominalProbeItemsBySet": {
+        "A": 57,
+        "B": 57,
+        "C": 57
+      },
+      "sets": [
+        {
+          "setId": "A",
+          "targetKcs": [
+            "KC03",
+            "KC06",
+            "KC11",
+            "KC14",
+            "KC17"
+          ],
+          "supportKcs": [
+            "KC01",
+            "KC02",
+            "KC08",
+            "KC09",
+            "KC10"
+          ],
+          "authorizedCalculusVersion": "authorized-calculus-v1"
+        },
+        {
+          "setId": "B",
+          "targetKcs": [
+            "KC04",
+            "KC07",
+            "KC12",
+            "KC15",
+            "KC18"
+          ],
+          "supportKcs": [
+            "KC01",
+            "KC02",
+            "KC03",
+            "KC05",
+            "KC06",
+            "KC08",
+            "KC09",
+            "KC10",
+            "KC11",
+            "KC13",
+            "KC14",
+            "KC16",
+            "KC17"
+          ],
+          "authorizedCalculusVersion": "authorized-calculus-v1"
+        },
+        {
+          "setId": "C",
+          "targetKcs": [
+            "KC05",
+            "KC09",
+            "KC10",
+            "KC13",
+            "KC16"
+          ],
+          "supportKcs": [
+            "KC01",
+            "KC02",
+            "KC07",
+            "KC08",
+            "KC11"
+          ],
+          "authorizedCalculusVersion": "authorized-calculus-v1"
+        }
+      ],
+      "probeCountsBySet": {
+        "A": 112,
+        "B": 140,
+        "C": 140
+      },
+      "transferMeasurementCountsBySet": {
+        "A": 10,
+        "B": 10,
+        "C": 10
+      },
+      "crossEdgeJustifications": [
+        {
+          "from": "KC11",
+          "to": "KC10",
+          "type": "FORMAL",
+          "explanation": "KC11 (Introducción de negación `¬I`) depende de KC10 (Obtención de `⊥` mediante `¬E`) por una arista FORMAL y quedan en conjuntos distintos. La dependencia se enseña después, lo que obliga a apoyarla como KC de soporte dentro de este conjunto en vez de darla por practicada.",
+          "carryoverRiskAcknowledged": false,
+          "retentionCompatibility": "La retención se mide con la reserva `retention`, disjunta de la práctica del prerrequisito (§7.7), así que el arrastre afecta a la interpretación del efecto y no contamina el material con el que se mide."
+        },
+        {
+          "from": "KC12",
+          "to": "KC10",
+          "type": "POLITICA_CONTENIDO",
+          "explanation": "KC12 (Explosión `X` (`⊥E`)) depende de KC10 (Obtención de `⊥` mediante `¬E`) por una arista POLITICA_CONTENIDO y quedan en conjuntos distintos. La dependencia se enseña después, lo que obliga a apoyarla como KC de soporte dentro de este conjunto en vez de darla por practicada.",
+          "carryoverRiskAcknowledged": false,
+          "retentionCompatibility": "La retención se mide con la reserva `retention`, disjunta de la práctica del prerrequisito (§7.7), así que el arrastre afecta a la interpretación del efecto y no contamina el material con el que se mide."
+        },
+        {
+          "from": "KC14",
+          "to": "KC09",
+          "type": "FORMAL",
+          "explanation": "KC14 (Introducción del bicondicional `↔I`) depende de KC09 (Introducción del condicional `→I`) por una arista FORMAL y quedan en conjuntos distintos. La dependencia se enseña después, lo que obliga a apoyarla como KC de soporte dentro de este conjunto en vez de darla por practicada.",
+          "carryoverRiskAcknowledged": false,
+          "retentionCompatibility": "La retención se mide con la reserva `retention`, disjunta de la práctica del prerrequisito (§7.7), así que el arrastre afecta a la interpretación del efecto y no contamina el material con el que se mide."
+        },
+        {
+          "from": "KC17",
+          "to": "KC10",
+          "type": "FORMAL",
+          "explanation": "KC17 (Prueba indirecta `IP` — RAA clásica) depende de KC10 (Obtención de `⊥` mediante `¬E`) por una arista FORMAL y quedan en conjuntos distintos. La dependencia se enseña después, lo que obliga a apoyarla como KC de soporte dentro de este conjunto en vez de darla por practicada.",
+          "carryoverRiskAcknowledged": false,
+          "retentionCompatibility": "La retención se mide con la reserva `retention`, disjunta de la práctica del prerrequisito (§7.7), así que el arrastre afecta a la interpretación del efecto y no contamina el material con el que se mide."
+        }
+      ]
+    }
+  ],
+  "leadingProposalId": "sel-por-conectivo",
+  "leadingProposalInventory": {
+    "probeInventoryItemIdsBySet": {
+      "A": [
+        "kc04-probes_baseline-1",
+        "kc04-probes_baseline-2",
+        "kc04-probes_baseline-3",
+        "kc04-probes_baseline-4",
+        "kc04-probes_baseline-5",
+        "kc04-probes_baseline-6",
+        "kc04-probes_baseline-7",
+        "kc04-probes_baseline-8",
+        "kc04-probes_baseline-9",
+        "kc04-probes_baseline-10",
+        "kc04-probes_baseline-11",
+        "kc04-probes_baseline-12",
+        "kc04-probes_baseline-13",
+        "kc04-probes_baseline-14",
+        "kc04-probes_intervention-1",
+        "kc04-probes_intervention-2",
+        "kc04-probes_intervention-3",
+        "kc04-probes_intervention-4",
+        "kc04-probes_intervention-5",
+        "kc04-probes_intervention-6",
+        "kc04-probes_intervention-7",
+        "kc04-probes_intervention-8",
+        "kc04-probes_intervention-9",
+        "kc04-probes_intervention-10",
+        "kc04-probes_intervention-11",
+        "kc04-probes_intervention-12",
+        "kc04-probes_intervention-13",
+        "kc04-probes_intervention-14",
+        "kc05-probes_baseline-1",
+        "kc05-probes_baseline-2",
+        "kc05-probes_baseline-3",
+        "kc05-probes_baseline-4",
+        "kc05-probes_baseline-5",
+        "kc05-probes_baseline-6",
+        "kc05-probes_baseline-7",
+        "kc05-probes_baseline-8",
+        "kc05-probes_baseline-9",
+        "kc05-probes_baseline-10",
+        "kc05-probes_baseline-11",
+        "kc05-probes_baseline-12",
+        "kc05-probes_baseline-13",
+        "kc05-probes_baseline-14",
+        "kc05-probes_intervention-1",
+        "kc05-probes_intervention-2",
+        "kc05-probes_intervention-3",
+        "kc05-probes_intervention-4",
+        "kc05-probes_intervention-5",
+        "kc05-probes_intervention-6",
+        "kc05-probes_intervention-7",
+        "kc05-probes_intervention-8",
+        "kc05-probes_intervention-9",
+        "kc05-probes_intervention-10",
+        "kc05-probes_intervention-11",
+        "kc05-probes_intervention-12",
+        "kc05-probes_intervention-13",
+        "kc05-probes_intervention-14",
+        "kc07-probes_baseline-1",
+        "kc07-probes_baseline-2",
+        "kc07-probes_baseline-3",
+        "kc07-probes_baseline-4",
+        "kc07-probes_baseline-5",
+        "kc07-probes_baseline-6",
+        "kc07-probes_baseline-7",
+        "kc07-probes_baseline-8",
+        "kc07-probes_baseline-9",
+        "kc07-probes_baseline-10",
+        "kc07-probes_baseline-11",
+        "kc07-probes_baseline-12",
+        "kc07-probes_baseline-13",
+        "kc07-probes_baseline-14",
+        "kc07-probes_intervention-1",
+        "kc07-probes_intervention-2",
+        "kc07-probes_intervention-3",
+        "kc07-probes_intervention-4",
+        "kc07-probes_intervention-5",
+        "kc07-probes_intervention-6",
+        "kc07-probes_intervention-7",
+        "kc07-probes_intervention-8",
+        "kc07-probes_intervention-9",
+        "kc07-probes_intervention-10",
+        "kc07-probes_intervention-11",
+        "kc07-probes_intervention-12",
+        "kc07-probes_intervention-13",
+        "kc07-probes_intervention-14",
+        "kc13-probes_baseline-1",
+        "kc13-probes_baseline-2",
+        "kc13-probes_baseline-3",
+        "kc13-probes_baseline-4",
+        "kc13-probes_baseline-5",
+        "kc13-probes_baseline-6",
+        "kc13-probes_baseline-7",
+        "kc13-probes_baseline-8",
+        "kc13-probes_baseline-9",
+        "kc13-probes_baseline-10",
+        "kc13-probes_baseline-11",
+        "kc13-probes_baseline-12",
+        "kc13-probes_baseline-13",
+        "kc13-probes_baseline-14",
+        "kc13-probes_intervention-1",
+        "kc13-probes_intervention-2",
+        "kc13-probes_intervention-3",
+        "kc13-probes_intervention-4",
+        "kc13-probes_intervention-5",
+        "kc13-probes_intervention-6",
+        "kc13-probes_intervention-7",
+        "kc13-probes_intervention-8",
+        "kc13-probes_intervention-9",
+        "kc13-probes_intervention-10",
+        "kc13-probes_intervention-11",
+        "kc13-probes_intervention-12",
+        "kc13-probes_intervention-13",
+        "kc13-probes_intervention-14"
+      ],
+      "B": [
+        "kc06-probes_baseline-1",
+        "kc06-probes_baseline-2",
+        "kc06-probes_baseline-3",
+        "kc06-probes_baseline-4",
+        "kc06-probes_baseline-5",
+        "kc06-probes_baseline-6",
+        "kc06-probes_baseline-7",
+        "kc06-probes_baseline-8",
+        "kc06-probes_baseline-9",
+        "kc06-probes_baseline-10",
+        "kc06-probes_baseline-11",
+        "kc06-probes_baseline-12",
+        "kc06-probes_baseline-13",
+        "kc06-probes_baseline-14",
+        "kc06-probes_intervention-1",
+        "kc06-probes_intervention-2",
+        "kc06-probes_intervention-3",
+        "kc06-probes_intervention-4",
+        "kc06-probes_intervention-5",
+        "kc06-probes_intervention-6",
+        "kc06-probes_intervention-7",
+        "kc06-probes_intervention-8",
+        "kc06-probes_intervention-9",
+        "kc06-probes_intervention-10",
+        "kc06-probes_intervention-11",
+        "kc06-probes_intervention-12",
+        "kc06-probes_intervention-13",
+        "kc06-probes_intervention-14",
+        "kc09-probes_baseline-1",
+        "kc09-probes_baseline-2",
+        "kc09-probes_baseline-3",
+        "kc09-probes_baseline-4",
+        "kc09-probes_baseline-5",
+        "kc09-probes_baseline-6",
+        "kc09-probes_baseline-7",
+        "kc09-probes_baseline-8",
+        "kc09-probes_baseline-9",
+        "kc09-probes_baseline-10",
+        "kc09-probes_baseline-11",
+        "kc09-probes_baseline-12",
+        "kc09-probes_baseline-13",
+        "kc09-probes_baseline-14",
+        "kc09-probes_intervention-1",
+        "kc09-probes_intervention-2",
+        "kc09-probes_intervention-3",
+        "kc09-probes_intervention-4",
+        "kc09-probes_intervention-5",
+        "kc09-probes_intervention-6",
+        "kc09-probes_intervention-7",
+        "kc09-probes_intervention-8",
+        "kc09-probes_intervention-9",
+        "kc09-probes_intervention-10",
+        "kc09-probes_intervention-11",
+        "kc09-probes_intervention-12",
+        "kc09-probes_intervention-13",
+        "kc09-probes_intervention-14",
+        "kc14-probes_baseline-1",
+        "kc14-probes_baseline-2",
+        "kc14-probes_baseline-3",
+        "kc14-probes_baseline-4",
+        "kc14-probes_baseline-5",
+        "kc14-probes_baseline-6",
+        "kc14-probes_baseline-7",
+        "kc14-probes_baseline-8",
+        "kc14-probes_baseline-9",
+        "kc14-probes_baseline-10",
+        "kc14-probes_baseline-11",
+        "kc14-probes_baseline-12",
+        "kc14-probes_baseline-13",
+        "kc14-probes_baseline-14",
+        "kc14-probes_intervention-1",
+        "kc14-probes_intervention-2",
+        "kc14-probes_intervention-3",
+        "kc14-probes_intervention-4",
+        "kc14-probes_intervention-5",
+        "kc14-probes_intervention-6",
+        "kc14-probes_intervention-7",
+        "kc14-probes_intervention-8",
+        "kc14-probes_intervention-9",
+        "kc14-probes_intervention-10",
+        "kc14-probes_intervention-11",
+        "kc14-probes_intervention-12",
+        "kc14-probes_intervention-13",
+        "kc14-probes_intervention-14",
+        "kc15-probes_baseline-1",
+        "kc15-probes_baseline-2",
+        "kc15-probes_baseline-3",
+        "kc15-probes_baseline-4",
+        "kc15-probes_baseline-5",
+        "kc15-probes_baseline-6",
+        "kc15-probes_baseline-7",
+        "kc15-probes_baseline-8",
+        "kc15-probes_baseline-9",
+        "kc15-probes_baseline-10",
+        "kc15-probes_baseline-11",
+        "kc15-probes_baseline-12",
+        "kc15-probes_baseline-13",
+        "kc15-probes_baseline-14",
+        "kc15-probes_intervention-1",
+        "kc15-probes_intervention-2",
+        "kc15-probes_intervention-3",
+        "kc15-probes_intervention-4",
+        "kc15-probes_intervention-5",
+        "kc15-probes_intervention-6",
+        "kc15-probes_intervention-7",
+        "kc15-probes_intervention-8",
+        "kc15-probes_intervention-9",
+        "kc15-probes_intervention-10",
+        "kc15-probes_intervention-11",
+        "kc15-probes_intervention-12",
+        "kc15-probes_intervention-13",
+        "kc15-probes_intervention-14",
+        "kc18-probes_baseline-1",
+        "kc18-probes_baseline-2",
+        "kc18-probes_baseline-3",
+        "kc18-probes_baseline-4",
+        "kc18-probes_baseline-5",
+        "kc18-probes_baseline-6",
+        "kc18-probes_baseline-7",
+        "kc18-probes_baseline-8",
+        "kc18-probes_baseline-9",
+        "kc18-probes_baseline-10",
+        "kc18-probes_baseline-11",
+        "kc18-probes_baseline-12",
+        "kc18-probes_baseline-13",
+        "kc18-probes_baseline-14",
+        "kc18-probes_intervention-1",
+        "kc18-probes_intervention-2",
+        "kc18-probes_intervention-3",
+        "kc18-probes_intervention-4",
+        "kc18-probes_intervention-5",
+        "kc18-probes_intervention-6",
+        "kc18-probes_intervention-7",
+        "kc18-probes_intervention-8",
+        "kc18-probes_intervention-9",
+        "kc18-probes_intervention-10",
+        "kc18-probes_intervention-11",
+        "kc18-probes_intervention-12",
+        "kc18-probes_intervention-13",
+        "kc18-probes_intervention-14"
+      ],
+      "C": [
+        "kc10-probes_baseline-1",
+        "kc10-probes_baseline-2",
+        "kc10-probes_baseline-3",
+        "kc10-probes_baseline-4",
+        "kc10-probes_baseline-5",
+        "kc10-probes_baseline-6",
+        "kc10-probes_baseline-7",
+        "kc10-probes_baseline-8",
+        "kc10-probes_baseline-9",
+        "kc10-probes_baseline-10",
+        "kc10-probes_baseline-11",
+        "kc10-probes_baseline-12",
+        "kc10-probes_baseline-13",
+        "kc10-probes_baseline-14",
+        "kc10-probes_intervention-1",
+        "kc10-probes_intervention-2",
+        "kc10-probes_intervention-3",
+        "kc10-probes_intervention-4",
+        "kc10-probes_intervention-5",
+        "kc10-probes_intervention-6",
+        "kc10-probes_intervention-7",
+        "kc10-probes_intervention-8",
+        "kc10-probes_intervention-9",
+        "kc10-probes_intervention-10",
+        "kc10-probes_intervention-11",
+        "kc10-probes_intervention-12",
+        "kc10-probes_intervention-13",
+        "kc10-probes_intervention-14",
+        "kc11-probes_baseline-1",
+        "kc11-probes_baseline-2",
+        "kc11-probes_baseline-3",
+        "kc11-probes_baseline-4",
+        "kc11-probes_baseline-5",
+        "kc11-probes_baseline-6",
+        "kc11-probes_baseline-7",
+        "kc11-probes_baseline-8",
+        "kc11-probes_baseline-9",
+        "kc11-probes_baseline-10",
+        "kc11-probes_baseline-11",
+        "kc11-probes_baseline-12",
+        "kc11-probes_baseline-13",
+        "kc11-probes_baseline-14",
+        "kc11-probes_intervention-1",
+        "kc11-probes_intervention-2",
+        "kc11-probes_intervention-3",
+        "kc11-probes_intervention-4",
+        "kc11-probes_intervention-5",
+        "kc11-probes_intervention-6",
+        "kc11-probes_intervention-7",
+        "kc11-probes_intervention-8",
+        "kc11-probes_intervention-9",
+        "kc11-probes_intervention-10",
+        "kc11-probes_intervention-11",
+        "kc11-probes_intervention-12",
+        "kc11-probes_intervention-13",
+        "kc11-probes_intervention-14",
+        "kc12-probes_baseline-1",
+        "kc12-probes_baseline-2",
+        "kc12-probes_baseline-3",
+        "kc12-probes_baseline-4",
+        "kc12-probes_baseline-5",
+        "kc12-probes_baseline-6",
+        "kc12-probes_baseline-7",
+        "kc12-probes_baseline-8",
+        "kc12-probes_baseline-9",
+        "kc12-probes_baseline-10",
+        "kc12-probes_baseline-11",
+        "kc12-probes_baseline-12",
+        "kc12-probes_baseline-13",
+        "kc12-probes_baseline-14",
+        "kc12-probes_intervention-1",
+        "kc12-probes_intervention-2",
+        "kc12-probes_intervention-3",
+        "kc12-probes_intervention-4",
+        "kc12-probes_intervention-5",
+        "kc12-probes_intervention-6",
+        "kc12-probes_intervention-7",
+        "kc12-probes_intervention-8",
+        "kc12-probes_intervention-9",
+        "kc12-probes_intervention-10",
+        "kc12-probes_intervention-11",
+        "kc12-probes_intervention-12",
+        "kc12-probes_intervention-13",
+        "kc12-probes_intervention-14",
+        "kc16-probes_baseline-1",
+        "kc16-probes_baseline-2",
+        "kc16-probes_baseline-3",
+        "kc16-probes_baseline-4",
+        "kc16-probes_baseline-5",
+        "kc16-probes_baseline-6",
+        "kc16-probes_baseline-7",
+        "kc16-probes_baseline-8",
+        "kc16-probes_baseline-9",
+        "kc16-probes_baseline-10",
+        "kc16-probes_baseline-11",
+        "kc16-probes_baseline-12",
+        "kc16-probes_baseline-13",
+        "kc16-probes_baseline-14",
+        "kc16-probes_intervention-1",
+        "kc16-probes_intervention-2",
+        "kc16-probes_intervention-3",
+        "kc16-probes_intervention-4",
+        "kc16-probes_intervention-5",
+        "kc16-probes_intervention-6",
+        "kc16-probes_intervention-7",
+        "kc16-probes_intervention-8",
+        "kc16-probes_intervention-9",
+        "kc16-probes_intervention-10",
+        "kc16-probes_intervention-11",
+        "kc16-probes_intervention-12",
+        "kc16-probes_intervention-13",
+        "kc16-probes_intervention-14",
+        "kc17-probes_baseline-1",
+        "kc17-probes_baseline-2",
+        "kc17-probes_baseline-3",
+        "kc17-probes_baseline-4",
+        "kc17-probes_baseline-5",
+        "kc17-probes_baseline-6",
+        "kc17-probes_baseline-7",
+        "kc17-probes_baseline-8",
+        "kc17-probes_baseline-9",
+        "kc17-probes_baseline-10",
+        "kc17-probes_baseline-11",
+        "kc17-probes_baseline-12",
+        "kc17-probes_baseline-13",
+        "kc17-probes_baseline-14",
+        "kc17-probes_intervention-1",
+        "kc17-probes_intervention-2",
+        "kc17-probes_intervention-3",
+        "kc17-probes_intervention-4",
+        "kc17-probes_intervention-5",
+        "kc17-probes_intervention-6",
+        "kc17-probes_intervention-7",
+        "kc17-probes_intervention-8",
+        "kc17-probes_intervention-9",
+        "kc17-probes_intervention-10",
+        "kc17-probes_intervention-11",
+        "kc17-probes_intervention-12",
+        "kc17-probes_intervention-13",
+        "kc17-probes_intervention-14"
+      ]
+    },
+    "transferMeasurementItemIdsBySet": {
+      "A": [
+        "kc03-transfer_measurement-1",
+        "kc03-transfer_measurement-2",
+        "kc04-transfer_measurement-1",
+        "kc04-transfer_measurement-2",
+        "kc05-transfer_measurement-1",
+        "kc05-transfer_measurement-2",
+        "kc07-transfer_measurement-1",
+        "kc07-transfer_measurement-2",
+        "kc13-transfer_measurement-1",
+        "kc13-transfer_measurement-2"
+      ],
+      "B": [
+        "kc06-transfer_measurement-1",
+        "kc06-transfer_measurement-2",
+        "kc09-transfer_measurement-1",
+        "kc09-transfer_measurement-2",
+        "kc14-transfer_measurement-1",
+        "kc14-transfer_measurement-2",
+        "kc15-transfer_measurement-1",
+        "kc15-transfer_measurement-2",
+        "kc18-transfer_measurement-1",
+        "kc18-transfer_measurement-2"
+      ],
+      "C": [
+        "kc10-transfer_measurement-1",
+        "kc10-transfer_measurement-2",
+        "kc11-transfer_measurement-1",
+        "kc11-transfer_measurement-2",
+        "kc12-transfer_measurement-1",
+        "kc12-transfer_measurement-2",
+        "kc16-transfer_measurement-1",
+        "kc16-transfer_measurement-2",
+        "kc17-transfer_measurement-1",
+        "kc17-transfer_measurement-2"
+      ]
+    }
+  }
+}

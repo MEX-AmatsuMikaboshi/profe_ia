@@ -1,0 +1,2605 @@
+# Submuestra preinscrita para el segundo auditor independiente (T-H5-14, Maestro §11.7). Armada el 2026-08-23T05:54:17.662Z con la semilla w4-segundo-auditor-v1. **Paquete ciego** (§13.4): no lleva el veredicto del sistema ni metadatos de generador. Contiene soluciones: no debe entregarse a ningún modelo que vaya a conducir sesiones sobre este banco.
+{
+  "packetId": "w4-second-auditor-w4-segundo-auditor-v1",
+  "builtAt": "2026-08-23T05:54:17.662Z",
+  "seed": "w4-segundo-auditor-v1",
+  "selectionRule": "Un reactivo de enseñanza y uno de medición por cada uno de los dieciocho KC, elegidos por el menor SHA-256 de «semilla:artifactId» dentro de su estrato. Declarado antes de mirar: elegir a mano qué se audita permite auditar justo lo que ya se sabe bueno.",
+  "blinding": "Primera pasada ciega. No se incluye el veredicto de la auditoría previa, ni la familia del modelo generador, ni las banderas del crítico interno.",
+  "strataWithoutCoverage": [],
+  "codebook": {
+    "version": "audit-codebook-v1",
+    "critical": [
+      "incorrect_solution",
+      "item_without_valid_solution",
+      "solution_leak",
+      "corpus_contradiction",
+      "accepts_invalid_answer",
+      "reused_or_contaminated_probe"
+    ],
+    "major": [
+      "answer_changing_ambiguity",
+      "difficulty_outside_declared_level",
+      "hint_practically_solves",
+      "incorrect_kc_label",
+      "inapplicable_rubric"
+    ],
+    "minor": [
+      "wording_without_interpretation_change",
+      "inconsistent_format",
+      "recoverable_incomplete_anchor",
+      "stylistic_detail"
+    ],
+    "whatToLookFor": {
+      "incorrect_solution": "La derivación adjunta ¿es correcta? ¿Alguna línea cita mal o no se sigue?",
+      "item_without_valid_solution": "¿Existe derivación válida para lo que el enunciado pide?",
+      "solution_leak": "¿El enunciado o alguna pista escribe un paso de la solución que no esté ya a la vista?",
+      "corpus_contradiction": "¿El reactivo afirma algo que contradiga el material del curso?",
+      "accepts_invalid_answer": "¿La forma en que está planteado admitiría como buena una respuesta que no lo es?",
+      "reused_or_contaminated_probe": "¿Esta sonda de medición repite, con otros nombres, un reactivo que el alumno ya practicó?",
+      "answer_changing_ambiguity": "¿El enunciado admite dos lecturas que llevan a respuestas distintas?",
+      "difficulty_outside_declared_level": "¿La dificultad real corresponde al nivel declarado (baja/media/alta)?",
+      "hint_practically_solves": "¿Alguna pista resuelve el reactivo en la práctica en vez de orientar?",
+      "incorrect_kc_label": "¿La derivación ejercita de verdad la regla que el reactivo dice enseñar? Es el defecto que ya apareció una vez.",
+      "inapplicable_rubric": "¿La rúbrica declarada sirve para puntuar esta respuesta?",
+      "wording_without_interpretation_change": "Redacción mejorable que no cambia lo que se entiende.",
+      "inconsistent_format": "Formato o notación distintos de los del resto del banco.",
+      "recoverable_incomplete_anchor": "Una pista cita el material del curso de forma incompleta pero recuperable.",
+      "stylistic_detail": "Detalle de estilo, sin consecuencia."
+    },
+    "severityRule": "La severidad se fundamenta en tres preguntas (Maestro §11.7): si el defecto puede cambiar la respuesta o el veredicto; si puede contaminar la medición, revelar una solución o enseñar una regla falsa; y si parece local o señal de causa común del generador."
+  },
+  "calculus": {
+    "version": "authorized-calculus-v1",
+    "rules": "Deducción natural proposicional en formato Fitch. Reglas autorizadas: R, ∧I, ∧E, ∨I, ∨E, →I, →E, ↔I, ↔E, ¬I, ¬E, X, DNE, IP, PR (premisa), AS (supuesto). No hay precedencia entre conectivos binarios: los paréntesis son obligatorios salvo los externos. Están prohibidas conmutativa, asociativa y las formas normales."
+  },
+  "artifactCount": 36,
+  "artifacts": [
+    {
+      "artifactId": "kc01-guia",
+      "kcId": "KC01",
+      "kcName": "Fórmulas bien formadas, conectivos y corchetes del cálculo",
+      "declaredRuleId": null,
+      "side": "ensenanza",
+      "bankFunction": "guided_practice",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "(D∧E)∧F"
+        ],
+        "goal": "D∧(E∧F)"
+      },
+      "promptText": "Deriva D∧(E∧F) a partir de (D∧E)∧F usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "(D∧E)∧F",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "D∧E",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "D",
+          "rule": "∧E",
+          "refs": [
+            2
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "E",
+          "rule": "∧E",
+          "refs": [
+            2
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "F",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "E∧F",
+          "rule": "∧I",
+          "refs": [
+            4,
+            5
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "D∧(E∧F)",
+          "rule": "∧I",
+          "refs": [
+            3,
+            6
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc01-retention-1",
+      "kcId": "KC01",
+      "kcName": "Fórmulas bien formadas, conectivos y corchetes del cálculo",
+      "declaredRuleId": null,
+      "side": "medicion",
+      "bankFunction": "retention",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "(A∧B)∧C",
+          "D"
+        ],
+        "goal": "(C∧D)∧B"
+      },
+      "promptText": "Deriva (C∧D)∧B a partir de (A∧B)∧C, D usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "(A∧B)∧C",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "D",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "C",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "C∧D",
+          "rule": "∧I",
+          "refs": [
+            3,
+            2
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "A∧B",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "B",
+          "rule": "∧E",
+          "refs": [
+            5
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "(C∧D)∧B",
+          "rule": "∧I",
+          "refs": [
+            4,
+            6
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc02-indep",
+      "kcId": "KC02",
+      "kcName": "Notación Fitch, citas de líneas y lectura de subpruebas",
+      "declaredRuleId": null,
+      "side": "ensenanza",
+      "bankFunction": "independent_practice",
+      "declaredComplexity": "media",
+      "measuredComplexityTier": "media",
+      "statement": {
+        "premises": [
+          "G∧H"
+        ],
+        "goal": "H∧G"
+      },
+      "promptText": "Deriva H∧G a partir de G∧H usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "G∧H",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "H",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "G",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "H∧G",
+          "rule": "∧I",
+          "refs": [
+            2,
+            3
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc02-probes_intervention-5",
+      "kcId": "KC02",
+      "kcName": "Notación Fitch, citas de líneas y lectura de subpruebas",
+      "declaredRuleId": null,
+      "side": "medicion",
+      "bankFunction": "probes_intervention",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "(R∧S)∧T"
+        ],
+        "goal": "U→(S∧R)"
+      },
+      "promptText": "Deriva U→(S∧R) a partir de (R∧S)∧T usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición de la conjunción (∧) y del condicional (→)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "(R∧S)∧T",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "U",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "R∧S",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "S",
+          "rule": "∧E",
+          "refs": [
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "R",
+          "rule": "∧E",
+          "refs": [
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "S∧R",
+          "rule": "∧I",
+          "refs": [
+            4,
+            5
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "U→(S∧R)",
+          "rule": "→I",
+          "refs": [
+            [
+              2,
+              6
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc03-recup",
+      "kcId": "KC03",
+      "kcName": "Reiteración `R`",
+      "declaredRuleId": "R",
+      "side": "ensenanza",
+      "bankFunction": "recovery",
+      "declaredComplexity": "media",
+      "measuredComplexityTier": "media",
+      "statement": {
+        "premises": [
+          "K"
+        ],
+        "goal": "L→K"
+      },
+      "promptText": "Deriva L→K a partir de K usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición del condicional (→)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "K",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "L",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "K",
+          "rule": "R",
+          "refs": [
+            1
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "L→K",
+          "rule": "→I",
+          "refs": [
+            [
+              2,
+              3
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc03-transfer_measurement-2",
+      "kcId": "KC03",
+      "kcName": "Reiteración `R`",
+      "declaredRuleId": "R",
+      "side": "medicion",
+      "bankFunction": "TRANSFER_MEASUREMENT",
+      "declaredComplexity": "media",
+      "measuredComplexityTier": "media",
+      "statement": {
+        "premises": [
+          "E∧F",
+          "G"
+        ],
+        "goal": "(G∧H)→(E∧F)"
+      },
+      "promptText": "Deriva (G∧H)→(E∧F) a partir de E∧F, G usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición de la conjunción (∧) y del condicional (→)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "E∧F",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "G",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "G∧H",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "E∧F",
+          "rule": "R",
+          "refs": [
+            1
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "(G∧H)→(E∧F)",
+          "rule": "→I",
+          "refs": [
+            [
+              3,
+              4
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc04-transf",
+      "kcId": "KC04",
+      "kcName": "Introducción de conjunción `∧I`",
+      "declaredRuleId": "∧I",
+      "side": "ensenanza",
+      "bankFunction": "TRANSFER_MASTERY",
+      "declaredComplexity": "media",
+      "measuredComplexityTier": "media",
+      "statement": {
+        "premises": [
+          "N",
+          "O",
+          "S"
+        ],
+        "goal": "(N∧O)∧S"
+      },
+      "promptText": "Deriva (N∧O)∧S a partir de N, O, S usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 3 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "N",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "O",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "S",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "N∧O",
+          "rule": "∧I",
+          "refs": [
+            1,
+            2
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "(N∧O)∧S",
+          "rule": "∧I",
+          "refs": [
+            4,
+            3
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc04-probes_baseline-2",
+      "kcId": "KC04",
+      "kcName": "Introducción de conjunción `∧I`",
+      "declaredRuleId": "∧I",
+      "side": "medicion",
+      "bankFunction": "probes_baseline",
+      "declaredComplexity": "media",
+      "measuredComplexityTier": "media",
+      "statement": {
+        "premises": [
+          "¬E",
+          "F∨G"
+        ],
+        "goal": "(F∨G)∧¬E"
+      },
+      "promptText": "Deriva (F∨G)∧¬E a partir de ¬E, F∨G usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la negación (¬), de la disyunción (∨) y de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas los conectivos principales son la negación (¬) y la disyunción (∨), y las reglas que los eliminan son ¬E y ∨E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "¬E",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "F∨G",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "(F∨G)∧¬E",
+          "rule": "∧I",
+          "refs": [
+            2,
+            1
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc05-diag",
+      "kcId": "KC05",
+      "kcName": "Eliminación de conjunción `∧E`",
+      "declaredRuleId": "∧E",
+      "side": "ensenanza",
+      "bankFunction": "diagnostic",
+      "declaredComplexity": "baja",
+      "measuredComplexityTier": "baja",
+      "statement": {
+        "premises": [
+          "A∧B"
+        ],
+        "goal": "A"
+      },
+      "promptText": "Deriva A a partir de A∧B usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "A∧B",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "A",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc05-probes_intervention-9",
+      "kcId": "KC05",
+      "kcName": "Eliminación de conjunción `∧E`",
+      "declaredRuleId": "∧E",
+      "side": "medicion",
+      "bankFunction": "probes_intervention",
+      "declaredComplexity": "baja",
+      "measuredComplexityTier": "baja",
+      "statement": {
+        "premises": [
+          "(J→L)∧N"
+        ],
+        "goal": "J→L"
+      },
+      "promptText": "Deriva J→L a partir de (J→L)∧N usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición de la conjunción (∧) y del condicional (→)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "(J→L)∧N",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "J→L",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc06-guia",
+      "kcId": "KC06",
+      "kcName": "Eliminación del condicional `→E`",
+      "declaredRuleId": "→E",
+      "side": "ensenanza",
+      "bankFunction": "guided_practice",
+      "declaredComplexity": "baja",
+      "measuredComplexityTier": "baja",
+      "statement": {
+        "premises": [
+          "D→E",
+          "D"
+        ],
+        "goal": "E"
+      },
+      "promptText": "Deriva E a partir de D→E, D usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del condicional (→)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "D→E",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "D",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "E",
+          "rule": "→E",
+          "refs": [
+            1,
+            2
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc06-retention-1",
+      "kcId": "KC06",
+      "kcName": "Eliminación del condicional `→E`",
+      "declaredRuleId": "→E",
+      "side": "medicion",
+      "bankFunction": "retention",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "A→B",
+          "B→C",
+          "C→D",
+          "A"
+        ],
+        "goal": "D"
+      },
+      "promptText": "Deriva D a partir de A→B, B→C, C→D, A usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 4 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del condicional (→)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "A→B",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "B→C",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "C→D",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "A",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "B",
+          "rule": "→E",
+          "refs": [
+            1,
+            4
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "C",
+          "rule": "→E",
+          "refs": [
+            2,
+            5
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "D",
+          "rule": "→E",
+          "refs": [
+            3,
+            6
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc07-diag",
+      "kcId": "KC07",
+      "kcName": "Introducción de disyunción `∨I`",
+      "declaredRuleId": "∨I",
+      "side": "ensenanza",
+      "bankFunction": "diagnostic",
+      "declaredComplexity": "baja",
+      "measuredComplexityTier": "baja",
+      "statement": {
+        "premises": [
+          "A"
+        ],
+        "goal": "A∨B"
+      },
+      "promptText": "Deriva A∨B a partir de A usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una disyunción. Repasa en el texto la definición de la disyunción (∨)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la disyunción (∨), y la regla que lo introduce es ∨I. Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∨I, que pide solo uno de sus dos lados: decide cuál de los dos puedes alcanzar."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "A",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "A∨B",
+          "rule": "∨I",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc07-transfer_measurement-1",
+      "kcId": "KC07",
+      "kcName": "Introducción de disyunción `∨I`",
+      "declaredRuleId": "∨I",
+      "side": "medicion",
+      "bankFunction": "TRANSFER_MEASUREMENT",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "A∧(B∧C)"
+        ],
+        "goal": "(B∨D)∧A"
+      },
+      "promptText": "Deriva (B∨D)∧A a partir de A∧(B∧C) usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧) y de la disyunción (∨)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "A∧(B∧C)",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "B∧C",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "B",
+          "rule": "∧E",
+          "refs": [
+            2
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "B∨D",
+          "rule": "∨I",
+          "refs": [
+            3
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "A",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "(B∨D)∧A",
+          "rule": "∧I",
+          "refs": [
+            4,
+            5
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc08-transf",
+      "kcId": "KC08",
+      "kcName": "Alcance, accesibilidad y descarga de supuestos",
+      "declaredRuleId": null,
+      "side": "ensenanza",
+      "bankFunction": "TRANSFER_MASTERY",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "N"
+        ],
+        "goal": "O→(S→(N∧O))"
+      },
+      "promptText": "Deriva O→(S→(N∧O)) a partir de N usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición del condicional (→) y de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "N",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "O",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "S",
+          "rule": "AS",
+          "depth": 2
+        },
+        {
+          "formula": "N∧O",
+          "rule": "∧I",
+          "refs": [
+            1,
+            2
+          ],
+          "depth": 2
+        },
+        {
+          "formula": "S→(N∧O)",
+          "rule": "→I",
+          "refs": [
+            [
+              3,
+              4
+            ]
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "O→(S→(N∧O))",
+          "rule": "→I",
+          "refs": [
+            [
+              2,
+              5
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc08-probes_baseline-12",
+      "kcId": "KC08",
+      "kcName": "Alcance, accesibilidad y descarga de supuestos",
+      "declaredRuleId": null,
+      "side": "medicion",
+      "bankFunction": "probes_baseline",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "S∧U"
+        ],
+        "goal": "(W∨Z)→S"
+      },
+      "promptText": "Deriva (W∨Z)→S a partir de S∧U usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición de la conjunción (∧), del condicional (→) y de la disyunción (∨)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "S∧U",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "W∨Z",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "S",
+          "rule": "∧E",
+          "refs": [
+            1
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "(W∨Z)→S",
+          "rule": "→I",
+          "refs": [
+            [
+              2,
+              3
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc09-transf",
+      "kcId": "KC09",
+      "kcName": "Introducción del condicional `→I`",
+      "declaredRuleId": "→I",
+      "side": "ensenanza",
+      "bankFunction": "TRANSFER_MASTERY",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "N→O"
+        ],
+        "goal": "(N∧S)→O"
+      },
+      "promptText": "Deriva (N∧S)→O a partir de N→O usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición del condicional (→) y de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "N→O",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "N∧S",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "N",
+          "rule": "∧E",
+          "refs": [
+            2
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "O",
+          "rule": "→E",
+          "refs": [
+            1,
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "(N∧S)→O",
+          "rule": "→I",
+          "refs": [
+            [
+              2,
+              4
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc09-probes_baseline-12",
+      "kcId": "KC09",
+      "kcName": "Introducción del condicional `→I`",
+      "declaredRuleId": "→I",
+      "side": "medicion",
+      "bankFunction": "probes_baseline",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "S",
+          "U→W"
+        ],
+        "goal": "U→(W∧S)"
+      },
+      "promptText": "Deriva U→(W∧S) a partir de S, U→W usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición del condicional (→) y de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "S",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "U→W",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "U",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "W",
+          "rule": "→E",
+          "refs": [
+            2,
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "W∧S",
+          "rule": "∧I",
+          "refs": [
+            4,
+            1
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "U→(W∧S)",
+          "rule": "→I",
+          "refs": [
+            [
+              3,
+              5
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc10-recup",
+      "kcId": "KC10",
+      "kcName": "Obtención de `⊥` mediante `¬E`",
+      "declaredRuleId": "¬E",
+      "side": "ensenanza",
+      "bankFunction": "recovery",
+      "declaredComplexity": "baja",
+      "measuredComplexityTier": "baja",
+      "statement": {
+        "premises": [
+          "K",
+          "¬K"
+        ],
+        "goal": "⊥"
+      },
+      "promptText": "Deriva ⊥ a partir de K, ¬K usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es la contradicción. Repasa en el texto la definición de la negación (¬)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es la contradicción, y la regla que la produce es ¬E. En las premisas el conectivo principal es la negación (¬), y la regla que lo elimina es ¬E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta es la contradicción y se obtiene con ¬E, que pide una fórmula y su negación disponibles en el mismo ámbito."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "K",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "¬K",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "⊥",
+          "rule": "¬E",
+          "refs": [
+            1,
+            2
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc10-probes_intervention-8",
+      "kcId": "KC10",
+      "kcName": "Obtención de `⊥` mediante `¬E`",
+      "declaredRuleId": "¬E",
+      "side": "medicion",
+      "bankFunction": "probes_intervention",
+      "declaredComplexity": "media",
+      "measuredComplexityTier": "media",
+      "statement": {
+        "premises": [
+          "(B∨D)→F",
+          "¬((B∨D)→F)"
+        ],
+        "goal": "⊥"
+      },
+      "promptText": "Deriva ⊥ a partir de (B∨D)→F, ¬((B∨D)→F) usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es la contradicción. Repasa en el texto la definición del condicional (→), de la disyunción (∨) y de la negación (¬)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es la contradicción, y la regla que la produce es ¬E. En las premisas los conectivos principales son el condicional (→) y la negación (¬), y las reglas que los eliminan son →E y ¬E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta es la contradicción y se obtiene con ¬E, que pide una fórmula y su negación disponibles en el mismo ámbito."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "(B∨D)→F",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "¬((B∨D)→F)",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "⊥",
+          "rule": "¬E",
+          "refs": [
+            1,
+            2
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc11-recup",
+      "kcId": "KC11",
+      "kcName": "Introducción de negación `¬I`",
+      "declaredRuleId": "¬I",
+      "side": "ensenanza",
+      "bankFunction": "recovery",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "K→L",
+          "K→¬L"
+        ],
+        "goal": "¬K"
+      },
+      "promptText": "Deriva ¬K a partir de K→L, K→¬L usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una negación. Repasa en el texto la definición del condicional (→) y de la negación (¬)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la negación (¬), y la regla que lo introduce es ¬I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ¬I, que abre una subprueba: supón lo que la meta niega y busca dentro una contradicción."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "K→L",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "K→¬L",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "K",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "L",
+          "rule": "→E",
+          "refs": [
+            1,
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "¬L",
+          "rule": "→E",
+          "refs": [
+            2,
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "⊥",
+          "rule": "¬E",
+          "refs": [
+            4,
+            5
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "¬K",
+          "rule": "¬I",
+          "refs": [
+            [
+              3,
+              6
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc11-retention-1",
+      "kcId": "KC11",
+      "kcName": "Introducción de negación `¬I`",
+      "declaredRuleId": "¬I",
+      "side": "medicion",
+      "bankFunction": "retention",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "A→B",
+          "B→C",
+          "¬C"
+        ],
+        "goal": "¬A"
+      },
+      "promptText": "Deriva ¬A a partir de A→B, B→C, ¬C usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 3 premisas y tienes que llegar a una meta que es una negación. Repasa en el texto la definición del condicional (→) y de la negación (¬)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la negación (¬), y la regla que lo introduce es ¬I. En las premisas los conectivos principales son el condicional (→) y la negación (¬), y las reglas que los eliminan son →E y ¬E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ¬I, que abre una subprueba: supón lo que la meta niega y busca dentro una contradicción."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "A→B",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "B→C",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "¬C",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "A",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "B",
+          "rule": "→E",
+          "refs": [
+            1,
+            4
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "C",
+          "rule": "→E",
+          "refs": [
+            2,
+            5
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "⊥",
+          "rule": "¬E",
+          "refs": [
+            6,
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "¬A",
+          "rule": "¬I",
+          "refs": [
+            [
+              4,
+              7
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc12-guia",
+      "kcId": "KC12",
+      "kcName": "Explosión `X` (`⊥E`)",
+      "declaredRuleId": "X",
+      "side": "ensenanza",
+      "bankFunction": "guided_practice",
+      "declaredComplexity": "media",
+      "measuredComplexityTier": "media",
+      "statement": {
+        "premises": [
+          "D",
+          "¬D"
+        ],
+        "goal": "E"
+      },
+      "promptText": "Deriva E a partir de D, ¬D usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición de la negación (¬)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es la negación (¬), y la regla que lo elimina es ¬E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta. Fíjate además en que las premisas no pueden ser verdaderas a la vez: de una contradicción se sigue cualquier fórmula con X."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "D",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "¬D",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "⊥",
+          "rule": "¬E",
+          "refs": [
+            1,
+            2
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "E",
+          "rule": "X",
+          "refs": [
+            3
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc12-probes_intervention-10",
+      "kcId": "KC12",
+      "kcName": "Explosión `X` (`⊥E`)",
+      "declaredRuleId": "X",
+      "side": "medicion",
+      "bankFunction": "probes_intervention",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "K∨M",
+          "¬(K∨M)"
+        ],
+        "goal": "O∧Q"
+      },
+      "promptText": "Deriva O∧Q a partir de K∨M, ¬(K∨M) usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la disyunción (∨), de la negación (¬) y de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas los conectivos principales son la disyunción (∨) y la negación (¬), y las reglas que los eliminan son ∨E y ¬E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos. Fíjate además en que las premisas no pueden ser verdaderas a la vez: de una contradicción se sigue cualquier fórmula con X."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "K∨M",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "¬(K∨M)",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "⊥",
+          "rule": "¬E",
+          "refs": [
+            1,
+            2
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "O∧Q",
+          "rule": "X",
+          "refs": [
+            3
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc13-recup",
+      "kcId": "KC13",
+      "kcName": "Eliminación de disyunción / prueba por casos `∨E`",
+      "declaredRuleId": "∨E",
+      "side": "ensenanza",
+      "bankFunction": "recovery",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "K∨L",
+          "K→M",
+          "L→M"
+        ],
+        "goal": "M"
+      },
+      "promptText": "Deriva M a partir de K∨L, K→M, L→M usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 3 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición de la disyunción (∨) y del condicional (→)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas los conectivos principales son la disyunción (∨) y el condicional (→), y las reglas que los eliminan son ∨E y →E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "K∨L",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "K→M",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "L→M",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "K",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "M",
+          "rule": "→E",
+          "refs": [
+            2,
+            4
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "L",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "M",
+          "rule": "→E",
+          "refs": [
+            3,
+            6
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "M",
+          "rule": "∨E",
+          "refs": [
+            1,
+            [
+              4,
+              5
+            ],
+            [
+              6,
+              7
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc13-probes_intervention-6",
+      "kcId": "KC13",
+      "kcName": "Eliminación de disyunción / prueba por casos `∨E`",
+      "declaredRuleId": "∨E",
+      "side": "medicion",
+      "bankFunction": "probes_intervention",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "(V∧W)∨(Y∧W)"
+        ],
+        "goal": "W∨Z"
+      },
+      "promptText": "Deriva W∨Z a partir de (V∧W)∨(Y∧W) usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una disyunción. Repasa en el texto la definición de la disyunción (∨) y de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la disyunción (∨), y la regla que lo introduce es ∨I. En las premisas el conectivo principal es la disyunción (∨), y la regla que lo elimina es ∨E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∨I, que pide solo uno de sus dos lados: decide cuál de los dos puedes alcanzar."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "(V∧W)∨(Y∧W)",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "V∧W",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "W",
+          "rule": "∧E",
+          "refs": [
+            2
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "Y∧W",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "W",
+          "rule": "∧E",
+          "refs": [
+            4
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "W",
+          "rule": "∨E",
+          "refs": [
+            1,
+            [
+              2,
+              3
+            ],
+            [
+              4,
+              5
+            ]
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "W∨Z",
+          "rule": "∨I",
+          "refs": [
+            6
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc14-indep",
+      "kcId": "KC14",
+      "kcName": "Introducción del bicondicional `↔I`",
+      "declaredRuleId": "↔I",
+      "side": "ensenanza",
+      "bankFunction": "independent_practice",
+      "declaredComplexity": "media",
+      "measuredComplexityTier": "media",
+      "statement": {
+        "premises": [
+          "G",
+          "H"
+        ],
+        "goal": "G↔H"
+      },
+      "promptText": "Deriva G↔H a partir de G, H usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es un bicondicional. Repasa en el texto la definición del bicondicional (↔)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el bicondicional (↔), y la regla que lo introduce es ↔I. Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ↔I, que abre dos subpruebas, una por cada dirección."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "G",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "H",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "G",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "H",
+          "rule": "R",
+          "refs": [
+            2
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "H",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "G",
+          "rule": "R",
+          "refs": [
+            1
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "G↔H",
+          "rule": "↔I",
+          "refs": [
+            [
+              3,
+              4
+            ],
+            [
+              5,
+              6
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc14-probes_intervention-12",
+      "kcId": "KC14",
+      "kcName": "Introducción del bicondicional `↔I`",
+      "declaredRuleId": "↔I",
+      "side": "medicion",
+      "bankFunction": "probes_intervention",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "(S∧W)→U",
+          "U→(S∧W)"
+        ],
+        "goal": "(S∧W)↔U"
+      },
+      "promptText": "Deriva (S∧W)↔U a partir de (S∧W)→U, U→(S∧W) usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es un bicondicional. Repasa en el texto la definición del condicional (→), de la conjunción (∧) y del bicondicional (↔)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el bicondicional (↔), y la regla que lo introduce es ↔I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ↔I, que abre dos subpruebas, una por cada dirección."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "(S∧W)→U",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "U→(S∧W)",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "S∧W",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "U",
+          "rule": "→E",
+          "refs": [
+            1,
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "U",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "S∧W",
+          "rule": "→E",
+          "refs": [
+            2,
+            5
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "(S∧W)↔U",
+          "rule": "↔I",
+          "refs": [
+            [
+              3,
+              4
+            ],
+            [
+              5,
+              6
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc15-transf",
+      "kcId": "KC15",
+      "kcName": "Eliminación del bicondicional `↔E`",
+      "declaredRuleId": "↔E",
+      "side": "ensenanza",
+      "bankFunction": "TRANSFER_MASTERY",
+      "declaredComplexity": "baja",
+      "measuredComplexityTier": "baja",
+      "statement": {
+        "premises": [
+          "N↔O",
+          "O"
+        ],
+        "goal": "N"
+      },
+      "promptText": "Deriva N a partir de N↔O, O usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del bicondicional (↔)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es el bicondicional (↔), y la regla que lo elimina es ↔E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "N↔O",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "O",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "N",
+          "rule": "↔E",
+          "refs": [
+            1,
+            2
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc15-probes_baseline-11",
+      "kcId": "KC15",
+      "kcName": "Eliminación del bicondicional `↔E`",
+      "declaredRuleId": "↔E",
+      "side": "medicion",
+      "bankFunction": "probes_baseline",
+      "declaredComplexity": "media",
+      "measuredComplexityTier": "media",
+      "statement": {
+        "premises": [
+          "(R∨Y)↔(T∧V)",
+          "R∨Y"
+        ],
+        "goal": "T∧V"
+      },
+      "promptText": "Deriva T∧V a partir de (R∨Y)↔(T∧V), R∨Y usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición del bicondicional (↔), de la disyunción (∨) y de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas los conectivos principales son el bicondicional (↔) y la disyunción (∨), y las reglas que los eliminan son ↔E y ∨E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "(R∨Y)↔(T∧V)",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "R∨Y",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "T∧V",
+          "rule": "↔E",
+          "refs": [
+            1,
+            2
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc16-diag",
+      "kcId": "KC16",
+      "kcName": "Eliminación de doble negación `DNE`",
+      "declaredRuleId": "DNE",
+      "side": "ensenanza",
+      "bankFunction": "diagnostic",
+      "declaredComplexity": "baja",
+      "measuredComplexityTier": "baja",
+      "statement": {
+        "premises": [
+          "¬¬A"
+        ],
+        "goal": "A"
+      },
+      "promptText": "Deriva A a partir de ¬¬A usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición de la negación (¬)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es la negación (¬), y la regla que lo elimina es DNE. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "¬¬A",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "A",
+          "rule": "DNE",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc16-transfer_measurement-1",
+      "kcId": "KC16",
+      "kcName": "Eliminación de doble negación `DNE`",
+      "declaredRuleId": "DNE",
+      "side": "medicion",
+      "bankFunction": "TRANSFER_MEASUREMENT",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "¬¬(A∨B)",
+          "¬A"
+        ],
+        "goal": "B"
+      },
+      "promptText": "Deriva B a partir de ¬¬(A∨B), ¬A usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición de la negación (¬) y de la disyunción (∨)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas los conectivos principales son la negación (¬), y las reglas que los eliminan son DNE y ¬E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "¬¬(A∨B)",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "¬A",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "A∨B",
+          "rule": "DNE",
+          "refs": [
+            1
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "A",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "⊥",
+          "rule": "¬E",
+          "refs": [
+            4,
+            2
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "B",
+          "rule": "X",
+          "refs": [
+            5
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "B",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "B",
+          "rule": "∨E",
+          "refs": [
+            3,
+            [
+              4,
+              6
+            ],
+            [
+              7,
+              7
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc17-guia",
+      "kcId": "KC17",
+      "kcName": "Prueba indirecta `IP` — RAA clásica",
+      "declaredRuleId": "IP",
+      "side": "ensenanza",
+      "bankFunction": "guided_practice",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "¬D→E",
+          "¬D→¬E"
+        ],
+        "goal": "D"
+      },
+      "promptText": "Deriva D a partir de ¬D→E, ¬D→¬E usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del condicional (→) y de la negación (¬)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "¬D→E",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "¬D→¬E",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "¬D",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "E",
+          "rule": "→E",
+          "refs": [
+            1,
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "¬E",
+          "rule": "→E",
+          "refs": [
+            2,
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "⊥",
+          "rule": "¬E",
+          "refs": [
+            4,
+            5
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "D",
+          "rule": "IP",
+          "refs": [
+            [
+              3,
+              6
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc17-probes_baseline-1",
+      "kcId": "KC17",
+      "kcName": "Prueba indirecta `IP` — RAA clásica",
+      "declaredRuleId": "IP",
+      "side": "medicion",
+      "bankFunction": "probes_baseline",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "¬A→B",
+          "¬B"
+        ],
+        "goal": "A"
+      },
+      "promptText": "Deriva A a partir de ¬A→B, ¬B usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del condicional (→) y de la negación (¬)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas los conectivos principales son el condicional (→) y la negación (¬), y las reglas que los eliminan son →E y ¬E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "¬A→B",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "¬B",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "¬A",
+          "rule": "AS",
+          "depth": 1
+        },
+        {
+          "formula": "B",
+          "rule": "→E",
+          "refs": [
+            1,
+            3
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "⊥",
+          "rule": "¬E",
+          "refs": [
+            4,
+            2
+          ],
+          "depth": 1
+        },
+        {
+          "formula": "A",
+          "rule": "IP",
+          "refs": [
+            [
+              3,
+              5
+            ]
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc18-repos",
+      "kcId": "KC18",
+      "kcName": "Selección de estrategia y trabajo hacia atrás",
+      "declaredRuleId": null,
+      "side": "ensenanza",
+      "bankFunction": "replacement",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "T→U",
+          "U→V",
+          "T"
+        ],
+        "goal": "V∧U"
+      },
+      "promptText": "Deriva V∧U a partir de T→U, U→V, T usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 3 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición del condicional (→) y de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "T→U",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "U→V",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "T",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "U",
+          "rule": "→E",
+          "refs": [
+            1,
+            3
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "V",
+          "rule": "→E",
+          "refs": [
+            2,
+            4
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "V∧U",
+          "rule": "∧I",
+          "refs": [
+            5,
+            4
+          ],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "artifactId": "kc18-probes_baseline-12",
+      "kcId": "KC18",
+      "kcName": "Selección de estrategia y trabajo hacia atrás",
+      "declaredRuleId": null,
+      "side": "medicion",
+      "bankFunction": "probes_baseline",
+      "declaredComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "statement": {
+        "premises": [
+          "S→(U→W)",
+          "S∧U"
+        ],
+        "goal": "W"
+      },
+      "promptText": "Deriva W a partir de S→(U→W), S∧U usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del condicional (→) y de la conjunción (∧)."
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas los conectivos principales son el condicional (→) y la conjunción (∧), y las reglas que los eliminan son →E y ∧E. Empieza por esas entradas del texto."
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta."
+        }
+      ],
+      "certificate": [
+        {
+          "formula": "S→(U→W)",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "S∧U",
+          "rule": "PR",
+          "depth": 0
+        },
+        {
+          "formula": "S",
+          "rule": "∧E",
+          "refs": [
+            2
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "U→W",
+          "rule": "→E",
+          "refs": [
+            1,
+            3
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "U",
+          "rule": "∧E",
+          "refs": [
+            2
+          ],
+          "depth": 0
+        },
+        {
+          "formula": "W",
+          "rule": "→E",
+          "refs": [
+            4,
+            5
+          ],
+          "depth": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,310 @@
+# Matriz de activación de estrategias y reglas de transición (T-H5-04, Rol B). Corrida del 2026-08-21T20:39:04.474Z sobre kc/map.yaml. Redactado por el modelo asistente (salvedad D-41/D-48/D-52): el propietario audita objetivos y señales observables antes del freeze de W5.
+{
+  "policyVersion": "pedagogy-policy-h5-v1",
+  "rules": [
+    {
+      "ruleId": "ar-01",
+      "level": 4,
+      "catalogEntryId": "explicacion_directa_breve",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "el KC objetivo no tiene intentos previos en la sesión"
+    },
+    {
+      "ruleId": "ar-02",
+      "level": 4,
+      "catalogEntryId": "ejemplo_trabajado",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "tras la explicación directa, antes del primer intento del alumno"
+    },
+    {
+      "ruleId": "ar-03",
+      "level": 4,
+      "catalogEntryId": "ejemplo_incompleto",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "el alumno completó el ejemplo trabajado sin error"
+    },
+    {
+      "ruleId": "ar-04",
+      "level": 4,
+      "catalogEntryId": "practica_guiada",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "el alumno completó el ejemplo incompleto sin error"
+    },
+    {
+      "ruleId": "ar-05",
+      "level": 4,
+      "catalogEntryId": "practica_independiente",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "el alumno resolvió la práctica guiada sin ayuda decisiva"
+    },
+    {
+      "ruleId": "ar-06",
+      "level": 4,
+      "catalogEntryId": "comprobacion_de_transferencia_cercana",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "el alumno resolvió práctica independiente del KC, o hay sospecha de dominio aparente tras un intento sin ayuda"
+    },
+    {
+      "ruleId": "ar-07",
+      "level": 4,
+      "catalogEntryId": "scaffolding_contingente",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "el intento del alumno falla parcialmente: la derivación avanza pero una línea es rechazada"
+    },
+    {
+      "ruleId": "ar-08",
+      "level": 5,
+      "catalogEntryId": "fading_contingente",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "el alumno resuelve con el nivel de ayuda actual: se baja `assistanceLevel` un escalón"
+    },
+    {
+      "ruleId": "ar-09",
+      "level": 4,
+      "catalogEntryId": "feedback_correctivo",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "el verificador rechaza una línea: el feedback se centra en la tarea y el proceso, con el código `E-*` devuelto"
+    },
+    {
+      "ruleId": "ar-10",
+      "level": 4,
+      "catalogEntryId": "autoexplicacion_guiada",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "un paso correcto no trivial, un error persistente del mismo tipo, o duda entre comprensión y memorización de patrón"
+    },
+    {
+      "ruleId": "ar-11",
+      "level": 2,
+      "catalogEntryId": "recuperacion_de_prerrequisito",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "un KC del que depende formalmente el objetivo no está dominado: el avance del KC actual se suspende"
+    },
+    {
+      "ruleId": "ar-12",
+      "level": 4,
+      "catalogEntryId": "retrieval_practice",
+      "modes": [
+        "LEARNING_MODE"
+      ],
+      "whenObservable": "el calendario programa recuperación de un KC ya introducido por primera enseñanza"
+    }
+  ],
+  "note": "Ninguna regla se activa en MEASUREMENT_MODE: §5.9 deshabilita ahí la ayuda no autorizada y §8.3.1 pone el modo pedagógico por encima de la selección de estrategia.",
+  "basePatterns": [
+    {
+      "patternId": "kc_procedimental_nuevo",
+      "steps": [
+        {
+          "catalogEntryId": "explicacion_directa_breve"
+        },
+        {
+          "catalogEntryId": "ejemplo_trabajado"
+        },
+        {
+          "catalogEntryId": "ejemplo_incompleto"
+        },
+        {
+          "catalogEntryId": "practica_guiada"
+        },
+        {
+          "catalogEntryId": "practica_independiente"
+        },
+        {
+          "catalogEntryId": "comprobacion_de_transferencia_cercana"
+        }
+      ]
+    },
+    {
+      "patternId": "dificultad_parcial",
+      "steps": [
+        {
+          "catalogEntryId": "scaffolding_contingente"
+        },
+        {
+          "engineAction": "comprobación"
+        },
+        {
+          "catalogEntryId": "fading_contingente"
+        }
+      ]
+    },
+    {
+      "patternId": "error_repetido_mismo_tipo",
+      "steps": [
+        {
+          "catalogEntryId": "feedback_correctivo"
+        },
+        {
+          "catalogEntryId": "autoexplicacion_guiada"
+        },
+        {
+          "engineAction": "explicación dirigida / ejemplo contrastante"
+        },
+        {
+          "engineAction": "nueva práctica"
+        }
+      ]
+    },
+    {
+      "patternId": "fallo_de_prerrequisito",
+      "steps": [
+        {
+          "engineAction": "suspender avance del KC actual"
+        },
+        {
+          "catalogEntryId": "recuperacion_de_prerrequisito"
+        },
+        {
+          "engineAction": "volver al KC objetivo"
+        }
+      ]
+    },
+    {
+      "patternId": "dominio_aparente_o_dependencia_de_ayuda",
+      "steps": [
+        {
+          "engineAction": "nuevo intento sin ayuda"
+        },
+        {
+          "catalogEntryId": "comprobacion_de_transferencia_cercana"
+        },
+        {
+          "engineAction": "sonda independiente cuando corresponda al calendario"
+        }
+      ]
+    }
+  ],
+  "kcProfileNote": "El perfil se lleva por KC. El Maestro pide «perfil pedagógico por KC/tipo de conocimiento» (§7.2) y no define en ninguna parte qué tipos de conocimiento hay: no se inventa la taxonomía, se registra el hueco.",
+  "kcProfiles": [
+    {
+      "kcId": "KC01",
+      "sequencePosition": 1,
+      "foundation": true,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC02",
+      "sequencePosition": 2,
+      "foundation": true,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC03",
+      "sequencePosition": 3,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC04",
+      "sequencePosition": 4,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC05",
+      "sequencePosition": 5,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC06",
+      "sequencePosition": 6,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC07",
+      "sequencePosition": 7,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC08",
+      "sequencePosition": 8,
+      "foundation": true,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC09",
+      "sequencePosition": 9,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC10",
+      "sequencePosition": 10,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC11",
+      "sequencePosition": 11,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC12",
+      "sequencePosition": 12,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC13",
+      "sequencePosition": 13,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC14",
+      "sequencePosition": 14,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC15",
+      "sequencePosition": 15,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC16",
+      "sequencePosition": 16,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC17",
+      "sequencePosition": 17,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    },
+    {
+      "kcId": "KC18",
+      "sequencePosition": 18,
+      "foundation": false,
+      "firstTeachingPattern": "kc_procedimental_nuevo"
+    }
+  ]
+}

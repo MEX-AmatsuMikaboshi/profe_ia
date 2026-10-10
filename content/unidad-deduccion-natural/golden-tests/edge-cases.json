@@ -1,0 +1,1648 @@
+{
+  "version": "1",
+  "description": "Casos límite del cálculo y de la política de Etapa 1",
+  "generator": "scripts/logic/generate-golden.mjs",
+  "seedBase": 20260814,
+  "authorizedCalculusVersion": "authorized-calculus-v1",
+  "count": 60,
+  "cases": [
+    {
+      "id": "edge-0001-falsum-como-premisa-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "⊥",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "X",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0002-falsum-como-supuesto-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0003-dne-triple-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0004-dne-doble-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0005-explosion-desde-contradiccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "¬E",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∨¬B",
+            "rule": "X",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0006-alias-de-regla-no-aparece-en-traza",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A→B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "MP",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0007-glyphs-de-corchete-equivalentes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "[A∧B]",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0008-asociatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(A∧B)∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∧(B∧A)",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0009-conmutatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∧A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0010-cita-a-linea-inexistente",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              9
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0011-falsum-como-premisa-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "⊥",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "X",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0012-falsum-como-supuesto-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0013-dne-triple-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬¬B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0014-dne-doble-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0015-explosion-desde-contradiccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "¬E",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∨¬C",
+            "rule": "X",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0016-alias-de-regla-no-aparece-en-traza",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B→C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "MP",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0017-glyphs-de-corchete-equivalentes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "[B∧C]",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0018-asociatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(B∧C)∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∧(C∧B)",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0019-conmutatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0020-cita-a-linea-inexistente",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              9
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0021-falsum-como-premisa-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "⊥",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "X",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0022-falsum-como-supuesto-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0023-dne-triple-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬¬C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0024-dne-doble-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0025-explosion-desde-contradiccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "¬E",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∨¬D",
+            "rule": "X",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0026-alias-de-regla-no-aparece-en-traza",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C→D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "MP",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0027-glyphs-de-corchete-equivalentes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "[C∧D]",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0028-asociatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(C∧D)∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧(D∧C)",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0029-conmutatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∧C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0030-cita-a-linea-inexistente",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              9
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0031-falsum-como-premisa-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "⊥",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "X",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0032-falsum-como-supuesto-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0033-dne-triple-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬¬D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0034-dne-doble-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0035-explosion-desde-contradiccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "¬E",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∨¬E",
+            "rule": "X",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0036-alias-de-regla-no-aparece-en-traza",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D→E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "MP",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0037-glyphs-de-corchete-equivalentes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "[D∧E]",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0038-asociatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(D∧E)∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∧(E∧D)",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0039-conmutatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∧D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0040-cita-a-linea-inexistente",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              9
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0041-falsum-como-premisa-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "⊥",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "X",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0042-falsum-como-supuesto-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0043-dne-triple-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬¬E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0044-dne-doble-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0045-explosion-desde-contradiccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "¬E",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∨¬A",
+            "rule": "X",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0046-alias-de-regla-no-aparece-en-traza",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E→A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "MP",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0047-glyphs-de-corchete-equivalentes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "[E∧A]",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0048-asociatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(E∧A)∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∧(A∧E)",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0049-conmutatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∧E",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0050-cita-a-linea-inexistente",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              9
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0051-falsum-como-premisa-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "⊥",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "X",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-PR-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0052-falsum-como-supuesto-prohibido",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-STRUCT-AS-POSITION"
+        ]
+      }
+    },
+    {
+      "id": "edge-0053-dne-triple-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0054-dne-doble-negacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "DNE",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0055-explosion-desde-contradiccion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "⊥",
+            "rule": "¬E",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∨¬D",
+            "rule": "X",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0056-alias-de-regla-no-aparece-en-traza",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A→D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "MP",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0057-glyphs-de-corchete-equivalentes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "[A∧D]",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "id": "edge-0058-asociatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(A∧D)∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∧(D∧A)",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0059-conmutatividad-no-es-normalizacion",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A∧D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∧A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-SHAPE"
+        ]
+      }
+    },
+    {
+      "id": "edge-0060-cita-a-linea-inexistente",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              9
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      }
+    }
+  ]
+}

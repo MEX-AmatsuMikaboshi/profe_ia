@@ -1,0 +1,4298 @@
+# Informe de auditoría previa (T-H5-14). Corrida del 2026-08-23T06:00:38.675Z. AUDITOR: modelo asistente (anthropic-claude) — NO independiente del generador. **No cierra el gate**: P-I §7.3 y P-III §6.2 exigen lectura humana en muestra ciega, y aquí auditor y generador son el mismo modelo.
+{
+  "auditedAt": "2026-08-23T06:00:38.675Z",
+  "auditor": "modelo asistente (anthropic-claude) — NO independiente del generador",
+  "independent": false,
+  "closesGate": false,
+  "closesGateReason": "Auditor y generador son el mismo modelo. §7.3: el acuerdo de un crítico no independiente no puede usarse como evidencia de calidad para congelar la familia. Este informe adelanta el trabajo; la firma sigue siendo del propietario.",
+  "reviewedArtifactIds": [
+    "kc09-indep",
+    "kc17-probes_baseline-3",
+    "kc16-probes_baseline-4",
+    "kc06-transfer_measurement-2",
+    "kc14-probes_baseline-1",
+    "kc01-probes_intervention-14",
+    "kc18-probes_baseline-14",
+    "kc06-probes_baseline-14",
+    "kc10-recup",
+    "kc16-probes_baseline-9",
+    "kc16-probes_intervention-3",
+    "kc15-probes_intervention-7",
+    "kc15-diag",
+    "kc15-probes_baseline-2",
+    "kc06-probes_baseline-8",
+    "kc13-probes_baseline-5",
+    "kc10-probes_baseline-10",
+    "kc18-probes_intervention-13",
+    "kc11-probes_intervention-10",
+    "kc11-probes_baseline-9",
+    "kc11-retention-1",
+    "kc08-probes_intervention-7",
+    "kc15-transf",
+    "kc02-probes_baseline-12",
+    "kc11-probes_intervention-11",
+    "kc10-probes_intervention-3",
+    "kc15-probes_intervention-13",
+    "kc05-probes_intervention-12",
+    "kc01-probes_baseline-4",
+    "kc08-probes_baseline-8",
+    "kc01-probes_baseline-3",
+    "kc03-retention-2",
+    "kc05-transf",
+    "kc02-probes_intervention-5",
+    "kc09-recup",
+    "kc08-probes_baseline-11",
+    "kc09-probes_intervention-7",
+    "kc12-probes_baseline-11",
+    "kc05-probes_intervention-5",
+    "kc02-probes_intervention-11",
+    "kc09-probes_baseline-3",
+    "kc08-probes_baseline-9",
+    "kc05-guia",
+    "kc14-probes_intervention-14",
+    "kc09-probes_intervention-5",
+    "kc16-probes_intervention-8",
+    "kc13-probes_baseline-13",
+    "kc10-probes_baseline-2",
+    "kc07-probes_baseline-4",
+    "kc08-probes_baseline-1",
+    "kc09-probes_baseline-2",
+    "kc13-probes_baseline-6",
+    "kc04-probes_intervention-5",
+    "kc10-transf",
+    "kc12-probes_intervention-11",
+    "kc04-diag",
+    "kc16-guia",
+    "kc14-probes_baseline-13",
+    "kc11-probes_baseline-7",
+    "kc06-retention-1",
+    "kc10-retention-1",
+    "kc13-probes_intervention-4",
+    "kc13-probes_baseline-9",
+    "kc05-probes_baseline-12",
+    "kc04-probes_intervention-11",
+    "kc05-probes_baseline-9",
+    "kc18-probes_intervention-14",
+    "kc14-probes_baseline-10",
+    "kc02-probes_baseline-4",
+    "kc13-retention-2",
+    "kc06-probes_intervention-3",
+    "kc12-retention-2",
+    "kc17-indep",
+    "kc01-diag",
+    "kc05-probes_intervention-6",
+    "kc04-probes_intervention-7",
+    "kc13-probes_baseline-2",
+    "kc01-probes_intervention-4",
+    "kc05-diag",
+    "kc01-probes_baseline-2",
+    "kc09-probes_intervention-9",
+    "kc01-probes_baseline-6",
+    "kc14-probes_baseline-6",
+    "kc15-indep",
+    "kc05-probes_baseline-8",
+    "kc11-probes_baseline-10",
+    "kc07-probes_baseline-3",
+    "kc08-probes_intervention-14",
+    "kc07-repos",
+    "kc07-probes_intervention-3",
+    "kc16-indep",
+    "kc11-probes_intervention-7",
+    "kc16-probes_baseline-2",
+    "kc16-probes_intervention-14",
+    "kc15-probes_baseline-12",
+    "kc02-indep",
+    "kc01-probes_baseline-14",
+    "kc08-probes_intervention-10",
+    "kc09-probes_baseline-6",
+    "kc06-probes_baseline-3",
+    "kc18-probes_intervention-8",
+    "kc15-probes_baseline-1",
+    "kc01-probes_baseline-5",
+    "kc05-probes_intervention-7",
+    "kc02-probes_baseline-6",
+    "kc05-probes_intervention-9",
+    "kc12-probes_baseline-13",
+    "kc02-probes_intervention-1",
+    "kc14-probes_intervention-2",
+    "kc15-guia",
+    "kc02-probes_intervention-2",
+    "kc01-probes_intervention-2",
+    "kc15-probes_intervention-9",
+    "kc08-probes_baseline-13",
+    "kc18-probes_baseline-1",
+    "kc02-probes_baseline-11",
+    "kc11-repos",
+    "kc04-retention-1",
+    "kc16-transf",
+    "kc05-repos",
+    "kc06-probes_baseline-4",
+    "kc17-probes_intervention-2",
+    "kc10-repos",
+    "kc09-probes_baseline-4",
+    "kc18-diag",
+    "kc04-transf",
+    "kc18-probes_baseline-12",
+    "kc04-probes_baseline-14",
+    "kc01-probes_baseline-11",
+    "kc18-recup",
+    "kc15-probes_intervention-1",
+    "kc17-probes_intervention-13",
+    "kc16-transfer_measurement-1",
+    "kc05-probes_baseline-14",
+    "kc06-indep",
+    "kc07-probes_intervention-14",
+    "kc02-diag",
+    "kc18-probes_intervention-7",
+    "kc05-probes_baseline-6",
+    "kc05-probes_baseline-3",
+    "kc09-transfer_measurement-2",
+    "kc08-probes_intervention-4",
+    "kc05-probes_baseline-7",
+    "kc09-probes_baseline-1",
+    "kc17-transfer_measurement-2",
+    "kc13-probes_intervention-6",
+    "kc12-probes_intervention-2",
+    "kc06-probes_baseline-9",
+    "kc13-probes_intervention-5",
+    "kc02-probes_baseline-13",
+    "kc18-probes_intervention-9",
+    "kc02-retention-1",
+    "kc07-probes_intervention-7",
+    "kc15-probes_baseline-5",
+    "kc11-probes_baseline-5",
+    "kc06-probes_intervention-1",
+    "kc16-repos",
+    "kc12-probes_intervention-4",
+    "kc11-probes_intervention-9",
+    "kc16-probes_baseline-1",
+    "kc01-probes_baseline-1",
+    "kc18-probes_baseline-6",
+    "kc11-probes_baseline-11",
+    "kc14-probes_intervention-3",
+    "kc17-probes_baseline-6",
+    "kc07-probes_baseline-14",
+    "kc14-probes_intervention-5",
+    "kc13-probes_baseline-11",
+    "kc13-diag",
+    "kc15-probes_baseline-8",
+    "kc07-probes_intervention-4",
+    "kc17-probes_baseline-11",
+    "kc12-probes_intervention-10",
+    "kc05-probes_baseline-5",
+    "kc16-probes_baseline-10",
+    "kc02-probes_intervention-6",
+    "kc01-retention-1",
+    "kc10-probes_intervention-13",
+    "kc11-probes_baseline-2",
+    "kc14-repos",
+    "kc01-probes_intervention-9",
+    "kc08-probes_baseline-14",
+    "kc14-probes_baseline-3",
+    "kc18-probes_baseline-7",
+    "kc17-probes_intervention-12",
+    "kc05-transfer_measurement-1",
+    "kc12-probes_baseline-5",
+    "kc02-probes_intervention-8",
+    "kc13-retention-1",
+    "kc07-probes_intervention-9",
+    "kc07-probes_baseline-2",
+    "kc12-repos",
+    "kc12-retention-1",
+    "kc01-probes_baseline-8",
+    "kc10-probes_baseline-14",
+    "kc04-probes_baseline-10",
+    "kc04-repos",
+    "kc08-probes_baseline-4",
+    "kc06-probes_baseline-2",
+    "kc07-probes_intervention-8",
+    "kc09-guia",
+    "kc13-transfer_measurement-2",
+    "kc15-probes_baseline-11",
+    "kc01-probes_intervention-7",
+    "kc14-probes_intervention-6",
+    "kc07-probes_baseline-9",
+    "kc16-probes_intervention-6",
+    "kc14-probes_baseline-4",
+    "kc09-probes_intervention-3",
+    "kc11-guia",
+    "kc04-probes_intervention-13",
+    "kc07-probes_baseline-8",
+    "kc18-probes_baseline-10",
+    "kc18-probes_intervention-4",
+    "kc13-indep",
+    "kc13-repos",
+    "kc17-probes_intervention-6",
+    "kc06-probes_baseline-10",
+    "kc01-retention-2",
+    "kc07-probes_intervention-10",
+    "kc01-probes_intervention-12",
+    "kc07-guia",
+    "kc18-probes_baseline-13",
+    "kc18-probes_baseline-3",
+    "kc15-probes_intervention-5",
+    "kc14-retention-2",
+    "kc08-indep",
+    "kc12-recup",
+    "kc04-transfer_measurement-1",
+    "kc13-probes_intervention-11",
+    "kc06-retention-2",
+    "kc18-indep",
+    "kc16-retention-1",
+    "kc12-transf",
+    "kc05-probes_baseline-10",
+    "kc14-probes_intervention-9",
+    "kc02-guia",
+    "kc01-probes_intervention-8",
+    "kc15-retention-1",
+    "kc16-probes_intervention-9",
+    "kc14-guia",
+    "kc04-probes_baseline-3",
+    "kc01-guia",
+    "kc10-probes_baseline-13",
+    "kc04-probes_intervention-2",
+    "kc09-retention-1",
+    "kc15-probes_intervention-11",
+    "kc08-probes_baseline-7",
+    "kc08-probes_intervention-8",
+    "kc06-transf",
+    "kc11-probes_intervention-3",
+    "kc15-probes_intervention-12",
+    "kc01-probes_intervention-1",
+    "kc07-probes_baseline-12",
+    "kc04-probes_baseline-11",
+    "kc04-probes_intervention-14",
+    "kc15-probes_intervention-8",
+    "kc15-probes_intervention-4",
+    "kc03-transf",
+    "kc18-probes_baseline-4",
+    "kc10-probes_intervention-11",
+    "kc02-probes_intervention-9",
+    "kc06-guia",
+    "kc10-probes_intervention-10",
+    "kc13-probes_baseline-8",
+    "kc18-probes_intervention-5",
+    "kc16-probes_baseline-11",
+    "kc07-probes_baseline-5",
+    "kc10-probes_intervention-2",
+    "kc02-transfer_measurement-1",
+    "kc16-probes_intervention-10",
+    "kc08-probes_intervention-1",
+    "kc09-probes_intervention-1",
+    "kc07-transfer_measurement-1",
+    "kc07-probes_intervention-5",
+    "kc05-probes_intervention-13",
+    "kc07-probes_intervention-1",
+    "kc12-probes_intervention-5",
+    "kc18-transfer_measurement-2",
+    "kc12-diag",
+    "kc08-transfer_measurement-2",
+    "kc12-probes_baseline-8",
+    "kc07-probes_baseline-10",
+    "kc14-transfer_measurement-2",
+    "kc15-probes_baseline-13",
+    "kc06-probes_baseline-11",
+    "kc05-probes_intervention-11",
+    "kc12-probes_baseline-6",
+    "kc16-probes_intervention-2",
+    "kc10-probes_baseline-6",
+    "kc07-transf",
+    "kc07-probes_baseline-13",
+    "kc06-probes_intervention-12",
+    "kc15-recup",
+    "kc12-probes_intervention-8",
+    "kc11-probes_intervention-8",
+    "kc14-probes_intervention-13",
+    "kc01-probes_intervention-5",
+    "kc08-probes_intervention-6",
+    "kc07-probes_intervention-13",
+    "kc02-repos",
+    "kc17-diag",
+    "kc04-probes_intervention-9",
+    "kc14-probes_baseline-8",
+    "kc09-probes_intervention-13",
+    "kc06-probes_intervention-5",
+    "kc15-probes_intervention-14",
+    "kc10-probes_intervention-8",
+    "kc01-probes_baseline-13",
+    "kc14-probes_baseline-5",
+    "kc05-retention-2",
+    "kc17-probes_intervention-8",
+    "kc09-probes_baseline-12",
+    "kc08-probes_intervention-12",
+    "kc01-transf",
+    "kc16-diag",
+    "kc18-probes_intervention-1",
+    "kc09-probes_intervention-8",
+    "kc18-retention-2",
+    "kc14-diag",
+    "kc15-probes_baseline-10",
+    "kc04-probes_intervention-3",
+    "kc02-probes_baseline-1",
+    "kc04-probes_baseline-2",
+    "kc17-probes_baseline-8",
+    "kc15-retention-2",
+    "kc14-transf",
+    "kc17-probes_intervention-1",
+    "kc10-probes_baseline-1",
+    "kc17-probes_intervention-7",
+    "kc15-probes_baseline-9",
+    "kc15-transfer_measurement-1",
+    "kc16-probes_baseline-8",
+    "kc05-retention-1",
+    "kc01-probes_intervention-6",
+    "kc11-probes_baseline-12",
+    "kc13-probes_baseline-1",
+    "kc08-probes_baseline-3",
+    "kc04-probes_baseline-4",
+    "kc02-probes_intervention-4",
+    "kc10-probes_intervention-7",
+    "kc11-probes_baseline-4",
+    "kc06-probes_baseline-1",
+    "kc18-probes_intervention-3",
+    "kc05-probes_baseline-13",
+    "kc04-probes_intervention-8",
+    "kc17-transfer_measurement-1",
+    "kc13-probes_intervention-10",
+    "kc18-transf",
+    "kc12-probes_intervention-12",
+    "kc08-transfer_measurement-1",
+    "kc15-probes_intervention-3",
+    "kc18-guia",
+    "kc02-probes_intervention-12",
+    "kc18-probes_baseline-8",
+    "kc02-recup",
+    "kc16-probes_baseline-7",
+    "kc07-transfer_measurement-2",
+    "kc04-probes_intervention-4",
+    "kc03-transfer_measurement-1",
+    "kc02-probes_intervention-3",
+    "kc11-probes_baseline-6",
+    "kc09-transfer_measurement-1",
+    "kc06-probes_baseline-6",
+    "kc09-probes_intervention-2",
+    "kc07-recup",
+    "kc14-probes_baseline-9",
+    "kc18-probes_baseline-5",
+    "kc08-probes_baseline-12",
+    "kc18-probes_intervention-10",
+    "kc07-indep",
+    "kc06-probes_intervention-6",
+    "kc12-transfer_measurement-2",
+    "kc18-repos",
+    "kc07-probes_baseline-11",
+    "kc12-probes_intervention-9",
+    "kc11-transfer_measurement-2",
+    "kc11-probes_intervention-1",
+    "kc12-probes_intervention-3",
+    "kc02-probes_baseline-5",
+    "kc13-recup",
+    "kc16-probes_intervention-13",
+    "kc05-probes_baseline-4",
+    "kc14-transfer_measurement-1",
+    "kc16-probes_intervention-7",
+    "kc15-probes_intervention-10",
+    "kc01-probes_intervention-11",
+    "kc06-probes_intervention-4",
+    "kc17-probes_baseline-14",
+    "kc07-probes_baseline-1",
+    "kc07-retention-1",
+    "kc15-probes_intervention-6",
+    "kc15-probes_baseline-4",
+    "kc05-probes_intervention-10",
+    "kc09-probes_baseline-10",
+    "kc17-probes_baseline-5",
+    "kc07-probes_intervention-12",
+    "kc06-probes_intervention-7",
+    "kc02-probes_baseline-3",
+    "kc09-retention-2",
+    "kc11-indep",
+    "kc06-transfer_measurement-1",
+    "kc15-probes_baseline-14",
+    "kc06-probes_intervention-14",
+    "kc04-probes_baseline-9",
+    "kc14-probes_intervention-7",
+    "kc14-probes_intervention-11",
+    "kc01-transfer_measurement-1",
+    "kc10-probes_intervention-9",
+    "kc11-probes_baseline-14",
+    "kc08-probes_intervention-11",
+    "kc07-diag",
+    "kc18-probes_baseline-2",
+    "kc18-probes_baseline-9",
+    "kc01-probes_intervention-3",
+    "kc11-transfer_measurement-1",
+    "kc07-probes_intervention-2",
+    "kc11-retention-2",
+    "kc14-probes_intervention-12",
+    "kc02-probes_intervention-7",
+    "kc09-probes_intervention-14",
+    "kc13-probes_intervention-7",
+    "kc09-repos",
+    "kc10-transfer_measurement-2",
+    "kc01-repos",
+    "kc07-retention-2",
+    "kc10-probes_baseline-4",
+    "kc06-probes_baseline-12",
+    "kc08-probes_baseline-5",
+    "kc17-probes_baseline-12",
+    "kc12-probes_baseline-2",
+    "kc09-transf",
+    "kc09-diag",
+    "kc13-probes_baseline-10",
+    "kc10-guia",
+    "kc05-transfer_measurement-2",
+    "kc12-probes_intervention-1",
+    "kc13-probes_intervention-8",
+    "kc11-probes_baseline-13",
+    "kc12-probes_baseline-7",
+    "kc16-probes_baseline-6",
+    "kc12-probes_intervention-6",
+    "kc17-probes_baseline-13",
+    "kc17-recup",
+    "kc10-probes_baseline-11",
+    "kc06-probes_baseline-7",
+    "kc13-transf",
+    "kc02-probes_intervention-10",
+    "kc18-probes_intervention-12",
+    "kc16-recup",
+    "kc08-probes_baseline-10",
+    "kc13-probes_baseline-7",
+    "kc10-probes_baseline-7",
+    "kc12-probes_baseline-10",
+    "kc06-probes_intervention-10",
+    "kc17-repos",
+    "kc01-indep",
+    "kc03-guia",
+    "kc08-retention-1",
+    "kc09-probes_baseline-5",
+    "kc14-probes_baseline-12",
+    "kc12-probes_intervention-7",
+    "kc11-probes_intervention-12",
+    "kc04-retention-2",
+    "kc06-probes_intervention-11",
+    "kc13-probes_intervention-12",
+    "kc08-probes_baseline-2",
+    "kc04-recup",
+    "kc02-probes_baseline-8",
+    "kc02-probes_intervention-13",
+    "kc16-retention-2",
+    "kc14-indep",
+    "kc14-probes_baseline-2",
+    "kc14-probes_intervention-4",
+    "kc08-probes_intervention-2",
+    "kc10-retention-2",
+    "kc03-retention-1",
+    "kc11-probes_intervention-6",
+    "kc17-retention-2",
+    "kc13-probes_intervention-9",
+    "kc13-probes_baseline-3",
+    "kc17-probes_intervention-14",
+    "kc01-transfer_measurement-2",
+    "kc18-probes_intervention-6",
+    "kc17-retention-1",
+    "kc09-probes_baseline-13",
+    "kc16-probes_baseline-12",
+    "kc08-diag",
+    "kc12-probes_intervention-14",
+    "kc17-probes_intervention-5",
+    "kc04-probes_intervention-6",
+    "kc04-guia",
+    "kc07-probes_baseline-7",
+    "kc17-probes_baseline-1",
+    "kc12-guia",
+    "kc04-probes_intervention-10",
+    "kc08-transf",
+    "kc09-probes_intervention-10",
+    "kc10-probes_intervention-1",
+    "kc11-probes_baseline-1",
+    "kc15-probes_intervention-2",
+    "kc05-recup",
+    "kc06-repos",
+    "kc07-probes_intervention-11",
+    "kc05-probes_intervention-14",
+    "kc14-probes_intervention-10",
+    "kc17-probes_intervention-3",
+    "kc06-diag",
+    "kc02-transf",
+    "kc12-probes_baseline-1",
+    "kc02-probes_baseline-10",
+    "kc04-probes_baseline-1",
+    "kc01-probes_baseline-7",
+    "kc09-probes_intervention-11",
+    "kc05-probes_baseline-1",
+    "kc06-probes_baseline-5",
+    "kc10-probes_intervention-6",
+    "kc02-probes_baseline-2",
+    "kc16-probes_baseline-5",
+    "kc12-probes_intervention-13",
+    "kc15-transfer_measurement-2",
+    "kc10-diag",
+    "kc05-probes_intervention-4",
+    "kc04-probes_baseline-13",
+    "kc17-probes_baseline-9",
+    "kc13-transfer_measurement-1",
+    "kc05-probes_intervention-3",
+    "kc17-transf",
+    "kc04-probes_baseline-12",
+    "kc08-retention-2",
+    "kc01-probes_baseline-10",
+    "kc02-probes_baseline-14",
+    "kc11-probes_intervention-2",
+    "kc18-probes_intervention-2",
+    "kc09-probes_intervention-12",
+    "kc04-probes_baseline-7",
+    "kc10-indep",
+    "kc13-probes_intervention-2",
+    "kc09-probes_baseline-14",
+    "kc15-probes_baseline-6",
+    "kc18-retention-1",
+    "kc12-probes_baseline-4",
+    "kc16-transfer_measurement-2",
+    "kc02-probes_baseline-7",
+    "kc09-probes_baseline-7",
+    "kc14-probes_intervention-1",
+    "kc05-probes_intervention-8",
+    "kc10-probes_intervention-14",
+    "kc04-transfer_measurement-2",
+    "kc16-probes_baseline-13",
+    "kc16-probes_intervention-4",
+    "kc18-probes_intervention-11",
+    "kc05-indep",
+    "kc13-guia",
+    "kc15-repos",
+    "kc18-probes_baseline-11",
+    "kc13-probes_baseline-4",
+    "kc10-probes_intervention-4",
+    "kc03-indep",
+    "kc13-probes_intervention-3",
+    "kc14-probes_intervention-8",
+    "kc01-probes_intervention-13",
+    "kc16-probes_baseline-3",
+    "kc09-probes_intervention-4",
+    "kc03-diag",
+    "kc04-indep",
+    "kc11-recup",
+    "kc02-probes_baseline-9",
+    "kc13-probes_intervention-1",
+    "kc11-probes_intervention-5",
+    "kc04-probes_baseline-8",
+    "kc08-probes_intervention-5",
+    "kc15-probes_baseline-7",
+    "kc09-probes_baseline-11",
+    "kc02-transfer_measurement-2",
+    "kc12-indep",
+    "kc03-repos",
+    "kc14-retention-1",
+    "kc01-probes_intervention-10",
+    "kc17-guia",
+    "kc14-probes_baseline-14",
+    "kc08-recup",
+    "kc10-probes_baseline-3",
+    "kc13-probes_intervention-14",
+    "kc12-probes_baseline-12",
+    "kc04-probes_baseline-5",
+    "kc08-probes_intervention-13",
+    "kc11-probes_intervention-14",
+    "kc10-probes_intervention-5",
+    "kc07-probes_baseline-6",
+    "kc15-probes_baseline-3",
+    "kc17-probes_baseline-2",
+    "kc07-probes_intervention-6",
+    "kc01-recup",
+    "kc16-probes_intervention-12",
+    "kc12-probes_baseline-9",
+    "kc10-probes_baseline-5",
+    "kc04-probes_intervention-1",
+    "kc14-probes_baseline-7",
+    "kc05-probes_intervention-2",
+    "kc03-transfer_measurement-2",
+    "kc06-probes_intervention-9",
+    "kc06-probes_baseline-13",
+    "kc14-probes_baseline-11",
+    "kc11-probes_baseline-8",
+    "kc17-probes_baseline-7",
+    "kc16-probes_intervention-11",
+    "kc06-recup",
+    "kc12-transfer_measurement-1",
+    "kc12-probes_baseline-3",
+    "kc01-probes_baseline-12",
+    "kc16-probes_baseline-14",
+    "kc13-probes_baseline-14",
+    "kc08-probes_intervention-3",
+    "kc11-transf",
+    "kc06-probes_intervention-2",
+    "kc09-probes_baseline-9",
+    "kc12-probes_baseline-14",
+    "kc14-recup",
+    "kc10-transfer_measurement-1",
+    "kc01-probes_baseline-9",
+    "kc17-probes_baseline-10",
+    "kc05-probes_baseline-2",
+    "kc02-retention-2",
+    "kc16-probes_intervention-1",
+    "kc13-probes_baseline-12",
+    "kc11-probes_intervention-13",
+    "kc02-probes_intervention-14",
+    "kc16-probes_intervention-5",
+    "kc10-probes_baseline-9",
+    "kc08-probes_intervention-9",
+    "kc18-transfer_measurement-1",
+    "kc11-probes_baseline-3",
+    "kc13-probes_intervention-13",
+    "kc09-probes_baseline-8",
+    "kc04-probes_baseline-6",
+    "kc10-probes_baseline-8",
+    "kc17-probes_intervention-11",
+    "kc17-probes_intervention-4",
+    "kc08-repos",
+    "kc17-probes_intervention-9",
+    "kc17-probes_baseline-4",
+    "kc04-probes_intervention-12",
+    "kc11-diag",
+    "kc17-probes_intervention-10",
+    "kc05-probes_baseline-11",
+    "kc03-recup",
+    "kc11-probes_intervention-4",
+    "kc09-probes_intervention-6",
+    "kc05-probes_intervention-1",
+    "kc10-probes_intervention-12",
+    "kc08-probes_baseline-6",
+    "kc08-guia",
+    "kc06-probes_intervention-8",
+    "kc06-probes_intervention-13",
+    "kc10-probes_baseline-12"
+  ],
+  "checksApplied": [
+    {
+      "check": "etiqueta_de_kc",
+      "codes": [
+        "incorrect_kc_label"
+      ],
+      "mechanical": true,
+      "coverage": "504 de 656 reactivos — los que declaran un KC con `ruleId` en el catálogo; KC01, KC02, KC08 y KC18 no lo tienen",
+      "method": "Por cada reactivo aceptado cuyo KC declara `ruleId`, esa regla debe aparecer en alguna línea de su certificado. Se leen las líneas, no `rulesUsed`: la reiteración se inserta al linealizar y no consta en el término."
+    },
+    {
+      "check": "resto_del_libro_de_codigos",
+      "codes": [
+        "incorrect_solution",
+        "item_without_valid_solution",
+        "solution_leak",
+        "corpus_contradiction",
+        "accepts_invalid_answer",
+        "reused_or_contaminated_probe",
+        "answer_changing_ambiguity",
+        "difficulty_outside_declared_level",
+        "hint_practically_solves",
+        "inapplicable_rubric",
+        "wording_without_interpretation_change",
+        "inconsistent_format",
+        "recoverable_incomplete_anchor",
+        "stylistic_detail"
+      ],
+      "mechanical": false,
+      "coverage": "ninguna comprobación automática",
+      "method": "Requieren lectura. La de esta corrida la hizo el mismo modelo que generó el material, así que **no cuenta como evidencia de calidad** (§7.3): el cero de esta fila significa «no se halló», no «se comprobó y no hay»."
+    }
+  ],
+  "judgments": [],
+  "observationsWithoutCode": [
+    {
+      "alcance": "KC03",
+      "observacion": "No se generó la reserva `probes_baseline`: La regla de KC03 es la reiteración `R`, que solo opera dentro de una subprueba, y toda regla que abre una subprueba se enseña después de KC03 en la secuencia congelada. Con el horizonte «hasta el KC medido inclusive» la única regla disponible es `R`, y con `R` sola la meta es siempre una premisa: `goal_trivial`.",
+      "porQueNoLlevaCodigo": "Es una consecuencia declarada del cálculo y de la secuencia congelada —la reserva no existe—, no un reactivo defectuoso. Auditar lo que no se generó no tiene objeto; lo que hay que decidir es si el diseño experimental lo admite.",
+      "consecuencia": "El conjunto experimental que lleve ese KC como objetivo trae menos sondas primarias. La selección A/B/C lo registra y comprueba que sigue por encima del piso del calendario."
+    },
+    {
+      "alcance": "KC03",
+      "observacion": "No se generó la reserva `probes_intervention`: La regla de KC03 es la reiteración `R`, que solo opera dentro de una subprueba, y toda regla que abre una subprueba se enseña después de KC03 en la secuencia congelada. Con el horizonte «hasta el KC medido inclusive» la única regla disponible es `R`, y con `R` sola la meta es siempre una premisa: `goal_trivial`.",
+      "porQueNoLlevaCodigo": "Es una consecuencia declarada del cálculo y de la secuencia congelada —la reserva no existe—, no un reactivo defectuoso. Auditar lo que no se generó no tiene objeto; lo que hay que decidir es si el diseño experimental lo admite.",
+      "consecuencia": "El conjunto experimental que lleve ese KC como objetivo trae menos sondas primarias. La selección A/B/C lo registra y comprueba que sigue por encima del piso del calendario."
+    }
+  ],
+  "gateReport": {
+    "blocked": false,
+    "sampleSize": 656,
+    "critical": {
+      "count": 0,
+      "denominator": 656
+    },
+    "major": {
+      "count": 0,
+      "denominator": 656,
+      "percent": 0
+    },
+    "minor": {
+      "count": 0,
+      "denominator": 656,
+      "percent": 0
+    },
+    "familiesWithAtLeastTwoMajor": [],
+    "uncoveredStrata": [],
+    "reasons": [],
+    "affectedFamilies": [],
+    "strata": [
+      {
+        "stratumKey": "KC01|diagnostic|alta|estructural|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-efb76ff580ebf250f89d9a0fc992f016"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC01|guided_practice|alta|estructural|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-9d3ca930f3910ab135d2a6d8c3c57a39"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC01|independent_practice|alta|estructural|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d50bbb3258b7ebf4bf7e879296cef716"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC01|probes_baseline|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-44b5d43e63ca73651c1132286acd5bbd"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC01|probes_intervention|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-ef97ca157d4348e5108447164e970699"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC01|recovery|alta|estructural|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-b5519fba47a3e444583d838dbdc44d73"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC01|replacement|alta|estructural|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-c867bb399ca5f34952ec6416707750da"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC01|retention|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-58c51d09d958778d92c0023af10e79b3"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC01|TRANSFER_MASTERY|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d605602169e04bed51ef5c54085da308"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC01|TRANSFER_MEASUREMENT|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-9846c1affee48a5c65ba55468a5d0327"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC02|diagnostic|media|estructural|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-41686f9317001cd1123f4b894dd02433"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC02|guided_practice|media|estructural|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-15ca5bdddce85d57ef3b721843f52515"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC02|independent_practice|media|estructural|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-122bdc42d734d5a2b37f613b9f610ca8"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC02|probes_baseline|media|estructural|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-ec1c3891c0f0a0ac9628d7246479c5b1"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC02|probes_intervention|alta|estructural|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-353bf3a6354884305d594e3fd5dcb53e"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC02|recovery|media|estructural|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d1948860805c878cd5d092210ef6fe2c"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC02|replacement|media|estructural|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-737db58fad873a2f375596368d74ba7e"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC02|retention|alta|estructural|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-35095d10a70878bd5cec222c269712e4"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC02|TRANSFER_MASTERY|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-bfa3c682662d5727f5f8402448725f5c"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC02|TRANSFER_MEASUREMENT|alta|estructural|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-9260b67ee3b62838f9611065c617aa43"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC03|diagnostic|media|R|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d25bca3108b03237b7116ea706a44751"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC03|guided_practice|media|R|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-b06027960d33a1d704f4bd9bcd8d1f2f"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC03|independent_practice|media|R|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-043ae17b0e9b76d4db73bf0146b63cda"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC03|recovery|media|R|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-9170c47862b875e2479287f8717558fd"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC03|replacement|media|R|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-b39ec5aa61870e422f1e62eb876aa3b2"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC03|retention|media|R|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-50520285d08ce261f94684d0ab165d04"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC03|TRANSFER_MASTERY|media|R|w3_generado|subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-eba943dc669c9d4fbf100c3f02e95010"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC03|TRANSFER_MEASUREMENT|media|R|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-417681c19f7cf286a8ae1ca19d57a585"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC04|diagnostic|baja|∧I|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-e99fdabfdbb0002425dd8b66434d0771"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC04|guided_practice|baja|∧I|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-dbc14666cafe319336e7aa68149e3039"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC04|independent_practice|baja|∧I|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-4956ffa1ecc9f3f7a5504c005d17b1ec"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC04|probes_baseline|media|∧I|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-67cb12de774b6ff0bad07e8e56b7e74c"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC04|probes_intervention|media|∧I|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-77e2bba63bf9f0aeab432be4159eec7d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC04|recovery|baja|∧I|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-a54db72926d58b7ddc9be2a4d5b1c1cb"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC04|replacement|baja|∧I|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-34d9a1d69c5b09dd83b29ca6d3c9c80d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC04|retention|media|∧I|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-7659bcd166b8adb23df5dd5760ccf23c"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC04|TRANSFER_MASTERY|media|∧I|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-22183bb9c0f50360f4f8f55dc2ce4d9a"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC04|TRANSFER_MEASUREMENT|media|∧I|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-512620db35de67d7aff26360a6322f9e"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC05|diagnostic|baja|∧E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-7b2940ee66beee42846de2ed75078426"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC05|guided_practice|baja|∧E|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d3a91d698d6393723976eb15de5c8ad9"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC05|independent_practice|baja|∧E|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-ccf37a3a29227bc1f4e79d9872a8fb47"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC05|probes_baseline|baja|∧E|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-cc3449af07565432756228417c314923"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC05|probes_intervention|baja|∧E|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-dddae578733d67c5206133a472fca584"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC05|recovery|baja|∧E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-b80fe109b38c8d9d4fe261540c6a82c5"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC05|replacement|baja|∧E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-b1b05e1106667907115fe069065a25e0"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC05|retention|alta|∧E|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-9e0a45e8804e6c65983f6d71bd4f016d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC05|TRANSFER_MASTERY|media|∧E|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-cd934edad58e92f685be2e576e831cab"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC05|TRANSFER_MEASUREMENT|alta|∧E|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-72b056c6ae402ecf04520505e5b85eaa"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC06|diagnostic|baja|→E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-2b860eca5ceebe90d8703323bf7dfbfa"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC06|guided_practice|baja|→E|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-8570e31850dc53eb8515bb662dead4dc"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC06|independent_practice|baja|→E|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-b6b797cad0c817f9596cc9006173d09e"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC06|probes_baseline|media|→E|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-84200a5373837fa319fcf84e49e4b339"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC06|probes_intervention|media|→E|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-8683790c07be3d2df43d23cea8fca33d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC06|recovery|baja|→E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-ac175577f53cff4bbabee220bdca54e7"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC06|replacement|baja|→E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-9a9a72a59ebe2d8a0ce37cc0bfa591d6"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC06|retention|alta|→E|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d449dacbb8557c04f36b08fbcff45937"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC06|TRANSFER_MASTERY|media|→E|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-cf5427bb59ced6ef3043b7f10310fb6e"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC06|TRANSFER_MEASUREMENT|media|→E|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-a9c75ef340b07494eb828110b19f0cbc"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC07|diagnostic|baja|∨I|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d4f4669c8319ec99da6eedcdfffff91a"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC07|guided_practice|baja|∨I|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-4d9d640e12291791fa3167d75075144c"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC07|independent_practice|baja|∨I|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-df186ce88d1d2b3d7f194539b57d7528"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC07|probes_baseline|media|∨I|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-c480691a0b24e0f1d6ed78b3e49d12d0"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC07|probes_intervention|media|∨I|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d8264365f83e6d4bbf5aa0eefd7fc829"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC07|recovery|baja|∨I|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-2a35b32e7fb649a39e9135a19bb7ac12"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC07|replacement|baja|∨I|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-3225881263321569e68ef80342322a18"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC07|retention|media|∨I|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-e7af79016e566125306262cf03da52cd"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC07|TRANSFER_MASTERY|alta|∨I|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-ff606371b4c18e7363e91767a80d9b5b"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC07|TRANSFER_MEASUREMENT|alta|∨I|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-399ccf6ac8c94fc57c0da1492cee4c58"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC08|diagnostic|media|estructural|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-c010eba1016b17fb7fdad2a50cf2dbc3"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC08|guided_practice|media|estructural|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-53ee42d7eb0472985cf690e807b0327d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC08|independent_practice|media|estructural|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-824d64f82df39b87cba6cab50d7221f8"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC08|probes_baseline|alta|estructural|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-e4dd84fbccdf498e442bbee95cf765f3"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC08|probes_intervention|alta|estructural|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-2f8e8f71a764bf5ee9ff41d4fd05baa3"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC08|recovery|media|estructural|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-4ccc4280724ebc90be4fc174b8696a10"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC08|replacement|media|estructural|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-aac1b89c157df9cd55846383ff6602c6"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC08|retention|alta|estructural|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-17905e95da6442b24befe2eaa432e905"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC08|TRANSFER_MASTERY|alta|estructural|w3_generado|subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-c0882a0bf2c5c14be4de3d53abdfb0ad"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC08|TRANSFER_MEASUREMENT|alta|estructural|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-ecba5df6a9e080f9a7ffbb5a67c4fd6c"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC09|diagnostic|alta|→I|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d6f225c840bab8455bf1f1c0d4da9a84"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC09|guided_practice|alta|→I|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-1048c3c24f1fc1bf455e3a07a6a29938"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC09|independent_practice|alta|→I|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-750df93834f0b7e7a9fa055d145c70ed"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC09|probes_baseline|alta|→I|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-47d1cf4ba0295bc564d507da5bc0acbc"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC09|probes_intervention|alta|→I|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-a41817d9e63c0735115652b3b480608d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC09|recovery|alta|→I|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-9cdcb99614683c8e39cc5a796b7b9ef6"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC09|replacement|alta|→I|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-06dc8f21f88c7707fe36ae4ecce28e22"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC09|retention|alta|→I|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-f752221ab8022f29ab33029c0a7ae118"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC09|TRANSFER_MASTERY|alta|→I|w3_generado|subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-338177f74c4d01065e21398659b7a052"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC09|TRANSFER_MEASUREMENT|alta|→I|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-18746df30f40dc46318e2c5258fe5f41"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC10|diagnostic|baja|¬E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-03a89a8ca411c4531e73fc32268257b7"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC10|guided_practice|baja|¬E|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-cc45dd8d0ea026d5e2fd431101a11c8f"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC10|independent_practice|baja|¬E|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-38926146e877aedf4dc88c6be49d9eae"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC10|probes_baseline|baja|¬E|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-4aed0f162c4676beab5e18dba3ce57f1"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC10|probes_intervention|media|¬E|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d60b3ba9db7f9a85b5fa2d567125ab71"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC10|recovery|baja|¬E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-009382ddf6e2ba597f36d9fbec4208bc"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC10|replacement|baja|¬E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-e1b9724574e1c618dadc454a8602bb44"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC10|retention|alta|¬E|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-539460709a30f3c30a4b5823dbe5c8ee"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC10|TRANSFER_MASTERY|media|¬E|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-0d49853493904eecae76b0e672bed6fd"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC10|TRANSFER_MEASUREMENT|media|¬E|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-24ad4f9b48f4524542ee0a72e0ca943e"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC11|diagnostic|alta|¬I|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-54e22fa3d387b171f15a3568f70dc158"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC11|guided_practice|alta|¬I|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-6bce2e2fdf28715944aa0ac3f6def733"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC11|independent_practice|alta|¬I|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-ef92b96c2b9619b75ca33a6977f10226"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC11|probes_baseline|alta|¬I|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-59f91e0d855000ea735efb8293227d4d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC11|probes_intervention|alta|¬I|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-5189d9f3ead140260ed94a0c6c4a0759"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC11|recovery|alta|¬I|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-3633e47f58fb7d6182b43519b79ea905"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC11|replacement|alta|¬I|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d7aa026412234aa3667db5d9449c5cb2"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC11|retention|alta|¬I|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-609b9d7f32ea37168e94e7a1a3b213bf"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC11|TRANSFER_MASTERY|alta|¬I|w3_generado|subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-6b74155a8a7050b8b132f08330fde7ef"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC11|TRANSFER_MEASUREMENT|alta|¬I|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-c9abf200b2d5aa7804841faf2b09d0db"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC12|diagnostic|media|X|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-64f00f5440d7b4f496aa1a62820e754c"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC12|guided_practice|media|X|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-ec93dc65cf97c33bc381db44c39e9b7c"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC12|independent_practice|media|X|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-8e03595a95398e17fa81b4e983244027"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC12|probes_baseline|alta|X|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-11bc1f5882ed194237e101440c25cb80"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC12|probes_intervention|alta|X|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-cb2fdbc7eb781fd2abca6502222c002d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC12|recovery|media|X|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-8718f8fd5f22dcaa263a9cf9b3b523cf"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC12|replacement|media|X|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-3da7c2936ba66557f9a4eb2b2ff0e2f3"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC12|retention|alta|X|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-f5eaa86fd483cb2796f790be93659cc3"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC12|TRANSFER_MASTERY|alta|X|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d388deb53fd597116bd80ee903e0fa0d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC12|TRANSFER_MEASUREMENT|alta|X|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-c91889388dfda864a1581c977aed702f"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC13|diagnostic|alta|∨E|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-eb2f54eb77a4346b216fd23bc26ae22d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC13|guided_practice|alta|∨E|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-9e9bd26779365e8e5b0817404a2f0942"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC13|independent_practice|alta|∨E|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-eaf96e306d67f652672e50437872c61e"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC13|probes_baseline|alta|∨E|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-671166b41efcaa1918b64721f04d98ec"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC13|probes_intervention|alta|∨E|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-9e501c5e4f6121bc352693f4ab5303c5"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC13|recovery|alta|∨E|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-6956f929558038c8fc5021801783e0c8"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC13|replacement|alta|∨E|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-7b1ec6efb2a14c824b179898abfd6444"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC13|retention|alta|∨E|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-e5f52f5c3fadf14297c096a9b021bb84"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC13|TRANSFER_MASTERY|alta|∨E|w3_generado|subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-916435fe80b8c4500296cc08237cee56"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC13|TRANSFER_MEASUREMENT|alta|∨E|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-06cbfec25b9a30c5ba0b1495e8971914"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC14|diagnostic|media|↔I|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-b5ff934287d75931387092556fbcc429"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC14|guided_practice|media|↔I|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-82253ca0fe839e3bbeec14e8245e6c86"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC14|independent_practice|media|↔I|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-5c80f48a2d86c7dd7bd840293f71f03c"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC14|probes_baseline|alta|↔I|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-75dfe66c7fd0208225e4b17be8f4c576"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC14|probes_intervention|alta|↔I|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-5da34552bd1e6cc5123186f05dd6ff56"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC14|recovery|media|↔I|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-5098034d6337d575812c6091c94ece38"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC14|replacement|media|↔I|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-4d8bf70d4ca024189230e56ae16e18f9"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC14|retention|alta|↔I|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-34984728a09ac65717ff04cf9aaedee7"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC14|TRANSFER_MASTERY|alta|↔I|w3_generado|subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-32793d3a22a35d5654bb2d15f17b6467"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC14|TRANSFER_MEASUREMENT|alta|↔I|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-50ecd545c7bf49fafd28478d29ed9a88"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC15|diagnostic|baja|↔E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-8243812052f2384d8c89c0651afa5f86"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC15|guided_practice|baja|↔E|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-e9a81964ff18889e59e61d0d6e40c6e2"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC15|independent_practice|baja|↔E|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-c5c9f586f7f206ba8bc6c412c83f4e40"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC15|probes_baseline|media|↔E|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-e1bab11e173b567cddbb6397292e96e1"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC15|probes_intervention|media|↔E|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-9b46634a3d20820822cf9f47dbf54f7b"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC15|recovery|baja|↔E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-500127f3f87b61191b30d91eb4d7692d"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC15|replacement|baja|↔E|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-e33e7bc13596c5f8829f6f12687cc602"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC15|retention|media|↔E|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-7247c5de9131dcca07c67601cf1d5068"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC15|TRANSFER_MASTERY|baja|↔E|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-6af432f5923037214ae082f4483c10bf"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC15|TRANSFER_MEASUREMENT|alta|↔E|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-1f41fb173ed8ca6c86c79350568613e2"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC16|diagnostic|baja|DNE|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-1b9903d7d4ad9874502c39c35750423b"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC16|guided_practice|baja|DNE|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-dfb1c43c70d2a3e3d6a8876dcf00b1fe"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC16|independent_practice|baja|DNE|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-a0edccfa71fb5e8bc51fd858c1d9ec70"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC16|probes_baseline|media|DNE|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-a753ff8bf8959da2d95e6e7b19bb8804"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC16|probes_intervention|media|DNE|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-2564b78c145c190a2a857b890a93455f"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC16|recovery|baja|DNE|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-cb9bb5fbf9e7f879061f0e127b1b4158"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC16|replacement|baja|DNE|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-d6df6f3ffa8bafb07f16748ea28ce3ff"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC16|retention|alta|DNE|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-b0a3807ea317518eda0ba7c8a8cce18b"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC16|TRANSFER_MASTERY|media|DNE|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-ecb205ad0b309d5d056c58d80fe9d3c1"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC16|TRANSFER_MEASUREMENT|alta|DNE|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-e569518727b2f745a60134b7a97bb618"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC17|diagnostic|alta|IP|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-177d967bfe31b8a395dae776ef465e30"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC17|guided_practice|alta|IP|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-a1e2e9350bf3351f1a34932e142019d2"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC17|independent_practice|alta|IP|w3_generado|subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-cbb8fec1794d3a765f2147287c39b93c"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC17|probes_baseline|alta|IP|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-c4e00ee42a21db167801b58c09c40889"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC17|probes_intervention|alta|IP|w3_generado|subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-16fb9bdf9617c0d5bddd281c64ebaf1a"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC17|recovery|alta|IP|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-588fbc2db29c003767e643a0df2774ac"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC17|replacement|alta|IP|w3_generado|subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-42b56f87f6689439cea3469d7cea5edd"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC17|retention|alta|IP|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-6d813dbe7c1b7ea4ff2af97c854afce8"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC17|TRANSFER_MASTERY|alta|IP|w3_generado|subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-2b64b4959301d446d120843c43744396"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC17|TRANSFER_MEASUREMENT|alta|IP|w3_generado|subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-e8798658aaffa6204521fe24be05f60f"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC18|diagnostic|alta|estructural|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-08aad11aaa401cd0d035d30b0da66640"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC18|guided_practice|alta|estructural|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-b2ea9f55c1dbc571ce32f51ce86cd832"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC18|independent_practice|alta|estructural|w3_generado|no-subproof|low",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-fcda19bf467ff058a9fb9c46456ba606"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC18|probes_baseline|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-c72426e69fc76223fde99dee83375576"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC18|probes_intervention|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 14,
+        "n_h": 14,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-2a69400db5eb8cad8b40b8c5a1d8ab55"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC18|recovery|alta|estructural|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-cc46432cf0b175c7e37eb89399436fa8"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC18|replacement|alta|estructural|w3_generado|no-subproof|medium",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-6f4a77923593d5e8c25814b070f9f8ee"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC18|retention|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-413fce9ebcb687266d5f49d47b2c8734"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC18|TRANSFER_MASTERY|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 1,
+        "n_h": 1,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-c543a80cd12d3da614ac9fe36a071d49"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      },
+      {
+        "stratumKey": "KC18|TRANSFER_MEASUREMENT|alta|estructural|w3_generado|no-subproof|high",
+        "N_h": 2,
+        "n_h": 2,
+        "fraction": 1,
+        "method": "seeded_sha256_with_floor_augmentation",
+        "seed": "w4-preaudit-bench04-7ea6860a41113495",
+        "inclusionProbability": null,
+        "familyIds": [
+          "fam-59f0f66f75a60cbea440fb6f8d686642"
+        ],
+        "origins": [
+          "w3_generado"
+        ],
+        "defectsBySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0
+        }
+      }
+    ]
+  }
+}

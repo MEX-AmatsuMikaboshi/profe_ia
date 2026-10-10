@@ -1,0 +1,9 @@
+# Integridad byte a byte.
+#
+# La autoridad de este repositorio son hashes: `authorized-calculus-v1.yaml`
+# está hasheado en `logic-core` y el conjunto dorado se regenera de forma
+# reproducible. Una conversión de finales de línea en el checkout cambiaría los
+# bytes y, con ellos, el hash: el verificador rechazaría su propio artefacto.
+#
+# Por eso se desactiva toda conversión de EOL en todo el árbol.
+* -text

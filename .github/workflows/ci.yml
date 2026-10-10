@@ -22,25 +22,8 @@ jobs:
     name: ci:lint · ci:typecheck · ci:unit · ci:build
     runs-on: ubuntu-latest
     steps:
-      # `content/` es un repositorio privado aparte (D-2). `secrets.GITHUB_TOKEN`
-      # solo alcanza a este repositorio, así que el clon del submódulo falla con
-      # `Repository not found`. Se usa un PAT fine-grained de solo lectura, que
-      # checkout aplica tanto al repo principal como al submódulo: necesita
-      # `Contents: Read` sobre `profe_ia` **y** sobre `profe_ia_contenido`.
-      - name: CONTENT_TOKEN presente
-        # Escalar de bloque: el mensaje lleva `: ` y en un escalar plano de YAML
-        # eso se parsea como mapa y rompe el workflow entero.
-        run: |
-          test -n "$T" || {
-            echo "::error::Falta el secreto CONTENT_TOKEN. Sin él no se puede clonar el submódulo privado content/ (D-2)."
-            exit 1
-          }
-        env:
-          T: ${{ secrets.CONTENT_TOKEN }}
+      # El checkout normal incluye el contenido educativo versionado en content/.
       - uses: actions/checkout@v5
-        with:
-          submodules: recursive
-          token: ${{ secrets.CONTENT_TOKEN }}
       - uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
@@ -207,21 +190,7 @@ jobs:
     name: ci:logic:golden · ci:logic:pbt · ci:logic:no-net
     runs-on: ubuntu-latest
     steps:
-      # Ver la nota del job `base`: el submódulo privado exige el PAT.
-      - name: CONTENT_TOKEN presente
-        # Escalar de bloque: el mensaje lleva `: ` y en un escalar plano de YAML
-        # eso se parsea como mapa y rompe el workflow entero.
-        run: |
-          test -n "$T" || {
-            echo "::error::Falta el secreto CONTENT_TOKEN. Sin él no se puede clonar el submódulo privado content/ (D-2)."
-            exit 1
-          }
-        env:
-          T: ${{ secrets.CONTENT_TOKEN }}
       - uses: actions/checkout@v5
-        with:
-          submodules: recursive
-          token: ${{ secrets.CONTENT_TOKEN }}
       - uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
@@ -238,24 +207,20 @@ jobs:
         run: pnpm run ci:logic:no-net
       # La tabla de mangos es derivada del corpus (D-77): si el corpus cambia y
       # nadie la regenera, un informe de BENCH-01 lleno de `F-…` deja de ser
-      # auditable. Va en este job porque necesita el submódulo de contenido.
+      # auditable. Va en este job porque necesita el contenido educativo.
       - name: ci:content:mangos
         run: pnpm run ci:build && pnpm run ci:content:mangos
       # El conjunto dorado es reproducible por semilla: regenerarlo no debe
       # cambiar nada. Un diff aquí significa que el generador o el cálculo cambió.
       #
-      # El diff va **dentro** del submódulo. Desde que D-2 se cerró, el índice del
-      # padre solo guarda un gitlink para `content/unidad-deduccion-natural`, así
-      # que `git diff -- content/…/golden-tests` desde el padre no ve ningún
-      # cambio de contenido y devuelve 0 siempre: el check pasaba por vacío.
-      # Comprobado sembrando un cambio en un caso dorado antes de escribir esto.
+      # Los casos se versionan directamente en el índice del repositorio.
       # `add -A` + `--cached` porque `git diff` a secas tampoco vería un caso nuevo.
       - name: conjunto dorado reproducible
         run: |
           pnpm run ci:build
           pnpm run logic:golden:generate
-          git -C content/unidad-deduccion-natural add -A golden-tests
-          git -C content/unidad-deduccion-natural diff --cached --exit-code -- golden-tests
+          git add -A content/unidad-deduccion-natural/golden-tests
+          git diff --cached --exit-code -- content/unidad-deduccion-natural/golden-tests
 
   mutation:
     # ci:logic:mutation — lento; se ejecuta en main y bajo demanda.
@@ -362,22 +327,8 @@ jobs:
     # Diez servicios, con Infisical y sus 60 s de `start_period`, más la build.
     timeout-minutes: 40
     steps:
-      # Aquí **sí** hace falta el submódulo: `compose-up` levanta el stack
-      # entero, y `authoring-worker` y `measurement-worker` montan rutas de
-      # `content/`. Sin él, Docker crearía directorios vacíos en su lugar y el
-      # check diría «levanta» sobre un sistema que no es el que se despliega.
-      - name: CONTENT_TOKEN presente
-        run: |
-          test -n "$T" || {
-            echo "::error::Falta el secreto CONTENT_TOKEN. Sin él no se puede clonar el submódulo privado content/ (D-2)."
-            exit 1
-          }
-        env:
-          T: ${{ secrets.CONTENT_TOKEN }}
+      # El checkout incluye las rutas de content/ que montan los workers.
       - uses: actions/checkout@v5
-        with:
-          submodules: recursive
-          token: ${{ secrets.CONTENT_TOKEN }}
       - uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}

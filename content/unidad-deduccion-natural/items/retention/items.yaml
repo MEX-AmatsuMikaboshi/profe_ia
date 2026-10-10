@@ -1,0 +1,4189 @@
+# Reactivos aceptados de retention (T-H5-05, W3). Corrida del 2026-08-23T03:33:57.153Z con el orden prefilter_then_search (bench04-7ea6860a41113495). Plantillas, pistas y críticas del modelo asistente (salvedad D-41/D-48/D-52/D-53): las audita W4. El crítico **no es independiente**.
+{
+  "courseId": "unidad-deduccion-natural",
+  "reserves": [
+    "retention"
+  ],
+  "authorizedCalculusVersion": "authorized-calculus-v1",
+  "variantId": "prefilter_then_search",
+  "items": [
+    {
+      "itemFamilyId": "fam-58c51d09d958778d92c0023af10e79b3",
+      "candidateId": "kc01-retention-1",
+      "generatorTemplateId": "plt-kc01-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC01"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 5,
+          "totalLineCount": 7,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "∧E",
+            "∧I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 6,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 5
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 30,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 56.143973,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "df80daf0258e068fe73f30c70ce8b79a3ccc5f24caea958c99b3058d0482d969",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "(A∧B)∧C",
+          "D"
+        ],
+        "goal": "(C∧D)∧B"
+      },
+      "promptText": "Deriva (C∧D)∧B a partir de (A∧B)∧C, D usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#atomic-sentences",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#connectives"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#atomic-sentences",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#connectives"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#atomic-sentences",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#connectives"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-58c51d09d958778d92c0023af10e79b3",
+      "candidateId": "kc01-retention-2",
+      "generatorTemplateId": "plt-kc01-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC01"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 5,
+          "totalLineCount": 7,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "∧E",
+            "∧I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 6,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 5
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 30,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 56.143973,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "df80daf0258e068fe73f30c70ce8b79a3ccc5f24caea958c99b3058d0482d969",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "(E∧F)∧G",
+          "H"
+        ],
+        "goal": "(G∧H)∧F"
+      },
+      "promptText": "Deriva (G∧H)∧F a partir de (E∧F)∧G, H usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#atomic-sentences",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#connectives"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#atomic-sentences",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#connectives"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#atomic-sentences",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-tfl.tex#connectives"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-35095d10a70878bd5cec222c269712e4",
+      "candidateId": "kc02-retention-1",
+      "generatorTemplateId": "plt-kc02-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC02"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 5,
+          "totalLineCount": 6,
+          "premiseCount": 1,
+          "rulesUsed": [
+            "R",
+            "→I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 2,
+          "maxSubproofDepth": 2,
+          "connectivesInStatement": 2,
+          "connectivesInProof": 3,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "→I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 4
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 4,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 47.8591,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "1fc57aa14e3346c20386c3d1a4606a4a4cf9e8d4d6a9d5aa64a9707d810f1be3",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A"
+        ],
+        "goal": "B→(C→A)"
+      },
+      "promptText": "Deriva B→(C→A) a partir de A usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-very-idea-of-natural-deduction",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-very-idea-of-natural-deduction",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-very-idea-of-natural-deduction",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-35095d10a70878bd5cec222c269712e4",
+      "candidateId": "kc02-retention-2",
+      "generatorTemplateId": "plt-kc02-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC02"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 5,
+          "totalLineCount": 6,
+          "premiseCount": 1,
+          "rulesUsed": [
+            "R",
+            "→I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 2,
+          "maxSubproofDepth": 2,
+          "connectivesInStatement": 2,
+          "connectivesInProof": 3,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "→I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 4
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 4,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 47.8591,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "1fc57aa14e3346c20386c3d1a4606a4a4cf9e8d4d6a9d5aa64a9707d810f1be3",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E"
+        ],
+        "goal": "F→(G→E)"
+      },
+      "promptText": "Deriva F→(G→E) a partir de E usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-very-idea-of-natural-deduction",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-very-idea-of-natural-deduction",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-very-idea-of-natural-deduction",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#the-idea-of-a-formal-proof"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-50520285d08ce261f94684d0ab165d04",
+      "candidateId": "kc03-retention-1",
+      "generatorTemplateId": "plt-kc03-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC03"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 3,
+          "totalLineCount": 5,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "R",
+            "→I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 1,
+          "maxSubproofDepth": 1,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "→I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 3
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 1,
+          "costExplored": 1,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "media",
+      "measuredComplexityTier": "media",
+      "complexityIndex": 32.255424,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "7bde3c9eac723c15587101a30f2d0935b73e21b1ae8f4efa6747875a8d2f6989",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A→B",
+          "C"
+        ],
+        "goal": "D→(A→B)"
+      },
+      "promptText": "Deriva D→(A→B) a partir de A→B, C usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-50520285d08ce261f94684d0ab165d04",
+      "candidateId": "kc03-retention-2",
+      "generatorTemplateId": "plt-kc03-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC03"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 3,
+          "totalLineCount": 5,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "R",
+            "→I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 1,
+          "maxSubproofDepth": 1,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "→I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 3
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 1,
+          "costExplored": 1,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "media",
+      "measuredComplexityTier": "media",
+      "complexityIndex": 32.255424,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "7bde3c9eac723c15587101a30f2d0935b73e21b1ae8f4efa6747875a8d2f6989",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E→F",
+          "G"
+        ],
+        "goal": "H→(E→F)"
+      },
+      "promptText": "Deriva H→(E→F) a partir de E→F, G usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#reiteration"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-7659bcd166b8adb23df5dd5760ccf23c",
+      "candidateId": "kc04-retention-1",
+      "generatorTemplateId": "plt-kc04-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC04"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 2,
+          "totalLineCount": 4,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "∧I"
+          ],
+          "distinctRuleCount": 1,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 7,
+          "connectivesInProof": 10,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 2
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 5,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "media",
+      "measuredComplexityTier": "media",
+      "complexityIndex": 28.448359,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "ae1a7202058ee7f1cb45119d1c173c1945e0403c1fbb50045f8dac5aa98ea135",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A→B",
+          "C∨D"
+        ],
+        "goal": "((A→B)∧(C∨D))∧(C∨D)"
+      },
+      "promptText": "Deriva ((A→B)∧(C∨D))∧(C∨D) a partir de A→B, C∨D usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición del condicional (→), de la disyunción (∨) y de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas los conectivos principales son el condicional (→) y la disyunción (∨), y las reglas que los eliminan son →E y ∨E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-7659bcd166b8adb23df5dd5760ccf23c",
+      "candidateId": "kc04-retention-2",
+      "generatorTemplateId": "plt-kc04-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC04"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 2,
+          "totalLineCount": 4,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "∧I"
+          ],
+          "distinctRuleCount": 1,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 7,
+          "connectivesInProof": 10,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 2
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 5,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "media",
+      "measuredComplexityTier": "media",
+      "complexityIndex": 28.448359,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "ae1a7202058ee7f1cb45119d1c173c1945e0403c1fbb50045f8dac5aa98ea135",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E→F",
+          "G∨H"
+        ],
+        "goal": "((E→F)∧(G∨H))∧(G∨H)"
+      },
+      "promptText": "Deriva ((E→F)∧(G∨H))∧(G∨H) a partir de E→F, G∨H usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición del condicional (→), de la disyunción (∨) y de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas los conectivos principales son el condicional (→) y la disyunción (∨), y las reglas que los eliminan son →E y ∨E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-9e0a45e8804e6c65983f6d71bd4f016d",
+      "candidateId": "kc05-retention-1",
+      "generatorTemplateId": "plt-kc05-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC05"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 4,
+          "totalLineCount": 5,
+          "premiseCount": 1,
+          "rulesUsed": [
+            "∧E",
+            "∧I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 4
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 29,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 44.909593,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "4773fe49f84230e68d3707435f6cc3f309121ec062cbc4701ffb39caf5bf281a",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A∧(B∧C)"
+        ],
+        "goal": "B∧A"
+      },
+      "promptText": "Deriva B∧A a partir de A∧(B∧C) usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-9e0a45e8804e6c65983f6d71bd4f016d",
+      "candidateId": "kc05-retention-2",
+      "generatorTemplateId": "plt-kc05-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC05"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 4,
+          "totalLineCount": 5,
+          "premiseCount": 1,
+          "rulesUsed": [
+            "∧E",
+            "∧I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 4
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 29,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 44.909593,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "4773fe49f84230e68d3707435f6cc3f309121ec062cbc4701ffb39caf5bf281a",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E∧(F∧G)"
+        ],
+        "goal": "F∧E"
+      },
+      "promptText": "Deriva F∧E a partir de E∧(F∧G) usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-d449dacbb8557c04f36b08fbcff45937",
+      "candidateId": "kc06-retention-1",
+      "generatorTemplateId": "plt-kc06-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC06"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 3,
+          "totalLineCount": 7,
+          "premiseCount": 4,
+          "rulesUsed": [
+            "→E"
+          ],
+          "distinctRuleCount": 1,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 3,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 9
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 16,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 49.110519,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "b5aa26298087a8a90879c180de5210bf9e2200620402a2f292e7146ecc3b5774",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A→B",
+          "B→C",
+          "C→D",
+          "A"
+        ],
+        "goal": "D"
+      },
+      "promptText": "Deriva D a partir de A→B, B→C, C→D, A usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 4 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-d449dacbb8557c04f36b08fbcff45937",
+      "candidateId": "kc06-retention-2",
+      "generatorTemplateId": "plt-kc06-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC06"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 3,
+          "totalLineCount": 7,
+          "premiseCount": 4,
+          "rulesUsed": [
+            "→E"
+          ],
+          "distinctRuleCount": 1,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 3,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 9
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 16,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 49.110519,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "b5aa26298087a8a90879c180de5210bf9e2200620402a2f292e7146ecc3b5774",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E→F",
+          "F→G",
+          "G→H",
+          "E"
+        ],
+        "goal": "H"
+      },
+      "promptText": "Deriva H a partir de E→F, F→G, G→H, E usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 4 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-e7af79016e566125306262cf03da52cd",
+      "candidateId": "kc07-retention-1",
+      "generatorTemplateId": "plt-kc07-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC07"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 1,
+          "totalLineCount": 3,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "∨I"
+          ],
+          "distinctRuleCount": 1,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 3
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 1,
+          "costExplored": 1,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "media",
+      "measuredComplexityTier": "media",
+      "complexityIndex": 14.418747,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "eb68a68dc61a7c75f090e83455b810e12d057f5768c0ffd233c10839c9086034",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A→B",
+          "C"
+        ],
+        "goal": "((A→B)∨D)∨C"
+      },
+      "promptText": "Deriva ((A→B)∨D)∨C a partir de A→B, C usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una disyunción. Repasa en el texto la definición del condicional (→) y de la disyunción (∨).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la disyunción (∨), y la regla que lo introduce es ∨I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∨I, que pide solo uno de sus dos lados: decide cuál de los dos puedes alcanzar.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-e7af79016e566125306262cf03da52cd",
+      "candidateId": "kc07-retention-2",
+      "generatorTemplateId": "plt-kc07-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC07"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 1,
+          "totalLineCount": 3,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "∨I"
+          ],
+          "distinctRuleCount": 1,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 3
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 1,
+          "costExplored": 1,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "media",
+      "measuredComplexityTier": "media",
+      "complexityIndex": 14.418747,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "eb68a68dc61a7c75f090e83455b810e12d057f5768c0ffd233c10839c9086034",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E→F",
+          "G"
+        ],
+        "goal": "((E→F)∨H)∨G"
+      },
+      "promptText": "Deriva ((E→F)∨H)∨G a partir de E→F, G usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una disyunción. Repasa en el texto la definición del condicional (→) y de la disyunción (∨).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la disyunción (∨), y la regla que lo introduce es ∨I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∨I, que pide solo uno de sus dos lados: decide cuál de los dos puedes alcanzar.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-17905e95da6442b24befe2eaa432e905",
+      "candidateId": "kc08-retention-1",
+      "generatorTemplateId": "plt-kc08-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC08"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 6,
+          "totalLineCount": 7,
+          "premiseCount": 1,
+          "rulesUsed": [
+            "→I",
+            "∧E",
+            "∧I"
+          ],
+          "distinctRuleCount": 3,
+          "subproofCount": 2,
+          "maxSubproofDepth": 2,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 7,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "→I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 8
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 66,
+          "costExplored": 4,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 84.405691,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "fba2565a10e07984bcf7ceac0687c572cd3eaa5ac9cefa5a5c76d218980de536",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A∧B"
+        ],
+        "goal": "C→(D→(A∧C))"
+      },
+      "promptText": "Deriva C→(D→(A∧C)) a partir de A∧B usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición de la conjunción (∧) y del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-17905e95da6442b24befe2eaa432e905",
+      "candidateId": "kc08-retention-2",
+      "generatorTemplateId": "plt-kc08-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC08"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 6,
+          "totalLineCount": 7,
+          "premiseCount": 1,
+          "rulesUsed": [
+            "→I",
+            "∧E",
+            "∧I"
+          ],
+          "distinctRuleCount": 3,
+          "subproofCount": 2,
+          "maxSubproofDepth": 2,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 7,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "→I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 8
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 66,
+          "costExplored": 4,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 84.405691,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "fba2565a10e07984bcf7ceac0687c572cd3eaa5ac9cefa5a5c76d218980de536",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E∧F"
+        ],
+        "goal": "G→(H→(E∧G))"
+      },
+      "promptText": "Deriva G→(H→(E∧G)) a partir de E∧F usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición de la conjunción (∧) y del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#additional-assumptions-and-subproofs"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-f752221ab8022f29ab33029c0a7ae118",
+      "candidateId": "kc09-retention-1",
+      "generatorTemplateId": "plt-kc09-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC09"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 5,
+          "totalLineCount": 6,
+          "premiseCount": 1,
+          "rulesUsed": [
+            "R",
+            "→I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 2,
+          "maxSubproofDepth": 2,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 7,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "→I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 4
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 6,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 56.01573,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "71f4d2def62ae4aea520243d03868e473a3e88b8af5f508c37ca421ff0baa2a8",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A∧B"
+        ],
+        "goal": "C→(D→(A∧B))"
+      },
+      "promptText": "Deriva C→(D→(A∧B)) a partir de A∧B usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición de la conjunción (∧) y del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-f752221ab8022f29ab33029c0a7ae118",
+      "candidateId": "kc09-retention-2",
+      "generatorTemplateId": "plt-kc09-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC09"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 5,
+          "totalLineCount": 6,
+          "premiseCount": 1,
+          "rulesUsed": [
+            "R",
+            "→I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 2,
+          "maxSubproofDepth": 2,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 7,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "→I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 4
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 6,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 56.01573,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "71f4d2def62ae4aea520243d03868e473a3e88b8af5f508c37ca421ff0baa2a8",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E∧F"
+        ],
+        "goal": "G→(H→(E∧F))"
+      },
+      "promptText": "Deriva G→(H→(E∧F)) a partir de E∧F usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es un condicional. Repasa en el texto la definición de la conjunción (∧) y del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es el condicional (→), y la regla que lo introduce es →I. En las premisas el conectivo principal es la conjunción (∧), y la regla que lo elimina es ∧E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta →I, que abre una subprueba: supón el antecedente y trabaja dentro hasta obtener el consecuente.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#conditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-539460709a30f3c30a4b5823dbe5c8ee",
+      "candidateId": "kc10-retention-1",
+      "generatorTemplateId": "plt-kc10-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC10"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 3,
+          "totalLineCount": 5,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "¬E",
+            "∧E"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 8
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 18,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 48.319631,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "a8721fd368aabca8a7bc704e22c863659bc3ae3497ea3366827b71d9e4e53447",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "(A∧B)∧C",
+          "¬B"
+        ],
+        "goal": "⊥"
+      },
+      "promptText": "Deriva ⊥ a partir de (A∧B)∧C, ¬B usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es la contradicción. Repasa en el texto la definición de la conjunción (∧) y de la negación (¬).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "La meta es la contradicción, y la regla que la produce es ¬E. En las premisas los conectivos principales son la conjunción (∧) y la negación (¬), y las reglas que los eliminan son ∧E y ¬E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "La meta es la contradicción y se obtiene con ¬E, que pide una fórmula y su negación disponibles en el mismo ámbito.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-539460709a30f3c30a4b5823dbe5c8ee",
+      "candidateId": "kc10-retention-2",
+      "generatorTemplateId": "plt-kc10-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC10"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 3,
+          "totalLineCount": 5,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "¬E",
+            "∧E"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 8
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 18,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 48.319631,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "a8721fd368aabca8a7bc704e22c863659bc3ae3497ea3366827b71d9e4e53447",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "(E∧F)∧G",
+          "¬F"
+        ],
+        "goal": "⊥"
+      },
+      "promptText": "Deriva ⊥ a partir de (E∧F)∧G, ¬F usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es la contradicción. Repasa en el texto la definición de la conjunción (∧) y de la negación (¬).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "La meta es la contradicción, y la regla que la produce es ¬E. En las premisas los conectivos principales son la conjunción (∧) y la negación (¬), y las reglas que los eliminan son ∧E y ¬E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "La meta es la contradicción y se obtiene con ¬E, que pide una fórmula y su negación disponibles en el mismo ámbito.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-609b9d7f32ea37168e94e7a1a3b213bf",
+      "candidateId": "kc11-retention-1",
+      "generatorTemplateId": "plt-kc11-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC11"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 5,
+          "totalLineCount": 8,
+          "premiseCount": 3,
+          "rulesUsed": [
+            "¬E",
+            "¬I",
+            "→E"
+          ],
+          "distinctRuleCount": 3,
+          "subproofCount": 1,
+          "maxSubproofDepth": 1,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "¬I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 8
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 16,
+          "costExplored": 4,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 79.772956,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "aed9993548806a1ad4abadbf5de309ee7e7febdb9a7788cc1c23cead02a22099",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A→B",
+          "B→C",
+          "¬C"
+        ],
+        "goal": "¬A"
+      },
+      "promptText": "Deriva ¬A a partir de A→B, B→C, ¬C usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 3 premisas y tienes que llegar a una meta que es una negación. Repasa en el texto la definición del condicional (→) y de la negación (¬).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la negación (¬), y la regla que lo introduce es ¬I. En las premisas los conectivos principales son el condicional (→) y la negación (¬), y las reglas que los eliminan son →E y ¬E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ¬I, que abre una subprueba: supón lo que la meta niega y busca dentro una contradicción.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-609b9d7f32ea37168e94e7a1a3b213bf",
+      "candidateId": "kc11-retention-2",
+      "generatorTemplateId": "plt-kc11-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC11"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 5,
+          "totalLineCount": 8,
+          "premiseCount": 3,
+          "rulesUsed": [
+            "¬E",
+            "¬I",
+            "→E"
+          ],
+          "distinctRuleCount": 3,
+          "subproofCount": 1,
+          "maxSubproofDepth": 1,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "¬I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 8
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 16,
+          "costExplored": 4,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 79.772956,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "aed9993548806a1ad4abadbf5de309ee7e7febdb9a7788cc1c23cead02a22099",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E→F",
+          "F→G",
+          "¬G"
+        ],
+        "goal": "¬E"
+      },
+      "promptText": "Deriva ¬E a partir de E→F, F→G, ¬G usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 3 premisas y tienes que llegar a una meta que es una negación. Repasa en el texto la definición del condicional (→) y de la negación (¬).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la negación (¬), y la regla que lo introduce es ¬I. En las premisas los conectivos principales son el condicional (→) y la negación (¬), y las reglas que los eliminan son →E y ¬E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ¬I, que abre una subprueba: supón lo que la meta niega y busca dentro una contradicción.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-f5eaa86fd483cb2796f790be93659cc3",
+      "candidateId": "kc12-retention-1",
+      "generatorTemplateId": "plt-kc12-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC12"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 3,
+          "totalLineCount": 5,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "X",
+            "¬E",
+            "∧E"
+          ],
+          "distinctRuleCount": 3,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 3,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 8
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 52,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 56.799197,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "40071e0f5c83de79dd2d2f3243868199e925045d069bce032942b524ea90031f",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A∧B",
+          "¬B"
+        ],
+        "goal": "C∧D"
+      },
+      "promptText": "Deriva C∧D a partir de A∧B, ¬B usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧) y de la negación (¬).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas los conectivos principales son la conjunción (∧) y la negación (¬), y las reglas que los eliminan son ∧E y ¬E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos. Fíjate además en que las premisas no pueden ser verdaderas a la vez: de una contradicción se sigue cualquier fórmula con X.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-f5eaa86fd483cb2796f790be93659cc3",
+      "candidateId": "kc12-retention-2",
+      "generatorTemplateId": "plt-kc12-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC12"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 3,
+          "totalLineCount": 5,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "X",
+            "¬E",
+            "∧E"
+          ],
+          "distinctRuleCount": 3,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 3,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 8
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 52,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 56.799197,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "40071e0f5c83de79dd2d2f3243868199e925045d069bce032942b524ea90031f",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E∧F",
+          "¬F"
+        ],
+        "goal": "G∧H"
+      },
+      "promptText": "Deriva G∧H a partir de E∧F, ¬F usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧) y de la negación (¬).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas los conectivos principales son la conjunción (∧) y la negación (¬), y las reglas que los eliminan son ∧E y ¬E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos. Fíjate además en que las premisas no pueden ser verdaderas a la vez: de una contradicción se sigue cualquier fórmula con X.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#contradiction-and-negation"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-e5f52f5c3fadf14297c096a9b021bb84",
+      "candidateId": "kc13-retention-1",
+      "generatorTemplateId": "plt-kc13-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC13"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 6,
+          "totalLineCount": 10,
+          "premiseCount": 4,
+          "rulesUsed": [
+            "→E",
+            "∨E"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 2,
+          "maxSubproofDepth": 1,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "∨E"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 11
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 24,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 77.56225,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "645be7401b43e2dc607b7151f382169ee28034edf1c65746fde0c29a0d202f93",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A∨B",
+          "A→C",
+          "B→C",
+          "C→D"
+        ],
+        "goal": "D"
+      },
+      "promptText": "Deriva D a partir de A∨B, A→C, B→C, C→D usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 4 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición de la disyunción (∨) y del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas los conectivos principales son la disyunción (∨) y el condicional (→), y las reglas que los eliminan son ∨E y →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-e5f52f5c3fadf14297c096a9b021bb84",
+      "candidateId": "kc13-retention-2",
+      "generatorTemplateId": "plt-kc13-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC13"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 6,
+          "totalLineCount": 10,
+          "premiseCount": 4,
+          "rulesUsed": [
+            "→E",
+            "∨E"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 2,
+          "maxSubproofDepth": 1,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "∨E"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 11
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 24,
+          "costExplored": 3,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 77.56225,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "645be7401b43e2dc607b7151f382169ee28034edf1c65746fde0c29a0d202f93",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E∨F",
+          "E→G",
+          "F→G",
+          "G→H"
+        ],
+        "goal": "H"
+      },
+      "promptText": "Deriva H a partir de E∨F, E→G, F→G, G→H usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 4 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición de la disyunción (∨) y del condicional (→).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas los conectivos principales son la disyunción (∨) y el condicional (→), y las reglas que los eliminan son ∨E y →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#disjunction"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-34984728a09ac65717ff04cf9aaedee7",
+      "candidateId": "kc14-retention-1",
+      "generatorTemplateId": "plt-kc14-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC14"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 11,
+          "totalLineCount": 14,
+          "premiseCount": 3,
+          "rulesUsed": [
+            "R",
+            "↔I",
+            "∧I"
+          ],
+          "distinctRuleCount": 3,
+          "subproofCount": 4,
+          "maxSubproofDepth": 1,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 5,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "↔I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 3
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 5,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 57.695187,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "b12326213cec8eb92e2449c9f35121a2e137b2427308d6ddce95fa8a563bdab6",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A",
+          "B",
+          "C"
+        ],
+        "goal": "(A↔B)∧(B↔C)"
+      },
+      "promptText": "Deriva (A↔B)∧(B↔C) a partir de A, B, C usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 3 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧) y del bicondicional (↔).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-34984728a09ac65717ff04cf9aaedee7",
+      "candidateId": "kc14-retention-2",
+      "generatorTemplateId": "plt-kc14-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC14"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 11,
+          "totalLineCount": 14,
+          "premiseCount": 3,
+          "rulesUsed": [
+            "R",
+            "↔I",
+            "∧I"
+          ],
+          "distinctRuleCount": 3,
+          "subproofCount": 4,
+          "maxSubproofDepth": 1,
+          "connectivesInStatement": 3,
+          "connectivesInProof": 5,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "↔I"
+          ],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 3
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 5,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 57.695187,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "b12326213cec8eb92e2449c9f35121a2e137b2427308d6ddce95fa8a563bdab6",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E",
+          "F",
+          "G"
+        ],
+        "goal": "(E↔F)∧(F↔G)"
+      },
+      "promptText": "Deriva (E↔F)∧(F↔G) a partir de E, F, G usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 3 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la conjunción (∧) y del bicondicional (↔).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. Ninguna premisa tiene conectivo principal, así que no hay nada que eliminar en ellas. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-7247c5de9131dcca07c67601cf1d5068",
+      "candidateId": "kc15-retention-1",
+      "generatorTemplateId": "plt-kc15-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC15"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 2,
+          "totalLineCount": 5,
+          "premiseCount": 3,
+          "rulesUsed": [
+            "↔E"
+          ],
+          "distinctRuleCount": 1,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 2,
+          "connectivesInProof": 2,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 6
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 5,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "media",
+      "measuredComplexityTier": "media",
+      "complexityIndex": 26.596128,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "40cad79a54efc5a3695f71edb109de41a59ad41079bbe2fed47121cab1609c69",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A↔B",
+          "B↔C",
+          "A"
+        ],
+        "goal": "C"
+      },
+      "promptText": "Deriva C a partir de A↔B, B↔C, A usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 3 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del bicondicional (↔).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es el bicondicional (↔), y la regla que lo elimina es ↔E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-7247c5de9131dcca07c67601cf1d5068",
+      "candidateId": "kc15-retention-2",
+      "generatorTemplateId": "plt-kc15-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC15"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 2,
+          "totalLineCount": 5,
+          "premiseCount": 3,
+          "rulesUsed": [
+            "↔E"
+          ],
+          "distinctRuleCount": 1,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 2,
+          "connectivesInProof": 2,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 6
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 5,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "media",
+      "measuredComplexityTier": "media",
+      "complexityIndex": 26.596128,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "40cad79a54efc5a3695f71edb109de41a59ad41079bbe2fed47121cab1609c69",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E↔F",
+          "F↔G",
+          "E"
+        ],
+        "goal": "G"
+      },
+      "promptText": "Deriva G a partir de E↔F, F↔G, E usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 3 premisas y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del bicondicional (↔).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es el bicondicional (↔), y la regla que lo elimina es ↔E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#biconditional"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-b0a3807ea317518eda0ba7c8a8cce18b",
+      "candidateId": "kc16-retention-1",
+      "generatorTemplateId": "plt-kc16-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC16"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 3,
+          "totalLineCount": 5,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "DNE",
+            "∧I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 5,
+          "connectivesInProof": 5,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 5
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 8,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 43.346433,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "8ddeae244496f0260654c9c816ea75c8889dda07b35f2f7e9fdeda4113d0ef12",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "¬¬A",
+          "¬¬B"
+        ],
+        "goal": "A∧B"
+      },
+      "promptText": "Deriva A∧B a partir de ¬¬A, ¬¬B usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la negación (¬) y de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#double-negation-elimination",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-double-negation-elimination"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es la negación (¬), y la regla que lo elimina es DNE. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#double-negation-elimination",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-double-negation-elimination"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#double-negation-elimination",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-double-negation-elimination"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-b0a3807ea317518eda0ba7c8a8cce18b",
+      "candidateId": "kc16-retention-2",
+      "generatorTemplateId": "plt-kc16-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC16"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 3,
+          "totalLineCount": 5,
+          "premiseCount": 2,
+          "rulesUsed": [
+            "DNE",
+            "∧I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 5,
+          "connectivesInProof": 5,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 5
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 8,
+          "costExplored": 2,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 43.346433,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "8ddeae244496f0260654c9c816ea75c8889dda07b35f2f7e9fdeda4113d0ef12",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "¬¬E",
+          "¬¬F"
+        ],
+        "goal": "E∧F"
+      },
+      "promptText": "Deriva E∧F a partir de ¬¬E, ¬¬F usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 2 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición de la negación (¬) y de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#double-negation-elimination",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-double-negation-elimination"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es la negación (¬), y la regla que lo elimina es DNE. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#double-negation-elimination",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-double-negation-elimination"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#double-negation-elimination",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#derivation-of-double-negation-elimination"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-6d813dbe7c1b7ea4ff2af97c854afce8",
+      "candidateId": "kc17-retention-1",
+      "generatorTemplateId": "plt-kc17-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC17"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 6,
+          "totalLineCount": 7,
+          "premiseCount": 1,
+          "rulesUsed": [
+            "IP",
+            "¬E",
+            "→E",
+            "∧E"
+          ],
+          "distinctRuleCount": 4,
+          "subproofCount": 1,
+          "maxSubproofDepth": 1,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 8,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "IP"
+          ],
+          "usesIndirectStrategy": true,
+          "structuralDistance": 6
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 18,
+          "costExplored": 5,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 74.663607,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "0287c8129b582d6b27a20e36767c608e21464fd2ea5449677fad25d468cebdc0",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "¬A→(B∧¬B)"
+        ],
+        "goal": "A"
+      },
+      "promptText": "Deriva A a partir de ¬A→(B∧¬B) usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del condicional (→), de la negación (¬) y de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#proceed-indirectly",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#indirect-proof-of-excluded-middle"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#proceed-indirectly",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#indirect-proof-of-excluded-middle"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#proceed-indirectly",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#indirect-proof-of-excluded-middle"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-6d813dbe7c1b7ea4ff2af97c854afce8",
+      "candidateId": "kc17-retention-2",
+      "generatorTemplateId": "plt-kc17-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC17"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 6,
+          "totalLineCount": 7,
+          "premiseCount": 1,
+          "rulesUsed": [
+            "IP",
+            "¬E",
+            "→E",
+            "∧E"
+          ],
+          "distinctRuleCount": 4,
+          "subproofCount": 1,
+          "maxSubproofDepth": 1,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 8,
+          "requiresAssumptionDischarge": true,
+          "dischargeRulesUsed": [
+            "IP"
+          ],
+          "usesIndirectStrategy": true,
+          "structuralDistance": 6
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 18,
+          "costExplored": 5,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 74.663607,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "0287c8129b582d6b27a20e36767c608e21464fd2ea5449677fad25d468cebdc0",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "¬E→(F∧¬F)"
+        ],
+        "goal": "E"
+      },
+      "promptText": "Deriva E a partir de ¬E→(F∧¬F) usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 1 premisa y tienes que llegar a una meta que es una letra proposicional. Repasa en el texto la definición del condicional (→), de la negación (¬) y de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#proceed-indirectly",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#indirect-proof-of-excluded-middle"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "La meta es una letra proposicional y ninguna regla la introduce: mira en qué premisas aparece y con qué conectivo está unida, porque de ahí tendrá que salir. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#proceed-indirectly",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#indirect-proof-of-excluded-middle"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "La meta no tiene conectivo principal, así que ninguna regla de introducción la construye: tendrá que salir de eliminar el conectivo principal de alguna premisa, o de una prueba indirecta (IP), que abre una subprueba suponiendo la negación de la meta.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#proceed-indirectly",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#indirect-proof-of-excluded-middle"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-413fce9ebcb687266d5f49d47b2c8734",
+      "candidateId": "kc18-retention-1",
+      "generatorTemplateId": "plt-kc18-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC18"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 4,
+          "totalLineCount": 8,
+          "premiseCount": 4,
+          "rulesUsed": [
+            "→E",
+            "∧I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 8
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 43,
+          "costExplored": 4,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 67.655756,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "6b1fbc806fca9fec4e6b9b7d50b7c655fad9e2d2f936125d13492d3c3936313c",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "A→B",
+          "B→C",
+          "C→D",
+          "A"
+        ],
+        "goal": "D∧B"
+      },
+      "promptText": "Deriva D∧B a partir de A→B, B→C, C→D, A usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 4 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición del condicional (→) y de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#constructing-proofs",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-backward-from-what-we-want"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#constructing-proofs",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-backward-from-what-we-want"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#constructing-proofs",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-backward-from-what-we-want"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    },
+    {
+      "itemFamilyId": "fam-413fce9ebcb687266d5f49d47b2c8734",
+      "candidateId": "kc18-retention-2",
+      "generatorTemplateId": "plt-kc18-sonda-retention",
+      "bankFunction": "retention",
+      "targetKcs": [
+        "KC18"
+      ],
+      "pipelineState": "filtros_superados",
+      "authoringState": "proof_found",
+      "accepted": true,
+      "rejections": [],
+      "complexity": {
+        "structural": {
+          "proofLength": 4,
+          "totalLineCount": 8,
+          "premiseCount": 4,
+          "rulesUsed": [
+            "→E",
+            "∧I"
+          ],
+          "distinctRuleCount": 2,
+          "subproofCount": 0,
+          "maxSubproofDepth": 0,
+          "connectivesInStatement": 4,
+          "connectivesInProof": 4,
+          "requiresAssumptionDischarge": false,
+          "dischargeRulesUsed": [],
+          "usesIndirectStrategy": false,
+          "structuralDistance": 8
+        },
+        "searchRelative": {
+          "minimalityGuaranteed": false,
+          "minimalityScope": "none",
+          "workUnitsSpent": 43,
+          "costExplored": 4,
+          "mode": "heuristic",
+          "searchOrderVersion": "search-order-v1",
+          "wallTimeoutHit": false,
+          "distinctStrategiesFoundWithinBudget": 1,
+          "interpretation": "budget_relative_not_total_paths"
+        },
+        "authorizedCalculusVersion": "authorized-calculus-v1",
+        "verifierVersion": "0.1.0",
+        "profileVersion": "structural-complexity-v1"
+      },
+      "targetComplexity": "alta",
+      "measuredComplexityTier": "alta",
+      "complexityIndex": 67.655756,
+      "complexityComparisonAvailable": true,
+      "structuralSignature": "6b1fbc806fca9fec4e6b9b7d50b7c655fad9e2d2f936125d13492d3c3936313c",
+      "criticRiskFlags": [
+        "correspondencia_con_objetivo",
+        "fuga",
+        "consistencia_de_notacion"
+      ],
+      "criticised": true,
+      "hintsProvided": true,
+      "statement": {
+        "premises": [
+          "E→F",
+          "F→G",
+          "G→H",
+          "E"
+        ],
+        "goal": "H∧F"
+      },
+      "promptText": "Deriva H∧F a partir de E→F, F→G, G→H, E usando solo las reglas del cálculo autorizado.",
+      "hints": [
+        {
+          "level": 1,
+          "text": "Vuelve a leer el reactivo antes de escribir nada: partes de 4 premisas y tienes que llegar a una meta que es una conjunción. Repasa en el texto la definición del condicional (→) y de la conjunción (∧).",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#constructing-proofs",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-backward-from-what-we-want"
+          ],
+          "proposedMasteryDisqualifying": false,
+          "nonRevelationExplanation": "Solo repite lo que el enunciado ya muestra —cuántas premisas hay y de qué forma es la meta— y remite a definiciones del texto: no nombra ninguna regla del paso ni ninguna fórmula que no esté a la vista.",
+          "masteryFacts": {
+            "level": 1,
+            "levelOneReminderOnly": true,
+            "selectsRuleOrNextStep": false,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 2,
+          "text": "El conectivo principal de la meta es la conjunción (∧), y la regla que lo introduce es ∧I. En las premisas el conectivo principal es el condicional (→), y la regla que lo elimina es →E. Empieza por esas entradas del texto.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#constructing-proofs",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-backward-from-what-we-want"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Nombra la región relevante y el tipo de regla, sin decir sobre qué líneas se aplica ni qué fórmula intermedia produce.",
+          "masteryFacts": {
+            "level": 2,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        },
+        {
+          "level": 3,
+          "text": "Para construir la meta directamente hace falta ∧I, que pide tener por separado cada uno de sus dos lados: comprueba si puedes conseguir los dos.",
+          "anchors": [
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#constructing-proofs",
+            "forallx-yyc/tfl-deduccion-natural@master@ec34df8 (2025-12-18)#forallx-yyc-prooftfl.tex#working-backward-from-what-we-want"
+          ],
+          "proposedMasteryDisqualifying": true,
+          "nonRevelationExplanation": "Indica con qué se justifica la última línea y qué exige tener antes, sin escribir ninguna fórmula intermedia ni ninguna cita de línea.",
+          "masteryFacts": {
+            "level": 3,
+            "levelOneReminderOnly": false,
+            "selectsRuleOrNextStep": true,
+            "containsDecisiveContent": false
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8052 @@
+{
+  "version": "1",
+  "description": "Derivaciones inválidas por mutación tipada, con el código esperado",
+  "generator": "scripts/logic/generate-golden.mjs",
+  "seedBase": 20260814,
+  "authorizedCalculusVersion": "authorized-calculus-v1",
+  "count": 120,
+  "cases": [
+    {
+      "id": "invalid-0001-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "DS",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((N→Y)∧A)∨E",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧E",
+            "rule": "∧I",
+            "refs": [
+              2,
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261814,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0002-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E↔E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬(O→Y)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬(C→D)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬(C→D)",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "¬(C→D)→¬(C→D)",
+            "rule": "Teorema",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                6,
+                7
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(E→E)∨B",
+            "rule": "∨I",
+            "refs": [
+              8
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(O→Y)",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261815,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0003-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((D↔N)↔¬N)∨A",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((D↔N)↔¬N)∨A",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((D↔N)↔¬N)∨A",
+            "rule": "R",
+            "refs": [
+              2,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(((D↔N)↔¬N)∨A)∧(((D↔N)↔¬N)∨A)",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261816,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0004-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y∧Y",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "∧E",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y∨B",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "∧E",
+            "refs": [
+              6
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261817,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0005-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(D∨O)∧(B↔A)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((D∨O)∧(B↔A)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧((D∨O)∧(B↔A))",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧((D∨O)∧(B↔A))",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "∧E",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261818,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0006-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬(C→C)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬(C→C)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∧¬(C→C)",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261819,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0007-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y→(Y→D)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∨N",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "∨I",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∨N",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261820,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0008-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬C∨(E∧D)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬C∨(E∧D))∧Y",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((¬C∨(E∧D))∧Y)∧Y",
+            "rule": "∧I",
+            "refs": [
+              4,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "∧I",
+            "refs": [
+              3,
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261821,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0009-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y→A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C↔Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(C↔Y)∧(C↔Y)",
+            "rule": "DS",
+            "refs": [
+              2,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C↔Y",
+            "rule": "∧E",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C↔Y",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C↔Y",
+            "rule": "∧E",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261822,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0010-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(Y∨A)∨A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N∧N",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(E↔D)∨B",
+            "rule": "Teorema",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N∨N",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(Y∨A)∨A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261823,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0011-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬¬E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬A",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "¬¬E→¬A",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O∨¬A",
+            "rule": "∨I",
+            "refs": [
+              1,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(B→¬B)∨(¬¬E→¬A)",
+            "rule": "∨I",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261824,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0012-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧(D↔A)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(A∧(D↔A))→B",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧B",
+            "rule": "∧I",
+            "refs": [
+              2,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(A∧(D↔A))→B",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261825,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0013-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "O",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(O→O",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O∧(O→O)",
+            "rule": "∧I",
+            "refs": [
+              1,
+              6
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261826,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0014-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧A",
+            "rule": "∧I",
+            "refs": [
+              1,
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬¬Y∨D",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261827,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0015-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "N→D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬(E∧A)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N↔Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N↔Y",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N↔Y",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "∧I",
+            "refs": [
+              5,
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬O∨((N↔Y)∧(N↔Y))",
+            "rule": "∨I",
+            "refs": [
+              6
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261828,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0016-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬Y→E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "N",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "N→N",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬Y→E)∧(O∨(¬Y→E))",
+            "rule": "∧I",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(N→N)∨D",
+            "rule": "∨I",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261829,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0017-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬N∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(A∨N)↔(E→Y)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(A∨N)↔(E→Y)",
+            "rule": "DS",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬N",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬N∧A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((A∨N)↔(E→Y))∧(¬N∧A)",
+            "rule": "∧I",
+            "refs": [
+              2,
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261830,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0018-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬(E∧E)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y∨E",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "Teorema",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∨Y",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261831,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0019-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "O",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "O→O",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "O→O",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "Y→(O→O)",
+            "rule": "→I",
+            "refs": [
+              [
+                7,
+                8
+              ],
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∨D",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261832,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0020-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(A∧N)∨D",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((A∧N)∨D)∧D",
+            "rule": "∧I",
+            "refs": [
+              2,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "((A∧N)∨D)∧D",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "N→(((A∧N)∨D)∧D)",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧((A∧N)∨D)",
+            "rule": "∧I",
+            "refs": [
+              7
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261833,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0021-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D↔D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬E→(C∨N)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(D↔D",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬E→(C∨N)",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N∨(D↔D)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261834,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0022-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(Y→Y)∧(A↔C)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(A→Y)∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((A→Y)∧C)∧((A→Y)∧C)",
+            "rule": "∧I",
+            "refs": [
+              2,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A→Y",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((A→Y)∧C)∧((A→Y)∧C)",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261835,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0023-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E↔(E→N)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(E↔(E→N))∧(E↔(E→N))",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((E→C)∨(O↔C))∨(E↔(E→N))",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((E↔(E→N))∧(E↔(E→N)))∧(D∨(((E→C)∨(O↔C))∨(E↔(E→N))))",
+            "rule": "∧I",
+            "refs": [
+              2,
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261836,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0024-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "O∧(A∨A)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((Y∨E)∧¬E)∨(O∧(A∨A))",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O∧(A∨A)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "∧E",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261837,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0025-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(Y→A)→(D→N)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬¬Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N∨B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "N∨B",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(N∨B)→(N∨B)",
+            "rule": "→I",
+            "refs": [
+              [
+                5,
+                6
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(C∧(N→D))∨((Y→A)→(D→N))",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(C∧(N→D))∨((Y→A)→(D→N))",
+            "rule": "DS",
+            "refs": [
+              8
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261838,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0026-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B↔¬O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N↔(A∧C)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∨E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬B∨(D∨E)",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(N↔(A∧C))∨C",
+            "rule": "Teorema",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(N↔(A∧C))∨C",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(A→N)∨(B↔¬O)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261839,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0027-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(C∧A)∧¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(N→N)→Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "O↔(B→O)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬A",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(N→N)→Y",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((N→N)→Y)∧((N→N)→Y)",
+            "rule": "∧I",
+            "refs": [
+              5,
+              5,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(((N→N)→Y)∧((N→N)→Y))∨((D∧D)∨(B→A))",
+            "rule": "∨I",
+            "refs": [
+              6
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261840,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0028-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬D↔(D∧Y)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E↔C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∨(E↔C)",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬Y∨¬(C↔Y)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬Y∨¬(C↔Y))∧(¬Y∨¬(C↔Y))",
+            "rule": "∧I",
+            "refs": [
+              5,
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬Y∨¬(C↔Y)",
+            "rule": "R",
+            "refs": [
+              7
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261841,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0029-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(O↔E)∨¬N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((O↔E)∨¬N)∨(O→(O↔O))",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(((O↔E)∨¬N)∨(O→(O↔O)))∨((Y∨O)↔D)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(C↔D)→E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(((O↔E)∨¬N)∨(O→(O↔O)))∨((Y∨O)↔D)",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(((C↔D)→E)→((((O↔E)∨¬N)∨(O→(O↔O)))∨((Y∨O)↔D))",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O∨((((O↔E)∨¬N)∨(O→(O↔O)))∨((Y∨O)↔D))",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261842,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0030-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(B∨O)∧(A∨N)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((B∨O)∧(A∨N))∧((B∨O)∧(A∨N))",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((B∨O)∧(A∨N))∨E",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(B∨O)∧(A∨N)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261843,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0031-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧D",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∨E",
+            "rule": "∨I",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261844,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0032-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(C→N)→¬D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∧D",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬¬D∨((C→N)→¬D)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(D∧D)∨B",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261845,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0033-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∨¬(O∧B)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∨A",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((E↔A)↔(Y→Y))∨(E∨A)",
+            "rule": "DS",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                5,
+                6
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261846,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0034-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(N∧O)↔O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "O∨¬D",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(N∧O)↔O",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((N∧O)↔O)∨(¬D→(O∧D))",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(N∧O)↔O",
+            "rule": "Teorema",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→((N∧O)↔O)",
+            "rule": "→I",
+            "refs": [
+              [
+                6,
+                7
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261847,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0035-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B↔A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(B∨Y)∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(O∧Y)↔(C→N)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∨Y",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              2,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(O∧Y)↔(C→N)",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261848,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0036-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(D↔D)∧O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬N",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧D",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D↔D",
+            "rule": "∧E",
+            "refs": [
+              7
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261849,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0037-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(B↔B)↔D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((O∨A)∨((B↔B)↔D)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(O∨A)∨((B↔B)↔D)",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((B↔B)↔D)∧((B↔B)↔D)",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((B↔B)↔D)∧((B↔B)↔D)",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261850,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0038-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(A↔D)↔C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∨((A↔D)↔C)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "Y→(A∨((A↔D)↔C))",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "Y→Y",
+            "rule": "→I",
+            "refs": [
+              [
+                6,
+                7
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y→(A∨((A↔D)↔C))",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261851,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0039-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y↔(N∧O)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(O↔(A↔O))∨(Y↔(N∧O))",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "O",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→O",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261852,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0040-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N∨¬Y",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N∧(N∨¬Y)",
+            "rule": "∧I",
+            "refs": [
+              2,
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261853,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0041-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(D→C)∨(D∧N)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(B→C)∨(O↔C)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((B→C)∨(O↔C))∨¬Y",
+            "rule": "DS",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((D→C)∨(D∧N))∧((B→C)∨(O↔C))",
+            "rule": "∧I",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((D→C)∨(D∧N))∧(((D→C)∨(D∧N))∧((B→C)∨(O↔C)))",
+            "rule": "∧I",
+            "refs": [
+              1,
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(D→C)∨(D∧N)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261854,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0042-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬(D↔E)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∨E",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∨¬(D↔E)",
+            "rule": "Teorema",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∨¬(D↔E)",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(D↔E)",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261855,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0043-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "D→D",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D→D",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              1,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(D→(Y→D))∨C",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261856,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0044-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(E↔Y)↔N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(E↔Y)↔N",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(E↔Y)↔N",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((E↔Y)↔N)∨(¬D∨(E→N))",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(D∨D)→(C↔O)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(E↔Y)↔N",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((D∨D)→(C↔O))→((E↔Y)↔N)",
+            "rule": "→I",
+            "refs": [
+              [
+                5,
+                6
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261857,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0045-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y→(N∨Y)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(¬N∨((D→Y)↔B)",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(Y→(N∨Y))∨C",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y→(N∨Y)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(Y→(N∨Y))∧(Y→(N∨Y))",
+            "rule": "∧I",
+            "refs": [
+              6,
+              6
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261858,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0046-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(O↔N)→O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∨Y",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261859,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0047-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(N∧D)∧Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N∧D",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A and B",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "O→O",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "∧E",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261860,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0048-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E↔B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(B↔N)→C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(A↔Y)∨Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "O∨((B↔N)→C)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∨(O∨((B↔N)→C))",
+            "rule": "∨I",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(C→B)∨(B→Y)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(C→B)∨(B→Y)",
+            "rule": "R",
+            "refs": [
+              7
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((C→B)∨(B→Y))→((C→B)∨(B→Y))",
+            "rule": "→I",
+            "refs": [
+              [
+                7,
+                8
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261861,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0049-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(B↔Y)∨¬E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((B↔Y)∨¬E)∧D",
+            "rule": "DS",
+            "refs": [
+              3,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∨¬(O↔D)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261862,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0050-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(Y↔B)→O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(Y↔B)→O",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((Y↔B)→O)∨¬(E↔E)",
+            "rule": "Teorema",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((Y↔B)→O)∨(¬B∨Y)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((D→B)↔¬O)∨((Y↔B)→O)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261863,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0051-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(O∧Y)∨(O→E)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∨(O∧(C∧C))",
+            "rule": "∨I",
+            "refs": [
+              3,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((O∧Y)∨(O→E))∨N",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261864,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0052-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D∨(Y→E)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(D∨(Y→E))∧(D∨(Y→E))",
+            "rule": "∧I",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E→Y",
+            "rule": "→I",
+            "refs": [
+              [
+                6,
+                7
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(E→Y)∧(E→Y)",
+            "rule": "∧I",
+            "refs": [
+              8,
+              8
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261865,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0053-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(A→O)∧(E↔D)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(((A→O)∧(E↔D))∨D",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(((A→O)∧(E↔D))∨D)∧N",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(((A→O)∧(E↔D))∨D)∧(((A→O)∧(E↔D))∨D)",
+            "rule": "∧I",
+            "refs": [
+              3,
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "∧E",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261866,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0054-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(O∨O)∧A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "O∨O",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(Y→O)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬(Y→O)",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "¬(Y→O)→¬(Y→O)",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(E→(A∨A))∨((O∨O)∧A)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261867,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0055-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(E↔O)↔D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(D↔(O∧Y))∨¬D",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬D",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "N→¬D",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((E↔O)↔D)∨A",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261868,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0056-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬(B∨O)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B→¬D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B→¬D",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(B∨O)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(B∨O)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261869,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0057-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬B↔N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(C→C)↔D",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((C→C)↔D)→Y",
+            "rule": "DS",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(Y→C)∨Y",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y∧Y",
+            "rule": "∧I",
+            "refs": [
+              7,
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261870,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0058-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∨N",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(A→(D∨B))∨N",
+            "rule": "Teorema",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∨N",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(A→(D∨B))∨N",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261871,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0059-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬E↔N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∨(¬E↔N)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬E↔N",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬E↔N)∨D",
+            "rule": "∨I",
+            "refs": [
+              1,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y∨((¬E↔N)∨D)",
+            "rule": "∨I",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261872,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0060-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬D→(C→E)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(¬D→(C→E))∧N",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∨N",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∨N",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N∨(Y→(E→E))",
+            "rule": "∨I",
+            "refs": [
+              7
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261873,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0061-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬(O∨N)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A↔¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y→¬O",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(Y→¬O",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(Y→¬O)→(Y→¬O)",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(O∨N)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              8
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B→B",
+            "rule": "→I",
+            "refs": [
+              [
+                8,
+                9
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(O∨N)∧((Y→¬O)→(Y→¬O))",
+            "rule": "∧I",
+            "refs": [
+              7,
+              6
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261874,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0062-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(C∨E)∧¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(D→D)→D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(D↔(O→A))∨((D→D)→D)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(A∧(O→E))∨((D→D)→D)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(A∧(O→E))∨((D→D)→D)",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "O→((A∧(O→E))∨((D→D)→D))",
+            "rule": "→I",
+            "refs": [
+              [
+                7,
+                8
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261875,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0063-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧C",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "∧E",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261876,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0064-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬D∨C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(A↔A)∧C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((A↔A)∧C)∨¬(C∧C)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(((A↔A)∧C)∨¬(C∧C))∨(Y∧O)",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261877,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0065-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(E∨Y)∨Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y∧(B∨C)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(E∨Y)∨Y",
+            "rule": "DS",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(E∨Y)∨Y",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(E∨Y)∨Y",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∨C",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261878,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0066-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "O∨¬N",
+            "rule": "Teorema",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬B∧A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬B∧A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(¬B∧A)→(¬B∧A)",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((¬B∧A)→(¬B∧A))∧((¬B∧A)→(¬B∧A))",
+            "rule": "∧I",
+            "refs": [
+              5,
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬N∨(O→C)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261879,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0067-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(N→C)∨(C∧N)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y∧N",
+            "rule": "∧I",
+            "refs": [
+              1,
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B↔(Y↔D)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "N",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(B↔(Y↔D))→N",
+            "rule": "→I",
+            "refs": [
+              [
+                5,
+                6
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(C→D)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬(C→D)",
+            "rule": "R",
+            "refs": [
+              8
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "¬(C→D)→¬(C→D)",
+            "rule": "→I",
+            "refs": [
+              [
+                8,
+                9
+              ],
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((B↔(Y↔D))→N)∧(Y∧N)",
+            "rule": "∧I",
+            "refs": [
+              7,
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261880,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0068-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(N∨Y)↔(O↔E)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(N∨Y)↔(O↔E)",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(N∨Y)↔(O↔E)",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∨((N∨Y)↔(O↔E))",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬¬O∨(E∨((N∨Y)↔(O↔E)))",
+            "rule": "∨I",
+            "refs": [
+              6
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261881,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0069-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(D↔A)→Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∨((N∨N)↔A)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(Y∨N)→¬O",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(Y∨N)→¬O",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(((Y∨N)→¬O)→((Y∨N)→¬O)",
+            "rule": "→I",
+            "refs": [
+              [
+                5,
+                6
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y↔(Y↔A)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "Y↔(Y↔A)",
+            "rule": "R",
+            "refs": [
+              9
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(Y↔(Y↔A))→(Y↔(Y↔A))",
+            "rule": "→I",
+            "refs": [
+              [
+                9,
+                10
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261882,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0070-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C→(A∨D)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N→(N→A)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬(E∨Y)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C→(A∨D)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(C→(A∨D))∨Y",
+            "rule": "∨I",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(N→(N→A))∨((C→C)∨D)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              7
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "→I",
+            "refs": [
+              [
+                7,
+                8
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261883,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0071-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(C∧N)↔E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B↔(E∧O)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((C∧N)↔E)∧(B↔(E∧O))",
+            "rule": "∧I",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(A∧(O∨B))∨(B↔(E∧O))",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((C∧N)↔E)∧(B↔(E∧O))",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261884,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0072-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∨N",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y↔A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B∨N",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(Y↔A)→(B∨N)",
+            "rule": "→I",
+            "refs": [
+              [
+                5,
+                6
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(Y↔A)→(B∨N)",
+            "rule": "R",
+            "refs": [
+              7
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261885,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0073-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬(E↔D)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(D∨A)↔(B→E)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(D∨A)↔(B→E)",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((D∨A)↔(B→E))→((D∨A)↔(B→E))",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(E↔D)∨((B∨D)∧¬E)",
+            "rule": "DS",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∨(((D∨A)↔(B→E))→((D∨A)↔(B→E)))",
+            "rule": "∨I",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(((D∨A)↔(B→E))→((D∨A)↔(B→E)))∧O",
+            "rule": "∧I",
+            "refs": [
+              5,
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261886,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0074-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∨(D↔Y)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B",
+            "rule": "Teorema",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(B∨(D↔Y))→B",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((B∨(D↔Y))→B)∨Y",
+            "rule": "∨I",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              7
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                7,
+                8
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261887,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0075-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬Y→O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬Y→O",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬Y→O)∧(¬Y→O)",
+            "rule": "∧I",
+            "refs": [
+              2,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬Y→O)∧(¬Y→O)",
+            "rule": "R",
+            "refs": [
+              3,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬Y→O",
+            "rule": "∧E",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261888,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0076-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(E∨N)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "¬(E∨N)→A",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬(E∨N)→A)∧(¬(E∨N)→A)",
+            "rule": "∧I",
+            "refs": [
+              5,
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬(E∨N)→A)∧(¬(E∨N)→A)",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261889,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0077-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(O∨Y)↔¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧C",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(((O∨Y)↔¬A)∨(O∧(A∨D))",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∨(C∧C)",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(B→Y)↔(C∨N)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(B→Y)↔(C∨N)",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((B→Y)↔(C∨N))→((B→Y)↔(C∨N))",
+            "rule": "→I",
+            "refs": [
+              [
+                6,
+                7
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261890,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0078-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(B↔Y)∨A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬C↔Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(¬C↔Y)∧((B↔Y)∨A)",
+            "rule": "∧I",
+            "refs": [
+              3,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((¬C↔Y)∧((B↔Y)∨A))∨(B↔(Y↔Y))",
+            "rule": "∨I",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(Y→Y)→(O↔A)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((Y→Y)→(O↔A))→(E∧E)",
+            "rule": "→I",
+            "refs": [
+              [
+                6,
+                7
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬C↔Y)∧((B↔Y)∨A)",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261891,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0079-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "∧I",
+            "refs": [
+              2,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(B∨N)→A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((B∨N)→A)→A",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "O",
+            "rule": "R",
+            "refs": [
+              7
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "O→O",
+            "rule": "→I",
+            "refs": [
+              [
+                7,
+                8
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y∨((A∨E)↔(A↔O))",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261892,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0080-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E→A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E∨(E→A)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∨(E→A)",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E→A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261893,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0081-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬E∧(A∧A)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬N",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "O",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "¬N→O",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "E",
+            "rule": "DS",
+            "refs": [
+              7
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "E→E",
+            "rule": "→I",
+            "refs": [
+              [
+                7,
+                8
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∨N",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬N→O",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(A∨N)→(¬N→O)",
+            "rule": "→I",
+            "refs": [
+              [
+                10,
+                11
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261894,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0082-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬A∧B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬O↔¬E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(¬A∧B)∨(Y↔O)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∨(¬O↔¬E)",
+            "rule": "Teorema",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∨(¬O↔¬E)",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(A∨D)∨(C∨(¬O↔¬E))",
+            "rule": "∨I",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261895,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0083-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬A∨E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬A∨E",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬A∨E)∧(¬A∨E)",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ],
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∨N",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "B∨N",
+            "rule": "R",
+            "refs": [
+              7
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(B∨N)→(B∨N)",
+            "rule": "→I",
+            "refs": [
+              [
+                7,
+                8
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261896,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0084-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(D∨B)→C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→C",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C→C",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "R",
+            "refs": [
+              7
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N∧(C→C)",
+            "rule": "∧I",
+            "refs": [
+              7,
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261897,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0085-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(Y∧Y",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(Y∧Y)∨B",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O∨Y",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261898,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0086-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y↔(D↔D)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y↔(D↔D)",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((E↔D)→Y)∨O",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬C∨(((E↔D)→Y)∨O)",
+            "rule": "∨I",
+            "refs": [
+              6
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261899,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0087-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(Y→D)↔¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(Y→D)↔¬A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(Y→D)↔¬A",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((Y→D)↔¬A)∧((Y→D)↔¬A)",
+            "rule": "∧I",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261900,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0088-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬(D∨D)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬(D∨D)∧¬(D∨D)",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬(D∨D)∧¬(D∨D))∨N",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y↔(Y∧C)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "a∧b",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(Y↔(Y∧C))→(¬(D∨D)∧¬(D∨D))",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((Y↔(Y∧C))→(¬(D∨D)∧¬(D∨D)))∧((¬(D∨D)∧¬(D∨D))∨N)",
+            "rule": "∧I",
+            "refs": [
+              6,
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261901,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0089-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E∧E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A→(Y→A)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(E∧E)∨E",
+            "rule": "DS",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(E∧E)∨E",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(A→(Y→A))∨C",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261902,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0090-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(Y→B)↔(N→A)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((Y→B)↔(N→A))→A",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧(((Y→B)↔(N→A))→A)",
+            "rule": "∧I",
+            "refs": [
+              3,
+              6
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N∨C",
+            "rule": "Teorema",
+            "refs": [
+              7
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261903,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0091-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(A↔E)↔D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "E",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬(O∧C)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬(O∧C)",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "¬(O∧C)→¬(O∧C)",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "O",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬(O∧C)→¬(O∧C)",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "O→(¬(O∧C)→¬(O∧C))",
+            "rule": "→I",
+            "refs": [
+              [
+                6,
+                7
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B∧A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬(O∧C)→¬(O∧C)",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(B∧A)→(¬(O∧C)→¬(O∧C))",
+            "rule": "→I",
+            "refs": [
+              [
+                9,
+                10
+              ],
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∨E",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261904,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0092-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(N↔N)∨D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "O∨((N↔N)∨D)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(N↔N)∨D",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→((N↔N)∨D)",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C↔B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "O∨((N↔N)∨D)",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(C↔B)→(O∨((N↔N)∨D))",
+            "rule": "→I",
+            "refs": [
+              [
+                6,
+                7
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C→((N↔N)∨D)",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261905,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0093-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "C→A",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((C→A)∧(C→A)",
+            "rule": "∧I",
+            "refs": [
+              4,
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C→A",
+            "rule": "∧E",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧((C→A)∧(C→A))",
+            "rule": "∧I",
+            "refs": [
+              1,
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261906,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0094-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬(O↔B)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬C∧(Y∨D)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y∨D",
+            "rule": "∧E",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(Y∨D)∧(Y∨D)",
+            "rule": "∧I",
+            "refs": [
+              3,
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y∨D",
+            "rule": "∧E",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(N→C)∨¬E",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((N→C)∨¬E)→(Y∨D)",
+            "rule": "→I",
+            "refs": [
+              [
+                6,
+                7
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261907,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0095-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(C↔N)∨N",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∨((C↔N)∨N)",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261908,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0096-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "N∧(D∨O)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B∧(N∨C)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬N→(B↔B))∨A",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261909,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0097-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B→¬B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬O",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B→¬B",
+            "rule": "DS",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬O",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "N→¬O",
+            "rule": "→I",
+            "refs": [
+              [
+                5,
+                6
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(B→¬B)∧¬O",
+            "rule": "∧I",
+            "refs": [
+              2,
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261910,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0098-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y↔A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A∧A",
+            "rule": "∧I",
+            "refs": [
+              2,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "Teorema",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261911,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0099-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "E↔(N↔E)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(N→C)∧¬Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B↔(E∧N)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(N→C)∧¬Y",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(B↔(E∧N))→((N→C)∧¬Y)",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(B↔(E∧N))→((N→C)∧¬Y)",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(B↔(E∧N))→((N→C)∧¬Y)",
+            "rule": "R",
+            "refs": [
+              7,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(N→C)∧¬Y",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261912,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0100-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(O→O)∨N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N↔D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(D→A)→(D→N)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(D→A)→(D→N)",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((D→A)→(D→N))→((D→A)→(D→N))",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((D→A)→(D→N))→((D→A)→(D→N))",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(C↔A)↔B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "((D→A)→(D→N))→((D→A)→(D→N))",
+            "rule": "R",
+            "refs": [
+              9
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((C↔A)↔B)→(((D→A)→(D→N))→((D→A)→(D→N)))",
+            "rule": "→I",
+            "refs": [
+              [
+                8,
+                9
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((C↔A)↔B)→(((D→A)→(D→N))→((D→A)→(D→N)))",
+            "rule": "R",
+            "refs": [
+              10
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261913,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0101-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬(D∧Y)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬N→O",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬(D∧Y)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(¬N→O)→¬(D∧Y)",
+            "rule": "→I",
+            "refs": [
+              [
+                2,
+                3
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(D∧Y)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬(D∧Y)",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬N∨(E→O)",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(¬(D∧Y)",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "(¬N∨(E→O))→¬(D∧Y)",
+            "rule": "→I",
+            "refs": [
+              [
+                7,
+                8
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261914,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0102-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(C↔O)↔(O↔Y)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬B∧¬B",
+            "rule": "∧I",
+            "refs": [
+              2,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬B",
+            "rule": "∧E",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬B",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261915,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0103-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "A↔B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261916,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0104-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((O↔N)∨(N→N))∨Y",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((O↔N)∨(N→N))∨Y",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "∧I",
+            "refs": [
+              1,
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261917,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0105-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬Y",
+            "rule": "DS",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬Y",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬Y",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬Y",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261918,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0106-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "Teorema",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧C",
+            "rule": "∧I",
+            "refs": [
+              2,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261919,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0107-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(C∧E)→(D↔N)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧D",
+            "rule": "∧I",
+            "refs": [
+              3,
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "N∨((C∧E)→(D↔N))",
+            "rule": "∨I",
+            "refs": [
+              2,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D",
+            "rule": "∧E",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261920,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0108-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(C∨E)∧(D→B)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬¬D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "((C∨E)∧(D→B))∧((C∨E)∧(D→B))",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬¬C",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "¬¬C",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "¬¬C→¬¬C",
+            "rule": "→I",
+            "refs": [
+              6
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∨E",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(C∨E)∧(D→B)",
+            "rule": "∧E",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261921,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0109-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(C∨A)→B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬C→(E→B)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(O∧Y)∨(A↔C)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A→A",
+            "rule": "→I",
+            "refs": [
+              [
+                4,
+                5
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((C∨A)→B)∧((O∧Y)∨(A↔C))",
+            "rule": "∧I",
+            "refs": [
+              1,
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(((C∨A)→B)∧((O∧Y)∨(A↔C))",
+            "rule": "R",
+            "refs": [
+              7
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((C∨A)→B)∧((C∨A)→B)",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261922,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0110-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "∧I",
+            "refs": [
+              2,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧D",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧D",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261923,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0111-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D∨¬A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(N→C)∧Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N→C",
+            "rule": "∧E",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬A∨A",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A∨((C↔E)∧¬O)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261924,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0112-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "¬N∧A",
+            "rule": "∧I",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "∧E",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "∨I",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261925,
+      "mutation": "simbolo-no-autorizado"
+    },
+    {
+      "id": "invalid-0113-regla-prohibida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(N∨Y)↔(A↔O)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧C",
+            "rule": "DS",
+            "refs": [
+              2,
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y∨C",
+            "rule": "∨I",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "∧E",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-FORBIDDEN"
+        ]
+      },
+      "seed": 20261926,
+      "mutation": "regla-prohibida"
+    },
+    {
+      "id": "invalid-0114-regla-desconocida",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(A∨Y)∧(C→B)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C→B",
+            "rule": "∧E",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(C→B)∨¬¬Y",
+            "rule": "Teorema",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(C→B)∨¬¬Y",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C→B",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-UNKNOWN"
+        ]
+      },
+      "seed": 20261927,
+      "mutation": "regla-desconocida"
+    },
+    {
+      "id": "invalid-0115-aridad-sobrante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(O∧B)∨O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(B→N)↔B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y",
+            "rule": "R",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "E∨Y",
+            "rule": "∨I",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(D∧(B∨D))∨Y",
+            "rule": "∨I",
+            "refs": [
+              4,
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((O∧B)∨O)∧Y",
+            "rule": "∧I",
+            "refs": [
+              1,
+              2
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-RULE-ARITY"
+        ]
+      },
+      "seed": 20261928,
+      "mutation": "aridad-sobrante"
+    },
+    {
+      "id": "invalid-0116-cita-hacia-adelante",
+      "proof": {
+        "lines": [
+          {
+            "formula": "(A∧D)∧O",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(N∨O)∧(D→A)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(A∧D)∧O",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(A∧D)∧O",
+            "rule": "R",
+            "refs": [
+              4
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(A∧D)∧O",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(A∧D)∧O",
+            "rule": "R",
+            "refs": [
+              6
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "B→((A∧D)∧O)",
+            "rule": "→I",
+            "refs": [
+              [
+                7,
+                8
+              ]
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-REF-FORWARD"
+        ]
+      },
+      "seed": 20261929,
+      "mutation": "cita-hacia-adelante"
+    },
+    {
+      "id": "invalid-0117-sintaxis-rota",
+      "proof": {
+        "lines": [
+          {
+            "formula": "D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(E∧Y)∨¬N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "(D",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∧D",
+            "rule": "∧I",
+            "refs": [
+              4,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "((D↔O)∧B)∨B",
+            "rule": "∨I",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(((D↔O)∧B)∨B)∧(((D↔O)∧B)∨B)",
+            "rule": "∧I",
+            "refs": [
+              6,
+              6
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PARSE"
+        ]
+      },
+      "seed": 20261930,
+      "mutation": "sintaxis-rota"
+    },
+    {
+      "id": "invalid-0118-sin-corchetes",
+      "proof": {
+        "lines": [
+          {
+            "formula": "N",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "N∧N",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(B↔N)∧¬A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "(B↔N)∧¬A",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "A∧B∧C",
+            "rule": "→I",
+            "refs": [
+              [
+                3,
+                4
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "D∨(N∧N)",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(¬N→(Y∨E))∨N",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-PRECEDENCE"
+        ]
+      },
+      "seed": 20261931,
+      "mutation": "sin-corchetes"
+    },
+    {
+      "id": "invalid-0119-alias-rechazado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "C",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "A",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∧(O∧O)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C",
+            "rule": "R",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧C",
+            "rule": "∧I",
+            "refs": [
+              1,
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "A and B",
+            "rule": "∨I",
+            "refs": [
+              2
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "C∧(O∧O)",
+            "rule": "R",
+            "refs": [
+              3
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-ALIAS"
+        ]
+      },
+      "seed": 20261932,
+      "mutation": "alias-rechazado"
+    },
+    {
+      "id": "invalid-0120-simbolo-no-autorizado",
+      "proof": {
+        "lines": [
+          {
+            "formula": "¬(Y∨B)",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "¬A↔B",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "Y∨D",
+            "rule": "PR",
+            "depth": 0
+          },
+          {
+            "formula": "C∨¬(Y∨B)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "Y∨¬(Y∨B)",
+            "rule": "∨I",
+            "refs": [
+              1
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "(A→N)∧¬A",
+            "rule": "AS",
+            "depth": 1
+          },
+          {
+            "formula": "Y∨¬(Y∨B)",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 1
+          },
+          {
+            "formula": "((A→N)∧¬A)→(Y∨¬(Y∨B))",
+            "rule": "→I",
+            "refs": [
+              [
+                6,
+                7
+              ]
+            ],
+            "depth": 0
+          },
+          {
+            "formula": "a∧b",
+            "rule": "R",
+            "refs": [
+              5
+            ],
+            "depth": 0
+          }
+        ]
+      },
+      "expected": {
+        "valid": false,
+        "codes": [
+          "E-SYN-SYMBOL"
+        ]
+      },
+      "seed": 20261933,
+      "mutation": "simbolo-no-autorizado"
+    }
+  ]
+}

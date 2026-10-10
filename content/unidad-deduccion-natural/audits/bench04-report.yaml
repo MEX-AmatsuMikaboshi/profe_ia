@@ -1,0 +1,872 @@
+# Informe del arnés BENCH-04 sobre el paquete real (T-H5-05, BENCH-04). Corrida del 2026-08-23T00:21:50.290Z sobre el snapshot 02351aa31c05…. Corrida y lectura del modelo asistente (salvedad D-41/D-48/D-52/D-53): el propietario audita el congelamiento antes del freeze de W5.
+{
+  "reportRunId": "bench04-7ea6860a41113495",
+  "measuredAt": "2026-08-23T00:21:50.290Z",
+  "snapshotSha256": "02351aa31c05f027ddb1c6a63b0bfd27e05b4a8a2751fc7a58dcffb691999510",
+  "contentPackageVersion": "forallx-yyc/tfl-deduccion-natural@7a988a58d38187cf",
+  "sampleSize": 37,
+  "discardedFromSource": [
+    {
+      "location": "forallx-yyc-prooftfl.tex",
+      "linea": "P \\eor Q, \\enot P & \\therefore Q\\\\",
+      "motivo": "forma multilínea (bloque align)"
+    },
+    {
+      "location": "forallx-yyc-prooftfl.tex",
+      "linea": "P \\eif Q, P & \\therefore Q",
+      "motivo": "forma multilínea (bloque align)"
+    },
+    {
+      "location": "forallx-yyc-prooftfl.tex",
+      "linea": "\\therefore\\, & (A_1 \\eand (A_2 \\eand (A_3 \\eand (A_4 \\eand A_5)))) \\eif {}\\\\",
+      "motivo": "forma multilínea (bloque align)"
+    },
+    {
+      "location": "forallx-yyc-prooftfl.tex",
+      "linea": "\\therefore\\, & \\small (A_1 \\eand (A_2 \\eand (A_3 \\eand (A_4 \\eand (A_5 \\eand {}\\\\",
+      "motivo": "forma multilínea (bloque align)"
+    },
+    {
+      "location": "forallx-yyc-prooftfl.tex",
+      "linea": "Suppose we want to show that the argument $(A \\eand B) \\eor (A \\eand C) \\therefore A \\eand (B \\eor C)$ is valid. We start the proof by writing the premise and conclusion down. (On a piece of paper, you would want as much space as possible between them, so write the premises at the top of the sheet and the conclusion at the bottom.)",
+      "motivo": "prosa alrededor de la fórmula"
+    },
+    {
+      "location": "forallx-yyc-prooftfl.tex",
+      "linea": "When applying the strategies, you will sometimes find yourself in a situation where you can justify~$\\ered$. Using the explosion rule, this would allow you to justify \\emph{anything}. So $\\ered$ works like a wildcard in proofs. For instance, suppose you want to give a proof of the argument $A \\eor B, \\enot A \\therefore B$. You set up your proof, writing the premises $A \\eor B$ and $\\enot A$ at the top on lines $1$ and $2$, and the conclusion~$B$ at the bottom of the page. $B$ has no main connective, so you can't work backward from it. Instead, you must work forward from $A \\eor B$: That requires two subproofs, like so:",
+      "motivo": "prosa alrededor de la fórmula"
+    },
+    {
+      "location": "forallx-yyc-prooftfl.tex",
+      "linea": "\\item Show that $ \\enot \\enot L,  (C \\eif \\enot L) \\eif C) \\therefore \\enot C$ is invalid.",
+      "motivo": "no es fórmula del cálculo: (C→¬L)→C)"
+    }
+  ],
+  "report": {
+    "benchmarkId": "BENCH-04",
+    "harnessVersion": "bench04-harness-v1",
+    "searchOrderVersion": "search-order-v1",
+    "authorizedCalculusVersion": "authorized-calculus-v1",
+    "referenceVariantId": "prefilter_then_search",
+    "caseIds": [
+      "corpus-01",
+      "corpus-02",
+      "corpus-03",
+      "corpus-04",
+      "corpus-05",
+      "corpus-06",
+      "corpus-07",
+      "corpus-08",
+      "corpus-09",
+      "corpus-10",
+      "corpus-11",
+      "corpus-12",
+      "corpus-13",
+      "corpus-14",
+      "corpus-15",
+      "corpus-16",
+      "corpus-17",
+      "corpus-18",
+      "corpus-19",
+      "corpus-20",
+      "corpus-21",
+      "corpus-22",
+      "corpus-23",
+      "corpus-24",
+      "corpus-25",
+      "corpus-26",
+      "corpus-27",
+      "corpus-28",
+      "corpus-29",
+      "corpus-30",
+      "corpus-31",
+      "corpus-32",
+      "corpus-33",
+      "corpus-34",
+      "corpus-35",
+      "corpus-36",
+      "corpus-37"
+    ],
+    "measurements": [
+      {
+        "caseId": "corpus-01",
+        "variantId": "prefilter_then_search",
+        "status": "search_budget_exhausted",
+        "workUnits": 56,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-01",
+        "variantId": "search_then_prefilter",
+        "status": "search_budget_exhausted",
+        "workUnits": 56,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-02",
+        "variantId": "prefilter_then_search",
+        "status": "search_budget_exhausted",
+        "workUnits": 260,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-02",
+        "variantId": "search_then_prefilter",
+        "status": "search_budget_exhausted",
+        "workUnits": 260,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-03",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 99,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-03",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 99,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-04",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 10,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 4,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-04",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 10,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 4,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-05",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 5,
+        "costExplored": 2,
+        "wallTimeoutHit": false,
+        "proofCost": 5,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-05",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 5,
+        "costExplored": 2,
+        "wallTimeoutHit": false,
+        "proofCost": 5,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-06",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 548,
+        "costExplored": 5,
+        "wallTimeoutHit": false,
+        "proofCost": 10,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-06",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 548,
+        "costExplored": 5,
+        "wallTimeoutHit": false,
+        "proofCost": 10,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-07",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 12,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 4,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-07",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 12,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 4,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-08",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 16,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 5,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-08",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 16,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 5,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-09",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 49,
+        "costExplored": 5,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-09",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 49,
+        "costExplored": 5,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-10",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 7,
+        "costExplored": 2,
+        "wallTimeoutHit": false,
+        "proofCost": 5,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-10",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 7,
+        "costExplored": 2,
+        "wallTimeoutHit": false,
+        "proofCost": 5,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-11",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 36,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-11",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 36,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-12",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 12,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 7,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-12",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 12,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 7,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-13",
+        "variantId": "prefilter_then_search",
+        "status": "search_budget_exhausted",
+        "workUnits": 133,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-13",
+        "variantId": "search_then_prefilter",
+        "status": "search_budget_exhausted",
+        "workUnits": 133,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-14",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 18,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-14",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 18,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-15",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 1036,
+        "costExplored": 6,
+        "wallTimeoutHit": false,
+        "proofCost": 9,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-15",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 1036,
+        "costExplored": 6,
+        "wallTimeoutHit": false,
+        "proofCost": 9,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-16",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 17,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 9,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-16",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 17,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 9,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-17",
+        "variantId": "prefilter_then_search",
+        "status": "search_budget_exhausted",
+        "workUnits": 35,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-17",
+        "variantId": "search_then_prefilter",
+        "status": "search_budget_exhausted",
+        "workUnits": 35,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-18",
+        "variantId": "prefilter_then_search",
+        "status": "search_budget_exhausted",
+        "workUnits": 12,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-18",
+        "variantId": "search_then_prefilter",
+        "status": "search_budget_exhausted",
+        "workUnits": 12,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-19",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 13,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 5,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-19",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 13,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 5,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-20",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 16,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-20",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 16,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-21",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 32,
+        "costExplored": 5,
+        "wallTimeoutHit": false,
+        "proofCost": 7,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-21",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 32,
+        "costExplored": 5,
+        "wallTimeoutHit": false,
+        "proofCost": 7,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-22",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 86,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 13,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-22",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 86,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 13,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-23",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 80,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 13,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-23",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 80,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 13,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-24",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 44,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 7,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-24",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 44,
+        "costExplored": 3,
+        "wallTimeoutHit": false,
+        "proofCost": 7,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-25",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 58,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 9,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-25",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 58,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 9,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-26",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 117,
+        "costExplored": 5,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-26",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 117,
+        "costExplored": 5,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-27",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 13,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-27",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 13,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 6,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-28",
+        "variantId": "prefilter_then_search",
+        "status": "search_budget_exhausted",
+        "workUnits": 107,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-28",
+        "variantId": "search_then_prefilter",
+        "status": "search_budget_exhausted",
+        "workUnits": 107,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-29",
+        "variantId": "prefilter_then_search",
+        "status": "search_budget_exhausted",
+        "workUnits": 224,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-29",
+        "variantId": "search_then_prefilter",
+        "status": "search_budget_exhausted",
+        "workUnits": 224,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-30",
+        "variantId": "prefilter_then_search",
+        "status": "search_budget_exhausted",
+        "workUnits": 107,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-30",
+        "variantId": "search_then_prefilter",
+        "status": "search_budget_exhausted",
+        "workUnits": 107,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-31",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 74,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 11,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-31",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 74,
+        "costExplored": 4,
+        "wallTimeoutHit": false,
+        "proofCost": 11,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-32",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 66,
+        "costExplored": 5,
+        "wallTimeoutHit": false,
+        "proofCost": 10,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-32",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 66,
+        "costExplored": 5,
+        "wallTimeoutHit": false,
+        "proofCost": 10,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-33",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 551,
+        "costExplored": 6,
+        "wallTimeoutHit": false,
+        "proofCost": 14,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-33",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 551,
+        "costExplored": 6,
+        "wallTimeoutHit": false,
+        "proofCost": 14,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-34",
+        "variantId": "prefilter_then_search",
+        "status": "search_budget_exhausted",
+        "workUnits": 1004,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-34",
+        "variantId": "search_then_prefilter",
+        "status": "search_budget_exhausted",
+        "workUnits": 1004,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-35",
+        "variantId": "prefilter_then_search",
+        "status": "search_budget_exhausted",
+        "workUnits": 35,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-35",
+        "variantId": "search_then_prefilter",
+        "status": "search_budget_exhausted",
+        "workUnits": 35,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-36",
+        "variantId": "prefilter_then_search",
+        "status": "semantically_invalid",
+        "workUnits": 0,
+        "costExplored": 0,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-36",
+        "variantId": "search_then_prefilter",
+        "status": "semantically_invalid",
+        "workUnits": 35,
+        "costExplored": 12,
+        "wallTimeoutHit": false
+      },
+      {
+        "caseId": "corpus-37",
+        "variantId": "prefilter_then_search",
+        "status": "proof_found",
+        "workUnits": 634,
+        "costExplored": 7,
+        "wallTimeoutHit": false,
+        "proofCost": 19,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      },
+      {
+        "caseId": "corpus-37",
+        "variantId": "search_then_prefilter",
+        "status": "proof_found",
+        "workUnits": 634,
+        "costExplored": 7,
+        "wallTimeoutHit": false,
+        "proofCost": 19,
+        "certificateReverified": true,
+        "minimalityGuaranteed": false
+      }
+    ],
+    "totals": [
+      {
+        "variantId": "prefilter_then_search",
+        "workUnits": 5622,
+        "proofsFound": 26,
+        "semanticRejections": 1,
+        "safetyFindings": 0
+      },
+      {
+        "variantId": "search_then_prefilter",
+        "workUnits": 5657,
+        "proofsFound": 26,
+        "semanticRejections": 1,
+        "safetyFindings": 0
+      }
+    ],
+    "safetyFindings": [],
+    "comparable": true,
+    "wallClockMeasured": false
+  },
+  "differingCases": [
+    {
+      "caseId": "corpus-36",
+      "diferencia": 35,
+      "status": "semantically_invalid"
+    }
+  ],
+  "winner": {
+    "variantId": "prefilter_then_search",
+    "workUnitsSaved": 35
+  },
+  "limitation": "Solo 1 de 37 argumentos del corpus es semánticamente inválido, y la ventaja del prefiltro aparece exactamente ahí: la muestra subrepresenta la situación en la que el orden importa. En W3 la proporción de candidatos inválidos será mucho mayor, así que el margen medido es un piso, no una estimación."
+}

@@ -1,0 +1,141 @@
+{
+  "provenance": {
+    "writtenBy": "modelo asistente, por instrucción del propietario (misma salvedad que D-41)",
+    "writtenAt": "2026-08-19",
+    "reviewRequired": "Revisión humana condición previa a coronar nada; el CORPUS_APPROVER audita estas observaciones y claims en el gate H4.5.",
+    "claimsSource": "Claims extraídos de forallx-yyc-quickreference.tex, sección «Basic deduction rules for TFL», rzach/forallx-yyc @ ec34df8 (2025-12-18).",
+    "licenseEvidenceSources": [
+      "https://api.github.com/repos/rzach/forallx-yyc/license → CC-BY-4.0",
+      "Frontmatter del libro: «A Modal Logic Primer by Robert Trueman, used with permission»",
+      "Aviso de licencia del curso MIT OCW 24.241 Fall 2009: CC BY-NC-SA"
+    ]
+  },
+  "observationNotes": {
+    "forallx-yyc/tfl-deduccion-natural": {
+      "autoridad": "0.95 — University of Calgary (Taylor Institute), Open Logic Project; adopción documentada en ADOPTIONS.md.",
+      "revision": "0.9 — erratas abiertas por GitHub, ediciones anuales revisadas (CHANGELOG.md), múltiples remixes revisados por pares.",
+      "estabilidad": "0.9 — repositorio activo desde 2016, revisiones identificadas por commit; el snapshot queda congelado por hash.",
+      "explicitud": "0.95 — reglas básicas y derivadas explícitas en la referencia rápida; notación y sistema alternativos declarados en el apéndice.",
+      "verificabilidad": "1.0 — sus claims se verifican mecánicamente contra authorized-calculus-v1: el cálculo congelado se transcribió de esta obra.",
+      "cobertura": "1.0 — las partes II–VI (TFL, tablas de verdad, deducción natural) cubren los dieciocho KC del bloque."
+    },
+    "forallx-yyc/logica-modal": {
+      "autoridad": "0.8 — Robert Trueman, A Modal Logic Primer, integrado en la edición Calgary.",
+      "revision": "0.7 — obra independiente revisada, integrada con cambios.",
+      "estabilidad": "0.9 — mismo repositorio y congelado por hash.",
+      "explicitud": "0.8 — sistema modal Fitch explícito.",
+      "verificabilidad": "0.3 — fuera del alcance del bloque: no hay cálculo autorizado contra el que verificarla.",
+      "cobertura": "0.0 — no cubre ningún KC del bloque proposicional."
+    },
+    "mit-ocw/24.241-logic-i-fall-2009": {
+      "autoridad": "0.9 — MIT, curso impartido (Dr. Ephraim Glick).",
+      "revision": "0.7 — material de curso publicado y archivado; sin proceso de erratas abierto comparable al repo.",
+      "estabilidad": "0.85 — curso archivado (Fall 2009), contenido congelado por OCW.",
+      "explicitud": "0.6 — el curso usa su propio sistema de derivación; no se extrajeron claims en esta corrida.",
+      "verificabilidad": "0.4 — verificable en principio, pero sin claims extraídos no hay nada que verificar en esta corrida.",
+      "cobertura": "0.5 — cubre cálculo sentencial y predicado según el temario; no evaluado por KC."
+    }
+  },
+  "evaluations": [
+    {
+      "candidateUrl": "https://github.com/rzach/forallx-yyc/tree/master#tfl-deduccion-natural",
+      "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+      "observations": {
+        "autoridad": 0.95,
+        "revision": 0.9,
+        "estabilidad": 0.9,
+        "explicitud": 0.95,
+        "verificabilidad": 1.0,
+        "cobertura": 1.0
+      },
+      "claims": [
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "reiteracion", "statement": "R: de A (línea m) se reitera A.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "introduccion-conjuncion", "statement": "∧I: de A y B se deriva A∧B.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "eliminacion-conjuncion", "statement": "∧E: de A∧B se deriva A, y de A∧B se deriva B.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "introduccion-condicional", "statement": "→I: de una subprueba que abre con el supuesto A y cierra en B se deriva A→B.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "eliminacion-condicional", "statement": "→E: de A→B y A se deriva B.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "introduccion-negacion", "statement": "¬I: de una subprueba que abre con el supuesto A y cierra en ⊥ se deriva ¬A.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "eliminacion-negacion", "statement": "¬E: de ¬A y A se deriva ⊥.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "prueba-indirecta", "statement": "IP: de una subprueba que abre con el supuesto ¬A y cierra en ⊥ se deriva A.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "explosion", "statement": "X: de ⊥ se deriva cualquier fórmula A.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "introduccion-disyuncion", "statement": "∨I: de A se deriva A∨B, y de A se deriva B∨A.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "eliminacion-disyuncion", "statement": "∨E: de A∨B, una subprueba de A a C y una subprueba de B a C, se deriva C.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "introduccion-bicondicional", "statement": "↔I: de una subprueba de A a B y una de B a A se deriva A↔B.", "declaredClass": "informacion_complementaria" },
+        { "sourceId": "forallx-yyc/tfl-deduccion-natural", "formalSystemId": "forallx-calgary-tfl", "notationFamily": "fitch", "version": "master@ec34df8", "scope": "eliminacion-bicondicional", "statement": "↔E: de A↔B y A se deriva B; de A↔B y B se deriva A.", "declaredClass": "informacion_complementaria" }
+      ],
+      "licenseRecord": {
+        "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+        "sourceVersion": "master@ec34df8 (2025-12-18)",
+        "provenanceBasis": "LICENSE.md de rzach/forallx-yyc @ec34df8; GitHub detecta CC-BY-4.0; el frontmatter del libro declara CC BY 4.0 y enumera las excepciones puntuales (ninguna en las partes II–VI).",
+        "licenseEvidence": "CC BY 4.0 — LICENSE.md del repositorio + detección SPDX de GitHub + frontmatter; assets/by.pdf incluido en el repo.",
+        "terms": {
+          "licenseId": "CC-BY-4.0",
+          "nonCommercial": false,
+          "shareAlike": false,
+          "noDerivatives": false,
+          "thirdPartyPermissionOnly": false
+        }
+      },
+      "attributionChain": [
+        "P. D. Magnus (forall x, University at Albany, CC BY 4.0)",
+        "Tim Button (forall x: Cambridge, UCL, CC BY 4.0)",
+        "Aaron Thomas-Bolduc y Richard Zach (forall x: Calgary, University of Calgary, CC BY 4.0)",
+        "J. Robert Loftis (material adicional, ejercicios)"
+      ]
+    },
+    {
+      "candidateUrl": "https://github.com/rzach/forallx-yyc/tree/master#logica-modal",
+      "sourceComponent": "forallx-yyc/logica-modal",
+      "observations": {
+        "autoridad": 0.8,
+        "revision": 0.7,
+        "estabilidad": 0.9,
+        "explicitud": 0.8,
+        "verificabilidad": 0.3,
+        "cobertura": 0.0
+      },
+      "claims": [],
+      "licenseRecord": {
+        "sourceComponent": "forallx-yyc/logica-modal",
+        "sourceVersion": "master@ec34df8 (2025-12-18)",
+        "provenanceBasis": "Frontmatter del libro: «A Modal Logic Primer by Robert Trueman, used with permission» (forallx-yyc-ml.tex).",
+        "licenseEvidence": "«used with permission» declarado en el frontmatter; la licencia global CC BY del repo no resuelve la cadena de derechos de este componente.",
+        "terms": {
+          "licenseId": "used-with-permission",
+          "nonCommercial": false,
+          "shareAlike": false,
+          "noDerivatives": false,
+          "thirdPartyPermissionOnly": true
+        }
+      },
+      "attributionChain": ["Robert Trueman (A Modal Logic Primer, used with permission)"]
+    },
+    {
+      "candidateUrl": "https://ocw.mit.edu/courses/24-241-logic-i-fall-2009/",
+      "sourceComponent": "mit-ocw/24.241-logic-i-fall-2009",
+      "observations": {
+        "autoridad": 0.9,
+        "revision": 0.7,
+        "estabilidad": 0.85,
+        "explicitud": 0.6,
+        "verificabilidad": 0.4,
+        "cobertura": 0.5
+      },
+      "claims": [],
+      "licenseRecord": {
+        "sourceComponent": "mit-ocw/24.241-logic-i-fall-2009",
+        "sourceVersion": "Fall 2009 (archivado)",
+        "provenanceBasis": "Aviso de licencia del curso en ocw.mit.edu: materiales bajo CC BY-NC-SA; condiciones de uso de MIT OCW (atribución, no comercial, compartir igual).",
+        "licenseEvidence": "CC BY-NC-SA 4.0 — aviso de licencia del curso y página de condiciones de uso de MIT OCW.",
+        "terms": {
+          "licenseId": "CC-BY-NC-SA-4.0",
+          "nonCommercial": true,
+          "shareAlike": true,
+          "noDerivatives": false,
+          "thirdPartyPermissionOnly": false
+        }
+      },
+      "attributionChain": ["Massachusetts Institute of Technology (MIT OpenCourseWare)", "Dr. Ephraim Glick (24.241 Logic I, Fall 2009)"]
+    }
+  ]
+}

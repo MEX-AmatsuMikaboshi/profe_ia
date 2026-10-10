@@ -1,0 +1,21 @@
+# Informe de saturación (T-H45-04). stopDecisionAvailable: false — la parada no está calibrada. Corrida del 2026-08-19T18:12:25.628Z.
+{
+  "curve": [
+    {
+      "round": 1,
+      "newItems": 2,
+      "newFraction": 1
+    },
+    {
+      "round": 2,
+      "newItems": 0,
+      "newFraction": 0
+    }
+  ],
+  "diversity": {
+    "distinctLineages": 2,
+    "totalFindings": 2,
+    "diversityRatio": 1
+  },
+  "stopDecisionAvailable": false
+}

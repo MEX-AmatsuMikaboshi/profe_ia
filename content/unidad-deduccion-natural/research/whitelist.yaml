@@ -1,0 +1,45 @@
+# Repositorios educativos/académicos autorizados para descubrimiento (T-H45-02).
+#
+# Norma: P-I §7.0 «Descubrimiento». Estrategia de menor complejidad:
+# repositorios autorizados, conectores cuando exista API/índice estable,
+# búsqueda abierta solo como complemento y **sin crawler web general**.
+#
+# ADVERTENCIA NORMATIVA, literal de §7.0: «La lista blanca no implica que cada
+# recurso sea confiable o jurídicamente reutilizable: cada recurso se evalúa
+# individualmente.» Estar aquí autoriza a *buscar* en la fuente; no valida nada
+# de lo que se encuentre. La idoneidad la decide T-H45-04 y la licencia, que es
+# un gate separado, T-H45-05.
+#
+# Ninguna entrada es de cosecha propia: las tres son las que el Maestro nombra
+# como candidatas (§0.1 «Open Logic Project», §7.0 y el registro de fuentes).
+# Añadir una fuente que ninguna autoridad nombre sería inventar corpus.
+
+whitelist_closed: true
+
+entries:
+  - source_id: open-logic-project
+    name: Open Logic Project
+    access_mode: indice_estable
+    base_url: https://openlogicproject.org/
+    notes: >-
+      Candidato primario, sujeto a la cláusula «salvo indicación contraria» de su
+      licencia. Incluye *forall x: Calgary*, ancla documental de
+      authorized-calculus-v1. Su gate jurídico se resuelve por sección/componente
+      y snapshot, no por la etiqueta global de la obra.
+
+  - source_id: mit-opencourseware
+    name: MIT OpenCourseWare
+    access_mode: indice_estable
+    base_url: https://ocw.mit.edu/
+    notes: >-
+      Se evalúa por recurso y versión. No se adopta como base expresiva por
+      defecto cuando existan restricciones NC/SA o material de terceros
+      incompatible.
+
+  - source_id: openstax
+    name: OpenStax
+    access_mode: indice_estable
+    base_url: https://openstax.org/
+    notes: >-
+      Se evalúa por recurso y versión, con la misma reserva que MIT OCW sobre
+      NC/SA y material de terceros.

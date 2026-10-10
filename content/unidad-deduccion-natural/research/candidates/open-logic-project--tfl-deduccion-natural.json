@@ -1,0 +1,13 @@
+# Candidato W0 con snapshot generado en W0 (2026-08-19T18:12:25.628Z). W1 verifica identidad contra snapshotSha256.
+{
+  "sourceId": "open-logic-project",
+  "accessMode": "indice_estable",
+  "record": {
+    "url": "https://github.com/rzach/forallx-yyc/tree/master#tfl-deduccion-natural",
+    "origin": "Open Logic Project / University of Calgary (GitHub rzach/forallx-yyc)",
+    "version": "master@ec34df8f8f42ccba2bf2d24403ebad335afa93b9 (2025-12-18T09:05:52Z)",
+    "retrievedAt": "2026-08-19T18:12:25.628Z",
+    "licenseEvidence": "CC BY 4.0 — LICENSE.md del repo + detección SPDX de GitHub + frontmatter del libro",
+    "snapshotSha256": "02351aa31c05f027ddb1c6a63b0bfd27e05b4a8a2751fc7a58dcffb691999510"
+  }
+}

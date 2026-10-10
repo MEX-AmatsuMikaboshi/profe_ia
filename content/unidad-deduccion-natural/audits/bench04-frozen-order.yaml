@@ -1,0 +1,13 @@
+# Orden del pipeline de validez congelado (T-H5-05, BENCH-04). Corrida del 2026-08-23T00:21:50.290Z sobre el snapshot 02351aa31c05…. Corrida y lectura del modelo asistente (salvedad D-41/D-48/D-52/D-53): el propietario audita el congelamiento antes del freeze de W5.
+{
+  "frozenOrder": {
+    "benchmarkId": "BENCH-04",
+    "variantId": "prefilter_then_search",
+    "harnessVersion": "bench04-harness-v1",
+    "measuredOn": "real_content_package",
+    "contentPackageVersion": "forallx-yyc/tfl-deduccion-natural@7a988a58d38187cf",
+    "reportRunId": "bench04-7ea6860a41113495"
+  },
+  "frozenAt": "2026-08-23T00:21:50.290Z",
+  "rationale": "Las dos variantes coinciden en veredicto en los 37 argumentos y no hay hallazgos de seguridad, así que compite el desempeño. Gana prefilter_then_search por 35 unidades de trabajo, y toda esa diferencia sale del único caso semánticamente inválido: el prefiltro no busca lo que el oráculo ya rechazó."
+}

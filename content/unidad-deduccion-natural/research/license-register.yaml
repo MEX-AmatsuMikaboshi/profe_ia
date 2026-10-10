@@ -1,0 +1,73 @@
+# Registro de licencias por componente y uso previsto (T-H45-05). Corrida del 2026-08-19T18:12:25.628Z.
+{
+  "licenseQuery": {
+    "intendedUse": "base_expresiva"
+  },
+  "verdicts": [
+    {
+      "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+      "verdict": {
+        "status": "autorizado",
+        "blocked": false,
+        "reason": "Licencia preferida (CC-BY-4.0) con proveniencia registrada."
+      }
+    },
+    {
+      "sourceComponent": "forallx-yyc/logica-modal",
+      "verdict": {
+        "status": "LICENSE_UNRESOLVED",
+        "blocked": true,
+        "reason": "Proveniencia no resuelta («used with permission»): no se incorpora como base expresiva hasta resolverla y, cuando corresponda, revisión jurídica profesional."
+      }
+    },
+    {
+      "sourceComponent": "mit-ocw/24.241-logic-i-fall-2009",
+      "verdict": {
+        "status": "excluido",
+        "blocked": true,
+        "reason": "NC/SA solo cuando el uso previsto sea compatible, y aquí no se declaró compatible. NC/SA no se convierten en base expresiva predeterminada de un producto potencialmente comercial."
+      }
+    }
+  ],
+  "records": [
+    {
+      "sourceComponent": "forallx-yyc/tfl-deduccion-natural",
+      "sourceVersion": "master@ec34df8 (2025-12-18)",
+      "provenanceBasis": "LICENSE.md de rzach/forallx-yyc @ec34df8; GitHub detecta CC-BY-4.0; el frontmatter del libro declara CC BY 4.0 y enumera las excepciones puntuales (ninguna en las partes II–VI).",
+      "licenseEvidence": "CC BY 4.0 — LICENSE.md del repositorio + detección SPDX de GitHub + frontmatter; assets/by.pdf incluido en el repo.",
+      "terms": {
+        "licenseId": "CC-BY-4.0",
+        "nonCommercial": false,
+        "shareAlike": false,
+        "noDerivatives": false,
+        "thirdPartyPermissionOnly": false
+      }
+    },
+    {
+      "sourceComponent": "forallx-yyc/logica-modal",
+      "sourceVersion": "master@ec34df8 (2025-12-18)",
+      "provenanceBasis": "Frontmatter del libro: «A Modal Logic Primer by Robert Trueman, used with permission» (forallx-yyc-ml.tex).",
+      "licenseEvidence": "«used with permission» declarado en el frontmatter; la licencia global CC BY del repo no resuelve la cadena de derechos de este componente.",
+      "terms": {
+        "licenseId": "used-with-permission",
+        "nonCommercial": false,
+        "shareAlike": false,
+        "noDerivatives": false,
+        "thirdPartyPermissionOnly": true
+      }
+    },
+    {
+      "sourceComponent": "mit-ocw/24.241-logic-i-fall-2009",
+      "sourceVersion": "Fall 2009 (archivado)",
+      "provenanceBasis": "Aviso de licencia del curso en ocw.mit.edu: materiales bajo CC BY-NC-SA; condiciones de uso de MIT OCW (atribución, no comercial, compartir igual).",
+      "licenseEvidence": "CC BY-NC-SA 4.0 — aviso de licencia del curso y página de condiciones de uso de MIT OCW.",
+      "terms": {
+        "licenseId": "CC-BY-NC-SA-4.0",
+        "nonCommercial": true,
+        "shareAlike": true,
+        "noDerivatives": false,
+        "thirdPartyPermissionOnly": false
+      }
+    }
+  ]
+}

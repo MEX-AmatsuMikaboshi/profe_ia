@@ -1,0 +1,44 @@
+# Decisiones curriculares con soporte y justificación (T-H5-02, Rol A). Corrida W2 del 2026-08-21T19:51:55.760Z sobre el corpus W1 (tarball 02351aa31c05…). Redactado por el modelo asistente (salvedad D-41/D-48): el CORPUS_APPROVER lo audita antes del freeze de W5.
+{
+  "extractionVersion": "w2-extraction-v1",
+  "courseId": "unidad-deduccion-natural",
+  "curricularDecisions": [
+    {
+      "decisionId": "dc-alcance-reglas",
+      "statement": "La unidad enseña las trece reglas primitivas del cálculo autorizado más DNE. DS, MT, LEM y DeM quedan fuera aunque la fuente las presente.",
+      "supportingClaims": [
+        "c-derivadas-fuera-whitelist",
+        "c-adicionales-derivables"
+      ],
+      "justification": "La whitelist de authorized-calculus-v1 es cerrada y el verificador rechaza lo que no esté en ella. Enseñar una regla que el verificador rechaza produciría un fallo garantizado en la primera corrección, y el alumno lo leería como error suyo."
+    },
+    {
+      "decisionId": "dc-parentesis-obligatorios",
+      "statement": "La unidad adopta paréntesis obligatorios salvo los más externos y no reconoce precedencia entre conectivos binarios.",
+      "supportingClaims": [
+        "c-sin-precedencia",
+        "c-parentesis-indispensables",
+        "c-negacion-alcance"
+      ],
+      "justification": "Es la convención de la propia fuente y la que el verificador implementa: A∧B∧C se rechaza con E-SYN-PRECEDENCE. Adoptar la precedencia habitual en matemáticas enseñaría a escribir lo que el verificador rechaza."
+    },
+    {
+      "decisionId": "dc-semantica-como-apoyo",
+      "statement": "Las secciones de tablas de verdad entran en la unidad como apoyo documental, no como base expresiva de ningún KC.",
+      "supportingClaims": [
+        "c-nd-frente-a-tablas"
+      ],
+      "justification": "El catálogo KC01–KC18 de P-I §5.2 no contiene ningún KC semántico: anclarles fragmentos de tablas de verdad les daría un KC de destino que nadie declaró. El material queda citable como fuente, que es lo que sí sostiene."
+    },
+    {
+      "decisionId": "dc-sin-consenso-cruzado",
+      "statement": "Esta extracción no emite ningún claim de tipo cross_source_consensus.",
+      "supportingClaims": [
+        "c-oracion-inductiva",
+        "c-parentesis-indispensables",
+        "c-adicionales-derivables"
+      ],
+      "justification": "El corpus autorizado tiene un solo componente (D-50: solo forallx-yyc/tfl-deduccion-natural), y cross_source_consensus exige dos componentes distintos. Emitir uno exigiría una segunda fuente que nadie autorizó; la ausencia se registra en vez de fabricarse."
+    }
+  ]
+}
